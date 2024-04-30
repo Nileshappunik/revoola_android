@@ -5,7 +5,6 @@
 
     <RelativeLayout
         android:id="@+id/container"
-        android:background="@color/bnv_tab_item_foreground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
