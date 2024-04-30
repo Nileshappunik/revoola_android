@@ -27,7 +27,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/logout"
-                android:textColor="@color/Black"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

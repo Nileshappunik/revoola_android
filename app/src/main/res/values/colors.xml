@@ -7,4 +7,7 @@
     <color name="transparent_dialog">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="off_white">#F6F6F6</color>
+    <color name="DarkBlue">#120D26</color>
+    <color name="green">#008b00</color>
 </resources>
