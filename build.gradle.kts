@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.application") version "8.0.1" apply false
-    kotlin("android") version "1.8.21" apply false
+    id("com.android.application") version "7.2.2" apply false
+    kotlin("android") version "1.6.10" apply false
+   // kotlin("jvm") version "1.6.10"
 }
 
 allprojects {
@@ -10,6 +11,7 @@ allprojects {
     }
 }
 
+/*
 tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
-}
+}*/
