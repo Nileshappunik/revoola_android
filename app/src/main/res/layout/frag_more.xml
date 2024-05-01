@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/off_white"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/more"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:weightSum="2"
+            android:background="@color/off_white"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_schdualedclasses"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:minHeight="60dp"
+                app:cardCornerRadius="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:drawableLeft="@drawable/ic_calendar_today"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/green"
+                    android:paddingLeft="10dp"
+                    android:text="@string/schduledclasses"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_big_size"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_notification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:minHeight="60dp"
+                app:cardCornerRadius="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:drawableLeft="@drawable/ic_notifications"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/green"
+                    android:paddingLeft="10dp"
+                    android:text="@string/notifications"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_big_size"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/lightGray" />
+
+        <include
+            android:id="@+id/lay_account"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_setting"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_changepassword"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_help"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_connecttohealthconnect"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_requesttodeletedata"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_linktoaccount"
+            layout="@layout/common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/lay_signout"
+            layout="@layout/common_image_text_image_rl" />
+
+
+    </LinearLayout>
+</layout>

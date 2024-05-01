@@ -38,12 +38,12 @@ android {
         (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(8))
     }
 }*/
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+/*tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
 
     }
-}
+}*/
 
 android {
     buildFeatures {

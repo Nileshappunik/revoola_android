@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityMainBinding
+import com.example.myfirstapp.fragment.FragMore
 import com.example.myfirstapp.utils.Constants
 import com.example.myfirstapp.utils.PrefManager
 
@@ -56,7 +57,7 @@ class MainActivity  : BaseActivity() {
                 }
                 R.id.more -> {
                     bottombarcolorwhite()
-                   // loadFrag(FragMore(), TAG, true, FragMore::class.java.simpleName, false)
+                    loadFrag(FragMore(), TAG, true, FragMore::class.java.simpleName, false)
                     true
                 }
                 else -> {
