@@ -14,4 +14,11 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
+    <style name="NoUnderlineTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!--  <item name="boxBackgroundMode">none</item>-->
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="hintTextColor">@color/colorPrimary</item>
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+
 </resources>

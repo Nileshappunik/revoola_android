@@ -80,12 +80,7 @@ open class BaseFragment : Fragment() {
     }*/
 
     //TODO : DataBind
-    open fun inflateBindLayout(
-        activity1: Class<FragmentActivity>?,
-        inflater: LayoutInflater,
-        layoutName: Int,
-        container: ViewGroup?,
-    ): Any? {
+    open fun inflateBindLayout(activity1: Class<FragmentActivity>?,inflater: LayoutInflater, layoutName: Int, container: ViewGroup?, ): Any? {
         return DataBindingUtil.inflate(inflater!!, layoutName, container, false)
     }
 
