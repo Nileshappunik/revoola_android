@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButtonPounds"
+            android:layout_width="wrap_content"
+            android:textColor="@color/green"
+            android:layout_height="wrap_content"
+            android:text="@string/uspounds" />
+
+        <RadioButton
+            android:id="@+id/radioButtonStones"
+            android:layout_width="wrap_content"
+            android:textColor="@color/green"
+            android:layout_height="wrap_content"
+            android:text="@string/ukstones" />
+
+        <RadioButton
+            android:id="@+id/radioButtonMetric"
+            android:layout_width="wrap_content"
+            android:textColor="@color/green"
+            android:layout_height="wrap_content"
+            android:text="@string/metric" />
+    </RadioGroup>
+
+
+
+</LinearLayout>
