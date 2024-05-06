@@ -11,7 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
-import com.example.myfirstapp.VerificationCodeActivity
+import com.example.myfirstapp.activity.VerificationCodeActivity
 import com.example.myfirstapp.api.ApiClientRet
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityLoginEmailBinding
@@ -35,7 +35,7 @@ class LoginEmailActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = inflateBindLayout(this, R.layout.activity_login_email) as ActivityLoginEmailBinding
-        // Api call
+        // Api call code
         apiClientRetrofit = ApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
         val userRepository = MainRepository(apiService)
@@ -107,7 +107,7 @@ class LoginEmailActivity : BaseActivity() {
 
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog!!.dismiss()
-            startActivity(Intent(this,VerificationCodeActivity::class.java))
+            startActivity(Intent(this, VerificationCodeActivity::class.java))
         })
         sucDialog!!.show()
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
