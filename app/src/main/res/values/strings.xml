@@ -46,6 +46,7 @@
     <string name="facebook_client_token">56789</string>
 
     <string name="signuplogin">Signup/Login</string>
+    <string name="signup">Signup</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="continuel">CONTINUE</string>
@@ -60,12 +61,34 @@
     <string name="linksend">We will send you link to reset your password.</string>
     <string name="next">NEXT</string>
 
+    <string name="taptoaddyourprofilepicture">Tap to add your profile picture</string>
+    <string name="dateofbirth">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="datedemotexm">--/--/----</string>
+    <string name="genderdemotexm">---</string>
+    <string name="feetandinches">Feet &amp; Inches</string>
+    <string name="metric">Metric</string>
+    <string name="uspounds">US Pounds</string>
+    <string name="ukstones">UK Stones</string>
+
     <!--feed-->
     <string name="myride">MyRide</string>
     <string name="time">TIME</string>
     <string name="assumedeffort">ASSUMED EFFORT</string>
     <string name="step">STEPS</string>
     <string name="calorie">CALORIES</string>
+    <string name="weneedtosendverificationcode">We need to send verification code.please confirm your email address is correct.</string>
+    <string name="looksgood">LOOKS GOOD</string>
+    <string name="changeemail">CHANGE EMAIL</string>
+    <string name="pleaseenterverificationcode">Please enter the verification code that we sent to your email address here.</string>
+    <string name="didntreceivethecode">Didn\'t receive the code?</string>
+    <string name="resend">Resend</string>
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
+    <string name="nickname">Nick Name</string>
+    <string name="nicknameappearon">Your nickname will appear on leaderboard and...</string>
 
 
     <!--friends-->
