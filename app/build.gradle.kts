@@ -82,6 +82,9 @@ dependencies {
     //google login
     implementation("com.google.android.gms:play-services-auth:19.0.0")
 
+    //pinview
+    implementation ("com.github.GoodieBag:Pinview:v1.4")
+
     //facebook login
 
 

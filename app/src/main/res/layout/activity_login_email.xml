@@ -27,7 +27,6 @@
             app:boxCornerRadiusTopStart="10dp"
             android:visibility="visible"
             android:textSize="@dimen/text_login_size"
-            style ="@style/NoUnderlineTextInputLayout"
             android:hint="@string/email">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etemailid"
@@ -58,7 +57,6 @@
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="@color/green"
             android:textSize="@dimen/text_login_size"
-            style="@style/NoUnderlineTextInputLayout"
             android:hint="@string/password">
 
             <com.google.android.material.textfield.TextInputEditText
