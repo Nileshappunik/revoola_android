@@ -1,19 +1,16 @@
-package com.example.myfirstapp
+package com.example.myfirstapp.activity
 
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.myfirstapp.activity.ForgotPasswordActivity
+import com.example.myfirstapp.R
 import com.example.myfirstapp.api.ApiClientRet
 import com.example.myfirstapp.base.BaseActivity
-import com.example.myfirstapp.databinding.ActivityLoginEmailBinding
 import com.example.myfirstapp.databinding.ActivitySignUpNameBinding
-import com.example.myfirstapp.utils.Tools
 import com.example.myfirstapp.viewmodel.MainRepository
 import com.example.myfirstapp.viewmodel.MainViewModel
 import com.example.myfirstapp.viewmodel.MainViewModelFactory

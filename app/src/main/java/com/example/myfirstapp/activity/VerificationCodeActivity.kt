@@ -1,15 +1,12 @@
-package com.example.myfirstapp
+package com.example.myfirstapp.activity
 
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.myfirstapp.activity.ForgotPasswordActivity
+import com.example.myfirstapp.R
 import com.example.myfirstapp.api.ApiClientRet
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityVerificationCodeBinding
@@ -48,7 +45,7 @@ class VerificationCodeActivity : BaseActivity()  {
         pin.setPinViewEventListener(object : Pinview.PinViewEventListener {
             override fun onDataEntered(pinview: Pinview?, fromUser: Boolean) {
                 //Toast.makeText(this@VerificationCodeActivity, pinview!!.value, Toast.LENGTH_SHORT).show()
-               startActivity(Intent(this@VerificationCodeActivity,SignUpNameActivity::class.java))
+               startActivity(Intent(this@VerificationCodeActivity, SignUpNameActivity::class.java))
             }
         })
        /* // pinView Customize
