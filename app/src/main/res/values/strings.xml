@@ -41,9 +41,7 @@
     <string name="facebookaccount">Facebook Account</string>
     <string name="googleaccount">Google Account</string>
 
-    <string name="facebook_app_id">1234</string>
-    <string name="fb_login_protocol_scheme">fb1234</string>
-    <string name="facebook_client_token">56789</string>
+
 
     <string name="signuplogin">Signup/Login</string>
     <string name="signup">Signup</string>
@@ -110,4 +108,10 @@
     <string name="requesttodeleteyourdata">Request to delete your data</string>
     <string name="linktoaccount">Link to Account</string>
     <string name="signout">Sign Out</string>
+
+    <!--facebook-->
+    <string name="facebook_app_id">423254927013835</string>
+    <string name="fb_login_protocol_scheme">fb423254927013835</string>
+    <string name="facebook_client_token">23148b487e52d13bea40029f58943f10</string>
+
 </resources>

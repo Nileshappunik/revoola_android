@@ -1,16 +1,14 @@
-package com.example.myfirstapp
+package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -26,14 +24,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.myfirstapp.activity.ForgotPasswordActivity
-import com.example.myfirstapp.activity.LoginEmailActivity
-import com.example.myfirstapp.activity.MainActivity
+import com.example.myfirstapp.R
 import com.example.myfirstapp.api.ApiClientRet
 import com.example.myfirstapp.base.BaseActivity
-import com.example.myfirstapp.databinding.ActivityLoginEmailBinding
 import com.example.myfirstapp.databinding.ActivitySignUpBinding
-import com.example.myfirstapp.utils.Tools
 import com.example.myfirstapp.viewmodel.MainRepository
 import com.example.myfirstapp.viewmodel.MainViewModel
 import com.example.myfirstapp.viewmodel.MainViewModelFactory
@@ -343,18 +337,37 @@ class SignUpActivity : BaseActivity(),DatePickerDialog.OnDateSetListener   {
             myDay.toString()
         }
 
-         DateTime = "" + Day + "-" + Month + "-" + myYear
+         DateTime = "" + Day + "/" + Month + "/" + myYear
 
         activityBinding.edDateofbirth.setText(DateTime).toString()
     }
 
-    open fun isStoragePermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+
+
+    private fun isStoragePermissionGranted(): Boolean {
+        val cameraPermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        )
+        val storagePermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        return cameraPermission == PackageManager.PERMISSION_GRANTED &&
+                storagePermission == PackageManager.PERMISSION_GRANTED
+    }
+    private fun requestStoragePermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ),
+            STORAGE_PERMISSION_REQUEST_CODE
+        )
     }
 
-    open fun requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_REQUEST_CODE)
-    }
+
 
     // Handle permission request result
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
