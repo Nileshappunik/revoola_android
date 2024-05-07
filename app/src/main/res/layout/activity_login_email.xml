@@ -115,7 +115,7 @@
                 android:paddingBottom="5dp"
                 android:textColor="@color/white"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/round_border"
+                android:background="@drawable/round_green"
                 android:layout_toRightOf="@+id/txt_forhotpassword"
                 android:layout_alignParentBottom="true"
                 android:textSize="12sp"

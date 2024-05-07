@@ -40,12 +40,14 @@
             android:name=".activity.ForgotPasswordActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".activity.LoginActivity"
-            android:exported="false"/>
+
         <activity
             android:name=".activity.LoginEmailActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false"/>
         <!-- android:name=".activity.LoginActivity"-->
         <activity
             android:name=".activity.SignUpActivity"

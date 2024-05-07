@@ -81,6 +81,7 @@ lateinit var activityBinding: ActivityLoginBinding
         }*/
 
 
+        logoutFromFacebook()
 
         activityBinding.txtEmailaccount.setOnClickListener {
             startActivity(Intent(this,LoginEmailActivity::class.java))
@@ -89,17 +90,17 @@ lateinit var activityBinding: ActivityLoginBinding
            googlelogin()
         }
         activityBinding.txtFacebookaccount.setOnClickListener {
-            if (AccessToken.getCurrentAccessToken() != null && AccessToken.getCurrentAccessToken()?.isExpired!!.not()) {
-                // User is logged in, perform logout
-                LoginManager.getInstance().logOut()
-            }else{
-                facebooklogin()
-            }
-
+            facebooklogin()
         }
 
     }
 
+    private fun logoutFromFacebook() {
+        FirebaseAuth.getInstance().signOut()
+        if (AccessToken.getCurrentAccessToken() != null) {
+            LoginManager.getInstance().logOut()
+        }
+    }
 
     private fun facebooklogin() {
         LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile","email"))

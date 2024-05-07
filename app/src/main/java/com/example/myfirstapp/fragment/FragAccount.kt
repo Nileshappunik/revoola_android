@@ -21,7 +21,7 @@ class FragAccount : BaseFragment() {
     val TAG: String = FragAccount::class.java.simpleName
     lateinit var fragBinding: FragAccountBinding
 
-    
+
     private val binding by lazy {
         FragAccountBinding.inflate(layoutInflater)
     }

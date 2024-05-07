@@ -44,6 +44,42 @@ android:padding="0dp">
 
 </RadioGroup>
 
+
+    <RelativeLayout
+        android:id="@+id/rv_poundmatric"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <NumberPicker
+            android:id="@+id/numberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rv_ukstones"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <NumberPicker
+            android:id="@+id/numberPickerfeet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"/>
+
+        <NumberPicker
+            android:id="@+id/numberPickerinches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="30dp"/>
+
+    </RelativeLayout>
+
+
 <View
     android:layout_width="match_parent"
     android:layout_height="1dp"
