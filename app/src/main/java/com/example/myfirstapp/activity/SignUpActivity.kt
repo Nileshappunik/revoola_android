@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -28,7 +27,6 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.api.ApiClientRet
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivitySignUpBinding
-import com.example.myfirstapp.utils.Constants
 import com.example.myfirstapp.viewmodel.MainRepository
 import com.example.myfirstapp.viewmodel.MainViewModel
 import com.example.myfirstapp.viewmodel.MainViewModelFactory
