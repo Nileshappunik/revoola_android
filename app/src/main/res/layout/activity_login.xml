@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:src="@drawable/ic_revoola_logo"
+            app:tint="@color/green"
             android:layout_marginTop="70dp"/>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

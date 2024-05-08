@@ -15,9 +15,9 @@
         app:layout_collapseMode="parallax"
         app:titleTextColor="@color/white">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="56dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -28,44 +28,33 @@
                 android:focusable="true"
                 android:padding="5dp"
                 android:src="@drawable/ic_arrow_back_ios"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
-           <!-- <ImageView
-                android:id="@+id/ivManuBar"
+            <ImageView
+                android:id="@+id/ivlogoapp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="true"
+                app:tint="@color/green"
                 android:padding="5dp"
-                android:src="@drawable/side_manu"
-                android:visibility="gone" />-->
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_revoola_logo"
+                android:visibility="gone" />
+
 
             <TextView
                 android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text=""
+                android:layout_centerHorizontal="true"
+                android:text="test"
                 android:visibility="visible"
                 android:textColor="@color/colorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-
-
-
-            <ImageView
-                android:id="@+id/ivAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="5dp"
-                android:src="@drawable/ic_add"
-                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/ivNotification"
@@ -74,12 +63,13 @@
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:layout_alignParentEnd="true"
                 android:padding="5dp"
                 android:src="@drawable/ic_notifications"
                 android:visibility="gone" />
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </androidx.appcompat.widget.Toolbar>

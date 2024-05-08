@@ -3,7 +3,9 @@ package com.example.myfirstapp.activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
@@ -14,6 +16,7 @@ import com.example.myfirstapp.viewmodel.MainRepository
 import com.example.myfirstapp.viewmodel.MainViewModel
 import com.example.myfirstapp.viewmodel.MainViewModelFactory
 import com.goodiebag.pinview.Pinview
+
 
 class VerificationCodeActivity : BaseActivity()  {
     val TAG: String = VerificationCodeActivity::class.java.simpleName
@@ -37,7 +40,8 @@ class VerificationCodeActivity : BaseActivity()  {
     }
 
     private fun Uisetup() {
-        activityBinding.toolbarLogin.tvTitle.setText(R.string.app_name)
+        activityBinding.toolbarLogin.tvTitle.visibility=View.GONE
+        activityBinding.toolbarLogin.ivlogoapp.visibility=View.VISIBLE
         activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
         onBackPresAct(activityBinding.toolbarLogin.ivBack)
         var pin = Pinview(this)
@@ -48,6 +52,10 @@ class VerificationCodeActivity : BaseActivity()  {
                startActivity(Intent(this@VerificationCodeActivity, SignUpNameActivity::class.java))
             }
         })
+
+        pin.apply {
+            setTextColor(resources.getColor(R.color.green))
+        }
        /* // pinView Customize
         pin.apply {
             setCursorShape(R.drawable.example_cursor)
