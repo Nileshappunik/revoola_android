@@ -89,7 +89,11 @@
     <string name="lastname">Last Name</string>
     <string name="nickname">Nick Name</string>
     <string name="nicknameappearon">Your nickname will appear on leaderboard and...</string>
-
+    <string name="feedsmall">Feed</string>
+    <string name="friendssmall">Friends</string>
+    <string name="groupsmall">Groups</string>
+    <string name="yousmall">You</string>
+    <string name="challengessmall">Challenges</string>
 
     <!--friends-->
     <string name="findonrevoola">Find on Revoola</string>
@@ -98,6 +102,7 @@
     <string name="invitefriends">Invite Friends</string>
     <string name="invitefriendsnotonyet">Invite Your Friends not yet on Revoola.</string>
     <string name="friend">Friends</string>
+
 
     <!--more-->
     <string name="schduledclasses">Scheduled Classes</string>
