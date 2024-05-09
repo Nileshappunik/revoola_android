@@ -34,7 +34,8 @@ class ForgotPasswordActivity : BaseActivity() {
 
     }
     private fun Uisetup() {
-        activityBinding.toolbar.tvTitle.setText(R.string.app_name)
+        activityBinding.toolbar.tvTitle.visibility=View.GONE
+        activityBinding.toolbar.ivlogoapp.visibility=View.VISIBLE
         activityBinding.toolbar.ivBack.visibility= View.VISIBLE
         onBackPresAct(activityBinding.toolbar.ivBack)
         activityBinding.tvnext.setOnClickListener(View.OnClickListener {

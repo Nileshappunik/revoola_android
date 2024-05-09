@@ -32,11 +32,14 @@ class FragChangePassword : BaseFragment() {
 
         PrefManager.setSomeStringValue(activity, PrefManager.current_fragment,"FragChangePassword" )
         fragBinding.toolbar.tvTitle.setText(R.string.changepassword)
+        fragBinding.toolbar.ivBack.visibility
+        onBackPresAct(fragBinding.toolbar.ivBack)
         uisetup()
         return fragBinding.root
     }
 
     private fun uisetup() {
+
         fragBinding.tvpassupdate.setOnClickListener {
             if (validation()) {
                 //api call

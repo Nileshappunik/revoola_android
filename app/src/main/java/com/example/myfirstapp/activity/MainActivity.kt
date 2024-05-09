@@ -16,6 +16,8 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityMainBinding
 import com.example.myfirstapp.fragment.FragMore
+import com.example.myfirstapp.fragment.FragOverview
+import com.example.myfirstapp.fragment.FragStart
 import com.example.myfirstapp.utils.Constants
 import com.example.myfirstapp.utils.PrefManager
 
@@ -30,14 +32,14 @@ class MainActivity  : BaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = inflateBindLayout(this, R.layout.activity_main) as ActivityMainBinding
-        //loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
+        loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
         activityMainBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.overview -> {
                     activityMainBinding.bottomNav.setBackgroundResource(R.color.DarkBlue)
-                   // loadFrag(FragOverview(), TAG, true, FragOverview::class.java.simpleName, false)
+                    loadFrag(FragOverview(), TAG, true, FragOverview::class.java.simpleName, false)
                     true
                 }
                 R.id.feed -> {
@@ -47,7 +49,7 @@ class MainActivity  : BaseActivity() {
                 }
                 R.id.start -> {
                     bottombarcolorwhite()
-                  //  loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
+                    loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
                     true
                 }
                 R.id.friends -> {

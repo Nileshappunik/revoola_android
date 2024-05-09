@@ -40,7 +40,9 @@
     <string name="emailaccount">Email Account</string>
     <string name="facebookaccount">Facebook Account</string>
     <string name="googleaccount">Google Account</string>
-
+    <string name="justhereforaquickpeak">Just here for a quick peak</string>
+    <string name="fullrevoolaexperience">Full Revoola Experience</string>
+    <string name="taptoADDYOURPROFILEPICTURE">Tap to add your profile picture</string>
 
 
     <string name="signuplogin">Signup/Login</string>
@@ -113,5 +115,8 @@
     <string name="facebook_app_id">423254927013835</string>
     <string name="fb_login_protocol_scheme">fb423254927013835</string>
     <string name="facebook_client_token">23148b487e52d13bea40029f58943f10</string>
+    <string name="cancle">Cancle</string>
 
+    <string name="foryourmindandbody">For Your Mind and Body</string>
+    <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends</string>
 </resources>

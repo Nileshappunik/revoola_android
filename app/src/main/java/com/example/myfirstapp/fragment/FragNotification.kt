@@ -30,6 +30,7 @@ class FragNotification : BaseFragment() {
         fragBinding = inflateBindLayout(activity?.javaClass,inflater, R.layout.frag_notification, container) as FragNotificationBinding
         PrefManager.setSomeStringValue(activity, PrefManager.current_fragment,"FragNotification" )
         fragBinding.toolbar.tvTitle.setText(R.string.notifications)
+        onBackPresAct(fragBinding.toolbar.ivBack)
         uisetup()
         return fragBinding.root
     }

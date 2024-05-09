@@ -14,7 +14,6 @@ import com.example.myfirstapp.databinding.FragMoreBinding
 import com.example.myfirstapp.utils.Constants
 import com.example.myfirstapp.utils.PrefManager
 
-
 class FragMore : BaseFragment() {
     val TAG: String = FragMore::class.java.simpleName
     lateinit var fragBinding: FragMoreBinding
@@ -33,25 +32,25 @@ class FragMore : BaseFragment() {
     }
 
     private fun setupui() {
-        fragBinding.laySetting.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.laySetting.imgAccount.setImageResource(R.drawable.ic_settings)
         fragBinding.laySetting.txtAccount.setText(R.string.settings)
 
-        fragBinding.layChangepassword.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.layChangepassword.imgAccount.setImageResource(R.drawable.ic_change_password)
         fragBinding.layChangepassword.txtAccount.setText(R.string.changepassword)
 
-        fragBinding.layHelp.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.layHelp.imgAccount.setImageResource(R.drawable.ic_help)
         fragBinding.layHelp.txtAccount.setText(R.string.help)
 
         fragBinding.layConnecttohealthconnect.imgAccount.setImageResource(R.drawable.ic_person)
         fragBinding.layConnecttohealthconnect.txtAccount.setText(R.string.connecttohealthconnect)
 
-        fragBinding.layRequesttodeletedata.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.layRequesttodeletedata.imgAccount.setImageResource(R.drawable.ic_help)
         fragBinding.layRequesttodeletedata.txtAccount.setText(R.string.requesttodeleteyourdata)
 
         fragBinding.layLinktoaccount.imgAccount.setImageResource(R.drawable.ic_person)
         fragBinding.layLinktoaccount.txtAccount.setText(R.string.linktoaccount)
 
-        fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_signout)
         fragBinding.laySignout.txtAccount.setText(R.string.signout)
 
         fragBinding.cardNotification.setOnClickListener {

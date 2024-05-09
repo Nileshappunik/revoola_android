@@ -29,6 +29,7 @@ class FragSetting : BaseFragment() {
         fragBinding = inflateBindLayout(activity?.javaClass,inflater, R.layout.frag_setting, container) as FragSettingBinding
         PrefManager.setSomeStringValue(activity, PrefManager.current_fragment,"FragSetting" )
         fragBinding.toolbar.tvTitle.setText(R.string.settings)
+        onBackPresAct(fragBinding.toolbar.ivBack)
         uisetup()
         return fragBinding.root
     }

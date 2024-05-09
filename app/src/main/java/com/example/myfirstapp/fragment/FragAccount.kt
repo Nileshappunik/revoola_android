@@ -37,7 +37,7 @@ class FragAccount : BaseFragment() {
     }
 
     private fun uisetup() {
-
+        onBackPresAct(fragBinding.toolbar.ivBack)
     }
 
 }

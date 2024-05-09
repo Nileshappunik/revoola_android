@@ -31,6 +31,7 @@ class FragScheduledClasses : BaseFragment() {
         fragBinding = inflateBindLayout(activity?.javaClass,inflater, R.layout.frag_scheduled_classes, container) as FragScheduledClassesBinding
         PrefManager.setSomeStringValue(activity, PrefManager.current_fragment,"FragScheduledClasses" )
         fragBinding.toolbar.tvTitle.setText(R.string.schduledclasses)
+        onBackPresAct(fragBinding.toolbar.ivBack)
         uisetup()
         return fragBinding.root
     }

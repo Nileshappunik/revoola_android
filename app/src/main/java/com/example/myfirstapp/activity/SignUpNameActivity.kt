@@ -39,7 +39,7 @@ class SignUpNameActivity : BaseActivity(){
     }
 
     private fun Uisetup() {
-        activityBinding.toolbarLogin.tvTitle.setText(R.string.signuplogin)
+        activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
         activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
         onBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
