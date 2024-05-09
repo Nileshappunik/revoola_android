@@ -1,7 +1,9 @@
 package com.example.myfirstapp.activity
 
+import android.Manifest
 import android.app.Dialog
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -9,12 +11,17 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityMainBinding
+import com.example.myfirstapp.fragment.FragFeed
+import com.example.myfirstapp.fragment.FragFriends
 import com.example.myfirstapp.fragment.FragMore
 import com.example.myfirstapp.fragment.FragOverview
 import com.example.myfirstapp.fragment.FragStart
@@ -27,14 +34,20 @@ class MainActivity  : BaseActivity() {
     lateinit var activityMainBinding: ActivityMainBinding
     var sucDialog: Dialog? = null
 
+    companion object {
+        const val ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE = 1001
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = inflateBindLayout(this, R.layout.activity_main) as ActivityMainBinding
         loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
+        bottombarcolorwhite()
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
+        chepermissionphysicalActivity()
         activityMainBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.overview -> {
@@ -44,7 +57,7 @@ class MainActivity  : BaseActivity() {
                 }
                 R.id.feed -> {
                     bottombarcolorwhite()
-                   // loadFrag(FragFeed(), TAG, true, FragFeed::class.java.simpleName, false)
+                    loadFrag(FragFeed(), TAG, true, FragFeed::class.java.simpleName, false)
                     true
                 }
                 R.id.start -> {
@@ -54,7 +67,7 @@ class MainActivity  : BaseActivity() {
                 }
                 R.id.friends -> {
                     bottombarcolorwhite()
-                   // loadFrag(FragFriends(), TAG, true, FragFriends::class.java.simpleName, false)
+                    loadFrag(FragFriends(), TAG, true, FragFriends::class.java.simpleName, false)
                     true
                 }
                 R.id.more -> {
@@ -69,7 +82,38 @@ class MainActivity  : BaseActivity() {
             }
         }
     }
+    fun chepermissionphysicalActivity(){
+        // Check if the permission is granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
 
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE)
+        } else {
+            // Permission is already granted
+            onActivityRecognitionPermissionGranted()
+        }
+    }
+    // Handle the permission result
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                onActivityRecognitionPermissionGranted()
+            } else {
+                // Permission denied
+                onActivityRecognitionPermissionDenied()
+            }
+        }
+    }
+    private fun onActivityRecognitionPermissionGranted() {
+        //Toast.makeText(this, "Activity Recognition Permission Granted", Toast.LENGTH_SHORT).show()
+        // Start using physical activity recognition features
+    }
+    private fun onActivityRecognitionPermissionDenied() {
+        Toast.makeText(this, "Activity Recognition Permission Denied", Toast.LENGTH_SHORT).show()
+        // Handle the denial appropriately, such as notifying the user about limited functionality
+    }
     fun bottombarcolorwhite(){
         activityMainBinding.bottomNav.setBackgroundResource(R.color.white)
     }
