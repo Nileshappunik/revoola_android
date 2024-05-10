@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_friend"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            app:shapeAppearance="@style/CornerRound"
+            android:src="@drawable/wellcome"/>
+
+        <TextView
+            android:id="@+id/txt_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/img_friend"
+            android:text="Dhruv Khatri"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_title_size"/>
+
+        <TextView
+            android:id="@+id/txt_friend_unfollow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/round_border_green"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/unfollow"
+            android:textColor="@color/green"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/Gray"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+</layout>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card_imagetext"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:cardCornerRadius="5dp"

@@ -102,7 +102,27 @@
     <string name="invitefriends">Invite Friends</string>
     <string name="invitefriendsnotonyet">Invite Your Friends not yet on Revoola.</string>
     <string name="friend">Friends</string>
+    <string name="invitefriendnotonrevoola">Invite your friends not on yet Revoola</string>
 
+    <!--invite friends-->
+    <string name="sendonfacebook">Send on Facebook</string>
+    <string name="sendontwitter">Send on Twitter</string>
+    <string name="sendontwhatsapp">Send on WhatsApp</string>
+    <string name="sendsms">Send SMS</string>
+    <string name="sendemail">Send email</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="members">Members</string>
+    <string name="delete">Delete</string>
+    <string name="sync">Sync</string>
+    <string name="enternameoremailtofindonrevoola">Enter name or email to find on Revoola</string>
+    <string name="friendsyoufollow">Friends You Follow</string>
+    <string name="friendsfollowingyou">Friends Following You</string>
+    <string name="mygroup">My Group</string>
+    <string name="creategroup">Create Group</string>
+    <string name="contacts">Contacts</string>
+    <string name="searchfriends">Search Friends</string>
+    <string name="alreadyusingrevoola">Find your contacts already using Revoola</string>
+    <string name="synccontacts">Sync Contacts</string>
 
     <!--more-->
     <string name="schduledclasses">Scheduled Classes</string>
