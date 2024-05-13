@@ -11,7 +11,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.MainActivity
 import com.example.myfirstapp.databinding.LayoutFeedListBinding
+import com.example.myfirstapp.fragment.FragSessionSummary
+import com.example.myfirstapp.fragment.FragYourFriends
 
 
 class FeedListAdapter(val context: FragmentActivity?) :
@@ -59,6 +62,11 @@ class FeedListAdapter(val context: FragmentActivity?) :
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_steps_green)
             layoutBinding.laySteps.txtTime.setText(R.string.step)
             layoutBinding.laySteps.txtTimeNumber.setText("0")
+
+            layoutBinding.cardChalengis.setOnClickListener {
+                (context as MainActivity).bottombarcolorwhite()
+                (context as MainActivity).loadFrag(FragSessionSummary(), TAG, true, FragSessionSummary::class.java.simpleName, false)
+            }
 
         }
     }

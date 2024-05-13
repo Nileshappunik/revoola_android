@@ -124,6 +124,33 @@
     </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/relay_groupname"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="70dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+               android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/classes" />
+
+            <TextView
+                android:id="@+id/txt_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/img_user"
+                android:text="123"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_title_size"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relay_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
@@ -134,5 +161,10 @@
                 android:layout_height="match_parent" />
 
         </RelativeLayout>
+
+        <include
+            android:id="@+id/relay_challenges"
+            android:visibility="gone"
+            layout="@layout/layout_challenges_list"/>
     </LinearLayout>
 </layout>

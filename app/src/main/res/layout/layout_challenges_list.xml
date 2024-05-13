@@ -45,26 +45,40 @@
                 android:layout_marginStart="15dp"
                 app:layout_constraintLeft_toRightOf="@+id/img_user"
                 app:layout_constraintTop_toBottomOf="@+id/txt_username"
-                android:text="23/04/2024 16:57"
+                android:text="13/5/2024"
                 android:textStyle="normal"
                 android:textColor="@color/Gray"
                 android:textSize="@dimen/text_size"/>
 
-            <ImageView
-                android:id="@+id/img_threedot"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_organizer_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/wellcome"
+                app:tint="@color/Gray"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_organizer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/fd_options_gray"
-                app:tint="@color/Gray"
-                app:layout_constraintTop_toBottomOf="@+id/txt_username"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/img_organizer_user"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Organizer"
+                android:textStyle="normal"
+                android:textColor="@color/Gray"
+                android:textSize="@dimen/text_size"/>
 
             <ImageView
                 android:id="@+id/img_myride"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginTop="15dp"
-                android:src="@drawable/fd_ride_green"
+                android:src="@drawable/ic_walk"
                 app:layout_constraintTop_toBottomOf="@+id/img_user"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -76,13 +90,13 @@
                 android:layout_marginStart="15dp"
                 app:layout_constraintTop_toBottomOf="@+id/img_user"
                 app:layout_constraintLeft_toRightOf="@+id/img_myride"
-                android:text="@string/myride"
+                android:text="new challenge"
                 android:textStyle="normal"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_main_title_size"/>
 
             <include
-                android:id="@+id/lay_time"
+                android:id="@+id/lay_stepssofar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/common_image_title_subtitle"
@@ -90,28 +104,22 @@
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <include
-                android:id="@+id/lay_calories"
+                android:id="@+id/lay_targetsteps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 layout="@layout/common_image_title_subtitle"
-                app:layout_constraintTop_toBottomOf="@+id/lay_time"
+                app:layout_constraintTop_toBottomOf="@+id/lay_stepssofar"
                 app:layout_constraintStart_toStartOf="parent"/>
 
             <include
-                android:id="@+id/lay_assumedeffort"
+                android:id="@+id/lay_daysremaining"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 layout="@layout/common_image_title_subtitle"
-                app:layout_constraintTop_toBottomOf="@+id/lay_calories"
+                app:layout_constraintTop_toBottomOf="@+id/lay_targetsteps"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <include
-                android:id="@+id/lay_steps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                layout="@layout/common_image_title_subtitle"
-                app:layout_constraintTop_toBottomOf="@+id/lay_assumedeffort"
-                app:layout_constraintStart_toStartOf="parent"/>
+
 
             <ImageView
                 android:id="@+id/img_nain"
@@ -121,56 +129,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="10dp"
                 android:scaleType="fitXY"
-                app:layout_constraintLeft_toRightOf="@+id/lay_assumedeffort"
+                app:layout_constraintLeft_toRightOf="@+id/lay_daysremaining"
                 android:src="@drawable/yourway"/>
-
-            <ImageView
-                android:id="@+id/img_thum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/fd_thumbs_gray"
-                app:tint="@color/Gray"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="30dp"
-                app:layout_constraintTop_toBottomOf="@+id/lay_steps"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1"
-                android:visibility="gone"
-                android:textColor="@color/Gray"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="5dp"
-                app:layout_constraintTop_toBottomOf="@+id/lay_steps"
-                app:layout_constraintStart_toEndOf="@+id/img_thum"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <ImageView
-                android:id="@+id/img_chat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/fd_comment_gray"
-                app:tint="@color/Gray"
-                android:layout_marginTop="30dp"
-                android:layout_marginRight="30dp"
-                app:layout_constraintTop_toBottomOf="@+id/lay_steps"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1"
-                android:visibility="gone"
-                android:textColor="@color/Gray"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="5dp"
-                app:layout_constraintTop_toBottomOf="@+id/lay_steps"
-                app:layout_constraintStart_toEndOf="@+id/img_chat"
-                app:layout_constraintBottom_toBottomOf="parent"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
