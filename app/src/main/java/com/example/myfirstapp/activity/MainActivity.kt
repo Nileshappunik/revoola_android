@@ -118,6 +118,10 @@ class MainActivity  : BaseActivity() {
         activityMainBinding.bottomNav.setBackgroundResource(R.color.white)
     }
 
+    fun hidebottombarcolorwhite(){
+        activityMainBinding.bottomNav.visibility=View.GONE
+    }
+
     fun loadFrag(fragment: Fragment?, tag: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager

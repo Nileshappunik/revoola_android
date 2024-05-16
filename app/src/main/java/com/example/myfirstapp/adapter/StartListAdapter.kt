@@ -9,7 +9,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.MainActivity
 import com.example.myfirstapp.databinding.LayoutStartListBinding
+import com.example.myfirstapp.fragment.FragChalengesType
+import com.example.myfirstapp.fragment.FragSessionSummary
 
 class StartListAdapter(
     val context: FragmentActivity?,
@@ -53,7 +56,10 @@ class StartListAdapter(
             val itemres = feedList[position]
             layoutBinding.txtName.setText(itemres)
             layoutBinding.imgFull.setImageDrawable( drawableArray[position])
-
+            layoutBinding.relayStart.setOnClickListener {
+                (context as MainActivity).hidebottombarcolorwhite()
+                (context as MainActivity).loadFrag(FragChalengesType(), TAG, true, FragChalengesType::class.java.simpleName, false)
+            }
         }
     }
 

@@ -27,14 +27,31 @@
     <string name="goodtoseeyou">Good to see you back,Lets get Going!</string>
     <string name="youractivity">YOUR ACTIVITY</string>
     <string name="effort">EFFORT</string>
+    <string name="effortsmall">Effort</string>
+    <string name="climbed">Climbed</string>
     <string name="mindfulminutes">MINDFUL MINUTES</string>
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
     <string name="calories">CALORIES</string>
+    <string name="caloriessmall">Calories</string>
     <string name="distance">DISTANCE</string>
+    <string name="distancesmall">Distance</string>
     <string name="steps">STEPS</string>
+    <string name="stepsmall">Steps</string>
     <string name="thismonth">This Month</string>
     <string name="allactivity">All Activity</string>
+    <string name="duration">Duration</string>
+    <string name="stepdot">Steps:</string>
+    <string name="effortdot">Effort:</string>
+    <string name="caloriesdot">Calories:</string>
+    <string name="distancedot">Distance:</string>
+    <string name="climbeddot">Climbed:</string>
+    <string name="durationdot">Duration:</string>
+    <string name="selectstart">Select the date the challenge should start</string>
+    <string name="selectend">Select the date to complete challenge by</string>
+    <string name="pleaseentertthestartdate">Please Enter the start date</string>
+    <string name="pleaseenterttheenddate">Please Enter the end date</string>
+    <string name="next">Next</string>
 
     <!--login-->
     <string name="emailaccount">Email Account</string>
@@ -59,7 +76,7 @@
 
     <string name="enteryouremail">Enter Your Email</string>
     <string name="linksend">We will send you link to reset your password.</string>
-    <string name="next">NEXT</string>
+    <string name="nextcaps">NEXT</string>
 
     <string name="taptoaddyourprofilepicture">Tap to add your profile picture</string>
     <string name="dateofbirth">Date of Birth</string>
@@ -94,6 +111,7 @@
     <string name="groupsmall">Groups</string>
     <string name="yousmall">You</string>
     <string name="challengessmall">Challenges</string>
+    <string name="sessionsummery">Session Summary</string>
 
     <!--friends-->
     <string name="findonrevoola">Find on Revoola</string>
@@ -103,6 +121,8 @@
     <string name="invitefriendsnotonyet">Invite Your Friends not yet on Revoola.</string>
     <string name="friend">Friends</string>
     <string name="invitefriendnotonrevoola">Invite your friends not on yet Revoola</string>
+    <string name="typeofchallenge">Type of Challenge?</string>
+    <string name="setyourgoal">Set your Goal</string>
 
     <!--invite friends-->
     <string name="sendonfacebook">Send on Facebook</string>
@@ -144,4 +164,26 @@
 
     <string name="foryourmindandbody">For Your Mind and Body</string>
     <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends</string>
+
+    <!--Help Challenges-->
+    <string name="youcandunumber">You can do a number of different types of Challenge using Revoola.</string>
+    <string name="revoolasync"> Revoola Syncs with core Health Apps such as Apple Heath and Google Fit so you can contribute to your challenge when doing activities even without opening Revoola.</string>
+    <string name="revoolachallengesinclude">Revoola Challenges include:</string>
+    <string name="asimplecount">A simple count of your steps.</string>
+    <string name="revoolauniqueeffort">Revoola’s unique effort measure, where all are equal. How hard will you try?</string>
+    <string name="asimplecountcallery">A simple count of your calorie burn while doing activities.</string>
+    <string name="measureinkmormiles">Measure in km\'s or miles a simple measure of the distance you travel when doing activities.</string>
+    <string name="measureinmeterorfeet">Measure in meters or feet, a simple count of the vertical meters you climb</string>
+    <string name="measureindaysandhours">Measure in Days and Hours, the total time spent on doing activities.</string>
+
+
+    <string name="setyourgoalchallenge">Set you challenge goal E.g. How many steps, how much effort, calories burnt etc..</string>
+    <string name="howlongdoyouwantyourchallenge">How long do you want your challenge to run for?</string>
+    <string name="pleaseenterstartdate">Please Enter the start date</string>
+    <string name="selecttosetthedatyouwantstart">Select to set the day you want your challenge to start.</string>
+    <string name="pleaseenterenddate">Please Enter the start date</string>
+    <string name="selecttosetthedayuoyend">Select to set the day you want your challenge to end.</string>
+    <string name="challengescanbeforaslongasyouwant">Challenges can be for as long as you want them to run. A few days, a week, month, several months or even a year !</string>
+
+
 </resources>
