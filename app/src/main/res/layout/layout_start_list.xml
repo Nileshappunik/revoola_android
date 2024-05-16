@@ -21,12 +21,27 @@
 
         <TextView
             android:id="@+id/txt_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Classes"
+            android:visibility="visible"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:textColor="@color/white"
+            android:layout_alignParentBottom="true"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txt_yourway_name"
+            android:layout_width="80dp"
+            android:layout_height="35dp"
+            android:text="Workout"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:textColor="@color/Gray"
+            android:gravity="center"
+            android:background="@drawable/round_border_white"
             android:layout_alignParentBottom="true"
             android:textStyle="bold"/>
 

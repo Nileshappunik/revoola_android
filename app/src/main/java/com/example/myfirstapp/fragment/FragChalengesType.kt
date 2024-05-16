@@ -46,11 +46,44 @@ class FragChalengesType : BaseFragment() {
 
     private fun uisetup() {
         onBackPresAct(fragBinding.toolbar.ivBack)
-
         fragBinding.relaySteps.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Steps" )
             (context as MainActivity).hidebottombarcolorwhite()
-            (context as MainActivity).loadFrag(FragSetYourGoal(), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+        }
 
+        fragBinding.relayEffort.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Effort" )
+            (context as MainActivity).hidebottombarcolorwhite()
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+        }
+
+        fragBinding.relayCalories.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Calories" )
+            (context as MainActivity).hidebottombarcolorwhite()
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+        }
+
+        fragBinding.relayDistance.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Distance" )
+            (context as MainActivity).hidebottombarcolorwhite()
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+        }
+        fragBinding.relayClimbed.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Climbed" )
+            (context as MainActivity).hidebottombarcolorwhite()
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
+        }
+        fragBinding.relayDuration.cardChalengesst.setOnClickListener {
+            var bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType", "Duration" )
+            (context as MainActivity).hidebottombarcolorwhite()
+            (context as MainActivity).loadFrag(FragSetYourGoal().newInstance(bundle), TAG, true, FragSetYourGoal::class.java.simpleName, false)
         }
 
         fragBinding.relayEffort.imgType.setImageResource(R.drawable.ic_heart_blanck)

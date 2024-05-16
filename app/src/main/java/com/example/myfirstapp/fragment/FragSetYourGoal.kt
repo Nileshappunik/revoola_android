@@ -1,15 +1,19 @@
 package com.example.myfirstapp.fragment
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import com.example.myfirstapp.BaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.DialogHelpChallengesBinding
@@ -17,11 +21,30 @@ import com.example.myfirstapp.databinding.DialogHelpSetyourgoalBinding
 import com.example.myfirstapp.databinding.FragSetYourGoalBinding
 
 import com.example.myfirstapp.utils.PrefManager
+import java.util.Calendar
 
 
-class FragSetYourGoal : BaseFragment() {
+class FragSetYourGoal : BaseFragment(),DatePickerDialog.OnDateSetListener {
     val TAG: String = FragSetYourGoal::class.java.simpleName
     lateinit var fragBinding: FragSetYourGoalBinding
+    var datetype:String="START"
+    var day: Int = 0
+    var month: Int = 0
+    var year: Int = 0
+    var myDay: Int = 0
+    var myMonth: Int = 0
+    var myYear: Int = 0
+    var Month: String = ""
+    var Day: String = ""
+    var DateTime: String = ""
+    var startdateselect:Boolean=false
+
+
+    fun newInstance(bundle: Bundle?): Fragment {
+        val fragment = FragSetYourGoal()
+        fragment.arguments = bundle
+        return fragment
+    }
 
     private val binding by lazy {
         FragSetYourGoalBinding.inflate(layoutInflater)
@@ -47,6 +70,38 @@ class FragSetYourGoal : BaseFragment() {
 
     private fun uisetup() {
         onBackPresAct(fragBinding.toolbar.ivBack)
+        val challengeType = requireArguments().getString("ChallengeType").toString().trim()
+        if (challengeType.equals("Steps")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
+            fragBinding.txtHeader.setText(R.string.stepsmall)
+        }else if (challengeType.equals("Effort")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart_blanck)
+            fragBinding.txtHeader.setText(R.string.revoolaeffortscore)
+        }else if (challengeType.equals("Calories")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
+            fragBinding.txtHeader.setText(R.string.caloriessmallkcal)
+        }else if (challengeType.equals("Distance")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
+            fragBinding.txtHeader.setText(R.string.distancesmallkm)
+        }else if (challengeType.equals("Climbed")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
+            fragBinding.txtHeader.setText(R.string.climbedm)
+        }else if (challengeType.equals("Duration")){
+            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
+            fragBinding.txtHeader.setText(R.string.durationh)
+        }
+
+        fragBinding.txtEnterStart.setOnClickListener {
+            datetype="START"
+            dialogStartDatePicker()
+        }
+
+        fragBinding.txtEnterEnd.setOnClickListener {
+            if (startdateselect){
+                datetype ="END"
+                dialogEndDatePicker()
+            }
+        }
     }
 
     fun showHelpDialog() {
@@ -78,6 +133,56 @@ class FragSetYourGoal : BaseFragment() {
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
 
+    }
+
+    //DATE SELECT
+    private fun dialogStartDatePicker() {
+        val calendar: Calendar = Calendar.getInstance()
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+        month = calendar.get(Calendar.MONTH)
+        year = calendar.get(Calendar.YEAR)
+        val datePickerDialog = DatePickerDialog(requireActivity(),this, day, month, year)
+        datePickerDialog.datePicker.minDate = System.currentTimeMillis() - 1000
+        datePickerDialog.show()
+    }
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
+        myYear = year
+        myMonth = month + 1
+        Log.d("myMonth", "" + myMonth)
+        myDay = day
+        Log.d("myDay", "" + myDay)
+
+        Month = if (myMonth < 10) {
+            "0$myMonth"
+        } else {
+            myMonth.toString()
+        }
+        Day = if (myDay < 10) {
+            "0$myDay"
+        } else {
+            myDay.toString()
+        }
+        DateTime = "" + Day + "-" + Month + "-" + myYear
+
+        if (datetype.equals("END")){
+            fragBinding.txtEnterEnd.setText(DateTime).toString()
+            fragBinding.txtEnterEnd.setTextColor(resources.getColor(R.color.black))
+        }else{
+            fragBinding.txtEnterStart.setText(DateTime).toString()
+            fragBinding.txtEnterStart.setTextColor(resources.getColor(R.color.black))
+            startdateselect=true
+        }
+
+    }
+
+    private fun dialogEndDatePicker() {
+        val desiredCalendar = Calendar.getInstance()
+        desiredCalendar.set(Calendar.YEAR, myYear) // Set the year
+        desiredCalendar.set(Calendar.MONTH, myMonth-1) // Set the month (zero-based index, so May is 4)
+        desiredCalendar.set(Calendar.DAY_OF_MONTH, myDay) // Set the day
+        val datePickerDialog = DatePickerDialog(requireActivity(),this, day, month, year)
+        datePickerDialog.datePicker.minDate = desiredCalendar.timeInMillis
+        datePickerDialog.show()
     }
 
 }

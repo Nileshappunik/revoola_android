@@ -12,66 +12,45 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.MainActivity
 import com.example.myfirstapp.databinding.LayoutStartListBinding
 import com.example.myfirstapp.fragment.FragChalengesType
-import com.example.myfirstapp.fragment.FragSessionSummary
-import com.example.myfirstapp.fragment.FragYourWay
+import com.example.myfirstapp.fragment.FragChooseYourSensor
 
-class StartListAdapter(
-    val context: FragmentActivity?,
-    valueslist: Array<String>,
-    drawableArray: Array<Drawable?>
-) :
+class YourWayListAdapter(val context: FragmentActivity?, valueslist: Array<String>, drawableArray: Array<Drawable?>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "StartListAdapter"
+    val TAG = "YourWayListAdapter"
     var bundle: Bundle = Bundle()
-    var feedList = valueslist
+    var yourwayList = valueslist
     var drawableArray = drawableArray
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: LayoutStartListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.layout_start_list , parent, false)
         return MyViewHolder(layoutbinding)
     }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is StartListAdapter.MyViewHolder) {
+        if (holder is YourWayListAdapter.MyViewHolder) {
             holder.bindData(position, holder.itemView)
-
         }
-
     }
-
     override fun getItemCount(): Int {
-        return feedList.size
-
-
+        return yourwayList.size
     }
-
-
-    fun setList(feedList: Array<String>) {
-        this.feedList = feedList
+    fun setList(yourwayList: Array<String>) {
+        this.yourwayList = yourwayList
         notifyDataSetChanged()
     }
-
     inner class MyViewHolder(layoutBinding: LayoutStartListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: LayoutStartListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
-            val itemres = feedList[position]
-            layoutBinding.txtName.setText(itemres)
+            val itemres = yourwayList[position]
+            layoutBinding.txtYourwayName.visibility=View.VISIBLE
+            layoutBinding.txtName.visibility=View.GONE
+            layoutBinding.txtYourwayName.setText(itemres)
             layoutBinding.imgFull.setImageDrawable( drawableArray[position])
+            //"Pilates","Ride","Run","Walk","Workout","Yoga"
             layoutBinding.relayStart.setOnClickListener {
-                if (itemres.equals("Challenges")){
-                    (context as MainActivity).hidebottombarcolorwhite()
-                    (context as MainActivity).loadFrag(FragChalengesType(), TAG, true, FragChalengesType::class.java.simpleName, false)
-
-                }else if (itemres.equals("Your Way")){
-                    (context as MainActivity).hidebottombarcolorwhite()
-                    (context as MainActivity).loadFrag(FragYourWay(), TAG, true, FragYourWay::class.java.simpleName, false)
-
-                }else if (itemres.equals("Classes")){
-                   // (context as MainActivity).hidebottombarcolorwhite()
-                   // (context as MainActivity).loadFrag(FragChalengesType(), TAG, true, FragChalengesType::class.java.simpleName, false)
-
-                }
-
+                var bundle: Bundle = Bundle()
+                bundle.putString("YourWayType",itemres)
+                (context as MainActivity).hidebottombarcolorwhite()
+                (context as MainActivity).loadFrag(FragChooseYourSensor().newInstance(bundle), TAG, true, FragChooseYourSensor::class.java.simpleName, false)
             }
         }
     }
