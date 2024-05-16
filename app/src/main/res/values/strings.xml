@@ -29,18 +29,22 @@
     <string name="effort">EFFORT</string>
     <string name="effortsmall">Effort</string>
     <string name="climbed">Climbed</string>
+    <string name="climbedm">Climbed(m)</string>
     <string name="mindfulminutes">MINDFUL MINUTES</string>
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
     <string name="calories">CALORIES</string>
     <string name="caloriessmall">Calories</string>
+    <string name="caloriessmallkcal">Calories (Kcal)</string>
     <string name="distance">DISTANCE</string>
     <string name="distancesmall">Distance</string>
+    <string name="distancesmallkm">Distance(km)</string>
     <string name="steps">STEPS</string>
     <string name="stepsmall">Steps</string>
     <string name="thismonth">This Month</string>
     <string name="allactivity">All Activity</string>
     <string name="duration">Duration</string>
+    <string name="durationh">Duration(h)</string>
     <string name="stepdot">Steps:</string>
     <string name="effortdot">Effort:</string>
     <string name="caloriesdot">Calories:</string>
@@ -52,6 +56,7 @@
     <string name="pleaseentertthestartdate">Please Enter the start date</string>
     <string name="pleaseenterttheenddate">Please Enter the end date</string>
     <string name="next">Next</string>
+    <string name="revoolaeffortscore">Revoola effort score</string>
 
     <!--login-->
     <string name="emailaccount">Email Account</string>
@@ -163,7 +168,41 @@
     <string name="cancle">Cancle</string>
 
     <string name="foryourmindandbody">For Your Mind and Body</string>
+
     <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends</string>
+    <string name="yourway">Your Way</string>
+    <string name="pilates">Pilates</string>
+    <string name="ride">Ride</string>
+    <string name="run">Run</string>
+    <string name="walk">Walk</string>
+    <string name="workout">Workout</string>
+    <string name="yoga">Yoga</string>
+    <string name="chooseyoursensor">Choose Your Sensor</string>
+    <string name="go">GO</string>
+    <string name="skip">SKIP</string>
+    <string name="speeddistance">SPEED/DISTANCE</string>
+    <string name="gpssatellitesfound">GPS(Satellites found)</string>
+    <string name="inprogress">IN PROGRESS</string>
+    <string name="cadencerpm">CADENCE(RPM)</string>
+    <string name="distancekm">DISTANCE(KM)</string>
+    <string name="speedkmh">SPEED(KM/H)</string>
+    <string name="paceperkm">PACE(PER KM)</string>
+    <string name="pause">PAUSE</string>
+    <string name="resume">RESUME</string>
+    <string name="stop">STOP</string>
+    <string name="save">SAVE</string>
+    <string name="sessioncomplete">Session Complete!</string>
+    <string name="ridesession">Ride Session</string>
+    <string name="personaliseyoursessiobn">PERSONALISE YOUR SESSION</string>
+    <string name="giveyoursessionname">Give your session a name</string>
+    <string name="addupto5photos">Add up to 5 Photos</string>
+    <string name="addnotes">Add Notes</string>
+    <string name="whocanseeyouractivity">Who can see your activity?</string>
+    <string name="sharemap">Share Map?</string>
+    <string name="privatetx">Private</string>
+    <string name="anyone">Anyone</string>
+    <string name="friendstx">Friends</string>
+    <string name="name">Name</string>
 
     <!--Help Challenges-->
     <string name="youcandunumber">You can do a number of different types of Challenge using Revoola.</string>

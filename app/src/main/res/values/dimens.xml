@@ -7,4 +7,5 @@
     <dimen name="text_main_title_size">15sp</dimen>
     <dimen name="text_login_size">15sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
+    <dimen name="_100sdp">100dp</dimen>
 </resources>

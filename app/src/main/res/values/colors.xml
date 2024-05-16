@@ -10,6 +10,7 @@
 
     <color name="Gray">#949399</color>
     <color name="transparent_dialog">#00000000</color>
+    <color name="transparent50">#E6000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="off_white">#F6F6F6</color>
@@ -18,6 +19,12 @@
     <color name="greenlight">#4CAF50</color>
     <color name="darkGray">#302F2F</color>
     <color name="lightGray">#C5C1C1</color>
+
+    <color name="lightnavyblue">#E5ECF0</color>
+    <color name="navyblue">#0099DA</color>
+    <color name="redlight">#F5EDEC</color>
+    <color name="reddark">#ED4541</color>
+    <color name="lightgreen">#FFEBF5E9</color>
 
     <color name="AppMainColor">#39B54AFF</color>
     <color name="AppMainBGColor">#ECF8EDFF</color>
