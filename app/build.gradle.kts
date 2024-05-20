@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.cli.jvm.main
+
+
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
@@ -34,6 +37,7 @@ android {
 }
 
 
+
 /*kotlin {
     //jvmToolchain(17)
     jvmToolchain {
@@ -51,7 +55,18 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    sourceSets {
+        getByName("main") {
+            res {
+                srcDirs("src/main/res", "src/main/res/layout/feed", "src/main/res/layout/more",
+                    "src/main/res/layout/friend", "src/main/res/layout/start", "src/main/res/layout/overview",
+                    "src/main/res/layout/common", "src/main/res/layout/activity", "src/main/res/layout/dialog"
+                )
+            }
+        }
+    }
 }
+
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")

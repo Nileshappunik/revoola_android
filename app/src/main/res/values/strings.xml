@@ -11,8 +11,14 @@
     <string name="areyousurewanttodeletedata">Are you sure want to delete data?</string>
     <string name="confirm">CONFIRM</string>
     <string name="cancel">CANCLE</string>
+    <string name="showallclasses">SHOW ALL CLASSES</string>
+    <string name="availablefilter">Available Filters</string>
     <string name="youalreadyconnecthealth">You have already Connected to Health Connect</string>
     <string name="ok">ok</string>
+    <string name="instructor">Instructor</string>
+    <string name="durationt">Duration</string>
+    <string name="takenbyme">Taken By Me</string>
+    <string name="classtype">Class Type</string>
 
     <!--bottom string-->
 
@@ -168,6 +174,13 @@
     <string name="cancle">Cancle</string>
 
     <string name="foryourmindandbody">For Your Mind and Body</string>
+    <string name="foryourbody">For Your Body</string>
+    <string name="foryourmind">For Your Mind</string>
+    <string name="all">ALL</string>
+    <string name="relax">RELAX</string>
+    <string name="sleep">SLEEP</string>
+    <string name="happiness">HAPPINESS</string>
+    <string name="mindclasses">MIND CLASSES</string>
 
     <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends</string>
     <string name="yourway">Your Way</string>
@@ -203,6 +216,8 @@
     <string name="anyone">Anyone</string>
     <string name="friendstx">Friends</string>
     <string name="name">Name</string>
+    <string name="revoolaclasses">Revoola Classes</string>
+    <string name="whatwouldyouliketodotoday">What would you like to do today?</string>
 
     <!--Help Challenges-->
     <string name="youcandunumber">You can do a number of different types of Challenge using Revoola.</string>

@@ -1,15 +1,10 @@
 package com.example.myfirstapp
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.view.*
-import android.widget.DatePicker
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -18,9 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.example.myfirstapp.BaseProgress.Companion.ShowProgressDialog
-import com.example.myfirstapp.fragment.FragNoInternet
-import com.example.myfirstapp.utils.PrefManager
+import com.example.myfirstapp.fragment.common.FragNoInternet
 import com.example.myfirstapp.utils.Tools.nextFinishAllActivity
 
 
