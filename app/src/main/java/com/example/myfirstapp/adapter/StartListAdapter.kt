@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.MainActivity
 import com.example.myfirstapp.databinding.LayoutStartListBinding
-import com.example.myfirstapp.fragment.FragChalengesType
-import com.example.myfirstapp.fragment.FragSessionSummary
-import com.example.myfirstapp.fragment.FragYourWay
+import com.example.myfirstapp.fragment.start.FragChalengesType
+import com.example.myfirstapp.fragment.start.FragClasses
+import com.example.myfirstapp.fragment.start.FragYourWay
 
 class StartListAdapter(
     val context: FragmentActivity?,
@@ -63,12 +63,12 @@ class StartListAdapter(
                     (context as MainActivity).loadFrag(FragChalengesType(), TAG, true, FragChalengesType::class.java.simpleName, false)
 
                 }else if (itemres.equals("Your Way")){
-                    (context as MainActivity).hidebottombarcolorwhite()
+                    (context as MainActivity).showbottombarcolorwhite()
                     (context as MainActivity).loadFrag(FragYourWay(), TAG, true, FragYourWay::class.java.simpleName, false)
 
                 }else if (itemres.equals("Classes")){
-                   // (context as MainActivity).hidebottombarcolorwhite()
-                   // (context as MainActivity).loadFrag(FragChalengesType(), TAG, true, FragChalengesType::class.java.simpleName, false)
+                    (context as MainActivity).showbottombarcolorwhite()
+                    (context as MainActivity).loadFrag(FragClasses(), TAG, true, FragClasses::class.java.simpleName, false)
 
                 }
 

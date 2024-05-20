@@ -1,7 +1,5 @@
 package com.example.myfirstapp.adapter
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +7,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.MainActivity
 import com.example.myfirstapp.databinding.LayoutFeedListBinding
-import com.example.myfirstapp.fragment.FragSessionSummary
-import com.example.myfirstapp.fragment.FragYourFriends
+import com.example.myfirstapp.fragment.feed.FragSessionSummary
 
 
 class FeedListAdapter(val context: FragmentActivity?) :

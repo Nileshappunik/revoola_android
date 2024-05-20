@@ -5,14 +5,9 @@ import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -20,13 +15,11 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.BaseActivity
 import com.example.myfirstapp.databinding.ActivityMainBinding
-import com.example.myfirstapp.fragment.FragFeed
-import com.example.myfirstapp.fragment.FragFriends
-import com.example.myfirstapp.fragment.FragMore
-import com.example.myfirstapp.fragment.FragOverview
-import com.example.myfirstapp.fragment.FragStart
-import com.example.myfirstapp.utils.Constants
-import com.example.myfirstapp.utils.PrefManager
+import com.example.myfirstapp.fragment.feed.FragFeed
+import com.example.myfirstapp.fragment.friends.FragFriends
+import com.example.myfirstapp.fragment.more.FragMore
+import com.example.myfirstapp.fragment.overview.FragOverview
+import com.example.myfirstapp.fragment.start.FragStart
 
 class MainActivity  : BaseActivity() {
     val TAG: String = MainActivity::class.java.simpleName
@@ -52,26 +45,31 @@ class MainActivity  : BaseActivity() {
             when (it.itemId) {
                 R.id.overview -> {
                     activityMainBinding.bottomNav.setBackgroundResource(R.color.DarkBlue)
+                    showbottombarcolorwhite()
                     loadFrag(FragOverview(), TAG, true, FragOverview::class.java.simpleName, false)
                     true
                 }
                 R.id.feed -> {
                     bottombarcolorwhite()
+                    showbottombarcolorwhite()
                     loadFrag(FragFeed(), TAG, true, FragFeed::class.java.simpleName, false)
                     true
                 }
                 R.id.start -> {
                     bottombarcolorwhite()
+                    showbottombarcolorwhite()
                     loadFrag(FragStart(), TAG, true, FragStart::class.java.simpleName, false)
                     true
                 }
                 R.id.friends -> {
                     bottombarcolorwhite()
+                    showbottombarcolorwhite()
                     loadFrag(FragFriends(), TAG, true, FragFriends::class.java.simpleName, false)
                     true
                 }
                 R.id.more -> {
                     bottombarcolorwhite()
+                    showbottombarcolorwhite()
                     loadFrag(FragMore(), TAG, true, FragMore::class.java.simpleName, false)
                     true
                 }
@@ -120,6 +118,10 @@ class MainActivity  : BaseActivity() {
 
     fun hidebottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.GONE
+    }
+
+    fun showbottombarcolorwhite(){
+        activityMainBinding.bottomNav.visibility=View.VISIBLE
     }
 
     fun loadFrag(fragment: Fragment?, tag: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
