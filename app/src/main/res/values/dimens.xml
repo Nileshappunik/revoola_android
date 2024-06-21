@@ -8,4 +8,18 @@
     <dimen name="text_login_size">15sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
     <dimen name="_100sdp">100dp</dimen>
+
+    <!--overview Screen Size-->
+    <dimen name="overviewcadtop">25dp</dimen>
+    <dimen name="overviewcadheight">100dp</dimen>
+    <dimen name="overviewcadtitlesize">18sp</dimen>
+    <dimen name="overviewcadnumbersize">24sp</dimen>
+    <dimen name="overviewcadtextnumbertop">0dp</dimen>
+    <dimen name="overviewsessiontitletextsize">24sp</dimen>
+
+    <!--Bottom Bar Size-->
+    <dimen name="bottomiconsize">20dp</dimen>
+    <dimen name="bottomtextsize">12sp</dimen>
+
+    <dimen name="feedbottomlineheight">5dp</dimen>
 </resources>

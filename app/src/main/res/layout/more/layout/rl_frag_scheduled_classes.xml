@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppLightGrayColor">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:background="@drawable/full_round"
+            android:src="@drawable/ic_back_g"/>
+
+        <TextView
+            android:id="@+id/txt_titletv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop= "10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_below="@+id/ivBack"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/schduledclasses"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="36dp"
+            android:fontFamily="@font/omnes_semibold_regular" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_schdualclasses"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/txt_titletv"/>
+
+    </RelativeLayout>
+</layout>

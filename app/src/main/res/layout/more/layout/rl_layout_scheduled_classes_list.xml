@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/img_user"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:scaleType="fitXY"
+                            app:shapeAppearance="@style/CornerRound"
+                            android:src="@drawable/wellcome"/>
+
+                        <TextView
+                            android:id="@+id/txt_organiser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@+id/img_user"
+                            android:text="Orgainser"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/txt_usernam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="1dp"
+                            android:layout_toEndOf="@+id/img_user"
+                            android:layout_below="@+id/txt_organiser"
+                            android:text="Dhruv90"
+                            android:fontFamily="@font/omnes_semibold_regular"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_calender"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="10dp"
+                            android:src="@drawable/ic_calendar_today"/>
+
+                        <TextView
+                            android:id="@+id/txt_missed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@+id/img_calender"
+                            android:text="Missed"
+                            android:textColor="@color/AppMainColor"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/txt_misseddate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="1dp"
+                            android:layout_toEndOf="@+id/img_calender"
+                            android:layout_below="@+id/txt_missed"
+                            android:text="29 Apr 06:57 Pm"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:layout_marginTop="10dp">
+                    <ImageView
+                        android:id="@+id/img_big_full"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/body_top"/>
+                    <TextView
+                        android:id="@+id/txt_with"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/AppWhiteColor"
+                        android:text="with"
+                        android:paddingStart="15dp"
+                        android:paddingBottom="30dp"
+                        android:layout_alignParentBottom="true"
+                        android:textSize="18sp"/>
+
+                    <TextView
+                        android:id="@+id/txt_with_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/AppWhiteColor"
+                        android:text="Alena"
+                        android:layout_toEndOf="@+id/txt_with"
+                        android:paddingStart="1dp"
+                        android:paddingBottom="30dp"
+                        android:fontFamily="@font/omnes_semibold_regular"
+                        android:layout_alignParentBottom="true"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/txt_image_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/AppWhiteColor"
+                        android:text="Balance Your Body"
+                        android:layout_above="@+id/txt_with"
+                        android:paddingStart="15dp"
+                        android:paddingBottom="5dp"
+                        android:fontFamily="@font/omnes_semibold_regular"
+                        android:textSize="22sp"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_watch"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_duration"/>
+
+                        <TextView
+                            android:id="@+id/txt_watchtime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_toEndOf="@+id/img_watch"
+                            android:text="10 mins"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+                    </RelativeLayout>
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/AppMainBGColor"/>
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_easy"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_toEndOf="@+id/txt_easy"
+                            android:layout_marginStart="10dp"
+                            android:src="@drawable/ic_easy"/>
+
+                        <TextView
+                            android:id="@+id/txt_easy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Beginner"
+                            android:textColor="@color/AppMainColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/AppMainBGColor"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_warmup"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_warmuptime"/>
+
+                        <TextView
+                            android:id="@+id/txt_warmup_min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@+id/img_warmup"
+                            android:text="min"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/txt_warmup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_toEndOf="@+id/img_warmup"
+                            android:layout_below="@+id/txt_warmup_min"
+                            android:text="warmup"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_workout"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_work_time"/>
+
+                        <TextView
+                            android:id="@+id/txt_workout_min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@+id/img_workout"
+                            android:text="min"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/txt_workout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_toEndOf="@+id/img_workout"
+                            android:layout_below="@+id/txt_workout_min"
+                            android:text="workout"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/img_cooldown"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_cooldown_time"/>
+
+                        <TextView
+                            android:id="@+id/txt_cooldown_min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toEndOf="@+id/img_cooldown"
+                            android:text="min"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/txt_cooldown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_toEndOf="@+id/img_cooldown"
+                            android:layout_below="@+id/txt_cooldown_min"
+                            android:text="cooldown"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="16sp"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/AppWhiteColor"/>
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+</layout>

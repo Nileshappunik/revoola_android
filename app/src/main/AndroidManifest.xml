@@ -8,7 +8,6 @@ package="com.example.myfirstapp">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -24,6 +23,14 @@ package="com.example.myfirstapp">
     
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
 
+    <uses-permission android:name="android.permission.health.READ_MENSTRUATION" />
+    <uses-permission android:name="android.permission.health.WRITE_MENSTRUATION" />
+    <uses-permission android:name="android.permission.BODY_SENSORS"/>
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
 <application
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
@@ -34,39 +41,39 @@ package="com.example.myfirstapp">
 
 
     <activity
-        android:name=".activity.SignUpActivity"
+        android:name=".activity.RLSignUpActivityRL"
         android:exported="false" />
 
     <activity
-        android:name=".activity.SignUpNameActivity"
+        android:name=".activity.RLSignUpNameActivityRL"
         android:exported="false" />
 
 
     <activity
-        android:name=".activity.VerificationCodeActivity"
+        android:name=".activity.RLVerificationCodeActivityRL"
         android:exported="false" />
 
     <activity
-        android:name=".activity.MainActivity"
+        android:name=".activity.RLMainActivityRL"
         android:exported="true" />
     <activity
-        android:name=".activity.ForgotPasswordActivity"
+        android:name=".activity.RLForgotPasswordActivityRL"
         android:exported="false" />
 
 
 
     <activity
-        android:name=".activity.LoginEmailActivity"
+        android:name=".activity.RLLoginEmailActivityRL"
         android:exported="false" />
 
     <activity
-        android:name=".activity.SignUpActivity"
+        android:name=".activity.RLSignUpActivityRL"
         android:exported="false" />
     <activity
-        android:name=".activity.LoginActivity"
+        android:name=".activity.RLLoginActivityRL"
         android:exported="false"/>
     <activity
-        android:name=".activity.SplashActivity"
+        android:name=".activity.RLSplashActivityRL"
         android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -100,7 +107,7 @@ package="com.example.myfirstapp">
         </intent-filter>
     </activity>
 
-
+    <service android:name=".services.RLBLEService" />
 
 </application>
 

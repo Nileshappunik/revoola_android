@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="100dp"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        android:id="@+id/listItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_border"
+        android:orientation="vertical"
+        android:layout_above="@+id/txtx_cancle">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:text="@string/selecttimeperiod"
+            android:textColor="@color/AppTextGrayColor"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/txt_thismonth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="25dp"
+            android:text="@string/thismonth"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/txt_thisquater"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="25dp"
+            android:text="@string/thisquater"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/txt_halfyear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="25dp"
+            android:text="@string/halfyear"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/txt_fullyear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="25dp"
+            android:text="@string/fullyear"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/txt_alltime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:text="@string/alltime"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtx_cancle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/square_border"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="@string/cancelsmall"
+        android:textColor="@color/AppBlackColor"
+        android:textSize="18sp"/>
+
+</RelativeLayout>

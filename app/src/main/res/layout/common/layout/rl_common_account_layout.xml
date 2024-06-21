@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
+        <ImageView
+            android:id="@+id/img_check"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_checkboxchecked"/>
+        <TextView
+            android:id="@+id/txt_revoola_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/freerevoolauser"
+            android:textSize="18sp"
+            android:visibility="gone"
+            android:layout_toEndOf="@+id/img_check"
+            android:textColor="@color/AppBlackColor"
+            android:layout_marginStart="13dp"/>
+
+        <TextView
+            android:id="@+id/txt_revoola_des"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/freerevoolauser"
+            android:layout_centerVertical="true"
+            android:visibility="visible"
+            android:textSize="18sp"
+            android:layout_toEndOf="@+id/img_check"
+            android:textColor="@color/AppBlackColor"
+            android:layout_marginStart="13dp"/>
+
+        <TextView
+            android:id="@+id/txt_revoola_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sincedate"
+            android:layout_below="@+id/txt_revoola_user"
+            android:layout_toEndOf="@+id/img_check"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            android:textSize="18sp"
+            android:textColor="@color/AppBlackColor"
+            android:layout_marginStart="13dp"/>
+    </RelativeLayout>
+</layout>

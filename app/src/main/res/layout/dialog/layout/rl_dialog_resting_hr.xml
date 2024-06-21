@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_dialog_background"
+    android:orientation="vertical"
+    android:padding="0dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/restinghr"
+        android:layout_marginTop="16dp"
+        android:textSize="26sp"
+        android:textColor="@android:color/black"
+        android:gravity="center"/>
+
+    <EditText
+        android:id="@+id/edt_restinghr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="50dp"
+        android:hint="@string/restinghr"
+        android:textColorHint="@color/AppBottomGrayColor"
+        android:textSize="16sp"
+        android:textColor="@color/AppBlackColor"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="25dp"
+        android:background="@color/AppDarkGrayColor" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:weightSum="2"
+        android:background="@color/AppDarkGrayColor"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tvNo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:fontFamily="@font/omnes_regular"
+            android:textSize="18sp"
+            android:background="@color/AppWhiteColor"
+            android:layout_marginEnd="1dp"
+            android:textColor="@color/AppZone6Color"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvYes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/okcaps"
+            android:fontFamily="@font/omnes_regular"
+            android:background="@color/AppWhiteColor"
+            android:textSize="18sp"
+            android:textColor="@color/AppZone6Color"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>

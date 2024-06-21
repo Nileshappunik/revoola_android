@@ -15,10 +15,14 @@
     <string name="availablefilter">Available Filters</string>
     <string name="youalreadyconnecthealth">You have already Connected to Health Connect</string>
     <string name="ok">ok</string>
+    <string name="okcaps">OK</string>
     <string name="instructor">Instructor</string>
     <string name="durationt">Duration</string>
     <string name="takenbyme">Taken By Me</string>
     <string name="classtype">Class Type</string>
+    <string name="unitofmeasure">Unit of Measure</string>
+    <string name="privacy">Privacy</string>
+    <string name="imperial">Imperial</string>
 
     <!--bottom string-->
 
@@ -29,8 +33,10 @@
     <string name="more">MORE</string>
 
     <!--DEMO string-->
+    <string name="winditdown">Wind it Down</string>
     <string name="hidhruv">Hi Dhruv,</string>
     <string name="goodtoseeyou">Good to see you back,Lets get Going!</string>
+    <string name="keepgoodtoseeyou">Keep up the good work.You are smashing it</string>
     <string name="youractivity">YOUR ACTIVITY</string>
     <string name="effort">EFFORT</string>
     <string name="effortsmall">Effort</string>
@@ -43,6 +49,7 @@
     <string name="caloriessmall">Calories</string>
     <string name="caloriessmallkcal">Calories (Kcal)</string>
     <string name="distance">DISTANCE</string>
+    <string name="standinghour">STANDING HOURS</string>
     <string name="distancesmall">Distance</string>
     <string name="distancesmallkm">Distance(km)</string>
     <string name="steps">STEPS</string>
@@ -129,6 +136,7 @@
     <string name="yourfriends">Your Friends</string>
     <string name="yourgroup">Your Groups</string>
     <string name="invitefriends">Invite Friends</string>
+    <string name="invite">Invite</string>
     <string name="invitefriendsnotonyet">Invite Your Friends not yet on Revoola.</string>
     <string name="friend">Friends</string>
     <string name="invitefriendnotonrevoola">Invite your friends not on yet Revoola</string>
@@ -166,6 +174,43 @@
     <string name="requesttodeleteyourdata">Request to delete your data</string>
     <string name="linktoaccount">Link to Account</string>
     <string name="signout">Sign Out</string>
+    <string name="unlockrevoolapremium">Unlock Revoola Premium</string>
+    <string name="freerevoolauser">free REVOOLA user</string>
+    <string name="sincedate">since 26/04/2025</string>
+    <string name="mindandbodyclasses">Entire library of exclusive Mind &amp; Body Classes</string>
+    <string name="trackyourprogress">Permanently record activities and track your progress</string>
+    <string name="classandactivities">Join your friends for your own group classes and activities</string>
+    <string name="personalisecalender">Schedule group sessions with your personalised calendar</string>
+    <string name="challengesfriends">1:1 challenges with your friends</string>
+    <string name="freeonemonthtrial">Free one month trial after that</string>
+    <string name="dollarsign">£6.99</string>
+    <string name="tryfreeonemonth">per month cancel at any time, Try free one month</string>
+    <string name="havepromocode">HAVE PROMOCODE?</string>
+    <string name="permonthcost">£9.99 per month (Start Free Month)</string>
+    <string name="or">or</string>
+    <string name="continuewithfree">Continue with Free</string>
+    <string name="bytappingsubscribeyourpayment">By tapping subscribe your payment will be charged to your google account, and your account will be charged each month at the price of £6.99 until you cancel it in settings within the Play store at least 24 hours prior to the end of the current period.</string>
+    <string name="getttingstarted">Getting Started</string>
+    <string name="faqs">FAQ\'s</string>
+    <string name="logs">Logs</string>
+    <string name="getstarted">Get Started</string>
+    <string name="connectionapplewatch">Connecting an Apple Watch</string>
+    <string name="heartratesensor">Connecting a Heart Rate Sensor</string>
+    <string name="connectingaspeedsensor">Connecting a Speed Sensor</string>
+    <string name="nameyoursensor">Name Your Sensor</string>
+    <string name="aquicktourofrevoola">A Quick Tour of Revoola</string>
+    <string name="icantfindmysensor">Troubleshooting-I Cant\'t find my Sensor</string>
+    <string name="profile">Profile</string>
+    <string name="surname">Surname</string>
+    <string name="avatar">Avatar</string>
+    <string name="maxheartrateestimated">Max heart\n rate Estimated</string>
+    <string name="restingheartrate">Resting Heartrate</string>
+    <string name="restinghr">Resting HR</string>
+    <string name="location">Location</string>
+    <string name="activities">Activites</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="termandcondition">Terms and Conditions</string>
 
     <!--facebook-->
     <string name="facebook_app_id">423254927013835</string>
@@ -181,6 +226,20 @@
     <string name="sleep">SLEEP</string>
     <string name="happiness">HAPPINESS</string>
     <string name="mindclasses">MIND CLASSES</string>
+    <string name="bodyclasses">Body CLASSES</string>
+    <string name="startclass">START CLASS</string>
+    <string name="introducinglaughteryouga">INTRODUCING LAUGHTER YOGA</string>
+    <string name="with">WITH</string>
+    <string name="schedule">SCHEDULE</string>
+    <string name="download">DOWNLOAD</string>
+    <string name="favourite">FAVOURITE</string>
+    <string name="video">VIDEO</string>
+    <string name="trainer">TRAINER</string>
+    <string name="warmup">WARMUP</string>
+    <string name="workoutcaps">WORKOUT</string>
+    <string name="cooldown">COOLDOWN</string>
+    <string name="mindbodyharmony">MIND BODY HARMONY</string>
+    <string name="descriptionofvideo">Laughing is good for wellbeing; it reduce stress and release endorphins; but please so be careful if you are watching this in public!</string>
 
     <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends</string>
     <string name="yourway">Your Way</string>
@@ -191,15 +250,23 @@
     <string name="workout">Workout</string>
     <string name="yoga">Yoga</string>
     <string name="chooseyoursensor">Choose Your Sensor</string>
+    <string name="edityoursensor">Edit your sensor</string>
     <string name="go">GO</string>
     <string name="skip">SKIP</string>
+    <string name="forgetsensor">FORGET SENSOR</string>
     <string name="speeddistance">SPEED/DISTANCE</string>
+    <string name="nameyoursensorcaps">NAME YOUR SENSOR</string>
+    <string name="heartratemonitor">HEART RATE MONITOR</string>
+    <string name="speedmonitor">SPEED MONITOR</string>
+    <string name="cadencemonitor">CADENCE MONITOR</string>
     <string name="gpssatellitesfound">GPS(Satellites found)</string>
     <string name="inprogress">IN PROGRESS</string>
     <string name="cadencerpm">CADENCE(RPM)</string>
-    <string name="distancekm">DISTANCE(KM)</string>
+    <string name="distancekm">DISTANCE(Km)</string>
     <string name="speedkmh">SPEED(KM/H)</string>
     <string name="paceperkm">PACE(PER KM)</string>
+    <string name="heartratebpm">HEART RATE(BPM)</string>
+    <string name="avarageeffortsofar">AVERAGAE EFFORT SO FAR</string>
     <string name="pause">PAUSE</string>
     <string name="resume">RESUME</string>
     <string name="stop">STOP</string>
@@ -238,6 +305,41 @@
     <string name="pleaseenterenddate">Please Enter the start date</string>
     <string name="selecttosetthedayuoyend">Select to set the day you want your challenge to end.</string>
     <string name="challengescanbeforaslongasyouwant">Challenges can be for as long as you want them to run. A few days, a week, month, several months or even a year !</string>
+
+    <!--overview-->
+    <string name="sessionsmall">Session</string>
+    <string name="longestsession">LONGEST SESSION</string>
+    <string name="averagesession">AVERAGE SESSION</string>
+    <string name="selecttimeperiod">Select Time Period</string>
+    <string name="thisquater">this Quarter</string>
+    <string name="halfyear">Half Year</string>
+    <string name="fullyear">Full Year</string>
+    <string name="alltime">All Time</string>
+    <string name="cancelsmall">Cancel</string>
+
+    <string name="selectbodyactivity">Select Body Activity</string>
+    <string name="mindbody">Mind + Body(All Activity)</string>
+    <string name="allmind">All Mind</string>
+    <string name="allbody">All Body</string>
+    <string name="relaxation">RELAXATION</string>
+    <string name="totalcalories">TOTAL CALORIES</string>
+    <string name="activecalories">ACTIVE CALORIES</string>
+    <string name="challengesfor">CHALLENGE FOR</string>
+    <string name="targetsteps">TARGET STEPS</string>
+    <string name="youachived">YOU ACHIEVED</string>
+    <string name="rank">Rank</string>
+    <string name="targeteffort">TARGET EFFORT</string>
+    <string name="targetcalories">TARGET CALORIES</string>
+    <string name="targetdistance">TARGET DISTANCE</string>
+    <string name="targetclimbed">TARGET CLIMBED</string>
+    <string name="targettotalduration">TARGET TOTAL DURATION</string>
+    <string name="zone">ZONE</string>
+    <string name="score">SCORE</string>
+    <string name="timeinzone">TIME IN ZONE</string>
+    <string name="inzone">% IN ZONE</string>
+    <string name="you">You</string>
+    <string name="group">Group</string>
+    <string name="selectgroup">Select Group</string>
 
 
 </resources>
