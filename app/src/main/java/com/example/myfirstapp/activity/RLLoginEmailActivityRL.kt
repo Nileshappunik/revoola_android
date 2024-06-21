@@ -22,6 +22,7 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -62,12 +63,8 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             if (RLvalidation()) {
-                if (RLApiClientRetrofit.RLisConnected()) {
-                    //login Api
-                    RLshowDialog(emailID)
-                } else {
-                    //showDialogFullscreen()
-                }
+                RLshowDialog(emailID)
+                //RLloginUserExitsornot()
             }
         })
         activityBinding.txtClickme.setOnClickListener(View.OnClickListener {
@@ -98,45 +95,101 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     }
 
     //Realtime Database
-    fun RLloginapicall() {
-        // Sign in with email and password
+    fun RLloginUserExitsornot() {
+      /* val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("users")
+            .whereEqualTo("email", emailID)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val userDoc = documents.documents[0]
+                    println("userDoc Name: $userDoc")
+                } else {
+                    println("No user found with this email.")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Error retrieving user details: ${e.message}")
+            }*/
 
-        auth.signInWithEmailAndPassword(emailID, password)
+        val credential = EmailAuthProvider.getCredential(emailID, password)
+        auth.signInWithCredential(credential).addOnCompleteListener{task->
+            if (task.isSuccessful) {
+                Log.e(TAG, "User exist:- $emailID")
+            }else{
+                Log.e(TAG, "Error fetching sign-in methods: ${task.exception?.message}")
+            }
+        }
+
+        auth.fetchSignInMethodsForEmail(emailID)
             .addOnCompleteListener { task ->
-                try {
-                    if (task.isSuccessful) {
-                        // Sign-in successful
-                        val user = auth.currentUser
-                        if (user != null) {
-                            // Get provider data from the user object
-                            val providerData = user.providerData
-                            // Iterate through the list of provider data
-                            val profile=providerData[0]
-                            val uid = profile.uid
-                            val userEmail = profile.email
-                            RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,uid)
-                            RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
-                            startActivity(Intent(this, RLMainActivityRL::class.java))
-                            finish()
-                        }
-                    }else {
-                        // Sign-in failed INVALID_LOGIN_CREDENTIALS
-                        try {
-                            throw task.exception!!
-                        } catch (e: FirebaseAuthInvalidUserException) {
-                            println("User does not exist.")
-                        } catch (e: FirebaseAuthInvalidCredentialsException) {
-                            println("Invalid credentials.")
-                        } catch (e: Exception) {
-                            println("Error: ${e.message}")
-                        }
+                if (task.isSuccessful) {
+                    val signInMethods = task.result?.signInMethods ?: emptyList()
+                    if (signInMethods.isNotEmpty()) {
+                        // User exists
+                        Log.e(TAG, "User exist:- "+signInMethods.size)
+                    } else {
+                        // User does not exist
+//                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
+//                        finish()
+                        Log.e(TAG, "User does not exist:- "+signInMethods.size)
                     }
-                }catch (e:Exception){
-                    Log.e(TAG,"Exception:- "+e.message)
+                } else {
+                    // Handle error
+                    Log.e(TAG, "Error fetching sign-in methods: ${task.exception?.message}")
                 }
             }
     }
 
+//  startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
+//  finish()
+    fun RLloginapicall() {
+        // Sign in with email and password
+        auth.signInWithEmailAndPassword(emailID, password)
+            .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Sign-in successful
+                        val user = auth.currentUser
+                        if (user != null) {
+                            try {
+                                // Get provider data from the user object
+                                val providerData = user.providerData
+                                // Iterate through the list of provider data
+                                val profile=providerData[0]
+                                val uid = profile.uid
+                                val userEmail = profile.email
+                                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,uid)
+                                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
+                                startActivity(Intent(this, RLMainActivityRL::class.java))
+                                finish()
+                            } catch (e:Exception){
+                                Log.e(TAG,"Exception:- "+e.message)
+                            }
+                        }
+                    }else {
+                        // Sign-in failed
+                        task.exception?.let { exception ->
+                            Log.e(TAG, "User $emailID: ${exception}")
+                            when (exception) {
+                                is FirebaseAuthInvalidUserException -> {
+                                    // Handle case where user does not exist
+                                      startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
+                                      finish()
+                                    Log.e(TAG, "User does not exist: ${exception.message}")
+                                }
+                                is FirebaseAuthInvalidCredentialsException -> {
+                                    // Handle case where password is incorrect
+                                    Log.e(TAG, "Invalid credentials: ${exception.message}")
+                                }
+                                else -> {
+                                    // Handle other exceptions
+                                    Log.e(TAG, "Sign-in failed: ${exception.message}")
+                                }
+                            }
+                        }
+                    }
+            }
+    }
     private fun RLshowDialog( emaildid: String) {
         sucDialog = Dialog(activity)
         sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)

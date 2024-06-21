@@ -44,8 +44,8 @@
             app:forceKeyboard="true"
             app:hint="0"
             app:textSize="13sp"
-            app:inputType="text"
-            app:password="false"/>
+            app:inputType="number"
+            app:password="true"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
