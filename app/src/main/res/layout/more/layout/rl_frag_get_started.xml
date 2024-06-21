@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppLightGrayColor"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:background="@drawable/full_round"
+            android:src="@drawable/ic_back_g"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop= "10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/getstarted"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="36dp"
+            android:fontFamily="@font/omnes_semibold_regular" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/AppMainBGColor"/>
+
+        <include
+            android:id="@+id/relay_applewatch"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_ratesensor"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_speedsensor"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_yourensor"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_tourofrevoola"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_cantfindmysensor"
+            layout="@layout/rl_common_image_text_image_rl" />
+
+
+
+
+    </LinearLayout>
+</layout>

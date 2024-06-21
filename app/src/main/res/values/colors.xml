@@ -1,74 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#949399</color>
-    <color name="colorPrimaryDark">#302F2F</color>
+    <color name="colorPrimary">#FF39B54A</color>
+    <color name="colorPrimaryDark">#FFFFFFFF</color>
     <color name="colorAccent">#949399</color>
 
-    <!--<color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>828282-->
 
-    <color name="Gray">#949399</color>
     <color name="transparent_dialog">#00000000</color>
     <color name="transparent50">#E6000000</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="off_white">#F6F6F6</color>
-    <color name="DarkBlue">#120D26</color>
-    <color name="green">#39B54A</color>
-    <color name="greenlight">#4CAF50</color>
-    <color name="darkGray">#302F2F</color>
-    <color name="lightGray">#C5C1C1</color>
+    <color name="transparent500">#201A30</color>
+    <color name="transparent5000">#95949A</color>
 
-    <color name="lightnavyblue">#E5ECF0</color>
-    <color name="navyblue">#0099DA</color>
-    <color name="redlight">#F5EDEC</color>
-    <color name="reddark">#ED4541</color>
-    <color name="lightgreen">#FFEBF5E9</color>
 
-    <color name="AppMainColor">#39B54AFF</color>
-    <color name="AppMainBGColor">#ECF8EDFF</color>
+
+
+   <!-- <color name="Gray">#949399</color>
+   <color name="off_white">#F6F6F6</color>
+   <color name="darkGray">#302F2F</color>
+<color name="lightGray">#C5C1C1</color>
+<color name="transparent50">#E6000000</color>-->
+
+
+    <color name="AppMainColor">#FF39B54A</color>
+    <color name="AppMainBGColor">#FFECF8ED</color>
     <color name="AppWhiteColor">#FFFFFFFF</color>
-    <color name="AppWhite10Color">#FFFFFF1A</color>
-    <color name="AppWhite30Color">#FFFFFF4D</color>
-    <color name="AppBlackColor">#000000FF</color>
-    <color name="AppBlack10Color">#0000001A</color>
-    <color name="AppBlack05Color">#0000000D</color>
-    <color name="AppTextLightGrayColor">#2F2B2C1A</color>
-    <color name="AppTextGrayColor">#95949AFF</color>
-    <color name="AppBottomGrayColor">#808080FF</color>
-    <color name="AppNEWBGColor">#201A30FF</color>
-    <color name="AppLightGrayColor">#F1F1F1FF</color>
-    <color name="AppDarkGrayColor">#4D4D4DFF</color>
-    <color name="AppOrangeColor">#F2994AFF</color>
-    <color name="AppRedColor">#EB5757FF</color>
-    <color name="AppGoldColor">#DAA520FF</color>
-    <color name="AppSilverColor">#C0C0C0FF</color>
-    <color name="AppBronzeColor">#CD7F32FF</color>
-    <color name="AppZone1Color">#F177A0FF</color>
-    <color name="AppZone2Color">#FFCF2FFF</color>
-    <color name="AppZone3Color">#39B54AFF</color>
-    <color name="AppZone4Color">#0099DAFF</color>
-    <color name="AppZone5Color">#FE6902FF</color>
-    <color name="AppZone6Color">#9900CCFF</color>
-    <color name="AppZone7Color">#ED4541FF</color>
-    <color name="AppZone1BGColor">#FEF2F6FF</color>
-    <color name="AppZone2BGColor">#FFFBEBFF</color>
-    <color name="AppZone3BGColor">#ECF8EDFF</color>
-    <color name="AppZone4BGColor">#E6F5FCFF</color>
-    <color name="AppZone5BGColor">#FFF4EDFF</color>
-    <color name="AppZone6BGColor">#F8EDFBFF</color>
-    <color name="AppZone7BGColor">#FEEDECFF</color>
-    <color name="AppPrivacyEveryOneBGColor">#39B54A0D</color>
-    <color name="AppPrivacyFriendsBGColor">#0099DA0D</color>
-    <color name="AppPrivacyPrivateBGColor">#EB57570D</color>
-    <color name="AppPrivacyEveryOneColor">#39B54AFF</color>
-    <color name="AppPrivacyFriendsColor">#0099DAFF</color>
-    <color name="AppPrivacyPrivateColor">#EB5757FF</color>
-    <color name="AppScheduleCompletedColor">#EB5757FF</color>
-    <color name="AppScheduleMissedColor">#EB5757FF</color>
-    <color name="AppScheduleDeclinedColor">#EB5757FF</color>
-    <color name="AppScheduleWinColor">#EB5757FF</color>
-    <color name="AppScheduleLoseColor">#EB5757FF</color>
+    <color name="AppWhite10Color">#1AFFFFFF</color>
+    <color name="AppWhite30Color">#4DFFFFFF</color>
+    <color name="AppBlackColor">#FF000000</color>
+    <color name="AppBlack10Color">#1A000000</color>
+    <color name="AppBlack05Color">#0D000000</color>
+    <color name="AppTextLightGrayColor">#1A2F2B2C</color>
+    <color name="AppTextGrayColor">#FF95949A</color>
+    <color name="AppBottomGrayColor">#FF808080</color>
+    <color name="AppNEWBGColor">#FF201A30</color>
+    <color name="AppOverviewCardColor">#383045</color>
+    <color name="AppLightGrayColor">#FFF1F1F1</color>
+    <color name="AppDarkGrayColor">#FF4D4D4D</color>
+    <color name="AppOrangeColor">#FFF2994A</color>
+    <color name="AppRedColor">#FFEB5757</color>
+    <color name="AppGoldColor">#FFDAA520</color>
+    <color name="AppSilverColor">#FFC0C0C0</color>
+    <color name="AppBronzeColor">#FFCD7F32</color>
+    <color name="AppZone1Color">#FFF177A0</color>
+    <color name="AppZone2Color">#FFFFCF2F</color>
+    <color name="AppZone3Color">#FF39B54A</color>
+    <color name="AppZone4Color">#FF0099DA</color>
+    <color name="AppZone5Color">#FFFE6902</color>
+    <color name="AppZone6Color">#FF9900CC</color>
+    <color name="AppZone7Color">#FFED4541</color>
+    <color name="AppZone1BGColor">#FFFEF2F6</color>
+    <color name="AppZone2BGColor">#FFFFFBEB</color>
+    <color name="AppZone3BGColor">#FFECF8ED</color>
+    <color name="AppZone4BGColor">#FFE6F5FC</color>
+    <color name="AppZone5BGColor">#FFFFF4ED</color>
+    <color name="AppZone6BGColor">#FFF8EDFB</color>
+    <color name="AppZone7BGColor">#FFFEEDEC</color>
+    <color name="AppPrivacyEveryOneBGColor">#0D39B54A</color>
+    <color name="AppPrivacyFriendsBGColor">#0D0099DA</color>
+    <color name="AppPrivacyPrivateBGColor">#0DEB5757</color>
+    <color name="AppPrivacyEveryOneColor">#FF39B54A</color>
+    <color name="AppPrivacyFriendsColor">#FF0099DA</color>
+    <color name="AppPrivacyPrivateColor">#FFEB5757</color>
+    <color name="AppScheduleCompletedColor">#FFEB5757</color>
+    <color name="AppScheduleMissedColor">#FFEB5757</color>
+    <color name="AppScheduleDeclinedColor">#FFEB5757</color>
+    <color name="AppScheduleWinColor">#FFEB5757</color>
+    <color name="AppScheduleLoseColor">#FFEB5757</color>
 
 </resources>

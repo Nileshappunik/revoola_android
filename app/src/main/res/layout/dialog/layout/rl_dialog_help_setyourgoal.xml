@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/square_border"
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="43dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:text="@string/setyourgoal"
+                android:textColor="@color/AppBlackColor"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/setyourgoalchallenge"
+                android:textColor="@color/AppBlackColor"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/howlongdoyouwantyourchallenge"
+                android:textColor="@color/AppBlackColor"/>
+
+
+            <include
+                android:id="@+id/lay_sartdate"
+                layout="@layout/rl_common_layout_help_dialog"/>
+
+            <include
+                android:id="@+id/lay_enddate"
+                layout="@layout/rl_common_layout_help_dialog"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/challengescanbeforaslongasyouwant"
+                android:textColor="@color/AppBlackColor"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</layout>

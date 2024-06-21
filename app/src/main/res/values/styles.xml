@@ -6,7 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
+
+
+
+   <!-- <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        &lt;!&ndash; Customize your theme here. &ndash;&gt;
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>-->
 
     <style name="FullScreenDialogStyle" parent="android:Theme">
         <item name="android:windowNoTitle">true</item>
@@ -18,7 +29,7 @@
         <!--  <item name="boxBackgroundMode">none</item>-->
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="hintTextColor">@color/colorPrimary</item>
-        <item name="boxBackgroundColor">@color/white</item>
+        <item name="boxBackgroundColor">@color/AppWhiteColor</item>
     </style>
 
     <style name="CornerCut">
@@ -33,6 +44,10 @@
     <style name="FullScreenDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="CustomBottomNavTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/bottomtextsize</item>
     </style>
 
 </resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/linear_part"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4">
+        <TextView
+            android:id="@+id/txt_zone_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppBlackColor"/>
+
+        <TextView
+            android:id="@+id/txt_score_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:text="0"
+            android:textAlignment="center"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppBlackColor"/>
+
+        <TextView
+            android:id="@+id/txt_timezone_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:text="00:00:00"
+            android:textAlignment="center"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppBlackColor"/>
+
+        <TextView
+            android:id="@+id/txt_inzone_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:text="0"
+            android:textAlignment="center"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppBlackColor"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/AppMainColor"
+        android:layout_below="@+id/linear_part"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"/>
+</RelativeLayout>
+
+
+</layout>

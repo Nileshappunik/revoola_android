@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_overview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/overviewcadheight"
+        app:cardBackgroundColor="@color/AppZone6Color"
+        app:cardCornerRadius="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txt_title_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/effort"
+                android:textSize="@dimen/overviewcadtitlesize"
+                android:textColor="@color/AppWhiteColor"
+                android:fontFamily="@font/omnes_semibold_regular" />
+
+            <TextView
+                android:id="@+id/txt_title_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textSize="@dimen/overviewcadtitlesize"
+                android:text="@string/relaxation"
+                android:textColor="@color/AppWhiteColor"
+                android:fontFamily="@font/omnes_semibold_regular" />
+
+            <TextView
+                android:id="@+id/txt_number_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_title_left"
+                android:text="0"
+                android:layout_marginTop="@dimen/overviewcadtextnumbertop"
+                android:textSize="@dimen/overviewcadnumbersize"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppWhiteColor"/>
+
+            <TextView
+                android:id="@+id/txt_number_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_title_right"
+                android:layout_alignParentRight="true"
+                android:text="0"
+                android:layout_marginTop="@dimen/overviewcadtextnumbertop"
+                android:fontFamily="@font/omnes_regular"
+                android:textSize="@dimen/overviewcadnumbersize"
+                android:textColor="@color/AppWhiteColor"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</layout>

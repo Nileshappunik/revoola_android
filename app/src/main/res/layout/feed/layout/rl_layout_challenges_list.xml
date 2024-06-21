@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_Chalengis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/AppWhiteColor"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        android:layout_margin="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/classes"
+                android:layout_marginStart="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                app:layout_constraintLeft_toRightOf="@+id/img_user"
+                android:text="@string/hidhruv"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/txt_userdatetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="15dp"
+                app:layout_constraintLeft_toRightOf="@+id/img_user"
+                app:layout_constraintTop_toBottomOf="@+id/txt_username"
+                android:text="13/5/2024"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppTextGrayColor"
+                android:textSize="16sp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_organizer_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/wellcome"
+                app:tint="@color/AppBottomGrayColor"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_organizer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/img_organizer_user"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Organizer"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppTextGrayColor"
+                android:textSize="@dimen/text_size"/>
+
+            <ImageView
+                android:id="@+id/img_myride"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="15dp"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_walk"
+                android:background="@drawable/full_round"
+                android:backgroundTint="@color/AppPrivacyEveryOneBGColor"
+                app:layout_constraintTop_toBottomOf="@+id/img_user"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/txt_myride"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                app:layout_constraintTop_toBottomOf="@+id/img_user"
+                app:layout_constraintLeft_toRightOf="@+id/img_myride"
+                android:text="new challenge"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/lay_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginStart="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/img_myride"
+                app:layout_constraintStart_toStartOf="parent">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <include
+                        android:id="@+id/lay_stepssofar"
+                        layout="@layout/rl_common_image_title_subtitle" />
+
+                    <include
+                        android:id="@+id/lay_targetsteps"
+                        layout="@layout/rl_common_image_title_subtitle" />
+
+                    <include
+                        android:id="@+id/lay_daysremaining"
+                        layout="@layout/rl_common_image_title_subtitle" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relay_chart"
+                    android:layout_width="0dp"
+                    android:layout_margin="10dp"
+                    android:layout_height="180dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/txt_steps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/step"
+                        android:layout_toStartOf="@+id/lay_pertext"
+                        android:fontFamily="@font/omnes_regular"
+                        android:textColor="@color/AppBlackColor"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/txt_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/time"
+                        android:layout_toEndOf="@+id/lay_pertext"
+                        android:fontFamily="@font/omnes_regular"
+                        android:textColor="@color/AppBlackColor"
+                        android:textSize="16sp"/>
+
+                    <View
+                        android:id="@+id/step_view"
+                        android:layout_width="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_below="@+id/txt_steps"
+                        android:background="@drawable/square_border_offwhite"
+                        android:backgroundTint="@color/AppTextGrayColor"
+                        android:layout_toStartOf="@+id/lay_pertext"
+                        android:layout_height="match_parent"/>
+
+                    <LinearLayout
+                        android:id="@+id/lay_pertext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="30dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/txt_75"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                             android:text="75%"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="20sp"/>
+                        <TextView
+                            android:id="@+id/txt_50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="50%"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="20sp"/>
+                        <TextView
+                            android:id="@+id/txt_25"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="25%"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppTextGrayColor"
+                            android:textSize="20sp"/>
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/time_view"
+                        android:layout_width="10dp"
+                        android:layout_below="@+id/txt_time"
+                        android:layout_marginTop="15dp"
+                        android:layout_toEndOf="@+id/lay_pertext"
+                        android:background="@drawable/square_border_offwhite"
+                        android:backgroundTint="@color/AppTextGrayColor"
+                        android:layout_marginStart="15dp"
+                        android:layout_height="match_parent"/>
+                    
+                </RelativeLayout>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/feedbottomlineheight"
+                app:layout_constraintTop_toBottomOf="@+id/lay_all"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="10dp"
+                android:background="@color/AppLightGrayColor"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

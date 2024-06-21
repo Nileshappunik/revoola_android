@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:id="@+id/relay_sensor_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null">
+        <View
+            android:id="@+id/progress_view2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="@color/AppBottomGrayColor"/>
+        <TextView
+            android:id="@+id/txt_progress_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/omnes_regular"
+            android:layout_below="@+id/progress_view2"
+            android:background="@null"
+            android:text="@string/time"
+            android:textColor="@color/AppLightGrayColor"
+            android:textSize="14sp"/>
+
+        <ImageView
+            android:id="@+id/img_time"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/fd_active_time_green"
+            android:layout_below="@+id/txt_progress_time"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/txt_progress_time_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:background="@null"
+            android:layout_below="@+id/txt_progress_time"
+            android:layout_toEndOf="@+id/img_time"
+            android:layout_marginStart="10dp"
+            android:text="00:00:01"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:id="@+id/lay_avg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_progress_time_number"
+            android:layout_toEndOf="@+id/img_time"
+            android:background="@null"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/txt_avg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/omnes_regular"
+                android:background="@null"
+                android:layout_marginStart="10dp"
+                android:text="AVG"
+                android:textColor="@color/AppLightGrayColor"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/txt_avg_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:background="@null"
+                android:layout_marginStart="10dp"
+                android:text="00:00"
+                android:textColor="@color/AppLightGrayColor"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lay_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_progress_time_number"
+            android:layout_toEndOf="@+id/lay_avg"
+            android:layout_marginStart="5dp"
+            android:background="@null"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/txt_max"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:fontFamily="@font/omnes_regular"
+                android:layout_marginStart="10dp"
+                android:text="MAX"
+                android:textColor="@color/AppLightGrayColor"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/txt_max_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:background="@null"
+                android:layout_marginStart="10dp"
+                android:text="00:00"
+                android:textColor="@color/AppLightGrayColor"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/progress_view1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="35dp"
+            android:layout_below="@+id/lay_max"
+            android:background="@color/AppBottomGrayColor"/>
+    </RelativeLayout>
+
+</layout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<RelativeLayout
+    android:id="@+id/relative_card"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/img_time"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/fd_active_time_green"/>
+
+    <TextView
+        android:id="@+id/txt_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/img_time"
+        android:text="@string/time"
+        android:fontFamily="@font/omnes_semibold_regular"
+        android:textColor="@color/AppBlackColor"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/txt_time_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_below="@+id/txt_time"
+        android:layout_toEndOf="@+id/img_time"
+        android:text="0"
+        android:fontFamily="@font/omnes_semibold_regular"
+        android:textColor="@color/AppBlackColor"
+        android:textSize="24sp"/>
+
+    <View
+        android:id="@+id/view_common"
+        android:layout_width="100dp"
+        android:layout_height="1dp"
+        android:visibility="visible"
+        android:layout_marginStart="15dp"
+        android:layout_below="@+id/txt_time_number"
+        android:layout_toEndOf="@+id/img_time"
+        android:layout_marginTop="10dp"
+        android:background="@color/AppBottomGrayColor"/>
+
+</RelativeLayout>
+</layout>

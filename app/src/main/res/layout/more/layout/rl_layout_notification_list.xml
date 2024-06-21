@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="10dp">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_notification"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitXY"
+            app:shapeAppearance="@style/CornerRound"
+            android:src="@drawable/wellcome"/>
+
+        <TextView
+            android:id="@+id/txt_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@+id/img_notification"
+            android:text="Dhruv Khatri"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/txt_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="1dp"
+            android:layout_toEndOf="@+id/img_notification"
+            android:layout_below="@+id/txt_user_name"
+            android:text="test android"
+            android:textColor="@color/AppTextGrayColor"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/txt_notification_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="1dp"
+            android:layout_toEndOf="@+id/img_notification"
+            android:layout_below="@+id/txt_notification"
+            android:text="14/05/2024 11:20"
+            android:textColor="@color/AppTextGrayColor"
+            android:textSize="16sp"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/txt_notification_time"
+           android:layout_marginTop="10dp"
+            android:background="@color/AppLightGrayColor" />
+
+    </RelativeLayout>
+
+</layout>
