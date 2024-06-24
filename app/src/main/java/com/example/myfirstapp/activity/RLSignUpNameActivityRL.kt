@@ -1,52 +1,35 @@
 package com.example.myfirstapp.activity
-
-
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
-import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerWrite
 import com.example.myfirstapp.databinding.RlActivitySignUpNameBinding
 import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.viewmodel.RLMainRepository
-import com.example.myfirstapp.viewmodel.RLMainViewModel
-import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
 
 class RLSignUpNameActivityRL : RLBaseActivity(){
-
     val TAG: String = RLSignUpNameActivityRL::class.java.simpleName
     lateinit var activityBinding: RlActivitySignUpNameBinding
+    lateinit var  databaseManager: RLDatabaseManagerWrite
     var firstName: String = ""
     var lastName: String = ""
     var nickName: String = ""
     var emailID: String = ""
     var password: String = ""
-    private lateinit var viewModel: RLMainViewModel
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_sign_up_name) as RlActivitySignUpNameBinding
-        // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
-        val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(this, RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLUisetup()
     }
-
     private fun RLUisetup() {
         emailID= intent.getStringExtra("EmailId").toString()
-         password= intent.getStringExtra("Password").toString()
+        password= intent.getStringExtra("Password").toString()
         activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
         activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
@@ -57,40 +40,58 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         })
 
     }
-
     fun RlupdateUserDetails() {
-        val auth = FirebaseAuth.getInstance()
-        val firestore = FirebaseFirestore.getInstance()
-         // Sign up with email and password
-        auth.createUserWithEmailAndPassword(emailID,password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // User creation successful
-                    val user = auth.currentUser
-                    val userId = user?.uid
-                    val userMap = hashMapOf(
-                        "firstName" to firstName,
-                        "lastName" to lastName,
-                        "nickname" to nickName,
-                        "email" to emailID)
-                    if (userId != null) {
-                        firestore.collection("users").document(userId)
-                            .set(userMap)
-                            .addOnSuccessListener {
-                                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,userId)
-                                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,emailID)
-                                startActivity(Intent(this, RLSignUpActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
-                                finish()
-                            }
-                            .addOnFailureListener { e ->
-                                RLopentoast( "Error saving user information: ${e.message}")
-                            }
-                    }
-                } else {
-                    // User creation failed
-                    RLopentoast("User creation failed: ${task.exception?.message}")
-                }
+          val authManager: RLAuthManager =RLAuthManager()
+           databaseManager =RLDatabaseManagerWrite()
+        authManager.RLRegisterUser(emailID, password) { user, error ->
+            if (user != null) {
+                val userId = user.uid
+                RLLiveUserEmailWrite(userId)
+            } else {
+                RLopentoast("Registration failed: ${error?.message}")
             }
+        }
+    }
+    private fun RLLiveUserEmailWrite(userId: String) {
+        databaseManager.RLLIVEUSERSEMAILWrite(userId,emailID) { success, error ->
+            if (success) {
+                RevoolaUserEmailWrite(userId)
+            } else {
+                RLopentoast("User write operation failed: ${error?.message}")
+            }
+        }
+    }
+    private fun RevoolaUserEmailWrite(userId: String) {
+        databaseManager.REVOOLAUSEREMAILSWrite(userId,emailID) { success, error ->
+            if (success) {
+                RevoolaUserForSearchWrite(userId)
+            } else {
+                RLopentoast("User write operation failed: ${error?.message}")
+            }
+        }
+    }
+    private fun RevoolaUserForSearchWrite(userId: String) {
+        val revoolaUserForSearchMap = hashMapOf(
+            "displayImage" to "",
+            "emailId" to emailID,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "name" to nickName,
+            "remark" to "Android",
+            "userId" to userId)
+        databaseManager.REVOOLAUSERFORSEARCHWrite(userId,revoolaUserForSearchMap) { success, error ->
+            if (success) {
+                RlLoginSuccessful(userId)
+            } else {
+                RLopentoast("User write operation failed: ${error?.message}")
+            }
+        }
+    }
+    private fun RlLoginSuccessful(userId:String){
+        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,userId)
+        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,emailID)
+        startActivity(Intent(this, RLSignUpActivityRL::class.java))
+        finish()
     }
     private fun RLopentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
@@ -99,7 +100,6 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         firstName = activityBinding.etfirstname.text.toString().trim()
         lastName = activityBinding.etlastname.text.toString().trim()
         nickName = activityBinding.etnickname.text.toString().trim()
-
         if (firstName.isEmpty()) {
             activityBinding.etfirstname.setError("First name is required.")
             activityBinding.etfirstname.requestFocus()

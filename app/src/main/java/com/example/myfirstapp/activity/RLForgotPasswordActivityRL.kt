@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databinding.RlActivityForgotPasswordBinding
 import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
@@ -42,16 +43,15 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
     }
     private fun RLSendPasswordResetEmail() {
         // Initialize Firebase Auth
-        val  auth = FirebaseAuth.getInstance()
-        auth.sendPasswordResetEmail(emailID)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Password reset email sent successfully", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
+        val  authManager = RLAuthManager()
+        authManager.RLForgotPasswordUser(emailID) { data, error ->
+            if (!data.isNullOrEmpty()) {
+                RLopentoast(data)
+                finish()
+            } else {
+                RLopentoast("Registration failed: ${error?.message}")
             }
+        }
     }
 
     private fun RLvalidation(): Boolean {
@@ -66,5 +66,9 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
             return false
         }
         return true
+    }
+
+    private fun RLopentoast(messageprint: String) {
+        Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
 }
