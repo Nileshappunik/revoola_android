@@ -28,6 +28,10 @@ package com.example.myfirstapp.utils
         const val REVOOLAUSERSETTINGS= "revoolaUserSettings"
         const val BASICDATA= "basicData"
         const val REVOOLAVIDEOKEYSMIND= "revoolaVideoKeysMind"
+        const val REVOOLAVIDEOKEYS= "revoolaVideoKeys"
+        const val REVOOLAVIDEOS= "revoolaVideos"
+        const val REVOOLAVIDEOSMIND= "revoolaVideosMind"
+
         const val FORALL= "forAll"
         const val FORENERGISE= "forEnergise"
         const val FORFOCUS= "forFocus"
@@ -36,6 +40,12 @@ package com.example.myfirstapp.utils
         const val FORRELAX= "forRelax"
         const val FORSLEEP= "forSleep"
         const val LISTOFVIDEOS= "listOfVideos"
+        const val FORDANCE= "forDance"
+        const val FORHIIT= "forHiit"
+        const val FORPILATES= "forPilates"
+        const val FORRIDE= "forRide"
+        const val FORWARMUP= "forWarmup"
+        const val FORYOGA= "forYoga"
 
 
 //      TODO: API

@@ -28,6 +28,38 @@ class RLDatabaseManagerRead {
             }
         }
     }
+    fun RLRevoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOKEYS)
+            .child(classname).child(RLConstants.LISTOFVIDEOS)
+            .get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(task.result?.value, null)
+            } else {
+                callback(null, task.exception)
+            }
+        }
+    }
+
+    fun RLRevoolaVideosRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
+        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOS).child(videoId)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(task.result?.value, null)
+                } else {
+                    callback(null, task.exception)
+                }
+            }
+    }
+    fun RLRevoolaVideosMindRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
+        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOSMIND).child(videoId)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(task.result?.value, null)
+                } else {
+                    callback(null, task.exception)
+                }
+            }
+    }
     fun RlreadData(path: String, callback: (Any?, Exception?) -> Unit) {
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {

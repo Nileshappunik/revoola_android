@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_dialog_background"
+    android:orientation="vertical"
+    android:padding="0dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/subscribedescription"
+        android:layout_margin="16dp"
+        android:fontFamily="@font/omnes_semibold_regular"
+        android:textSize="18sp"
+        android:textColor="@color/AppBlackColor"
+        android:gravity="center"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/AppDarkGrayColor" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="2"
+        android:background="@color/AppDarkGrayColor"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSubscribe"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/subscribe"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:background="@color/AppWhiteColor"
+            android:textSize="18sp"
+            android:layout_marginEnd="1dp"
+            android:textColor="@color/AppMainColor"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textSize="18sp"
+            android:background="@color/AppWhiteColor"
+            android:textColor="@color/AppMainColor"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>

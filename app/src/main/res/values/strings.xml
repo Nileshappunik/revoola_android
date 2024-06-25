@@ -341,5 +341,8 @@
     <string name="group">Group</string>
     <string name="selectgroup">Select Group</string>
 
+    <string name="subscribedescription">Your account is currently a Free account to access this content please subscribe to Premium.</string>
+    <string name="subscribe">SUBSCRIBE</string>
+
 
 </resources>

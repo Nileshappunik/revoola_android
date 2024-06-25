@@ -12,8 +12,7 @@
             android:layout_height="80dp"
             android:layout_marginStart="15dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/CornerCut"
-            android:src="@drawable/ride"/>
+            app:shapeAppearanceOverlay="@style/CornerCut"/>
 
         <ImageView
             android:id="@+id/img_right"
@@ -29,8 +28,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/img_mind"
-            android:src="@drawable/run"/>
+            android:layout_toEndOf="@+id/img_mind"/>
 
         <TextView
             android:id="@+id/txt_username"
@@ -41,8 +39,7 @@
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/img_user"
             android:layout_toStartOf="@+id/img_right"
-            android:textColor="@color/AppTextGrayColor"
-            android:text="sam Rehan"/>
+            android:textColor="@color/AppTextGrayColor"/>
 
         <TextView
             android:id="@+id/txt_classname"
@@ -56,8 +53,7 @@
             android:layout_toStartOf="@+id/img_right"
             android:layout_below="@+id/txt_username"
             android:textColor="@color/AppBlackColor"
-            android:fontFamily="@font/omnes_semibold_regular"
-            android:text="Introducing Laughter Yoga"/>
+            android:fontFamily="@font/omnes_semibold_regular"/>
 
         <TextView
             android:id="@+id/txt_classtime"
@@ -69,8 +65,7 @@
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/img_mind"
             android:layout_below="@+id/txt_classname"
-            android:textColor="@color/AppTextGrayColor"
-            android:text="17mins"/>
+            android:textColor="@color/AppTextGrayColor" />
 
         <View
             android:id="@+id/viewdivider"
@@ -92,8 +87,7 @@
             android:layout_toStartOf="@+id/img_right"
             android:layout_toEndOf="@+id/viewdivider"
             android:layout_below="@+id/txt_classname"
-            android:textColor="@color/AppTextGrayColor"
-            android:text="Video"/>
+            android:textColor="@color/AppTextGrayColor"/>
 
         <View
             android:layout_width="match_parent"

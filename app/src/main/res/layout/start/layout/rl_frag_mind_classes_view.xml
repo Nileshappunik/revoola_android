@@ -16,9 +16,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
+                    android:id="@+id/img_main_banner"
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
-                    android:src="@drawable/ride"
                     android:scaleType="fitXY"/>
                 <ImageView
                     android:id="@+id/ivBack"
@@ -39,7 +39,6 @@
                     android:layout_marginEnd="16dp"
                     android:textSize="36sp"
                     android:layout_below="@+id/ivBack"
-                    android:text="@string/introducinglaughteryouga"
                     android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppWhiteColor"
                     android:gravity="start"/>
@@ -64,7 +63,6 @@
                     android:layout_toEndOf="@+id/txt_with"
                     android:textSize="18sp"
                     android:layout_below="@+id/txt_title"
-                    android:text="SAM REHAN"
                     android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppWhiteColor"
                     android:gravity="start"/>
@@ -87,6 +85,7 @@
                         android:paddingBottom="15dp"
                         android:weightSum="3">
                         <RelativeLayout
+                            android:id="@+id/rl_schdual"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
@@ -195,7 +194,6 @@
                                     android:textSize="14sp"
                                     android:layout_marginStart="10dp"
                                     android:layout_toEndOf="@+id/img_minutes"
-                                    android:text="17 MINS"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppDarkGrayColor"
                                     android:gravity="start"/>
@@ -224,7 +222,6 @@
                                     android:layout_centerVertical="true"
                                     android:textSize="14sp"
                                     android:layout_marginEnd="10dp"
-                                    android:text="@string/video"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppTextGrayColor"
                                     android:gravity="start"/>
@@ -261,7 +258,6 @@
                                     android:textSize="14sp"
                                     android:layout_marginStart="10dp"
                                     android:layout_toEndOf="@+id/img_warmup"
-                                    android:text="5 MIN"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppTextGrayColor"
                                     android:gravity="start"/>
@@ -298,7 +294,6 @@
                                     android:textSize="14sp"
                                     android:layout_marginStart="10dp"
                                     android:layout_toEndOf="@+id/img_workout"
-                                    android:text="35 MIN"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppTextGrayColor"
                                     android:gravity="start"/>
@@ -334,7 +329,6 @@
                                     android:textSize="14sp"
                                     android:layout_marginStart="10dp"
                                     android:layout_toEndOf="@+id/img_cooldown"
-                                    android:text="5 MIN"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppTextGrayColor"
                                     android:gravity="start"/>
@@ -378,7 +372,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
-                            android:text="@string/introducinglaughteryouga"
                             android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppBlackColor"
                             android:gravity="start"/>
@@ -388,8 +381,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             android:textSize="16sp"
-                            android:text="@string/descriptionofvideo"
-                            android:fontFamily="@font/omnes_regular"
+                           android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppTextGrayColor"
                             android:gravity="start"/>
 
@@ -428,7 +420,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
-                            android:text="SAM REHAN"
                             android:layout_marginTop="2dp"
                             android:layout_marginEnd="10dp"
                             android:layout_toStartOf="@+id/img_traner"
@@ -442,7 +433,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
-                            android:text="24 CLASSES"
                             android:layout_marginTop="2dp"
                             android:layout_marginEnd="10dp"
                             android:layout_toStartOf="@+id/img_traner"
@@ -454,7 +444,6 @@
                             android:id="@+id/img_traner"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:src="@drawable/wellcome"
                             android:scaleType="centerCrop"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"/>

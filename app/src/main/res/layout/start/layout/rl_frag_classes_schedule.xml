@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppWhiteColor">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/btn_scheduleclass">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/img_main_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:src="@drawable/ride"
+                    android:scaleType="fitXY"/>
+                <ImageView
+                    android:id="@+id/ivBack"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginStart="16dp"
+                    android:padding="10dp"
+                    android:background="@drawable/full_round"
+                    android:src="@drawable/ic_back_g"/>
+
+                <TextView
+                    android:id="@+id/txt_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="36sp"
+                    android:text="Set Personal Targets"
+                    android:layout_below="@+id/ivBack"
+                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:textColor="@color/AppWhiteColor"
+                    android:gravity="start"/>
+                <TextView
+                    android:id="@+id/txt_with"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="3dp"
+                    android:textSize="18sp"
+                    android:layout_below="@+id/txt_title"
+                    android:text="@string/with"
+                    android:fontFamily="@font/omnes_regular"
+                    android:textColor="@color/AppWhiteColor"
+                    android:gravity="start"/>
+                <TextView
+                    android:id="@+id/txt_namewith"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/txt_with"
+                    android:textSize="18sp"
+                    android:text="John MArtimore"
+                    android:layout_below="@+id/txt_title"
+                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:textColor="@color/AppWhiteColor"
+                    android:gravity="start"/>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_below="@+id/txt_namewith"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="15dp"
+                        android:paddingBottom="15dp"
+                        android:weightSum="3">
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                            <ImageView
+                                android:id="@+id/img_schdual"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_centerHorizontal="true"
+                                android:src="@drawable/ic_calendar_today"/>
+                            <TextView
+                                android:id="@+id/txt_schdual"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:textSize="14sp"
+                                android:layout_below="@+id/img_schdual"
+                                android:text="@string/schedule"
+                                android:fontFamily="@font/omnes_regular"
+                                android:textColor="@color/AppTextGrayColor"
+                                android:gravity="center"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_below="@+id/card_1"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="1dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:id="@+id/lay_timevideo"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:layout_weight="1">
+                                <ImageView
+                                    android:id="@+id/img_minutes"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerVertical="true"
+                                    app:tint="@color/AppBlackColor"
+                                    android:src="@drawable/fd_active_time_green"/>
+                                <TextView
+                                    android:id="@+id/txt_minutes"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:textSize="14sp"
+                                    android:text="20 mins"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_toEndOf="@+id/img_minutes"
+                                    android:fontFamily="@font/omnes_regular"
+                                    android:textColor="@color/AppDarkGrayColor"
+                                    android:gravity="start"/>
+
+                            </RelativeLayout>
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/AppLightGrayColor"/>
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center_horizontal"
+                                android:layout_weight="1">
+                                <ImageView
+                                    android:id="@+id/img_video"
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_toEndOf="@+id/txt_video"
+                                    android:src="@drawable/ic_easy"/>
+                                <TextView
+                                    android:id="@+id/txt_video"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:textSize="14sp"
+                                    android:text="Beginner"
+                                    android:layout_marginEnd="10dp"
+                                    android:fontFamily="@font/omnes_regular"
+                                    android:textColor="@color/AppMainColor"
+                                    android:gravity="start"/>
+                            </RelativeLayout>
+                        </LinearLayout>
+                        <View
+                            android:id="@+id/view_timevideo"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_below="@+id/lay_timevideo"
+                            android:background="@color/AppLightGrayColor"/>
+
+                    </RelativeLayout>
+
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_below="@+id/card_2"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/txt_video_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textAlignment="center"
+                            android:text="WHEN WOULD YOU LIKE To SEHEDULE THIS SESSION?"
+                            android:fontFamily="@font/omnes_semibold_regular"
+                            android:textColor="@color/AppBlackColor" />
+                        <TextView
+                            android:id="@+id/txt_video_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:textSize="18sp"
+                            android:textAlignment="center"
+                            android:text="SELECT DATE TIME"
+                           android:fontFamily="@font/omnes_semibold_regular"
+                            android:textColor="@color/AppBlackColor" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="@color/AppWhiteColor"
+                    android:layout_below="@+id/card_3"/>
+
+            </RelativeLayout>
+        </ScrollView>
+        <TextView
+            android:id="@+id/btn_scheduleclass"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/schedule"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppWhiteColor"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:backgroundTint="@color/AppLightGrayColor"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/full_round_green"/>
+    </RelativeLayout>
+
+</layout>
