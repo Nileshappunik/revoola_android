@@ -22,6 +22,7 @@
     <string name="classtype">Class Type</string>
     <string name="unitofmeasure">Unit of Measure</string>
     <string name="privacy">Privacy</string>
+    <string name="privacycaps">PRIVACY</string>
     <string name="imperial">Imperial</string>
 
     <!--bottom string-->
@@ -272,12 +273,14 @@
     <string name="stop">STOP</string>
     <string name="save">SAVE</string>
     <string name="sessioncomplete">Session Complete!</string>
+    <string name="workoutcomplete">WORKOUT COMPLETE!</string>
     <string name="ridesession">Ride Session</string>
     <string name="personaliseyoursessiobn">PERSONALISE YOUR SESSION</string>
     <string name="giveyoursessionname">Give your session a name</string>
     <string name="addupto5photos">Add up to 5 Photos</string>
     <string name="addnotes">Add Notes</string>
     <string name="whocanseeyouractivity">Who can see your activity?</string>
+    <string name="whocanseethispost">WHO CAN SEE THIS POST?</string>
     <string name="sharemap">Share Map?</string>
     <string name="privatetx">Private</string>
     <string name="anyone">Anyone</string>
@@ -339,10 +342,13 @@
     <string name="inzone">% IN ZONE</string>
     <string name="you">You</string>
     <string name="group">Group</string>
+    <string name="groups">Groups</string>
     <string name="selectgroup">Select Group</string>
 
     <string name="subscribedescription">Your account is currently a Free account to access this content please subscribe to Premium.</string>
     <string name="subscribe">SUBSCRIBE</string>
+    <string name="invitefriendorgrouptosession">Invite Friends or Groups to join  your session.</string>
+    <string name="enternametosearch">Enter name to search</string>
 
 
 </resources>

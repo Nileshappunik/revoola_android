@@ -12,6 +12,7 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMindClassesViewBinding
+import com.example.myfirstapp.fragment.start.adapter.RLFragChooseYourSensorClass
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -55,16 +56,32 @@ class RLFragMindClassesView : RLBaseFragment() {
                 fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
             }
             RLMindUiSetup(VideoCardData)
+            RLClickToSechedule(data,classtype,audioVideoType)
         }else{
             fragBinding.layWorklog.visibility=View.VISIBLE
             fragBinding.viewTimevideo.visibility=View.VISIBLE
             fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved_gray)
             RLBodyUiSetup(VideoCardData)
+            RLClickToSechedule(data,classtype,"")
         }
-        fragBinding.rlSchdual.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule(), TAG, true,null, false)
+        fragBinding.btnStartclass.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("VIDEODATA",data)
+            bundle.putString(RLConstants.CLASSTYPE,classtype)
+            (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensorClass().newInstance(bundle), TAG, true,null, false)
         }
     }
+
+    private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
+        fragBinding.rlSchdual.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("VIDEODATA",data)
+            bundle.putString(RLConstants.CLASSTYPE,classtype)
+            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
+        }
+    }
+
     private fun RLMindUiSetup(VideoData:RLFulllVideoModel){
         fragBinding.txtTitle.setText(VideoData.rideTitle)
         fragBinding.txtVideoTitle.setText(VideoData.rideTitle)

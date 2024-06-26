@@ -194,55 +194,43 @@
                             android:layout_below="@+id/lay_timevideo"
                             android:background="@color/AppLightGrayColor"/>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:layout_below="@+id/view_timevideo"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/txt_video_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:text="WHEN WOULD YOU LIKE To SEHEDULE THIS SESSION?"
+                                android:fontFamily="@font/omnes_semibold_regular"
+                                android:textColor="@color/AppBlackColor" />
+                            <TextView
+                                android:id="@+id/txt_select_datatime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:text="SELECT DATE TIME"
+                                android:fontFamily="@font/omnes_semibold_regular"
+                                android:textColor="@color/AppBlackColor" />
+
+                        </LinearLayout>
+
                     </RelativeLayout>
 
                 </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_below="@+id/card_2"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/txt_video_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textAlignment="center"
-                            android:text="WHEN WOULD YOU LIKE To SEHEDULE THIS SESSION?"
-                            android:fontFamily="@font/omnes_semibold_regular"
-                            android:textColor="@color/AppBlackColor" />
-                        <TextView
-                            android:id="@+id/txt_video_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:textSize="18sp"
-                            android:textAlignment="center"
-                            android:text="SELECT DATE TIME"
-                           android:fontFamily="@font/omnes_semibold_regular"
-                            android:textColor="@color/AppBlackColor" />
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
                     android:background="@color/AppWhiteColor"
-                    android:layout_below="@+id/card_3"/>
+                    android:layout_below="@+id/card_2"/>
 
             </RelativeLayout>
         </ScrollView>
@@ -255,7 +243,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:text="@string/schedule"
-            android:fontFamily="@font/omnes_regular"
+            android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppWhiteColor"
             android:textStyle="bold"
             android:gravity="center"

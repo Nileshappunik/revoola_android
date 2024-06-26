@@ -62,7 +62,6 @@ class RLYourWayListAdapter(val context: FragmentActivity?, valueslist: Array<Str
                 bundle.putString("YourWayType",itemres)
                 (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, RLFragChooseYourSensor::class.java.simpleName, false)
-
             }
         }
     }
