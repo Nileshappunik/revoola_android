@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/relay_sensor_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null">
+
+        <ImageView
+            android:id="@+id/img_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            app:tint="@color/AppWhiteColor"
+            android:src="@drawable/fd_active_time_green"
+            android:layout_marginTop="10dp"/>
+
+          <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/omnes_regular"
+            android:background="@null"
+            android:text="@string/time"
+              android:layout_toEndOf="@+id/img_icon"
+            android:textColor="@color/AppLightGrayColor"
+            android:textSize="14sp"/>
+
+
+        <TextView
+            android:id="@+id/txt_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:background="@null"
+            android:layout_below="@+id/txt_name"
+            android:layout_toEndOf="@+id/img_icon"
+            android:layout_marginStart="10dp"
+            android:text="0"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="18sp"/>
+
+        <View
+            android:id="@+id/progress_view1"
+            android:layout_width="150dp"
+            android:layout_height="1dp"
+            android:layout_below="@+id/txt_number"
+            android:layout_marginTop="35dp"
+            android:background="@color/AppBottomGrayColor"/>
+    </RelativeLayout>
+
+</layout>

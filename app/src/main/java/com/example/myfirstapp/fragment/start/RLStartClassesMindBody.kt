@@ -1,17 +1,17 @@
 package com.example.myfirstapp.fragment.start
 
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.DisplayMetrics
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.MediaController
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.myfirstapp.RLBaseFragment
@@ -22,6 +22,7 @@ import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
+import java.util.concurrent.TimeUnit
 
 class RLStartClassesMindBody : RLBaseFragment() {
     val TAG: String = RLStartClassesMindBody::class.java.simpleName
@@ -29,6 +30,7 @@ class RLStartClassesMindBody : RLBaseFragment() {
     var classtype:String=""
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
+    private val handler = Handler(Looper.getMainLooper())
 
     private val binding by lazy {
         RlStartClassesMindBodyBinding.inflate(layoutInflater)
@@ -39,8 +41,7 @@ class RLStartClassesMindBody : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-       // activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_start_classes_mind_body, container) as RlStartClassesMindBodyBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLStartClassesMindBody" )
@@ -60,17 +61,26 @@ class RLStartClassesMindBody : RLBaseFragment() {
     }
 
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
-        val videoUri = Uri.parse(VideoCardData.streamingUrl)
-        // Set the media controller for the VideoView
-        val mediaController = MediaController(requireContext())
+        fragBinding.inlayTime.progressView1.visibility=View.GONE
+
+        //val videoUri = Uri.parse(VideoCardData.streamingUrl)
+        val videoUri = Uri.parse(VideoCardData.streamingUrlIphonex)
+
+        /*val mediaController = MediaController(requireContext())
         mediaController.setAnchorView(fragBinding.videoView)
-        fragBinding.videoView.setMediaController(mediaController)
+        fragBinding.videoView.setMediaController(mediaController)*/
+
         // Set the URI for the VideoView
         fragBinding.videoView.setVideoURI(videoUri)
 
         // Start playing the video
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
+            RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
+            fragBinding.seekbarVideo.max=fragBinding.videoView.duration
             mediaPlayer.start()
+            fragBinding.layPlayStop.visibility=View.GONE
+            fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
+            handler.post(RLupdateSeekBarRunnable)
         }
 
         // Handle errors
@@ -110,8 +120,22 @@ class RLStartClassesMindBody : RLBaseFragment() {
                 fragBinding.layPlayStop.visibility=View.VISIBLE
             }
         }
-        //RLFullScreenVideoView()
 
+    }
+
+    private val RLupdateSeekBarRunnable = object : Runnable {
+        override fun run() {
+            fragBinding.seekbarVideo.progress = fragBinding.videoView.currentPosition
+            handler.postDelayed(this, 1000)
+            Log.d(TAG,"TIME:- ${fragBinding.videoView.currentPosition}")
+            //fragBinding.txtVideoTimePending.setText(RLformatTime(fragBinding.videoView.currentPosition))
+        }
+    }
+
+    private fun RLformatTime(milliseconds: Int): String {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds.toLong())
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds.toLong()) % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
     private fun RLMindBodyUISet(VideoData: RLFulllVideoModel) {
         fragBinding.txtTitle.setText(VideoData.rideTitle)
@@ -151,19 +175,24 @@ class RLStartClassesMindBody : RLBaseFragment() {
             }
         }.start()
     }
-    private fun RLFullScreenVideoView() {
-        /*try {
-            val metrics = DisplayMetrics()
-            activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-            val params = fragBinding.videoView.layoutParams as LinearLayout.LayoutParams
-            params.width = metrics.widthPixels
-            params.height = metrics.heightPixels
-            params.leftMargin = 0
-            fragBinding.videoView.layoutParams = params
-        }catch (e:Exception){
-            Log.e(TAG,"EXCEPTION:- ${e.message}")
-        }*/
 
+    private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
+        val layoutParams = videoView.layoutParams
+        val viewWidth = videoView.width.toFloat()
+        val viewHeight = videoView.height.toFloat()
+        val aspectRatio = videoWidth.toFloat() / videoHeight
+
+        if (viewWidth / viewHeight > aspectRatio) {
+            // Adjust height to fit the width
+            layoutParams.height = (viewWidth / aspectRatio).toInt()
+            layoutParams.width = viewWidth.toInt()
+        } else {
+            // Adjust width to fit the height
+            layoutParams.width = (viewHeight * aspectRatio).toInt()
+            layoutParams.height = viewHeight.toInt()
+        }
+
+        videoView.layoutParams = layoutParams
     }
 
 }

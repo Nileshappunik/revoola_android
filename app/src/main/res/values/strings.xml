@@ -47,6 +47,8 @@
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
     <string name="calories">CALORIES</string>
+    <string name="heartrate">HEARTRATE</string>
+    <string name="cadence">CADENCE</string>
     <string name="caloriessmall">Calories</string>
     <string name="caloriessmallkcal">Calories (Kcal)</string>
     <string name="distance">DISTANCE</string>

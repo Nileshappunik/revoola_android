@@ -309,7 +309,7 @@
             android:layout_height="match_parent"
             android:background="@color/AppBlackColor"
             android:gravity="center"
-            android:visibility="visible"
+            android:visibility="gone"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textSize="50sp"
             android:textColor="@color/AppWhiteColor"/>

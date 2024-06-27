@@ -116,6 +116,9 @@ dependencies {
     //pinview
     implementation ("com.github.GoodieBag:Pinview:v1.4")
 
+    //VIDEO PLAY
+    implementation ("bg.devlabs:fullscreen-video-view:1.2.0")
+
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
 

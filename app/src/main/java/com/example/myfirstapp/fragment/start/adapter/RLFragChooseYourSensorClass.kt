@@ -37,12 +37,11 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragChooseYourSensorBinding
 import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
 import com.example.myfirstapp.fragment.start.RLStartClassesMindBody
+import com.example.myfirstapp.fragment.start.RLStartClassesMindBodyWithHeartSensor
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
-import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
-import com.google.gson.Gson
 import java.util.UUID
 
 class RLFragChooseYourSensorClass : RLBaseFragment() , RLItemClickListenerAdapter {
@@ -101,23 +100,31 @@ class RLFragChooseYourSensorClass : RLBaseFragment() , RLItemClickListenerAdapte
                 RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
                 isHeartRateDevice=false
             }
-            RLclickToNextScreenOpen()
+            RLclickToNextScreenOpen(false)
         }
         fragBinding.tvskip.setOnClickListener {
             RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
             RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
             isHeartRateDevice=false
-            RLclickToNextScreenOpen()
+            RLclickToNextScreenOpen(true)
         }
     }
-    private fun RLclickToNextScreenOpen(){
+    private fun RLclickToNextScreenOpen(withoutsensor:Boolean){
         classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         val data=  requireArguments().getString("VIDEODATA","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
         bundle.putString(RLConstants.CLASSTYPE,classtype)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-        (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBody().newInstance(bundle), TAG, true, null, false)
+        if (withoutsensor){
+            (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBody().newInstance(bundle), TAG, true, null, false)
+        }else{
+             if (isHeartRateDevice){
+                 (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBodyWithHeartSensor().newInstance(bundle), TAG, true, null, false)
+             }else{
+                 (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBody().newInstance(bundle), TAG, true, null, false)
+             }
+        }
     }
     private fun RLcheckAndRequestPermissions() {
         val permissions = mutableListOf<String>()
