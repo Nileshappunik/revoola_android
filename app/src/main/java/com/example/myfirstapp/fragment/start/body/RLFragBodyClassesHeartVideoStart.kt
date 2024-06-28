@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.body
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
@@ -11,7 +11,6 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -20,13 +19,10 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -36,10 +32,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlStartClassesMindBodyBinding
 import com.example.myfirstapp.databinding.RlStartClassesMindBodyWithSensorBinding
-import com.example.myfirstapp.fragment.start.adapter.RLMindClassListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLStartClassAttendListAdapter
+import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLConstants
@@ -47,10 +42,9 @@ import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
-class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
-    val TAG: String = RLStartClassesMindBodyWithHeartSensor::class.java.simpleName
+class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
+    val TAG: String = RLFragBodyClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlStartClassesMindBodyWithSensorBinding
-    var classtype:String=""
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
 
@@ -69,7 +63,7 @@ class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
         RlStartClassesMindBodyWithSensorBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLStartClassesMindBodyWithHeartSensor()
+        val fragment = RLFragBodyClassesHeartVideoStart()
         fragment.arguments = bundle
         return fragment
     }
@@ -77,14 +71,16 @@ class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_start_classes_mind_body_with_sensor, container) as RlStartClassesMindBodyWithSensorBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLStartClassesMindBodyWithHeartSensor" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClassesHeartVideoStart" )
         RLuisetup()
+        @Suppress("DEPRECATION")
+        requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLstartCountdown()
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-        classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
@@ -155,7 +151,7 @@ class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,classtype)
+            bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
@@ -195,27 +191,20 @@ class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
     private fun RLMindBodyUISet(VideoData: RLFulllVideoModel) {
         fragBinding.txtTitle.setText(VideoData.rideTitle)
         fragBinding.txtNamewith.setText(VideoData.instructor)
-        if (classtype.equals(RLConstants.MIND)){
-            //MIND
-            fragBinding.rlBodyTimenumber.visibility=View.GONE
-            fragBinding.rlMindTimenumber.visibility=View.VISIBLE
-            fragBinding.txtMinutes.setText(VideoData.duration+" Class")
+        //BODY
+        fragBinding.rlBodyTimenumber.visibility=View.VISIBLE
+        fragBinding.rlMindTimenumber.visibility=View.GONE
+        fragBinding.txtMinutesMind.setText(VideoData.duration+" Class")
+        fragBinding.txtVideo.setText(VideoData.difficulty)
+        if(VideoData.difficulty.equals("Beginner")){
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
+        }else if (VideoData.difficulty.equals("Advanced")){
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
         }else{
-            //BODY
-            fragBinding.rlBodyTimenumber.visibility=View.VISIBLE
-            fragBinding.rlMindTimenumber.visibility=View.GONE
-            fragBinding.txtMinutesMind.setText(VideoData.duration+" Class")
-            fragBinding.txtVideo.setText(VideoData.difficulty)
-            if(VideoData.difficulty.equals("Beginner")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
-            }else if (VideoData.difficulty.equals("Advanced")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
-            }else{
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
-            }
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
         }
     }
     private fun RLstartCountdown() {
@@ -337,12 +326,19 @@ class RLStartClassesMindBodyWithHeartSensor : RLBaseFragment() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        fragBinding.videoView.stopPlayback()
         try {
             if (isServiceBound) {
                 requireActivity().unbindService(RLserviceConnection)
                 isServiceBound = false
             }
             requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
+            // Show the status bar and navigation bar again and set dark color
+            @Suppress("DEPRECATION")
+            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            @Suppress("DEPRECATION")
+            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
         }catch (e:Exception){
             Log.e(TAG,"Exception:- "+e.message)
         }

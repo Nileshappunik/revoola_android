@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.mind
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -12,7 +12,7 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMindClassesViewBinding
-import com.example.myfirstapp.fragment.start.adapter.RLFragChooseYourSensorClass
+import com.example.myfirstapp.fragment.start.classes.RLClassesSchedule
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -20,7 +20,6 @@ import com.google.gson.Gson
 class RLFragMindClassesView : RLBaseFragment() {
     val TAG: String = RLFragMindClassesView::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesViewBinding
-    var classtype:String=""
     private val binding by lazy {
         RlFragMindClassesViewBinding.inflate(layoutInflater)
     }
@@ -38,37 +37,27 @@ class RLFragMindClassesView : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         RLonBackPresAct(fragBinding.ivBack)
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
-        if (classtype.equals(RLConstants.MIND)){
-            fragBinding.layWorklog.visibility=View.GONE
-            fragBinding.viewTimevideo.visibility=View.GONE
-            fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
-            fragBinding.txtVideo.setText(audioVideoType)
-            if (audioVideoType.equals("Video")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_video)
-            }else{
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
-            }
-            RLMindUiSetup(VideoCardData)
-            RLClickToSechedule(data,classtype,audioVideoType)
+        fragBinding.layWorklog.visibility=View.GONE
+        fragBinding.viewTimevideo.visibility=View.GONE
+        fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved)
+        fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppTextGrayColor))
+        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+        fragBinding.txtVideo.setText(audioVideoType)
+        if (audioVideoType.equals("Video")){
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_video)
         }else{
-            fragBinding.layWorklog.visibility=View.VISIBLE
-            fragBinding.viewTimevideo.visibility=View.VISIBLE
-            fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved_gray)
-            RLBodyUiSetup(VideoCardData)
-            RLClickToSechedule(data,classtype,"")
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
         }
+        RLMindUiSetup(VideoCardData)
+        RLClickToSechedule(data,RLConstants.MIND,audioVideoType)
         fragBinding.btnStartclass.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,classtype)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensorClass().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
         }
     }
 
@@ -97,37 +86,5 @@ class RLFragMindClassesView : RLBaseFragment() {
             //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
             .into(fragBinding.imgMainBanner)
     }
-    private fun RLBodyUiSetup(VideoData:RLFulllVideoModel){
-        fragBinding.txtTitle.setText(VideoData.rideTitle)
-        fragBinding.txtVideoTitle.setText(VideoData.rideTitle)
-        fragBinding.txtNamewith.setText(VideoData.instructor)
-        fragBinding.txtTrainerName.setText(VideoData.instructor)
-        fragBinding.txtMinutes.setText(VideoData.duration)
-        fragBinding.txtVideoDescription.setText(VideoData.rideDescription)
-        fragBinding.txtTotalClass.setText(VideoData.instructorClasses+" CLASSES")
 
-        fragBinding.txtWarmupMinutes.setText(VideoData.minwarmup+" MIN")
-        fragBinding.txtCooldownMinutes.setText(VideoData.mincooldown+" MIN")
-        fragBinding.txtWorkoutMinutes.setText(VideoData.mininstruction+" MIN")
-
-        Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
-            .into(fragBinding.imgTraner)
-        Glide.with(requireContext()).load(VideoData.imageLinkSquareV2)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
-            .into(fragBinding.imgMainBanner)
-
-        fragBinding.txtVideo.setText(VideoData.difficulty)
-        if(VideoData.difficulty.equals("Beginner")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
-        }else if (VideoData.difficulty.equals("Advanced")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
-        }else{
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
-        }
-
-    }
 }

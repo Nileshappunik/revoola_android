@@ -16,13 +16,13 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlLayoutMindClassesListBinding
-import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesView
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesView
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.model.RLVideoModel
 import com.google.gson.Gson
 
-class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val context: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLMindClassListAdapter"
+class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val context: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val TAG = "RLBodyClassListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
         return MyViewHolder(layoutbinding)
@@ -40,14 +40,14 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             try{
-                RLGetVideoListMind(cardData.key,itemVIew,cardData.classtype)
+                RLGetVideoListBody(cardData.key,itemVIew)
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")
             }
         }
-        private fun RLGetVideoListMind(videoID:String,itemVIew: View,audioVideoType:String) {
+      private fun RLGetVideoListBody(videoID:String,itemVIew: View) {
             val databaseManager= RLDatabaseManagerRead()
-            databaseManager.RLRevoolaVideosMindRead(videoID){ data, error ->
+            databaseManager.RLRevoolaVideosRead(videoID){ data, error ->
                 if (data != null) {
                     val gson = Gson()
                     val jsonObject = gson.toJson(data)
@@ -55,25 +55,21 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
                     layoutBinding.txtClasstime.setText(VideoData.duration)
                     layoutBinding.txtUsername.setText(VideoData.instructor)
                     layoutBinding.txtClassname.setText(VideoData.rideTitle)
-                    //layoutBinding.txtVideoaudio.setText(audioVideoType)
                     layoutBinding.txtVideoaudio.setText(VideoData.difficulty)
                     Glide.with(context!!).load(VideoData.imageLinkInstructor)
                         //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
                         .into(layoutBinding.imgUser)
                     Glide.with(context).load(VideoData.imageLinkSquareV2)
-                        //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                       // .placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
                         .into(layoutBinding.imgMind)
                     itemVIew.setOnClickListener {
                         val bundle = Bundle()
-                        bundle.putString("AUDIOVIDEOTYPE", audioVideoType)
                         bundle.putString("VIDEODATA",jsonObject)
-                        (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, RLFragMindClassesView::class.java.simpleName, false)
+                        (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, false)
                     }
-
                 }
             }
         }
-
         private fun RLshowSubscribeDialog() {
             val sucDialog: Dialog = Dialog(context!!)
             sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

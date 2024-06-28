@@ -1,9 +1,8 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.body
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,41 +15,37 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
-import com.example.myfirstapp.fragment.start.adapter.RLMindClassListAdapter
 import com.example.myfirstapp.databinding.RlDailogClassFilterBinding
 import com.example.myfirstapp.databinding.RlFragMindClassesBinding
+import com.example.myfirstapp.fragment.start.adapter.RLBodyClassListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.google.gson.reflect.TypeToken
 import com.example.myfirstapp.model.RLVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
-class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
-    val TAG: String = RLFragMindClasses::class.java.simpleName
+class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
+    val TAG: String = RLFragBodyClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
-    var classtype:String=""
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLFragMindClasses()
+        val fragment = RLFragBodyClasses()
         fragment.arguments = bundle
         return fragment
     }
-    //val valueslistMind = arrayOf("All", "Relax","Sleep","Happiness","Focus","Energise","Mindful Movement")
-    val valueslistMind = arrayOf("ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT")
     //val valueslistBody = arrayOf("All", "HIIT","Ride","Yoga","Pilates","Dance","Warm")
     val valueslistBody = arrayOf("ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClasses" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         fragBinding.toolbar.tvTitle.setTextColor(resources.getColor(R.color.AppBlackColor))
         RLonBackPresAct(fragBinding.toolbar.ivBack)
         fragBinding.toolbar.ivNotification.visibility=View.VISIBLE
@@ -62,33 +57,12 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
-        if (classtype.equals(RLConstants.MIND)){
-            fragBinding.toolbar.tvTitle.setText(R.string.mindclasses)
-            RLGetMindVideoList(RLConstants.FORALL)
-            val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistMind,activity)
-            fragBinding.recycleSessionTitle.adapter = adaptertitle
-        }else{
-            fragBinding.toolbar.tvTitle.setText(R.string.bodyclasses)
-            RLGetBodyVideoList(RLConstants.FORALL)
-            val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
-            fragBinding.recycleSessionTitle.adapter = adaptertitle
-        }
+        fragBinding.toolbar.tvTitle.setText(R.string.bodyclasses)
+        val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
+        fragBinding.recycleSessionTitle.adapter = adaptertitle
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
-    }
-    private fun RLGetMindVideoList(videotype: String) {
-        val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLREVOOLAVIDEOKEYSMINDRead(videotype){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
-                val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
-                val videoList = videoMap.values.toList()
-                val adapter = RLMindClassListAdapter(true,videoList,activity,classtype)
-                fragBinding.rvItemmindclass.adapter = adapter
-            }
-        }
+        RLGetBodyVideoList(RLConstants.FORALL)
     }
     private fun RLGetBodyVideoList(videotype: String) {
         val databaseManager= RLDatabaseManagerRead()
@@ -99,7 +73,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-                val adapter = RLMindClassListAdapter(false,videoList,activity,classtype)
+                val adapter = RLBodyClassListAdapter(videoList,activity)
                 fragBinding.rvItemmindclass.adapter = adapter
             }
         }
@@ -160,60 +134,28 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
 
     }
     override fun onItemClick(position: Int) {
-        if (classtype.equals(RLConstants.MIND)){
-           val selectiontitle= valueslistMind[position]
-            when(selectiontitle){
-                "ALL"->{
-                    RLGetMindVideoList(RLConstants.FORALL)
-                }
-                "RELAX"->{
-                    RLGetMindVideoList(RLConstants.FORRELAX)
-                }
-                "SLEEP"->{
-                    RLGetMindVideoList(RLConstants.FORSLEEP)
-                }
-                "HAPPINESS"->{
-                    RLGetMindVideoList(RLConstants.FORHAPPINESS)
-                }
-                "FOCUS"->{
-                    RLGetMindVideoList(RLConstants.FORFOCUS)
-                }
-                "ENERGISE"->{
-                    RLGetMindVideoList(RLConstants.FORENERGISE)
-                }
-                "MINDFUL"->{
-                    RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT)
-                }
-                "MOVEMENT"->{
-                    RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT)
-                }
+        val selectiontitle= valueslistBody[position]
+        when(selectiontitle){
+            "ALL"->{
+                RLGetBodyVideoList(RLConstants.FORALL)
             }
-
-        }
-        else{
-            val selectiontitle= valueslistBody[position]
-            when(selectiontitle){
-                "ALL"->{
-                    RLGetBodyVideoList(RLConstants.FORALL)
-                }
-                "HIIT"->{
-                    RLGetBodyVideoList(RLConstants.FORHIIT)
-                }
-                "RIDE"->{
-                    RLGetBodyVideoList(RLConstants.FORRIDE)
-                }
-                "YOGA"->{
-                    RLGetBodyVideoList(RLConstants.FORYOGA)
-                }
-                "PILATES"->{
-                    RLGetBodyVideoList(RLConstants.FORPILATES)
-                }
-                "DANCE"->{
-                    RLGetBodyVideoList(RLConstants.FORDANCE)
-                }
-                "WARM"->{
-                    RLGetBodyVideoList(RLConstants.FORWARMUP)
-                }
+            "HIIT"->{
+                RLGetBodyVideoList(RLConstants.FORHIIT)
+            }
+            "RIDE"->{
+                RLGetBodyVideoList(RLConstants.FORRIDE)
+            }
+            "YOGA"->{
+                RLGetBodyVideoList(RLConstants.FORYOGA)
+            }
+            "PILATES"->{
+                RLGetBodyVideoList(RLConstants.FORPILATES)
+            }
+            "DANCE"->{
+                RLGetBodyVideoList(RLConstants.FORDANCE)
+            }
+            "WARM"->{
+                RLGetBodyVideoList(RLConstants.FORWARMUP)
             }
         }
     }

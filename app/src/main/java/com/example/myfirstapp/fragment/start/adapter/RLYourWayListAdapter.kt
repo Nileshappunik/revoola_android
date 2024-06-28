@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutStartListBinding
-import com.example.myfirstapp.fragment.start.RLFragChooseYourSensor
+import com.example.myfirstapp.fragment.start.yourway.RLFragChooseYourSensor
 
 class RLYourWayListAdapter(val context: FragmentActivity?, valueslist: Array<String>, drawableArray: Array<Drawable?>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

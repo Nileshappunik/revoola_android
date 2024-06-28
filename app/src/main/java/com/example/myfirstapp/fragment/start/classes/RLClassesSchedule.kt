@@ -1,11 +1,10 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.classes
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +12,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragClassesScheduleBinding
-import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
-import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager

@@ -47,6 +47,16 @@
             android:textSize="18sp"/>
 
         <View
+            android:id="@+id/progress_view2"
+            android:layout_width="150dp"
+            android:layout_height="1dp"
+            android:layout_below="@+id/txt_number"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/AppWhiteColor"/>
+
+        <View
             android:id="@+id/progress_view1"
             android:layout_width="150dp"
             android:layout_height="1dp"

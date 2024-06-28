@@ -71,10 +71,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp"
+            android:layout_marginStart="20dp"
             android:orientation="horizontal"
             android:gravity="center">
 
@@ -82,27 +84,34 @@
             <include
                 android:id="@+id/inlay_time"
                 layout="@layout/rl_common_start_class_with_sensor"/>
-
-            <ProgressBar
-                android:id="@+id/seekbar_video"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="105dp"
-                android:layout_marginStart="20dp"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:progress="0"
-                android:max="100"
-                android:progressBackgroundTint="@color/transparent50"
-                android:progressTint="@color/AppWhiteColor"
-                android:indeterminate="false" />
+                android:layout_marginStart="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/txt_Video_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:background="@null"
+                    android:text="00:00"
+                    android:textColor="@color/AppWhiteColor"
+                    android:textSize="18sp"/>
+                <ProgressBar
+                    android:id="@+id/seekbar_video"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="105dp"
+                    android:layout_height="wrap_content"
+                    android:progress="0"
+                    android:max="100"
+                    android:layout_below="@+id/txt_Video_time"
+                    android:progressBackgroundTint="@color/transparent50"
+                    android:progressTint="@color/AppWhiteColor"
+                    android:indeterminate="false" />
+            </RelativeLayout>
 
-          <!--  <SeekBar
-                android:id="@+id/seekbar_video1"
-                android:layout_width="200dp"
-                android:max="100"
-                android:progress="0"
-                android:thumbTint="@color/AppWhiteColor"
-                android:progressBackgroundTint="@color/AppWhiteColor"
-                android:layout_height="wrap_content" />-->
 
         </LinearLayout>
 
@@ -175,6 +184,7 @@
                     android:id="@+id/rl_mind_timenumber"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
+                    android:visibility="visible"
                     android:orientation="horizontal"
                     android:layout_below="@+id/lay_width"
                     android:gravity="center">
@@ -198,70 +208,6 @@
 
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:id="@+id/rl_body_timenumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/lay_width">
-                    <LinearLayout
-                        android:id="@+id/lay_timevideo"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:layout_weight="1">
-                            <ImageView
-                                android:id="@+id/img_minutes"
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
-                                android:layout_centerVertical="true"
-                                app:tint="@color/AppDarkGrayColor"
-                                android:src="@drawable/fd_active_time_green"/>
-                            <TextView
-                                android:id="@+id/txt_minutes"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:textSize="16sp"
-                                android:text="20 mins"
-                                android:layout_marginStart="10dp"
-                                android:layout_toEndOf="@+id/img_minutes"
-                                android:fontFamily="@font/omnes_regular"
-                                android:textColor="@color/AppWhiteColor"
-                                android:gravity="start"/>
-
-                        </RelativeLayout>
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:gravity="center_horizontal"
-                            android:layout_weight="1">
-                            <ImageView
-                                android:id="@+id/img_video"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_centerVertical="true"
-                                android:layout_toEndOf="@+id/txt_video"
-                                android:src="@drawable/ic_easy"/>
-                            <TextView
-                                android:id="@+id/txt_video"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:textSize="16sp"
-                                android:text="Beginner"
-                                android:layout_marginEnd="10dp"
-                                android:fontFamily="@font/omnes_regular"
-                                android:textColor="@color/AppMainColor"
-                                android:gravity="start"/>
-                        </RelativeLayout>
-                    </LinearLayout>
-
-                </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

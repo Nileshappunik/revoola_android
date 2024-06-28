@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start.adapter
+package com.example.myfirstapp.fragment.start.mind
 
 
 import android.Manifest
@@ -36,16 +36,15 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragChooseYourSensorBinding
 import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
-import com.example.myfirstapp.fragment.start.RLStartClassesMindBody
-import com.example.myfirstapp.fragment.start.RLStartClassesMindBodyWithHeartSensor
+import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
+import com.example.myfirstapp.fragment.start.adapter.RLSensorListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
 import com.example.myfirstapp.services.RLBLEService
-import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import java.util.UUID
 
-class RLFragChooseYourSensorClass : RLBaseFragment() , RLItemClickListenerAdapter {
-    val TAG: String = RLFragChooseYourSensorClass::class.java.simpleName
+class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapter {
+    val TAG: String = RLFragMindClassSensorChooes::class.java.simpleName
     lateinit var fragBinding: RlFragChooseYourSensorBinding
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var handler: Handler
@@ -53,14 +52,13 @@ class RLFragChooseYourSensorClass : RLBaseFragment() , RLItemClickListenerAdapte
     private var isServiceBound = false
     private var isHeartRateDevice = false
     var adapter : RLSensorListAdapter?=null
-    var classtype:String=""
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
         private const val REQUEST_PERMISSIONS = 2
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLFragChooseYourSensorClass()
+        val fragment = RLFragMindClassSensorChooes()
         fragment.arguments = bundle
         return fragment
     }
@@ -110,19 +108,18 @@ class RLFragChooseYourSensorClass : RLBaseFragment() , RLItemClickListenerAdapte
         }
     }
     private fun RLclickToNextScreenOpen(withoutsensor:Boolean){
-        classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         val data=  requireArguments().getString("VIDEODATA","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
-        bundle.putString(RLConstants.CLASSTYPE,classtype)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         if (withoutsensor){
-            (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBody().newInstance(bundle), TAG, true, null, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{
+
              if (isHeartRateDevice){
-                 (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBodyWithHeartSensor().newInstance(bundle), TAG, true, null, false)
+                 (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
              }else{
-                 (context as RLMainActivityRL).RLloadFrag(RLStartClassesMindBody().newInstance(bundle), TAG, true, null, false)
+                 (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
              }
         }
     }

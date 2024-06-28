@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.body
 
 
 import android.Manifest
@@ -36,15 +36,17 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragChooseYourSensorBinding
 import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesHeartVideoStart
 import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
 import com.example.myfirstapp.fragment.start.adapter.RLSensorListAdapter
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesNormalVideoStart
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
 import java.util.UUID
 
-class RLFragChooseYourSensor : RLBaseFragment() , RLItemClickListenerAdapter {
-    val TAG: String = RLFragChooseYourSensor::class.java.simpleName
+class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapter {
+    val TAG: String = RLFragBodyClassSensorChooes::class.java.simpleName
     lateinit var fragBinding: RlFragChooseYourSensorBinding
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var handler: Handler
@@ -58,7 +60,7 @@ class RLFragChooseYourSensor : RLBaseFragment() , RLItemClickListenerAdapter {
         private const val REQUEST_PERMISSIONS = 2
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLFragChooseYourSensor()
+        val fragment = RLFragBodyClassSensorChooes()
         fragment.arguments = bundle
         return fragment
     }
@@ -79,14 +81,8 @@ class RLFragChooseYourSensor : RLBaseFragment() , RLItemClickListenerAdapter {
         fragBinding.rvSensorList.layoutManager = linearLayoutManager
         adapter = RLSensorListAdapter(activity,this)
         fragBinding.rvSensorList.adapter = adapter
-
-        val yourWayType = requireArguments().getString("YourWayType").toString().trim()
        val deviceTypeLastConnect= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
-        if (yourWayType.equals("Ride") || yourWayType.equals("Run") || yourWayType.equals("Walk")) {
-            fragBinding.cardGps.visibility = View.VISIBLE
-        } else {
-            fragBinding.cardGps.visibility = View.GONE
-        }
+        fragBinding.cardGps.visibility = View.GONE
         fragBinding.tvgo.setOnClickListener {
             if (adapter!=null){
                 if (adapter!!.connectedDeviceType.equals("HEARTRATESENSOR")){
@@ -104,23 +100,30 @@ class RLFragChooseYourSensor : RLBaseFragment() , RLItemClickListenerAdapter {
                 RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
                 isHeartRateDevice=false
             }
-            RLclickToNextScreenOpen(yourWayType)
+            RLclickToNextScreenOpen(false)
         }
         fragBinding.tvskip.setOnClickListener {
             RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
             RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
             isHeartRateDevice=false
-            RLclickToNextScreenOpen(yourWayType)
+            RLclickToNextScreenOpen(true)
         }
     }
-    private fun RLclickToNextScreenOpen(yourWayType:String){
-        var bundle: Bundle = Bundle()
-        bundle.putString("YourWayType", yourWayType)
+    private fun RLclickToNextScreenOpen(withoutsensor:Boolean){
+        val data=  requireArguments().getString("VIDEODATA","")
+        val bundle = Bundle()
+        bundle.putString("VIDEODATA",data)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-        if (isHeartRateDevice){
-            (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
+        if (withoutsensor){
+           // startActivity(Intent(requireContext(),RLActivityBodyClassesHeartVideoStart::class.java).putExtra("VIDEODATA", data))
+            (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{
-            (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, true, RLFragSensorProgress::class.java.simpleName, false)
+
+             if (isHeartRateDevice){
+                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+             }else{
+                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+             }
         }
     }
     private fun RLcheckAndRequestPermissions() {

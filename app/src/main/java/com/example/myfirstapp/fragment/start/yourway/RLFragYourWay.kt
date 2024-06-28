@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.yourway
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle

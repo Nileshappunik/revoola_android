@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.yourway
 
 import android.content.pm.ActivityInfo
 import android.Manifest
@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -26,19 +27,19 @@ import android.os.Looper
 import android.util.Log
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlFragSensorProgressBinding
 import com.example.myfirstapp.utils.RLPrefManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.example.myfirstapp.databinding.RlFragHeartrateSensorProgressBinding
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
 import com.example.myfirstapp.utils.RLTimerManager
 import java.lang.Math.round
 
-class RLFragSensorProgress : RLBaseFragment(){
-    val TAG: String = RLFragSensorProgress::class.java.simpleName
-    lateinit var fragBinding: RlFragSensorProgressBinding
+class RLFragHeartRateSensorProgress : RLBaseFragment(){
+    val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
+    lateinit var fragBinding: RlFragHeartrateSensorProgressBinding
     private val timerManager = RLTimerManager()
     private var rlbleService: RLBLEService? = null
     private var isServiceBound = false
@@ -51,41 +52,58 @@ class RLFragSensorProgress : RLBaseFragment(){
         private const val REQUEST_PERMISSIONS = 2
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLFragSensorProgress()
+        val fragment = RLFragHeartRateSensorProgress()
         fragment.arguments = bundle
         return fragment
     }
     private val binding by lazy {
-        RlFragSensorProgressBinding.inflate(layoutInflater)
+        RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_sensor_progress, container) as RlFragSensorProgressBinding
+        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
+        yourWayType = requireArguments().getString("YourWayType").toString().trim()
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLstartCountdown()
-         yourWayType = requireArguments().getString("YourWayType").toString().trim()
+        val yourWayType = requireArguments().getString("YourWayType").toString().trim()
         fragBinding.txtMaintitle.setText(yourWayType)
+
+        fragBinding.circularProgressBar.RLsetProgress(100)
+        fragBinding.circularProgressBar.RLsetMaxProgress(100)
+        fragBinding.circularProgressBar.RLsetProgressColor(resources.getColor(R.color.AppOrangeColor))
+        fragBinding.circularProgressBar.setBackgroundColor(Color.LTGRAY)
+        fragBinding.circularProgressBar.RLsetStrokeWidth(15f)
+
+        fragBinding.inlayCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
+        fragBinding.inlayCalories.txtProgressTime.setText(R.string.calorie)
+        fragBinding.inlayCalories.txtProgressTimeNumber.setText("0")
+
+        fragBinding.inlayHeartrate.imgTime.setImageResource(R.drawable.ic_heartrate)
+        fragBinding.inlayHeartrate.txtProgressTime.setText(R.string.heartratebpm)
+        fragBinding.inlayHeartrate.layAvg.visibility=View.VISIBLE
+        fragBinding.inlayHeartrate.layMax.visibility=View.VISIBLE
+
+        fragBinding.inlayTime.progressView2.visibility=View.VISIBLE
+        fragBinding.inlayCadence.progressView2.visibility=View.VISIBLE
 
         RLwayTypeDesignSet(yourWayType)
 
         fragBinding.layPause.setOnClickListener {
-            try {
-                timerManager.RLpause()
-                fragBinding.layPause.visibility=View.GONE
-                fragBinding.layResumestop.visibility=View.VISIBLE
-                if (isServiceBound) {
-                    rlbleService!!.RLpauseNotifications()
-                }
-            }catch (e:Exception){
-                Log.e(TAG,"Exception:- "+e.message)
+           try {
+            timerManager.RLpause()
+            fragBinding.layPause.visibility=View.GONE
+            fragBinding.layResumestop.visibility=View.VISIBLE
+            if (isServiceBound) {
+                rlbleService!!.RLpauseNotifications()
             }
-
-
+           }catch (e:Exception){
+               Log.e(TAG,"Exception:- "+e.message)
+           }
         }
         fragBinding.layResume.setOnClickListener {
            try{
@@ -100,16 +118,16 @@ class RLFragSensorProgress : RLBaseFragment(){
            }
         }
         fragBinding.layStop.setOnClickListener {
-            val bundle: Bundle = Bundle()
-            bundle.putString("YourWayType",yourWayType)
-            try {
+           try{
             timerManager.RLstop()
             if (isServiceBound) {
                 rlbleService!!.RLstopNotifications()
             }
-            }catch (e:Exception){
-                Log.e(TAG,"Exception:- "+e.message)
-            }
+           }catch (e:Exception){
+               Log.e(TAG,"Exception:- "+e.message)
+           }
+            val bundle: Bundle = Bundle()
+            bundle.putString("YourWayType",yourWayType)
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, RLFragSessionComplete::class.java.simpleName, false)
 
@@ -117,11 +135,22 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
     fun  RLwayTypeDesignSet(yourWayType:String){
         if (yourWayType.equals("Pilates")||yourWayType.equals("Workout")||yourWayType.equals("Yoga")){
-            fragBinding.inlayCadence.relaySensorProgress.visibility=View.GONE
+            fragBinding.inlayCalories.relaySensorProgress.visibility=View.GONE
             fragBinding.inlayDistance.relaySensorProgress.visibility=View.GONE
-            fragBinding.inlaySpeed.relaySensorProgress.visibility=View.GONE
             fragBinding.inlayPace.relaySensorProgress.visibility=View.GONE
-            fragBinding.inlayTime.progressView1.visibility=View.GONE
+
+            fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.ic_heart)
+            fragBinding.inlayCadence.txtProgressTime.setText(R.string.avarageeffortsofar)
+            fragBinding.inlayCadence.txtProgressTimeNumber.setText("0")
+
+            fragBinding.inlaySpeed.imgTime.setImageResource(R.drawable.fd_calories_green)
+            fragBinding.inlaySpeed.txtProgressTime.setText(R.string.activecalories)
+            fragBinding.inlaySpeed.txtProgressTimeNumber.setText("0")
+
+            fragBinding.inlaySpeed.progressView1.visibility=View.GONE
+            fragBinding.inlayHeartrate.progressView1.visibility=View.GONE
+
+
         }else if (yourWayType.equals("Ride")){
 
             fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.ic_cadence)
@@ -144,6 +173,7 @@ class RLFragSensorProgress : RLBaseFragment(){
             fragBinding.inlayPace.txtMaxNumber.setText("0")
             fragBinding.inlayPace.txtAvgNumber.setText("0")
             fragBinding.inlayPace.progressView1.visibility=View.GONE
+
 
         }else if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
             fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.fd_steps_green)
@@ -192,8 +222,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         }
 
         if (permissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(),
-                REQUEST_CODE_BLE_PERMISSIONS
+            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(), REQUEST_CODE_BLE_PERMISSIONS
             )
         } else {
             RLsetupBlutooth()
@@ -211,9 +240,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         } else {
             if (!bluetoothAdapter.isEnabled) {
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent,
-                    REQUEST_ENABLE_BT
-                )
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
             } else {
                 RLstartBLEService()
             }
@@ -221,22 +248,17 @@ class RLFragSensorProgress : RLBaseFragment(){
 
     }
     private fun RLstartBLEService() {
-        val lastconnectdevicetype= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
-        if (lastconnectdevicetype.isNullOrEmpty()){
             if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                 RLstepGetToGPS()
             }
-            Log.e(TAG,"No DEVICE CONNECT SO Step Get To GPS")
-        }else{
             val intent = Intent(requireContext(),RLBLEService::class.java)
             requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
 
             val filter = IntentFilter().apply {
-                addAction("ACTION_DATA_RETRIEVED")
-                addAction("ACTION_CONNECTION_STATE_CHANGED")
+                addAction("ACTION_DATA_RETRIEVED_HEART")
             }
             requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
-        }
+
     }
     private val RLserviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -251,14 +273,11 @@ class RLFragSensorProgress : RLBaseFragment(){
             val lastConnectDeviceAddress =
                 RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
             RLhandleDeviceFound(lastConnectDeviceAddress)
-        }
 
+        }
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceBound = false
             Log.d(TAG,"onServiceDisconnected")
-            if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                RLstepGetToGPS()
-            }
         }
     }
     fun RLhandleDeviceFound(deviceAddress: String) {
@@ -270,30 +289,10 @@ class RLFragSensorProgress : RLBaseFragment(){
     private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "ACTION_DATA_RETRIEVED" -> {
+                "ACTION_DATA_RETRIEVED_HEART" -> {
                     val data = intent.getStringExtra("EXTRA_DATA")
-                    val SPEED = intent.getStringExtra("SPEED")
-                    val AvgSPEED = intent.getStringExtra("AvgSPEED")
-                    val DISTANCE = intent.getStringExtra("DISTANCE")
-                    val CADENCE = intent.getStringExtra("CADENCE")
-                    fragBinding.inlayCadence.txtProgressTimeNumber.setText(CADENCE.toString())
-                    fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString())
-                    fragBinding.inlaySpeed.txtProgressTimeNumber.setText(SPEED.toString())
-                    fragBinding.inlaySpeed.txtAvgNumber.setText(AvgSPEED.toString())
-                }
-                "ACTION_CONNECTION_STATE_CHANGED" -> {
-                    val device_name = intent.getStringExtra("device_name")
-                    val is_connected = intent.getBooleanExtra("is_connected",false)
-                    if (is_connected){
-                        // commonToast("BLE DEVICE CONNECT")
-                        Log.d(TAG,"BLE DEVICE CONNECT")
-                    }else{
-                        //commonToast("NO ANY BLE DEVICE CONNECT")
-                        Log.d(TAG,"NO ANY BLE DEVICE CONNECT")
-                        if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                            RLstepGetToGPS()
-                        }
-                    }
+                    fragBinding.txtEffortNumber.setText(data)
+                    fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
                 }
             }
         }
@@ -308,11 +307,11 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             override fun onFinish() {
                 fragBinding.countdownText.visibility=View.GONE
-                RLtimermain()
+                RLtimerMain()
             }
         }.start()
     }
-    fun RLtimermain() {
+    fun RLtimerMain() {
         timerManager.RLstart { elapsedTime ->
             activity?.runOnUiThread {
                 fragBinding.inlayTime.txtProgressTimeNumber.setText(RLformatElapsedTime(elapsedTime))
@@ -344,7 +343,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         })
         RLLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
             distance?.let {
-                val totalDistance=it //     round(it * 100) / 100
+                val totalDistance=it //round(it * 100) / 100
                 Log.d(TAG,"Distance: $totalDistance km")
                 fragBinding.inlayDistance.txtProgressTimeNumber.setText(totalDistance.toString())
             }
@@ -360,7 +359,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         RLLocationViewModel.maxSpeedData.observe(viewLifecycleOwner, Observer { maxSpeed ->
             maxSpeed?.let {
-                val maxsSpeed=round(it * 100)  / 100
+                val maxsSpeed=round(it * 100) / 100
                 Log.d(TAG,"Max Speed: $maxsSpeed m/s")
                 fragBinding.inlaySpeed.txtMaxNumber.setText(maxsSpeed.toString())
             }
@@ -368,7 +367,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         RLLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
             pace?.let {
-                val totalspace=round(it * 100)  / 100
+                val totalspace=round(it * 100) / 100
                 Log.d(TAG, "Pace: $totalspace min/km")
                 fragBinding.inlayPace.txtProgressTimeNumber.setText(totalspace.toString())
             }
@@ -376,7 +375,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         RLLocationViewModel.averagePaceData.observe(viewLifecycleOwner, Observer { averagePace ->
             averagePace?.let {
-                val avgspace=round(it * 100)  / 100
+                val avgspace=round(it * 100) / 100
                 Log.d(TAG, "Avg Pace: $avgspace min/km")
                 fragBinding.inlayPace.txtAvgNumber.setText(avgspace.toString())
             }
@@ -394,16 +393,16 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
     override fun onStart() {
         super.onStart()
+       // timerManager.resume()
         RLcheckAndRequestPermissions()
-        //timerManager.resume()
     }
     override fun onResume() {
         super.onResume()
-       // timerManager.resume()
+        //timerManager.resume()
     }
     override fun onPause() {
         super.onPause()
-       // timerManager.pause()
+        //timerManager.pause()
     }
     override fun onDestroy() {
         super.onDestroy()

@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.mind
 
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -10,58 +10,61 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlStartClassesMindBodyBinding
+import com.example.myfirstapp.databinding.RlFragMindClassesNormalVideoStartBinding
+import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
-class RLStartClassesMindBody : RLBaseFragment() {
-    val TAG: String = RLStartClassesMindBody::class.java.simpleName
-    lateinit var fragBinding: RlStartClassesMindBodyBinding
-    var classtype:String=""
+class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
+    val TAG: String = RLFragMindClassesNormalVideoStart::class.java.simpleName
+    lateinit var fragBinding: RlFragMindClassesNormalVideoStartBinding
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     private val handler = Handler(Looper.getMainLooper())
 
     private val binding by lazy {
-        RlStartClassesMindBodyBinding.inflate(layoutInflater)
+        RlFragMindClassesNormalVideoStartBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = RLStartClassesMindBody()
+        val fragment = RLFragMindClassesNormalVideoStart()
         fragment.arguments = bundle
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_start_classes_mind_body, container) as RlStartClassesMindBodyBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLStartClassesMindBody" )
+        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_normal_video_start, container) as RlFragMindClassesNormalVideoStartBinding
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClassesNormalVideoStart" )
         RLuisetup()
+        @Suppress("DEPRECATION")
+        requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLstartCountdown()
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-        classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
 
-        RLMindBodyUISet(VideoCardData)
+        fragBinding.txtTitle.setText(VideoCardData.rideTitle)
+        fragBinding.txtNamewith.setText(VideoCardData.instructor)
         RLVideoUISet(VideoCardData,data)
     }
-
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         fragBinding.inlayTime.progressView1.visibility=View.GONE
+        fragBinding.inlayTime.progressView2.visibility=View.VISIBLE
+
 
         //val videoUri = Uri.parse(VideoCardData.streamingUrl)
         val videoUri = Uri.parse(VideoCardData.streamingUrlIphonex)
@@ -93,7 +96,7 @@ class RLStartClassesMindBody : RLBaseFragment() {
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,classtype)
+            bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
@@ -122,46 +125,18 @@ class RLStartClassesMindBody : RLBaseFragment() {
         }
 
     }
-
     private val RLupdateSeekBarRunnable = object : Runnable {
         override fun run() {
             fragBinding.seekbarVideo.progress = fragBinding.videoView.currentPosition
             handler.postDelayed(this, 1000)
             Log.d(TAG,"TIME:- ${fragBinding.videoView.currentPosition}")
-            //fragBinding.txtVideoTimePending.setText(RLformatTime(fragBinding.videoView.currentPosition))
+            fragBinding.txtVideoTime.setText(RLformatTime(fragBinding.videoView.currentPosition))
         }
     }
-
     private fun RLformatTime(milliseconds: Int): String {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds.toLong())
         val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds.toLong()) % 60
         return String.format("%02d:%02d", minutes, seconds)
-    }
-    private fun RLMindBodyUISet(VideoData: RLFulllVideoModel) {
-        fragBinding.txtTitle.setText(VideoData.rideTitle)
-        fragBinding.txtNamewith.setText(VideoData.instructor)
-        if (classtype.equals(RLConstants.MIND)){
-            //MIND
-            fragBinding.rlBodyTimenumber.visibility=View.GONE
-            fragBinding.rlMindTimenumber.visibility=View.VISIBLE
-            fragBinding.txtMinutes.setText(VideoData.duration+" Class")
-        }else{
-            //BODY
-            fragBinding.rlBodyTimenumber.visibility=View.VISIBLE
-            fragBinding.rlMindTimenumber.visibility=View.GONE
-            fragBinding.txtMinutesMind.setText(VideoData.duration+" Class")
-            fragBinding.txtVideo.setText(VideoData.difficulty)
-            if(VideoData.difficulty.equals("Beginner")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
-            }else if (VideoData.difficulty.equals("Advanced")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
-            }else{
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
-            }
-        }
     }
     private fun RLstartCountdown() {
         var count = 5
@@ -175,7 +150,6 @@ class RLStartClassesMindBody : RLBaseFragment() {
             }
         }.start()
     }
-
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams
         val viewWidth = videoView.width.toFloat()
@@ -194,5 +168,13 @@ class RLStartClassesMindBody : RLBaseFragment() {
 
         videoView.layoutParams = layoutParams
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fragBinding.videoView.stopPlayback()
+        // Show the status bar and navigation bar again and set dark color
+        @Suppress("DEPRECATION")
+        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        @Suppress("DEPRECATION")
+        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
 }

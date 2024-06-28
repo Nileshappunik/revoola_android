@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.classes
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -10,7 +10,8 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragClassesBinding
-import com.example.myfirstapp.utils.RLConstants
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClasses
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClasses
 import com.example.myfirstapp.utils.RLPrefManager
 
 
@@ -51,17 +52,13 @@ class RLFragClasses : RLBaseFragment() {
         fragBinding.layYourmind.imgFull.setOnClickListener {
             (context as RLMainActivityRL).RLshowbottombarcolorwhite()
             (context as RLMainActivityRL).RLbottombarcolorwhite()
-            val bundle = Bundle()
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
-            (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses().newInstance(bundle), TAG, true, RLFragMindClasses::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, false)
 
         }
         fragBinding.layYourbody.imgFull.setOnClickListener {
             (context as RLMainActivityRL).RLshowbottombarcolorwhite()
             (context as RLMainActivityRL).RLbottombarcolorwhite()
-            val bundle = Bundle()
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
-            (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses().newInstance(bundle), TAG, true, RLFragMindClasses::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, false)
 
         }
 

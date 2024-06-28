@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo

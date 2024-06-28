@@ -1,7 +1,5 @@
 package com.example.myfirstapp.fragment.start.adapter
 
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlCommonSensorListBinding
 import com.example.myfirstapp.databinding.RlLayoutStartClassAttendListBinding
-import com.example.myfirstapp.fragment.start.RLFragEditYourSensor
-import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
-import com.example.myfirstapp.utils.RLConstants
-import com.example.myfirstapp.utils.RLPrefManager
-import com.google.gson.JsonParser
 
 class RLStartClassAttendListAdapter(val context: FragmentActivity?) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartClassAttendListAdapter"

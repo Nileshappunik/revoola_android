@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start
+package com.example.myfirstapp.fragment.start.classes
 
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
@@ -12,7 +12,6 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlClassWorkoutCompleteBinding
-import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
 import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants

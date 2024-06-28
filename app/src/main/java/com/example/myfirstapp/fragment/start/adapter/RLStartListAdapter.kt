@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutStartListBinding
-import com.example.myfirstapp.fragment.start.RLFragChalengesType
-import com.example.myfirstapp.fragment.start.RLFragClasses
-import com.example.myfirstapp.fragment.start.RLFragYourWay
+import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
+import com.example.myfirstapp.fragment.start.classes.RLFragClasses
+import com.example.myfirstapp.fragment.start.yourway.RLFragYourWay
 
 class RLStartListAdapter(val context: FragmentActivity?, valueslist: Array<String>, drawableArray: Array<Drawable?>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
