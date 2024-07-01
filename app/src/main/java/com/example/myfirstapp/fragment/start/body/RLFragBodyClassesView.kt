@@ -39,6 +39,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
         val data=  requireArguments().getString("VIDEODATA","")
+        val ride=  requireArguments().getBoolean("Ride")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         fragBinding.layWorklog.visibility=View.VISIBLE
@@ -49,6 +50,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
         fragBinding.btnStartclass.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
+            bundle.putBoolean("Ride",ride)
             (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassSensorChooes().newInstance(bundle), TAG, true,null, false)
         }
     }

@@ -53,7 +53,9 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     private var rlbleService: RLBLEService? = null
     private var isServiceBound = false
     private var isHeartRateDevice = false
+    private var isSpeedDevice = false
     var adapter : RLSensorListAdapter?=null
+    var ride=false
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
@@ -77,6 +79,7 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
+         ride=  requireArguments().getBoolean("Ride")
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvSensorList.layoutManager = linearLayoutManager
         adapter = RLSensorListAdapter(activity,this)
@@ -89,11 +92,12 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
                     isHeartRateDevice=true
                 }else{
                     isHeartRateDevice=false
+                    isSpeedDevice=true
                 }
-                Log.e(TAG,"SIZEOFLIST:- "+adapter!!.dataList.size)
                 if(adapter!!.dataList.size<=0){
                     RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
                     RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
+                    isSpeedDevice=false
                 }
             }else{
                 RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
@@ -113,16 +117,24 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         val data=  requireArguments().getString("VIDEODATA","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
+        bundle.putBoolean("Ride",ride)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         if (withoutsensor){
-           // startActivity(Intent(requireContext(),RLActivityBodyClassesHeartVideoStart::class.java).putExtra("VIDEODATA", data))
             (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{
-
              if (isHeartRateDevice){
                  (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
              }else{
-                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                 if (ride){
+                     if (isSpeedDevice){
+                         (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                     }else{
+                         (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                     }
+                 }else{
+                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                 }
+
              }
         }
     }
@@ -236,20 +248,32 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "ACTION_DEVICE_FOUND" -> {
-                    val lastConnectDeviceAddress =
-                        RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+                    val lastConnectDeviceAddress =RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
 
                     val deviceName:String = intent.getStringExtra("DEVICE_NAME").toString()
                     val deviceAddress:String = intent.getStringExtra("DEVICE_ADDRESS").toString()
                     val deviceType:String = intent.getStringExtra("DEVICE_TYPE").toString()
 
-                    if (lastConnectDeviceAddress.equals(deviceAddress)){
-                        // Last Connected device found
-                        RLhandleDeviceFound(deviceAddress)
-                        adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,true)))
+                    if (ride){
+                        if (lastConnectDeviceAddress.equals(deviceAddress)){
+                            // Last Connected device found
+                            RLhandleDeviceFound(deviceAddress)
+                            adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,true)))
+                        }else{
+                            adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,false)))
+                        }
                     }else{
-                        adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,false)))
+                        if (deviceType.equals("HEARTRATESENSOR")){
+                            if (lastConnectDeviceAddress.equals(deviceAddress)){
+                                // Last Connected device found
+                                RLhandleDeviceFound(deviceAddress)
+                                adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,true)))
+                            }else{
+                                adapter!!.RLaddData(listOf(RLBleListModel(deviceName,deviceAddress,deviceType,false)))
+                            }
+                        }
                     }
+
                 }
             }
         }
@@ -297,6 +321,7 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
                         isHeartRateDevice=true
                     } else {
                         // Heart rate service is not available
+                        isSpeedDevice=true
                         isHeartRateDevice=false
                     }
                     // Close GATT connection after checking

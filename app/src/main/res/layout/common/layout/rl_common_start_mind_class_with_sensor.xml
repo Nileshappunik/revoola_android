@@ -11,8 +11,7 @@
             android:id="@+id/img_icon"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             app:tint="@color/AppWhiteColor"
             android:src="@drawable/fd_active_time_green" />
@@ -53,7 +52,6 @@
             android:layout_below="@+id/txt_number"
             android:visibility="visible"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
             android:background="@color/AppTextGrayColor"/>
 
     </RelativeLayout>

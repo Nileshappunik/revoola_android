@@ -62,9 +62,9 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         fragBinding.recycleSessionTitle.adapter = adaptertitle
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
-        RLGetBodyVideoList(RLConstants.FORALL)
+        RLGetBodyVideoList(RLConstants.FORALL,false)
     }
-    private fun RLGetBodyVideoList(videotype: String) {
+    private fun RLGetBodyVideoList(videotype: String,ride:Boolean) {
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLRevoolaVideoKeysRead(videotype){ data, error ->
             if (data != null) {
@@ -73,7 +73,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-                val adapter = RLBodyClassListAdapter(videoList,activity)
+                val adapter = RLBodyClassListAdapter(videoList,activity,ride)
                 fragBinding.rvItemmindclass.adapter = adapter
             }
         }
@@ -137,25 +137,25 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         val selectiontitle= valueslistBody[position]
         when(selectiontitle){
             "ALL"->{
-                RLGetBodyVideoList(RLConstants.FORALL)
+                RLGetBodyVideoList(RLConstants.FORALL,false)
             }
             "HIIT"->{
-                RLGetBodyVideoList(RLConstants.FORHIIT)
+                RLGetBodyVideoList(RLConstants.FORHIIT,false)
             }
             "RIDE"->{
-                RLGetBodyVideoList(RLConstants.FORRIDE)
+                RLGetBodyVideoList(RLConstants.FORRIDE,true)
             }
             "YOGA"->{
-                RLGetBodyVideoList(RLConstants.FORYOGA)
+                RLGetBodyVideoList(RLConstants.FORYOGA,false)
             }
             "PILATES"->{
-                RLGetBodyVideoList(RLConstants.FORPILATES)
+                RLGetBodyVideoList(RLConstants.FORPILATES,false)
             }
             "DANCE"->{
-                RLGetBodyVideoList(RLConstants.FORDANCE)
+                RLGetBodyVideoList(RLConstants.FORDANCE,false)
             }
             "WARM"->{
-                RLGetBodyVideoList(RLConstants.FORWARMUP)
+                RLGetBodyVideoList(RLConstants.FORWARMUP,false)
             }
         }
     }

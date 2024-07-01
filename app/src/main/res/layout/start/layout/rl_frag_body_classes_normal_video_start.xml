@@ -71,66 +71,12 @@
         </LinearLayout>
 
         <include
-            android:id="@+id/inlay_relaxation"
+            android:id="@+id/inlay_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_above="@+id/inlay_relaxed"
-            layout="@layout/rl_common_start_class_with_sensor"/>
-
-
-        <include
-            android:id="@+id/inlay_relaxed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_above="@+id/layout_progress"
-            layout="@layout/rl_common_start_class_with_sensor"/>
-
-        <LinearLayout
-            android:id="@+id/layout_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp"
-            android:layout_marginStart="20dp"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-
-            <include
-                android:id="@+id/inlay_time"
-                layout="@layout/rl_common_start_class_with_sensor"/>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/txt_Video_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:background="@null"
-                    android:text="00:00"
-                    android:textColor="@color/AppWhiteColor"
-                    android:textSize="18sp"/>
-                <ProgressBar
-                    android:id="@+id/seekbar_video"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="105dp"
-                    android:layout_height="wrap_content"
-                    android:progress="0"
-                    android:max="100"
-                    android:layout_below="@+id/txt_Video_time"
-                    android:progressBackgroundTint="@color/transparent50"
-                    android:progressTint="@color/AppWhiteColor"
-                    android:indeterminate="false" />
-            </RelativeLayout>
-
-
-        </LinearLayout>
+            android:layout_alignParentBottom="true"
+            layout="@layout/rl_common_start_class_with_sensor"/>
 
         <RelativeLayout
             android:id="@+id/relay_countdown"

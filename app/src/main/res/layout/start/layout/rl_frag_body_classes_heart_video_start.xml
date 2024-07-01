@@ -14,99 +14,78 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <RelativeLayout
+            android:id="@+id/linear_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:visibility="visible"
-                android:layout_marginTop="10dp"
-                android:weightSum="2"
-                android:orientation="horizontal">
-                <ScrollView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:scrollbars="none"
-                    android:background="@null">
-                <RelativeLayout
-                    android:id="@+id/linear_heart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@null">
-                    <RelativeLayout
-                        android:id="@+id/rl_heartrate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/rl_heartrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_effort">
 
-                        <com.example.myfirstapp.ui.RLCircularProgressBar
-                            android:id="@+id/circularProgressBar"
-                            android:layout_marginStart="25dp"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"/>
+                <com.example.myfirstapp.ui.RLCircularProgressBar
+                    android:id="@+id/circularProgressBar"
+                    android:layout_marginStart="20dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="22sp"
-                            android:text="20%"
-                            android:layout_marginTop="30dp"
-                            android:layout_marginStart="55dp"
-                            android:textAlignment="center"
-                            android:textColor="@color/AppWhiteColor"
-                            android:fontFamily="@font/omnes_bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:text="77%"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginStart="50dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/AppWhiteColor"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/omnes_regular"/>
 
-                    </RelativeLayout>
+            </RelativeLayout>
 
-                    <include
-                        android:id="@+id/inlay_effort"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/rl_heartrate"
-                        layout="@layout/rl_common_start_class_with_sensor"/>
-                    <include
-                        android:id="@+id/inlay_calories"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/inlay_effort"
-                        layout="@layout/rl_common_start_class_with_sensor"/>
-                    <include
-                        android:id="@+id/inlay_heartrate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/inlay_calories"
-                        layout="@layout/rl_common_start_class_with_sensor"/>
-                    <include
-                        android:id="@+id/inlay_cadence"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/inlay_heartrate"
-                        layout="@layout/rl_common_start_class_with_sensor"/>
+            <include
+                android:id="@+id/inlay_effort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_calories"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+            <include
+                android:id="@+id/inlay_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_heartrate"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+            <include
+                android:id="@+id/inlay_heartrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_cadence"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+            <include
+                android:id="@+id/inlay_cadence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_time"
+                layout="@layout/rl_common_start_class_with_sensor"/>
 
-                    <include
-                        android:id="@+id/inlay_time"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/inlay_cadence"
-                        layout="@layout/rl_common_start_class_with_sensor"/>
-                </RelativeLayout>
-                </ScrollView>
-                <RelativeLayout
-                    android:id="@+id/reclay_list"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:background="@null"
-                    android:layout_weight="1">
+            <include
+                android:id="@+id/inlay_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+        </RelativeLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RelativeLayout>
-
-            </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_list"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:layout_alignParentRight="true"/>
 
         <LinearLayout
             android:id="@+id/lay_play_stop"
@@ -168,7 +147,7 @@
             android:id="@+id/relay_countdown"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:visibility="visible"
             android:background="@color/AppBlackColor">
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -229,32 +208,6 @@
                         android:textAlignment="center"/>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/rl_mind_timenumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:orientation="horizontal"
-                    android:layout_below="@+id/lay_width"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_centerVertical="true"
-                        app:tint="@color/AppDarkGrayColor"
-                        android:src="@drawable/fd_active_time_green"/>
-                    <TextView
-                        android:id="@+id/txt_minutes_mind"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:textSize="16sp"
-                        android:text="20 mins"
-                        android:layout_marginStart="10dp"
-                        android:fontFamily="@font/omnes_regular"
-                        android:textColor="@color/AppWhiteColor"
-                        android:gravity="start"/>
-
-                </LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/rl_body_timenumber"

@@ -424,7 +424,7 @@ class RLBLEService : Service() {
                     // Use the cadence value as needed
                     Log.d(TAG, "Cadence: $formattedNumber RPM")
                     speedcadence.append(" Cadence: $formattedNumber RPM")
-                    CADENCE=formattedNumber+" RPM"
+                    CADENCE=formattedNumber
                 }
             }
 

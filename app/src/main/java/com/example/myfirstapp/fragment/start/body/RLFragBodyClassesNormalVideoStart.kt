@@ -61,28 +61,8 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         RLVideoUISet(VideoCardData,data)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
-        fragBinding.inlayTime.progressView1.visibility=View.GONE
-        fragBinding.inlayRelaxation.progressView1.visibility=View.GONE
-        fragBinding.inlayRelaxed.progressView1.visibility=View.GONE
-
-        fragBinding.inlayTime.progressView2.visibility=View.VISIBLE
-        fragBinding.inlayRelaxation.progressView2.visibility=View.VISIBLE
-        fragBinding.inlayRelaxed.progressView2.visibility=View.VISIBLE
-
-        fragBinding.inlayRelaxation.imgIcon.setImageResource(R.drawable.ic_mind_read)
-        fragBinding.inlayRelaxation.txtName.setText("RELAXATION")
-        fragBinding.inlayRelaxation.txtNumber.setText("0")
-
-        fragBinding.inlayRelaxed.imgIcon.setImageResource(R.drawable.ic_mind_read)
-        fragBinding.inlayRelaxed.txtName.setText("RELAXED")
-        fragBinding.inlayRelaxed.txtNumber.setText("0%")
-
-        //val videoUri = Uri.parse(VideoCardData.streamingUrl)
-        val videoUri = Uri.parse(VideoCardData.streamingUrlIphonex)
-
-        /*val mediaController = MediaController(requireContext())
-        mediaController.setAnchorView(fragBinding.videoView)
-        fragBinding.videoView.setMediaController(mediaController)*/
+        fragBinding.inlayTime.progressView2.visibility=View.GONE
+        val videoUri = Uri.parse(VideoCardData.streamingUrl)
 
         // Set the URI for the VideoView
         fragBinding.videoView.setVideoURI(videoUri)
@@ -90,7 +70,6 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         // Start playing the video
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
             RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
-            fragBinding.seekbarVideo.max=fragBinding.videoView.duration
             mediaPlayer.start()
             fragBinding.layPlayStop.visibility=View.GONE
             fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
@@ -138,10 +117,9 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     }
     private val RLupdateSeekBarRunnable = object : Runnable {
         override fun run() {
-            fragBinding.seekbarVideo.progress = fragBinding.videoView.currentPosition
             handler.postDelayed(this, 1000)
-            Log.d(TAG,"TIME:- ${fragBinding.videoView.currentPosition}")
-            fragBinding.txtVideoTime.setText(RLformatTime(fragBinding.videoView.currentPosition))
+            val timeminus=fragBinding.videoView.duration - fragBinding.videoView.currentPosition
+            fragBinding.inlayTime.txtNumber.setText(RLformatTime(timeminus))
         }
     }
     private fun RLformatTime(milliseconds: Int): String {

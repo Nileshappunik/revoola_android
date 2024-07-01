@@ -115,7 +115,6 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         if (withoutsensor){
             (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{
-
              if (isHeartRateDevice){
                  (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
              }else{

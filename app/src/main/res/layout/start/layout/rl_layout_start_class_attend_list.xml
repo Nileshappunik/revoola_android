@@ -2,14 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null">
         <LinearLayout
             android:layout_width="wrap_content"
             android:background="@null"
             android:layout_height="50dp"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="false">
             <TextView
                 android:id="@+id/txt_srno"
                 android:layout_width="wrap_content"
@@ -18,7 +18,7 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="10sp"
                 android:fontFamily="@font/omnes_regular"
-                android:text="5"
+                android:text="10"
                 android:textColor="@color/AppWhiteColor"/>
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -34,7 +34,7 @@
             <ImageView
                 android:id="@+id/img_country_flag"
                 android:layout_width="10dp"
-                android:layout_height="10dp"
+                android:layout_height="8dp"
                 android:layout_marginStart="5dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/indian_flag"
@@ -46,28 +46,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_gravity="center_vertical"
-                android:text="DGK"
-                android:fontFamily="@font/omnes_semibold_regular"
+                android:text="DHRUV90"
+                android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
                 android:textColor="@color/AppWhiteColor"
-                android:textSize="5sp"/>
+                android:textSize="10sp"/>
 
             <TextView
                 android:id="@+id/txt_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="10sp"
                 android:fontFamily="@font/omnes_regular"
-                android:text="8"
+                android:text="10"
                 android:textColor="@color/AppWhiteColor"/>
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_dot"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                android:layout_marginEnd="5dp"
                 app:shapeAppearance="@style/CornerRound"
                 android:background="@color/AppZone2Color"
                 android:layout_gravity="center_vertical"/>
