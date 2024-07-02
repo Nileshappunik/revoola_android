@@ -20,20 +20,24 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragBodyClassesHeartVideoStartBinding
-import com.example.myfirstapp.databinding.RlFragMindClassesHeartVideoStartBinding
 import com.example.myfirstapp.fragment.start.adapter.RLStartClassAttendListAdapter
 import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
@@ -55,6 +59,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private lateinit var handler: Handler
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private val handlerprogress = Handler(Looper.getMainLooper())
+    private lateinit var gestureDetectorleft: GestureDetectorCompat
+    private lateinit var gestureDetectorright: GestureDetectorCompat
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -79,6 +85,21 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        // Initialize the GestureDetector
+        gestureDetectorleft = GestureDetectorCompat(requireContext(), SwipeGestureListenerLeft())
+        gestureDetectorright = GestureDetectorCompat(requireContext(), SwipeGestureListenerRight())
+
+        // Set touch listener to the  view
+        fragBinding.leftsideview.setOnTouchListener { _, event ->
+            gestureDetectorleft.onTouchEvent(event)
+            true
+        }
+
+        // Set touch listener to the  view
+        fragBinding.rightsideviewclick.setOnTouchListener { _, event ->
+           gestureDetectorright.onTouchEvent(event)
+            true
+        }
         return fragBinding.root
     }
     private fun RLuisetup() {
@@ -129,12 +150,12 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         return String.format("%02d:%02d", minutes, seconds)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
-        val videoUri = Uri.parse(VideoCardData.streamingUrl)
+        val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
         // Set the URI for the VideoView
         fragBinding.videoView.setVideoURI(videoUri)
         // Start playing the video
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
-            RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
+           // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             mediaPlayer.start()
             fragBinding.layPlayStop.visibility=View.GONE
             fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
@@ -271,6 +292,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
 
         val filter = IntentFilter().apply {
             addAction("ACTION_DATA_RETRIEVED_HEART")
+            addAction("ACTION_CONNECTION_DEVICE_TYPE")
             if (ride){
                 addAction("ACTION_DATA_RETRIEVED")
             }
@@ -310,18 +332,27 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
                     val data = intent.getStringExtra("EXTRA_DATA")
                     fragBinding.inlayHeartrate.txtNumber.setText(data)
                     fragBinding.inlayEffort.txtNumber.setText(data)
-                    fragBinding.rlHeartrate.visibility=View.VISIBLE
-                    fragBinding.inlayEffort.relaySensorProgress.visibility=View.VISIBLE
-                    fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.VISIBLE
-                    fragBinding.inlayCalories.relaySensorProgress.visibility=View.VISIBLE
+
                 }
                 "ACTION_DATA_RETRIEVED" -> {
                     val data = intent.getStringExtra("CADENCE")
                     fragBinding.inlayCadence.txtNumber.setText(data)
-                    fragBinding.rlHeartrate.visibility=View.GONE
-                    fragBinding.inlayEffort.relaySensorProgress.visibility=View.GONE
-                    fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.GONE
-                    fragBinding.inlayCalories.relaySensorProgress.visibility=View.GONE
+                }
+                "ACTION_CONNECTION_DEVICE_TYPE" -> {
+                    val deviceType = intent.getStringExtra("device_type")
+                    if (deviceType.equals(RLConstants.HEARTSENSOR)){
+                        fragBinding.rlHeartrate.visibility=View.VISIBLE
+                        fragBinding.inlayEffort.relaySensorProgress.visibility=View.VISIBLE
+                        fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.VISIBLE
+                        fragBinding.inlayCalories.relaySensorProgress.visibility=View.VISIBLE
+                        fragBinding.recyclerList.visibility=View.VISIBLE
+                    }else{
+                        fragBinding.rlHeartrate.visibility=View.GONE
+                        fragBinding.inlayEffort.relaySensorProgress.visibility=View.GONE
+                        fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.GONE
+                        fragBinding.inlayCalories.relaySensorProgress.visibility=View.GONE
+                        fragBinding.recyclerList.visibility=View.GONE
+                    }
 
                 }
             }
@@ -371,4 +402,99 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         videoView.layoutParams = layoutParams
     }
 
+    private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
+        private val SWIPE_THRESHOLD = 100
+        private val SWIPE_VELOCITY_THRESHOLD = 100
+
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            if (e1 == null || e2 == null) return false
+            val diffX = e2.x - e1.x
+            val diffY = e2.y - e1.y
+            return if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight(true)
+                    } else {
+                        onSwipeLeft(true)
+                    }
+                    return   true
+                } else {
+                    return  false
+                }
+            } else {
+                return  false
+            }
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+
+    }
+    private inner class SwipeGestureListenerRight : GestureDetector.SimpleOnGestureListener() {
+        private val SWIPE_THRESHOLD = 100
+        private val SWIPE_VELOCITY_THRESHOLD = 100
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            if (e1 == null || e2 == null) return false
+            val diffX = e2.x - e1.x
+            val diffY = e2.y - e1.y
+            return if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight(false)
+                    } else {
+                        onSwipeLeft(false)
+                    }
+                    return   true
+                } else {
+                    return  false
+                }
+            } else {
+                return  false
+            }
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+
+    }
+    private fun onSwipeRight(isLeftSideClick:Boolean) {
+        if (isLeftSideClick){
+            toggleVisibilityleft(true)
+        }else{
+            toggleVisibilityright(false)
+        }
+    }
+    private fun onSwipeLeft(isLeftSideClick:Boolean) {
+        if (isLeftSideClick){
+            toggleVisibilityleft(false)
+        }else{
+            toggleVisibilityright(true)
+        }
+    }
+    private fun toggleVisibilityleft(visible: Boolean) {
+        val anim: Animation = if (visible) {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
+        } else {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left)
+        }
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                fragBinding.linearHeart.visibility = if (visible) View.VISIBLE else View.GONE
+            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        fragBinding.linearHeart.startAnimation(anim)
+    }
+    private fun toggleVisibilityright(visible: Boolean) {
+        val anim: Animation = if (visible) {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right)
+        } else {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_right)
+        }
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                fragBinding.rightsideview.visibility = if (visible) View.VISIBLE else View.GONE
+            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        fragBinding.rightsideview.startAnimation(anim)
+    }
 }

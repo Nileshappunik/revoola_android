@@ -12,6 +12,10 @@
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:background="@null"/>
 
         <LinearLayout
@@ -70,13 +74,21 @@
             </LinearLayout>
         </LinearLayout>
 
-        <include
-            android:id="@+id/inlay_time"
+        <RelativeLayout
+            android:id="@+id/leftsideview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentBottom="true"
-            layout="@layout/rl_common_start_mind_class_with_sensor"/>
+            android:minWidth="100dp"
+            android:layout_height="match_parent">
+            <include
+                android:id="@+id/inlay_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"
+                layout="@layout/rl_common_start_mind_class_with_sensor"/>
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/relay_progress"
@@ -84,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:visibility="gone"
-            android:layout_toEndOf="@+id/inlay_time"
+            android:layout_toEndOf="@+id/leftsideview"
             android:layout_marginStart="30dp">
             <TextView
                 android:id="@+id/txt_Video_time"

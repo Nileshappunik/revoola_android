@@ -12,7 +12,13 @@
             android:id="@+id/video_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:background="@null"/>
+
+
 
         <LinearLayout
             android:id="@+id/lay_play_stop"
@@ -69,14 +75,20 @@
                     android:text="STOP"/>
             </LinearLayout>
         </LinearLayout>
-
-        <include
-            android:id="@+id/inlay_time"
+        <RelativeLayout
+            android:id="@+id/leftsideview"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentBottom="true"
-            layout="@layout/rl_common_start_class_with_sensor"/>
+            android:layout_height="match_parent"
+            android:minWidth="100dp">
+            <include
+                android:id="@+id/inlay_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/relay_countdown"

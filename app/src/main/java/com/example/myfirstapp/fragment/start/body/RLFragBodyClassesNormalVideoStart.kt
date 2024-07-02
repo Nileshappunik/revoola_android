@@ -6,12 +6,16 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
@@ -30,6 +34,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     private val handler = Handler(Looper.getMainLooper())
+    private lateinit var gestureDetector: GestureDetectorCompat
 
     private val binding by lazy {
         RlFragBodyClassesNormalVideoStartBinding.inflate(layoutInflater)
@@ -48,6 +53,13 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        // Initialize the GestureDetector
+        gestureDetector = GestureDetectorCompat(requireContext(), SwipeGestureListener())
+        // Set touch listener to the root view
+        fragBinding.leftsideview.setOnTouchListener { v, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
         return fragBinding.root
     }
     private fun RLuisetup() {
@@ -62,14 +74,14 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         fragBinding.inlayTime.progressView2.visibility=View.GONE
-        val videoUri = Uri.parse(VideoCardData.streamingUrl)
+        val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
 
         // Set the URI for the VideoView
         fragBinding.videoView.setVideoURI(videoUri)
 
         // Start playing the video
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
-            RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
+           // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             mediaPlayer.start()
             fragBinding.layPlayStop.visibility=View.GONE
             fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
@@ -180,5 +192,58 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
+
+    private inner class SwipeGestureListener : GestureDetector.SimpleOnGestureListener() {
+        private val SWIPE_THRESHOLD = 100
+        private val SWIPE_VELOCITY_THRESHOLD = 100
+
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            if (e1 == null || e2 == null) return false
+            val diffX = e2.x - e1.x
+            val diffY = e2.y - e1.y
+            return if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight()
+                    } else {
+                        onSwipeLeft()
+                    }
+                    return   true
+                } else {
+                    return  false
+                }
+            } else {
+                return  false
+            }
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+
+    }
+
+    private fun onSwipeRight() {
+        //fragBinding.inlayTime.relaySensorProgress.visibility=View.VISIBLE
+        toggleVisibility(true)
+    }
+
+    private fun onSwipeLeft() {
+        //fragBinding.inlayTime.relaySensorProgress.visibility=View.GONE
+        toggleVisibility(false)
+    }
+
+    private fun toggleVisibility(visible: Boolean) {
+        val anim: Animation = if (visible) {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
+        } else {
+            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left)
+        }
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                fragBinding.inlayTime.relaySensorProgress.visibility = if (visible) View.VISIBLE else View.GONE
+            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+        fragBinding.inlayTime.relaySensorProgress.startAnimation(anim)
     }
 }

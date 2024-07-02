@@ -12,8 +12,18 @@
         <VideoView
             android:id="@+id/video_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"/>
 
+    <RelativeLayout
+        android:id="@+id/leftsideview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="100dp"
+        android:background="@null">
         <RelativeLayout
             android:id="@+id/linear_heart"
             android:layout_width="wrap_content"
@@ -75,17 +85,42 @@
                 android:id="@+id/inlay_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-               android:layout_alignParentBottom="true"
+                android:layout_alignParentBottom="true"
                 android:layout_marginBottom="20dp"
                 layout="@layout/rl_common_start_class_with_sensor"/>
         </RelativeLayout>
+    </RelativeLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_list"
+
+        <RelativeLayout
+            android:id="@+id/rightsideviewclick"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@null"
-            android:layout_alignParentRight="true"/>
+            android:paddingStart="50dp"
+            android:minWidth="150dp"
+            android:layout_alignParentRight="true"
+            android:background="@null">
+            <include
+                android:id="@+id/recycler_list_itemview"
+                android:layout_width="150dp"
+                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                layout="@layout/rl_layout_heartrate_sensor_user"/>
+        <RelativeLayout
+            android:id="@+id/rightsideview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_list"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:background="@null"/>
+        </RelativeLayout>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/lay_play_stop"

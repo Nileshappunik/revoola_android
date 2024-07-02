@@ -13,6 +13,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.example.myfirstapp.utils.RLConstants
 import java.lang.StringBuilder
 import java.util.*
 
@@ -194,8 +195,10 @@ class RLBLEService : Service() {
                 val hasHeartRateService = gatt.services.any { it.uuid == UUID_HEART_RATE_SERVICE }
                 val hasSpeedService = gatt.services.any { it.uuid == UUID_SPEED_SERVICE }
                 if (hasHeartRateService) {
+                    RLbroadcastConnectionDeviceType(RLConstants.HEARTSENSOR, true)
                     RLheartRateServicesDiscovered(gatt)
                 }else if (hasSpeedService){
+                    RLbroadcastConnectionDeviceType(RLConstants.SPEEDSENSOR, true)
                     RLspeedAndCadenceServicesDiscovered(gatt)
                 }
             } else {
@@ -338,6 +341,13 @@ class RLBLEService : Service() {
     private fun RLbroadcastConnectionState(deviceName: String, isConnected: Boolean) {
         val intent = Intent("ACTION_CONNECTION_STATE_CHANGED")
         intent.putExtra("device_name", deviceName)
+        intent.putExtra("is_connected", isConnected)
+        sendBroadcast(intent)
+    }
+
+    private fun RLbroadcastConnectionDeviceType(deviceType: String, isConnected: Boolean) {
+        val intent = Intent("ACTION_CONNECTION_DEVICE_TYPE")
+        intent.putExtra("device_type", deviceType)
         intent.putExtra("is_connected", isConnected)
         sendBroadcast(intent)
     }

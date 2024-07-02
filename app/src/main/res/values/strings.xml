@@ -351,6 +351,7 @@
     <string name="subscribe">SUBSCRIBE</string>
     <string name="invitefriendorgrouptosession">Invite Friends or Groups to join  your session.</string>
     <string name="enternametosearch">Enter name to search</string>
+    <string name="follow">Follow</string>
 
 
 </resources>
