@@ -2,7 +2,6 @@ package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -61,7 +60,8 @@ class RLMainActivityRL  : RLBaseActivity() {
                 R.id.start -> {
                     RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+                   RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+
                     true
                 }
                 R.id.friends -> {

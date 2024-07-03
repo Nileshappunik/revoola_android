@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null">
+        <include
+            android:id="@+id/inlay_itemview"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            layout="@layout/rl_layout_heartrate_sensor_user"/>
+        <RelativeLayout
+            android:id="@+id/rightsideview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null">
+
+            <TextView
+                android:id="@+id/txt_leaderboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/leaderboard"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
+                android:textColor="@color/AppWhiteColor"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/txt_leaderboard_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(12)"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/txt_leaderboard"
+                android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
+                android:textColor="@color/AppWhiteColor"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/txt_rev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REV"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="20dp"
+                android:layout_alignParentRight="true"
+                android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
+                android:textColor="@color/AppWhiteColor"
+                android:textSize="14sp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/txt_rev"
+                android:layout_above="@+id/inlay_ownear"
+                android:visibility="visible"
+                android:background="@null"/>
+
+            <include
+                android:id="@+id/inlay_ownear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                layout="@layout/rl_layout_heartrate_sensor_ownear"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

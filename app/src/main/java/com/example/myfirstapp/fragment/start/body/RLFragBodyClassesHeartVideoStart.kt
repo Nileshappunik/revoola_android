@@ -1,23 +1,10 @@
 package com.example.myfirstapp.fragment.start.body
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.GestureDetector
@@ -27,127 +14,92 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragBodyClassesHeartVideoStartBinding
-import com.example.myfirstapp.fragment.start.adapter.RLStartClassAttendListAdapter
 import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
-import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
+
 class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     val TAG: String = RLFragBodyClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlFragBodyClassesHeartVideoStartBinding
+
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
 
-    private var rlbleService: RLBLEService? = null
-    private var isServiceBound = false
-    private lateinit var handler: Handler
-    private lateinit var bluetoothAdapter: BluetoothAdapter
-    private val handlerprogress = Handler(Looper.getMainLooper())
     private lateinit var gestureDetectorleft: GestureDetectorCompat
     private lateinit var gestureDetectorright: GestureDetectorCompat
+    private val handlerprogress = Handler(Looper.getMainLooper())
 
-    companion object {
-        private val REQUEST_CODE_BLE_PERMISSIONS = 1
-        private const val REQUEST_ENABLE_BT = 1
-        private const val REQUEST_PERMISSIONS = 2
+
+        private val binding by lazy {
+            RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
-    
-    private val binding by lazy {
-        RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
-    }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragBodyClassesHeartVideoStart()
         fragment.arguments = bundle
         return fragment
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_heart_video_start, container) as RlFragBodyClassesHeartVideoStartBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesHeartVideoStart" )
-        RLuisetup()
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        RLuisetup()
+        return fragBinding.root
+    }
+    private fun RLuisetup() {
         // Initialize the GestureDetector
         gestureDetectorleft = GestureDetectorCompat(requireContext(), SwipeGestureListenerLeft())
         gestureDetectorright = GestureDetectorCompat(requireContext(), SwipeGestureListenerRight())
 
         // Set touch listener to the  view
-        fragBinding.leftsideview.setOnTouchListener { _, event ->
+        fragBinding.viewLeft.setOnTouchListener { _, event ->
             gestureDetectorleft.onTouchEvent(event)
             true
         }
 
         // Set touch listener to the  view
-        fragBinding.rightsideviewclick.setOnTouchListener { _, event ->
-           gestureDetectorright.onTouchEvent(event)
+        fragBinding.viewRight.setOnTouchListener { _, event ->
+            gestureDetectorright.onTouchEvent(event)
             true
         }
-        return fragBinding.root
-    }
-    private fun RLuisetup() {
+
+       parentFragmentManager.beginTransaction()
+            .add(R.id.frame_left, RLFragLeftBodyWithHeartVideo())
+            .commit()
+
+        parentFragmentManager.beginTransaction()
+            .add(R.id.frame_right, RLFragRightBodyWithHeartVideo())
+            .commit()
+
         RLstartCountdown()
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         val data=  requireArguments().getString("VIDEODATA","")
-         ride=  requireArguments().getBoolean("Ride")
+        ride=  requireArguments().getBoolean("Ride")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLBodyUISet(VideoCardData)
         RLVideoUISet(VideoCardData,data)
-
-        fragBinding.circularProgressBar.RLsetProgress(77)
-        fragBinding.circularProgressBar.RLsetMaxProgress(100)
-        fragBinding.circularProgressBar.RLsetProgressColor(resources.getColor(R.color.AppZone5Color))
-        fragBinding.circularProgressBar.setBackgroundColor(Color.LTGRAY)
-        fragBinding.circularProgressBar.RLsetStrokeWidth(15f)
-
-        fragBinding.inlayEffort.imgIcon.setImageResource(R.drawable.ic_heart)
-        fragBinding.inlayEffort.txtName.setText(R.string.effort)
-        fragBinding.inlayEffort.txtNumber.setText("0")
-
-        fragBinding.inlayCalories.imgIcon.setImageResource(R.drawable.fd_calories_green)
-        fragBinding.inlayCalories.txtName.setText(R.string.calories)
-        fragBinding.inlayCalories.txtNumber.setText("0")
-
-        fragBinding.inlayHeartrate.imgIcon.setImageResource(R.drawable.ic_heartrate)
-        fragBinding.inlayHeartrate.txtName.setText(R.string.heartrate)
-        fragBinding.inlayHeartrate.txtNumber.setText("0")
-
-        fragBinding.inlayCadence.imgIcon.setImageResource(R.drawable.ic_cadence)
-        fragBinding.inlayCadence.txtName.setText(R.string.cadence)
-        fragBinding.inlayCadence.txtNumber.setText("--")
-
-        fragBinding.inlayTime.imgIcon.setImageResource(R.drawable.fd_active_time_green)
-        fragBinding.inlayTime.txtName.setText(R.string.time)
-        fragBinding.inlayTime.progressView2.visibility=View.GONE
-
-        val linearLayoutMain = LinearLayoutManager(activity)
-        fragBinding.recyclerList.layoutManager = linearLayoutMain
-        val adapter = RLStartClassAttendListAdapter(activity)
-        fragBinding.recyclerList.adapter = adapter
-
     }
-    private fun RLformatTime(milliseconds: Int): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds.toLong())
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds.toLong()) % 60
-        return String.format("%02d:%02d", minutes, seconds)
+    private fun RLVideotimeset(time:String){
+        val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
+        firstFragment?.RLUpdateVideoTime(time)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
@@ -155,10 +107,10 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         fragBinding.videoView.setVideoURI(videoUri)
         // Start playing the video
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
-           // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
+            // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             mediaPlayer.start()
-            fragBinding.layPlayStop.visibility=View.GONE
-            fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
+            fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
+            RLVideotimeset(RLformatTime(fragBinding.videoView.duration))
             handlerprogress.post(RLupdateSeekBarRunnable)
         }
         // Handle errors
@@ -166,213 +118,83 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             // Handle the error
             true
         }
-        fragBinding.btnStop.setOnClickListener {
+        fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
+            bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
-        fragBinding.btnPauseResume.setOnClickListener {
+        fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
                 fragBinding.videoView.pause()
                 pauseVideo=false
-                fragBinding.txtPauseResume.setText("RESUME")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
-                fragBinding.txtPauseResume.setText("PAUSE")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
             }
         }
-        fragBinding.relayVideoplay.setOnClickListener {
+        fragBinding.viewCenter.setOnClickListener {
             if (pauseStopVideoView){
                 pauseStopVideoView=false
-                fragBinding.layPlayStop.visibility=View.GONE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
             }else{
                 pauseStopVideoView=true
-                fragBinding.layPlayStop.visibility=View.VISIBLE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.VISIBLE
             }
         }
     }
-    private val RLupdateSeekBarRunnable = object : Runnable {
-        override fun run() {
-            handlerprogress.postDelayed(this, 1000)
-            val timeminus=fragBinding.videoView.duration - fragBinding.videoView.currentPosition
-            fragBinding.inlayTime.txtNumber.setText(RLformatTime(timeminus))
-        }
+    private fun RLformatTime(milliseconds: Int): String {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds.toLong())
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds.toLong()) % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
     private fun RLBodyUISet(VideoData: RLFulllVideoModel) {
-        fragBinding.txtTitle.setText(VideoData.rideTitle)
-        fragBinding.txtNamewith.setText(VideoData.instructor)
+        fragBinding.inlayCountdown.txtTitle.setText(VideoData.rideTitle)
+        fragBinding.inlayCountdown.txtNamewith.setText(VideoData.instructor)
         //BODY
-        fragBinding.rlBodyTimenumber.visibility=View.VISIBLE
-        fragBinding.txtVideo.setText(VideoData.difficulty)
+        fragBinding.inlayCountdown.rlBodyTimenumber.visibility=View.VISIBLE
+        fragBinding.inlayCountdown.txtVideo.setText(VideoData.difficulty)
         if(VideoData.difficulty.equals("Beginner")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_easy)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
         }else if (VideoData.difficulty.equals("Advanced")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_hard)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
         }else{
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_medium)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
         }
     }
     private fun RLstartCountdown() {
         var count = 5
         var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
             override fun onTick(millisUntilFinished: Long) {
-                fragBinding.txtCountdown.text = "$count" // Display current count
+                fragBinding.inlayCountdown.txtCountdown.text = "$count" // Display current count
                 count--
             }
             override fun onFinish() {
-                fragBinding.relayCountdown.visibility=View.GONE
+                fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
     }
-
-    //BLE DEVICE CODE START
-    private fun RLcheckAndRequestPermissions() {
-        val permissions = mutableListOf<String>()
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH)
+    private val RLupdateSeekBarRunnable = object : Runnable {
+        override fun run() {
+            handlerprogress.postDelayed(this, 1000)
+            val timeminus=fragBinding.videoView.duration - fragBinding.videoView.currentPosition
+            RLVideotimeset(RLformatTime(timeminus))
         }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-            }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-            }
-        }
-
-        if (permissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(), REQUEST_CODE_BLE_PERMISSIONS)
-        } else {
-            RLsetupBlutooth()
-        }
-    }
-    private fun RLsetupBlutooth() {
-        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothAdapter = bluetoothManager.adapter
-        handler = Handler(Looper.getMainLooper())
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN),
-                REQUEST_PERMISSIONS
-            )
-        } else {
-            if (!bluetoothAdapter.isEnabled) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent,
-                    REQUEST_ENABLE_BT
-                )
-            } else {
-                RLstartBLEService()
-            }
-        }
-
-    }
-    private fun RLstartBLEService() {
-        val intent = Intent(requireContext(),RLBLEService::class.java)
-        requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
-
-        val filter = IntentFilter().apply {
-            addAction("ACTION_DATA_RETRIEVED_HEART")
-            addAction("ACTION_CONNECTION_DEVICE_TYPE")
-            if (ride){
-                addAction("ACTION_DATA_RETRIEVED")
-            }
-        }
-        requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
-
-    }
-    private val RLserviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // Request necessary permissions
-            }
-            Log.d(TAG,"onServiceConnected")
-            val binder = service as RLBLEService.RLLocalBinder
-            rlbleService = binder.getService()
-            // Check if devices are not connected then scan
-            isServiceBound = true
-            val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
-            RLhandleDeviceFound(lastConnectDeviceAddress)
-
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceBound = false
-            Log.d(TAG,"onServiceDisconnected")
-        }
-    }
-    fun RLhandleDeviceFound(deviceAddress: String) {
-        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-        if (device != null) {
-            rlbleService!!.RLconnectToDevice(device)
-        }
-    }
-    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                "ACTION_DATA_RETRIEVED_HEART" -> {
-                    val data = intent.getStringExtra("EXTRA_DATA")
-                    fragBinding.inlayHeartrate.txtNumber.setText(data)
-                    fragBinding.inlayEffort.txtNumber.setText(data)
-
-                }
-                "ACTION_DATA_RETRIEVED" -> {
-                    val data = intent.getStringExtra("CADENCE")
-                    fragBinding.inlayCadence.txtNumber.setText(data)
-                }
-                "ACTION_CONNECTION_DEVICE_TYPE" -> {
-                    val deviceType = intent.getStringExtra("device_type")
-                    if (deviceType.equals(RLConstants.HEARTSENSOR)){
-                        fragBinding.rlHeartrate.visibility=View.VISIBLE
-                        fragBinding.inlayEffort.relaySensorProgress.visibility=View.VISIBLE
-                        fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.VISIBLE
-                        fragBinding.inlayCalories.relaySensorProgress.visibility=View.VISIBLE
-                        fragBinding.recyclerList.visibility=View.VISIBLE
-                    }else{
-                        fragBinding.rlHeartrate.visibility=View.GONE
-                        fragBinding.inlayEffort.relaySensorProgress.visibility=View.GONE
-                        fragBinding.inlayHeartrate.relaySensorProgress.visibility=View.GONE
-                        fragBinding.inlayCalories.relaySensorProgress.visibility=View.GONE
-                        fragBinding.recyclerList.visibility=View.GONE
-                    }
-
-                }
-            }
-        }
-    }
-    //BLE DEVICE CODE CLOSE
-    override fun onStart() {
-        super.onStart()
-        // timerManager.resume()
-        RLcheckAndRequestPermissions()
     }
     override fun onDestroy() {
         super.onDestroy()
         fragBinding.videoView.stopPlayback()
         try {
-            if (isServiceBound) {
-                requireActivity().unbindService(RLserviceConnection)
-                isServiceBound = false
-            }
-            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -383,25 +205,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             Log.e(TAG,"Exception:- "+e.message)
         }
     }
-    private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
-        val layoutParams = videoView.layoutParams
-        val viewWidth = videoView.width.toFloat()
-        val viewHeight = videoView.height.toFloat()
-        val aspectRatio = videoWidth.toFloat() / videoHeight
-
-        if (viewWidth / viewHeight > aspectRatio) {
-            // Adjust height to fit the width
-            layoutParams.height = (viewWidth / aspectRatio).toInt()
-            layoutParams.width = viewWidth.toInt()
-        } else {
-            // Adjust width to fit the height
-            layoutParams.width = (viewHeight * aspectRatio).toInt()
-            layoutParams.height = viewHeight.toInt()
-        }
-
-        videoView.layoutParams = layoutParams
-    }
-
     private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100
@@ -476,11 +279,11 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         anim.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
-                fragBinding.linearHeart.visibility = if (visible) View.VISIBLE else View.GONE
+                fragBinding.frameLeft.visibility = if (visible) View.VISIBLE else View.GONE
             }
             override fun onAnimationRepeat(animation: Animation) {}
         })
-        fragBinding.linearHeart.startAnimation(anim)
+        fragBinding.frameLeft.startAnimation(anim)
     }
     private fun toggleVisibilityright(visible: Boolean) {
         val anim: Animation = if (visible) {
@@ -491,10 +294,10 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         anim.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
-                fragBinding.rightsideview.visibility = if (visible) View.VISIBLE else View.GONE
+                fragBinding.frameRight.visibility = if (visible) View.VISIBLE else View.GONE
             }
             override fun onAnimationRepeat(animation: Animation) {}
         })
-        fragBinding.rightsideview.startAnimation(anim)
+        fragBinding.frameRight.startAnimation(anim)
     }
 }

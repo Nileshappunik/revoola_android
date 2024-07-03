@@ -1,5 +1,6 @@
 package com.example.myfirstapp.fragment.start.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutStartClassAttendListBinding
+import com.example.myfirstapp.interfaceall.RLItemClickListener
 
-class RLStartClassAttendListAdapter(val context: FragmentActivity?) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLStartClassAttendListAdapter(val context: Context, private val RLItemClickListener: RLItemClickListener) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartClassAttendListAdapter"
      val dataList = mutableListOf<String>()
 
@@ -27,7 +29,7 @@ class RLStartClassAttendListAdapter(val context: FragmentActivity?) :RecyclerVie
 
     override fun getItemCount(): Int {
       // return dataList.size
-       return 7
+       return 30
     }
 
     fun RLaddData(newData:List<String>) {
@@ -41,6 +43,9 @@ class RLStartClassAttendListAdapter(val context: FragmentActivity?) :RecyclerVie
         fun bindData(position: Int, itemVIew: View) {
             //val cardData:RLBleListModel= dataList[position]
             layoutBinding.txtSrno.setText((position+1).toString())
+            layoutBinding.relayAttendlist.setOnClickListener {
+                RLItemClickListener.onItemClick(position)
+            }
         }
     }
 

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/relay_click"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/AppDarkGrayColor">
+
+        <ImageView
+            android:id="@+id/image_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_static"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_friend"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/image_close"
+            android:scaleType="centerCrop"
+            app:shapeAppearance="@style/CornerRound"
+            android:src="@drawable/wellcome"/>
+
+        <TextView
+            android:id="@+id/txt_count_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="11"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_below="@+id/image_close"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/txt_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DHRUV90"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/img_friend"
+            android:layout_toStartOf="@+id/txt_number"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/txt_city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AHMEDABAD"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img_friend"
+            android:layout_toStartOf="@+id/txt_number"
+            android:layout_below="@+id/txt_friend_name"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="10sp"/>
+
+        <TextView
+            android:id="@+id/txt_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           android:layout_centerVertical="true"
+            android:text="0"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="15dp"
+            android:layout_alignParentRight="true"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
+</layout>

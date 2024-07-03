@@ -36,10 +36,8 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragChooseYourSensorBinding
 import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
-import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesHeartVideoStart
 import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
 import com.example.myfirstapp.fragment.start.adapter.RLSensorListAdapter
-import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesNormalVideoStart
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
@@ -124,10 +122,12 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         }else{
              if (isHeartRateDevice){
                  (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                 //(context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, true, null, false)
              }else{
                  if (ride){
                      if (isSpeedDevice){
-                         (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                         //(context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                         (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, true, null, false)
                      }else{
                          (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
                      }

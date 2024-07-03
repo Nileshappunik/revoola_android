@@ -71,8 +71,8 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
 
-        fragBinding.txtTitle.setText(VideoCardData.rideTitle)
-        fragBinding.txtNamewith.setText(VideoCardData.instructor)
+        fragBinding.inlayCountdown.txtTitle.setText(VideoCardData.rideTitle)
+        fragBinding.inlayCountdown.txtNamewith.setText(VideoCardData.instructor)
         RLVideoUISet(VideoCardData,data)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
@@ -86,7 +86,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             //RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             fragBinding.seekbarVideo.max=fragBinding.videoView.duration
             mediaPlayer.start()
-            fragBinding.layPlayStop.visibility=View.GONE
+            fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
             fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
             handler.post(RLupdateSeekBarRunnable)
         }
@@ -97,7 +97,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             true
         }
 
-        fragBinding.btnStop.setOnClickListener {
+        fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -106,27 +106,27 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
-        fragBinding.btnPauseResume.setOnClickListener {
+        fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
                 fragBinding.videoView.pause()
                 pauseVideo=false
-                fragBinding.txtPauseResume.setText("RESUME")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
-                fragBinding.txtPauseResume.setText("PAUSE")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
             }
         }
         fragBinding.relayVideoplay.setOnClickListener {
             if (pauseStopVideoView){
                 pauseStopVideoView=false
-                fragBinding.layPlayStop.visibility=View.GONE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
                 fragBinding.relayProgress.visibility=View.GONE
             }else{
                 pauseStopVideoView=true
-                fragBinding.layPlayStop.visibility=View.VISIBLE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.VISIBLE
                 fragBinding.relayProgress.visibility=View.VISIBLE
             }
         }
@@ -150,11 +150,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         var count = 5
         var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
             override fun onTick(millisUntilFinished: Long) {
-                fragBinding.txtCountdown.text = "$count" // Display current count
+                fragBinding.inlayCountdown.txtCountdown.text = "$count" // Display current count
                 count--
             }
             override fun onFinish() {
-                fragBinding.relayCountdown.visibility=View.GONE
+                fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
     }

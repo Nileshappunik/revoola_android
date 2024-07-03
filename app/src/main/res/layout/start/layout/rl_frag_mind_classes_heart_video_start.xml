@@ -19,61 +19,13 @@
             android:layout_alignParentBottom="true"
             android:background="@null"/>
 
-        <LinearLayout
-            android:id="@+id/lay_play_stop"
+        <include
+            android:id="@+id/inlay_playStop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="visible"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="vertical"
-                android:gravity="center">
+            layout="@layout/rl_layout_play_stop_video_button"/>
 
-                <ImageView
-                    android:id="@+id/btn_pause_resume"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_pause_button"/>
-                <TextView
-                    android:id="@+id/txt_pause_resume"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/AppWhiteColor"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:text="PAUSE"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="20dp"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/btn_stop"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/ic_stop_button"/>
-                <TextView
-                    android:id="@+id/txt_stop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/AppWhiteColor"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:text="STOP"/>
-            </LinearLayout>
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/leftsideview"
@@ -141,101 +93,11 @@
                 android:indeterminate="false" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relay_countdown"
+        <include
+            android:id="@+id/inlay_countdown"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            android:background="@color/AppBlackColor">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true">
-                <TextView
-                    android:id="@+id/txt_countdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:visibility="visible"
-                    android:fontFamily="@font/omnes_regular"
-                    android:textSize="55sp"
-                    android:text="5"
-                    android:textColor="@color/AppWhiteColor"/>
-                <TextView
-                    android:id="@+id/txt_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:textSize="36sp"
-                    android:text="Set Personal Targets"
-                    android:layout_below="@+id/txt_countdown"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:textColor="@color/AppWhiteColor"
-                    android:textAlignment="center"/>
-                <LinearLayout
-                    android:id="@+id/lay_width"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_below="@+id/txt_title"
-                    android:layout_centerHorizontal="true">
-                    <TextView
-                        android:id="@+id/txt_with"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="3dp"
-                        android:textSize="18sp"
-                        android:text="@string/with"
-                        android:fontFamily="@font/omnes_regular"
-                        android:textColor="@color/AppWhiteColor"
-                        android:textAlignment="center"/>
-                    <TextView
-                        android:id="@+id/txt_namewith"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textSize="18sp"
-                        android:text="John MArtimore"
-                        android:layout_below="@+id/txt_title"
-                        android:fontFamily="@font/omnes_semibold_regular"
-                        android:textColor="@color/AppWhiteColor"
-                        android:textAlignment="center"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/rl_mind_timenumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:visibility="visible"
-                    android:orientation="horizontal"
-                    android:layout_below="@+id/lay_width"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_centerVertical="true"
-                        app:tint="@color/AppDarkGrayColor"
-                        android:src="@drawable/fd_active_time_green"/>
-                    <TextView
-                        android:id="@+id/txt_minutes_mind"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:textSize="16sp"
-                        android:text="20 mins"
-                        android:layout_marginStart="10dp"
-                        android:fontFamily="@font/omnes_regular"
-                        android:textColor="@color/AppWhiteColor"
-                        android:gravity="start"/>
-
-                </LinearLayout>
-
-            </RelativeLayout>
-        </RelativeLayout>
+            layout="@layout/rl_layout_countdown_mind"/>
     </RelativeLayout>
 
 

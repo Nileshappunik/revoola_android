@@ -83,7 +83,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         fragBinding.videoView.setOnPreparedListener { mediaPlayer ->
            // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             mediaPlayer.start()
-            fragBinding.layPlayStop.visibility=View.GONE
+            fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
             fragBinding.inlayTime.txtNumber.setText(RLformatTime(fragBinding.videoView.duration))
             handler.post(RLupdateSeekBarRunnable)
         }
@@ -94,7 +94,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             true
         }
 
-        fragBinding.btnStop.setOnClickListener {
+        fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -103,26 +103,26 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
-        fragBinding.btnPauseResume.setOnClickListener {
+        fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
                 fragBinding.videoView.pause()
                 pauseVideo=false
-                fragBinding.txtPauseResume.setText("RESUME")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
-                fragBinding.txtPauseResume.setText("PAUSE")
-                fragBinding.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
+                fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
+                fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
             }
         }
         fragBinding.relayVideoplay.setOnClickListener {
             if (pauseStopVideoView){
                 pauseStopVideoView=false
-                fragBinding.layPlayStop.visibility=View.GONE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
             }else{
                 pauseStopVideoView=true
-                fragBinding.layPlayStop.visibility=View.VISIBLE
+                fragBinding.inlayPlayStop.layPlayStop.visibility=View.VISIBLE
             }
         }
 
@@ -140,29 +140,29 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         return String.format("%02d:%02d", minutes, seconds)
     }
     private fun RLMindBodyUISet(VideoData: RLFulllVideoModel) {
-        fragBinding.txtTitle.setText(VideoData.rideTitle)
-        fragBinding.txtNamewith.setText(VideoData.instructor)
-        fragBinding.txtVideo.setText(VideoData.difficulty)
+        fragBinding.inlayCountdown.txtTitle.setText(VideoData.rideTitle)
+        fragBinding.inlayCountdown.txtNamewith.setText(VideoData.instructor)
+        fragBinding.inlayCountdown.txtVideo.setText(VideoData.difficulty)
         if(VideoData.difficulty.equals("Beginner")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_easy)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
         }else if (VideoData.difficulty.equals("Advanced")){
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_hard)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
         }else{
-            fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
+            fragBinding.inlayCountdown.imgVideo.setImageResource(R.drawable.ic_medium)
+            fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
         }
     }
     private fun RLstartCountdown() {
         var count = 5
         var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
             override fun onTick(millisUntilFinished: Long) {
-                fragBinding.txtCountdown.text = "$count" // Display current count
+                fragBinding.inlayCountdown.txtCountdown.text = "$count" // Display current count
                 count--
             }
             override fun onFinish() {
-                fragBinding.relayCountdown.visibility=View.GONE
+                fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
     }
