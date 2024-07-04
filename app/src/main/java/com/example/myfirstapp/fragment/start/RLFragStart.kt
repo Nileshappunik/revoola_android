@@ -15,7 +15,6 @@ import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.utils.RLPrefManager
 
-
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
     lateinit var fragBinding: RlFragStartBinding

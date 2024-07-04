@@ -86,6 +86,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         RLstartCountdown()
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         val data=  requireArguments().getString("VIDEODATA","")
+        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLMindBodyUISet(VideoCardData)

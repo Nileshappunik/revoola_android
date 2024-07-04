@@ -15,8 +15,8 @@ package com.example.myfirstapp.utils
         const val PACE = "pace"
         const val DEVICENAME = "devicename"
         const val DEVICEADDRESS = "deviceAddress"
-        const val HEARTSENSOR = "heartsensor"
-        const val SPEEDSENSOR = "speedsensor"
+        const val HEARTSENSOR = "HEARTRATESENSOR"
+        const val SPEEDSENSOR = "SPEEDSENSOR"
 
 
         //TODO : Realtime Database Table Name

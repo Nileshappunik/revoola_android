@@ -55,19 +55,9 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
 
-    private var rlbleService: RLBLEService? = null
-    private var isServiceBound = false
-    private lateinit var handler: Handler
-    private lateinit var bluetoothAdapter: BluetoothAdapter
     private val handlerprogress = Handler(Looper.getMainLooper())
     private lateinit var gestureDetectorleft: GestureDetectorCompat
 
-    companion object {
-        private val REQUEST_CODE_BLE_PERMISSIONS = 1
-        private const val REQUEST_ENABLE_BT = 1
-        private const val REQUEST_PERMISSIONS = 2
-    }
-    
     private val binding by lazy {
         RlFragBodyClassesSpeedVideoStartBinding.inflate(layoutInflater)
     }
@@ -206,91 +196,12 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         }.start()
     }
 
-    //BLE DEVICE CODE START
-    private fun RLcheckAndRequestPermissions() {
-        val permissions = mutableListOf<String>()
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-            }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-            }
-        }
-
-        if (permissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(), REQUEST_CODE_BLE_PERMISSIONS)
-        } else {
-            RLsetupBlutooth()
-        }
-    }
-    private fun RLsetupBlutooth() {
-        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothAdapter = bluetoothManager.adapter
-        handler = Handler(Looper.getMainLooper())
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN),
-                REQUEST_PERMISSIONS
-            )
-        } else {
-            if (!bluetoothAdapter.isEnabled) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent,
-                    REQUEST_ENABLE_BT
-                )
-            } else {
-                RLstartBLEService()
-            }
-        }
-
-    }
-    private fun RLstartBLEService() {
-        val intent = Intent(requireContext(),RLBLEService::class.java)
-        requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
-
+    private fun RLGetSpeedDataBLEService() {
         val filter = IntentFilter().apply {
             addAction("ACTION_DATA_RETRIEVED")
         }
         requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
 
-    }
-    private val RLserviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // Request necessary permissions
-            }
-            Log.d(TAG,"onServiceConnected")
-            val binder = service as RLBLEService.RLLocalBinder
-            rlbleService = binder.getService()
-            // Check if devices are not connected then scan
-            isServiceBound = true
-            val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
-            RLhandleDeviceFound(lastConnectDeviceAddress)
-
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceBound = false
-            Log.d(TAG,"onServiceDisconnected")
-        }
-    }
-    fun RLhandleDeviceFound(deviceAddress: String) {
-        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-        if (device != null) {
-            rlbleService!!.RLconnectToDevice(device)
-        }
     }
     private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -302,20 +213,16 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             }
         }
     }
-    //BLE DEVICE CODE CLOSE
+
     override fun onStart() {
         super.onStart()
         // timerManager.resume()
-        RLcheckAndRequestPermissions()
+        RLGetSpeedDataBLEService()
     }
     override fun onDestroy() {
         super.onDestroy()
         fragBinding.videoView.stopPlayback()
         try {
-            if (isServiceBound) {
-                requireActivity().unbindService(RLserviceConnection)
-                isServiceBound = false
-            }
             requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")

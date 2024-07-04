@@ -1,11 +1,19 @@
 package com.example.myfirstapp.fragment.start.mind
 
+import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
@@ -17,9 +25,13 @@ import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
+import java.util.UUID
+
 class RLFragMindClassesView : RLBaseFragment() {
     val TAG: String = RLFragMindClassesView::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesViewBinding
+    private val PERMISSION_REQUEST_CODE = 1001
+    var videoLink=""
     private val binding by lazy {
         RlFragMindClassesViewBinding.inflate(layoutInflater)
     }
@@ -57,10 +69,18 @@ class RLFragMindClassesView : RLBaseFragment() {
         fragBinding.btnStartclass.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
+            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
             (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
         }
+        fragBinding.imgDownload.setOnClickListener {
+            videoLink=VideoCardData.videoLinkiPhonex.toString()
+            if (checkPermissions()) {
+                downloadVideo(VideoCardData.videoLinkiPhonex)
+            } else {
+                requestPermissions()
+            }
+        }
     }
-
     private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
         fragBinding.rlSchdual.setOnClickListener {
             val bundle = Bundle()
@@ -70,7 +90,6 @@ class RLFragMindClassesView : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
         }
     }
-
     private fun RLMindUiSetup(VideoData:RLFulllVideoModel){
         fragBinding.txtTitle.setText(VideoData.rideTitle)
         fragBinding.txtVideoTitle.setText(VideoData.rideTitle)
@@ -85,6 +104,34 @@ class RLFragMindClassesView : RLBaseFragment() {
         Glide.with(requireContext()).load(VideoData.imageLinkSquareV2)
             //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
             .into(fragBinding.imgMainBanner)
+    }
+    private fun checkPermissions(): Boolean {
+        val writePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return writePermission == PackageManager.PERMISSION_GRANTED
+    }
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadVideo(videoLink)
+            }
+        }
+    }
+    private fun downloadVideo(url: String) {
+        val uniqueFileName = "video_${UUID.randomUUID()}.mp4"
+        val request = DownloadManager.Request(Uri.parse(url))
+            .setTitle("Downloading video")
+            .setDescription("Downloading a video file")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uniqueFileName)
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true)
+
+        val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        downloadManager.enqueue(request)
     }
 
 }

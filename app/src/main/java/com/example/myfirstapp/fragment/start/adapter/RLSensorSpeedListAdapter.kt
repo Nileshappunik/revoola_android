@@ -17,8 +17,8 @@ import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.JsonParser
 
-class RLSensorListAdapter(val context: FragmentActivity?, private val itemClickListener: RLItemClickListenerAdapter) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLSensorListAdapter"
+class RLSensorSpeedListAdapter(val context: FragmentActivity?, private val itemClickListener: RLItemClickListenerAdapter) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val TAG = "RLSensorSpeedListAdapter"
      val dataList = mutableListOf<RLBleListModel>()
      var connectedDeviceAddress:String=""
     var connectedDeviceType:String=""
@@ -48,19 +48,10 @@ class RLSensorListAdapter(val context: FragmentActivity?, private val itemClickL
         private val layoutBinding:RlCommonSensorListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             try {
-                val lastConnectDeviceAddress =
-                    RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.last_device_connect, "")
+                val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.last_device_connect, "")
                 val cardData:RLBleListModel= dataList[position]
-                if (cardData.deviceType.equals("HEARTRATESENSOR")){
-                    layoutBinding.txtSensorTitle.setText(R.string.heartratemonitor)
-                    layoutBinding.img1.setImageResource(R.drawable.ic_heartrate)
-                }else if (cardData.deviceType.equals("SPEEDSENSOR")){
-                    layoutBinding.txtSensorTitle.setText(R.string.speedmonitor)
-                    layoutBinding.img1.setImageResource(R.drawable.ic_speeed)
-                }else{
-                    layoutBinding.txtSensorTitle.setText(R.string.cadencemonitor)
-                    layoutBinding.img1.setImageResource(R.drawable.ic_cadence)
-                }
+                layoutBinding.img1.setImageResource(R.drawable.ic_speeed)
+
                 if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
                     connectedDeviceAddress=cardData.deviceAddress
                     connectedDeviceType=cardData.deviceType
@@ -81,22 +72,17 @@ class RLSensorListAdapter(val context: FragmentActivity?, private val itemClickL
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
                         RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect, "no")
                         RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect_type, "")
-                        itemClickListener.onItemClick(cardData.deviceAddress,false)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
                     }else{
                         RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect, cardData.deviceAddress)
-                        if (cardData.deviceType.equals("HEARTRATESENSOR")){
-                            RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect_type,RLConstants.HEARTSENSOR)
-                        }else{
-                            RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect_type,RLConstants.SPEEDSENSOR)
-                        }
-                        itemClickListener.onItemClick(cardData.deviceAddress,true)
+                        RLPrefManager.RLsetSomeStringValue(context, RLPrefManager.last_device_connect_type,RLConstants.SPEEDSENSOR)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
                     }
                     notifyDataSetChanged()
                 }
 
                 // when we Change name then display name Change
-                val changeDeviceName =
-                    RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.change_device_name, "")
+                val changeDeviceName = RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.change_device_name, "")
                 if (changeDeviceName.isNullOrEmpty()){
                     layoutBinding.txtSensorName.setText(cardData.devicename)
                 }else{

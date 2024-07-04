@@ -37,7 +37,7 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragChooseYourSensorBinding
 import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
 import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
-import com.example.myfirstapp.fragment.start.adapter.RLSensorListAdapter
+import com.example.myfirstapp.fragment.start.adapter.RLSensorHeartListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
@@ -51,7 +51,8 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     private var rlbleService: RLBLEService? = null
     private var isServiceBound = false
     private var isHeartRateDevice = false
-    var adapter : RLSensorListAdapter?=null
+    private var connecetedDeviceType = ""
+    var adapter : RLSensorHeartListAdapter?=null
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
@@ -76,41 +77,34 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
         val linearLayoutManager = LinearLayoutManager(activity)
-        fragBinding.rvSensorList.layoutManager = linearLayoutManager
-        adapter = RLSensorListAdapter(activity,this)
-        fragBinding.rvSensorList.adapter = adapter
-       val deviceTypeLastConnect= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
+        fragBinding.rvHeartrateSensorList.layoutManager = linearLayoutManager
+        adapter = RLSensorHeartListAdapter(activity,this)
+        fragBinding.rvHeartrateSensorList.adapter = adapter
         fragBinding.cardGps.visibility = View.GONE
+
         fragBinding.tvgo.setOnClickListener {
-            if (adapter!=null){
-                if (adapter!!.connectedDeviceType.equals("HEARTRATESENSOR")){
-                    isHeartRateDevice=true
-                }else{
-                    isHeartRateDevice=false
-                }
-                Log.e(TAG,"SIZEOFLIST:- "+adapter!!.dataList.size)
-                if(adapter!!.dataList.size<=0){
-                    RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
-                    RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
-                }
+            val lastdevicetype= RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.last_device_connect_type, "")
+            if (!lastdevicetype.isNullOrEmpty()){
+                connecetedDeviceType=lastdevicetype
+            }
+            if (connecetedDeviceType.equals("HEARTRATESENSOR")){
+                isHeartRateDevice=true
             }else{
-                RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
-                RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
                 isHeartRateDevice=false
             }
             RLclickToNextScreenOpen(false)
         }
         fragBinding.tvskip.setOnClickListener {
-            RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
-            RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
-            isHeartRateDevice=false
+           isHeartRateDevice=false
             RLclickToNextScreenOpen(true)
         }
     }
     private fun RLclickToNextScreenOpen(withoutsensor:Boolean){
         val data=  requireArguments().getString("VIDEODATA","")
+        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
+        bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         if (withoutsensor){
             (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
@@ -212,10 +206,10 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     override fun onStop() {
         super.onStop()
         try {
-            if (isServiceBound) {
+            /*if (isServiceBound) {
                 requireActivity().unbindService(RLserviceConnection)
                 isServiceBound = false
-            }
+            }*/
             requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
         }catch (e:Exception){
          Log.e(TAG,"Exception:- "+e.message)
@@ -232,9 +226,10 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "ACTION_DEVICE_FOUND" -> {
-                    val lastConnectDeviceAddress =
-                        RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
-
+                    fragBinding.cardCadenceSensor.visibility = View.GONE
+                    fragBinding.cardGps.visibility = View.GONE
+                    fragBinding.cardHeartRateSensor.visibility = View.VISIBLE
+                    val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
                     val deviceName:String = intent.getStringExtra("DEVICE_NAME").toString()
                     val deviceAddress:String = intent.getStringExtra("DEVICE_ADDRESS").toString()
                     val deviceType:String = intent.getStringExtra("DEVICE_TYPE").toString()
@@ -291,9 +286,11 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
                     if (heartRateService != null) {
                         // Heart rate service is available
                         isHeartRateDevice=true
+                        connecetedDeviceType="HEARTRATESENSOR"
                     } else {
                         // Heart rate service is not available
                         isHeartRateDevice=false
+                        connecetedDeviceType=""
                     }
                     // Close GATT connection after checking
                     gatt.close()
@@ -303,12 +300,16 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
 
     }
 
-    override fun onItemClick(deviceAddress: String,isconnection:Boolean) {
+    override fun onItemClick(deviceType:String,deviceAddress: String,isconnection:Boolean) {
         if (isconnection){
-            Log.d(TAG, "BLE connection isconnection")
+            connecetedDeviceType=deviceType
+            Log.d(TAG, "BLE connection isconnection:-  $connecetedDeviceType")
             RLhandleDeviceFound(deviceAddress)
         }else{
-            Log.d(TAG, "BLE connection disconnection")
+            if (deviceType.equals(connecetedDeviceType)){
+                connecetedDeviceType=""
+            }
+            Log.d(TAG, "BLE connection disconnection:- $connecetedDeviceType")
             rlbleService!!.RLdisconnectFromDevice()
         }
 

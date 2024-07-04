@@ -37,8 +37,5 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-
-
     }
-
 }
