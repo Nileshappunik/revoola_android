@@ -25,9 +25,6 @@ class RLBLEService : Service() {
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val foundDevicesArray = mutableListOf<BluetoothDevice>()
 
-
-   // private val deviceGattMap = mutableMapOf<BluetoothDevice, BluetoothGatt>()
-
     private var notificationCharacteristic: BluetoothGattCharacteristic? = null
     private var bluetoothGatt: BluetoothGatt? = null
 
@@ -358,7 +355,6 @@ class RLBLEService : Service() {
         intent.putExtra("is_connected", isConnected)
         sendBroadcast(intent)
     }
-
     private fun RLbroadcastConnectionDeviceType(deviceType: String, isConnected: Boolean) {
         val intent = Intent("ACTION_CONNECTION_DEVICE_TYPE")
         intent.putExtra("device_type", deviceType)
@@ -512,5 +508,4 @@ class RLBLEService : Service() {
             bluetoothGatt = null
         }
     }
-
 }

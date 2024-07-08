@@ -76,6 +76,7 @@
                     android:layout_height="wrap_content"
                     android:paddingEnd="10dp"
                     android:paddingStart="2dp"
+                    android:visibility="gone"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@+id/txt_totalsession_number"
                     android:text="@string/session"
@@ -88,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:layout_below="@+id/txt_totalsession"/>
+                    android:layout_below="@+id/txt_totalsession_number"/>
 
 
                 <androidx.recyclerview.widget.RecyclerView

@@ -67,7 +67,7 @@ object RLTools {
                 val width = testImage.width
 
                 // Calculate height as 75% of width
-                val height = (width * 0.75).toInt()
+                val height = (width * 0.76).toInt()
 
                 // Set the calculated height to the ImageView
                 val layoutParams = testImage.layoutParams
@@ -454,9 +454,11 @@ object RLTools {
     fun RLconvertTimestampToDateTime(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
-                return dateTime.format(formatter)
+                val dateall=dateTime.format(formatter)+" at "+dateTime.format(formatter2)
+                return dateall
             }else{
                 return "0"
             }

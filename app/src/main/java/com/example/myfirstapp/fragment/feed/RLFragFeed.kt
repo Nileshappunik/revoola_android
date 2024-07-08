@@ -208,10 +208,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private fun RLapicall(groupid:String) {
         isLoading = true
       adapter!!.RLaddLoadingFooter()
-        var  currentTimestamp= "1716450280"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           currentTimestamp =   ZonedDateTime.now().toString()
-        }
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
 
         val request = listOf(
             RLSetoverview_thumbRequest(
@@ -260,7 +257,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private fun RLapicallYou() {
         isLoading = true
         adapter!!.RLaddLoadingFooter()
-        var  currentTimestamp= "1716450280"
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
         val user= listOf<String>(currentUser)
 
         val request = listOf(
@@ -385,7 +382,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
 
     private fun RLapicallChallenges(adapterch: RLFeedListChallengesAdapter) {
         isLoading=true
-        var  currentTimestamp="1716874240"
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
         val request = listOf(
             RLSetgoaled_challenges_request(
                 goaled_challenges = RLSetgoaled_challenges(
@@ -415,13 +412,13 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        if (valueslist[position].equals("Friends")) {
+        if (valueslist[position].equals("FRIENDS")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false
             RLfirsttimeApiCall(GroupId)
 
-        } else if (valueslist[position].equals("Groups")) {
+        } else if (valueslist[position].equals("GROUPS")) {
             fragBinding.relayGroupname.visibility=View.VISIBLE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false
@@ -430,7 +427,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             }
             RLgroupAPiCall()
 
-        }else if (valueslist[position].equals("You")) {
+        }else if (valueslist[position].equals("YOU")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=true
@@ -448,7 +445,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLshowDialogFullscreen()
             }
 
-        }else if (valueslist[position].equals("Challenges")) {
+        }else if (valueslist[position].equals("CHALLENGES")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false

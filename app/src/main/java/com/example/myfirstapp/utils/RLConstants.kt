@@ -53,6 +53,7 @@ package com.example.myfirstapp.utils
         const val BASE_URL: String = "https://video.revoola.com/_stuff/"
         const val URLALL: String = "getResponse_v3.php"
         const val URLALLV2: String = "getResponse_v2.php"
+        const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
 
         //Weight Array
         val valuesUsPounds = arrayOf(
@@ -138,7 +139,5 @@ package com.example.myfirstapp.utils
             "251 cm", "252 cm", "253 cm", "254 cm", "255 cm","256 cm", "257 cm", "258 cm", "259 cm", "260 cm",
             "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
             "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")
-
-
     }
 }

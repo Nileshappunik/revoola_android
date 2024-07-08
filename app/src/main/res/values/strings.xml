@@ -265,7 +265,7 @@
     <string name="gpssatellitesfound">GPS(Satellites found)</string>
     <string name="inprogress">IN PROGRESS</string>
     <string name="cadencerpm">CADENCE(RPM)</string>
-    <string name="distancekm">DISTANCE(Km)</string>
+    <string name="distancekm">DISTANCE(miles)</string>
     <string name="speedkmh">SPEED(KM/H)</string>
     <string name="paceperkm">PACE(PER KM)</string>
     <string name="heartratebpm">HEART RATE(BPM)</string>
@@ -331,8 +331,8 @@
     <string name="activecalories">ACTIVE CALORIES</string>
     <string name="challengesfor">CHALLENGE FOR</string>
     <string name="targetsteps">TARGET STEPS</string>
-    <string name="youachived">YOU ACHIEVED</string>
-    <string name="rank">Rank</string>
+    <string name="youachived">ACHIEVED</string>
+    <string name="rank">RANK</string>
     <string name="targeteffort">TARGET EFFORT</string>
     <string name="targetcalories">TARGET CALORIES</string>
     <string name="targetdistance">TARGET DISTANCE</string>

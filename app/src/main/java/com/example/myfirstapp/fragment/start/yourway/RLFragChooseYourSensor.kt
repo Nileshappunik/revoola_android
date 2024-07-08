@@ -45,7 +45,7 @@ import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
 import java.util.UUID
 
-class RLFragChooseYourSensor : RLBaseFragment() , RLItemClickListenerAdapter {
+class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
     val TAG: String = RLFragChooseYourSensor::class.java.simpleName
     lateinit var fragBinding: RlFragChooseYourSensorBinding
     private lateinit var bluetoothAdapter: BluetoothAdapter

@@ -18,9 +18,9 @@
             android:padding="1dp">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_user"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/classes"/>
 
@@ -29,14 +29,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/img_user"
                 android:layout_toStartOf="@+id/img_threedot"
                 android:text="@string/hidhruv"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
-                android:textSize="18sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/txt_userdatetime"
@@ -48,9 +48,9 @@
                 android:layout_toStartOf="@+id/img_threedot"
                 android:layout_below="@+id/txt_username"
                 android:text="23/04/2024 16:57"
-                android:fontFamily="@font/omnes_regular"
-                android:textColor="@color/AppTextGrayColor"
-                android:textSize="16sp"/>
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="12sp"/>
 
             <ImageView
                 android:id="@+id/img_threedot"
@@ -65,12 +65,12 @@
 
             <ImageView
                 android:id="@+id/img_myride"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="10dp"
-                android:padding="10dp"
-                android:backgroundTint="@color/AppLightGrayColor"
+                android:padding="5dp"
+                android:backgroundTint="@color/AppMainBGColor"
                 android:background="@drawable/full_round"
                 android:src="@drawable/fd_ride_green"
                 android:layout_below="@+id/img_user" />
@@ -84,7 +84,7 @@
                 android:layout_below="@+id/img_user"
                 android:layout_toEndOf="@+id/img_myride"
                 android:text="@string/myride"
-                android:fontFamily="@font/omnes_regular"
+                android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="20sp"/>
 
@@ -94,7 +94,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginStart="10dp"
-                android:weightSum="2"
+                android:layout_marginEnd="3dp"
+                android:layout_marginTop="10dp"
+                android:weightSum="2.2"
                 android:layout_below="@+id/img_myride">
                 <LinearLayout
                     android:layout_width="0dp"
@@ -115,17 +117,14 @@
                     android:id="@+id/lay_steps"
                     layout="@layout/rl_common_image_title_subtitle" />
                 </LinearLayout>
-
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/img_nain"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_myride"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/lay_all_common"
-                    android:layout_margin="10dp"
+                    android:layout_weight="1.2"
+                    android:src="@drawable/ride"
                     android:scaleType="centerCrop"
+                    android:layout_gravity="bottom"
                     app:shapeAppearanceOverlay="@style/CornerCut"/>
             </LinearLayout>
             
@@ -134,9 +133,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:background="@color/AppMainBGColor"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:weightSum="4"
-                android:layout_marginTop="30dp"
                 android:layout_below="@+id/lay_all_common">
 
                 <RelativeLayout
@@ -146,8 +148,8 @@
                     android:layout_weight="1">
                     <ImageView
                         android:id="@+id/img_thum"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
                         android:src="@drawable/ic_thumbs_g"
                         android:layout_centerVertical="true"/>
 
@@ -155,11 +157,11 @@
                         android:id="@+id/txt_thum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:visibility="visible"
                         android:layout_centerVertical="true"
                         android:textColor="@color/AppBlackColor"
-                        android:fontFamily="@font/omnes_regular"
+                        android:fontFamily="@font/omnes_semibold_regular"
                         android:layout_marginStart="5dp"
                         android:layout_toEndOf="@+id/img_thum"/>
                 </RelativeLayout>
@@ -171,20 +173,20 @@
                     android:layout_weight="1">
                     <ImageView
                         android:id="@+id/img_award"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_award"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_award_g"
                         android:layout_centerVertical="true"/>
 
                     <TextView
                         android:id="@+id/txt_award"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:visibility="visible"
                         android:layout_centerVertical="true"
                         android:textColor="@color/AppBlackColor"
-                        android:fontFamily="@font/omnes_regular"
+                        android:fontFamily="@font/omnes_semibold_regular"
                         android:layout_marginStart="5dp"
                         android:layout_toEndOf="@+id/img_award"/>
                 </RelativeLayout>
@@ -196,8 +198,8 @@
                     android:layout_weight="1">
                     <ImageView
                         android:id="@+id/img_comment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
                         android:src="@drawable/fd_comment_gray"
                         android:layout_centerVertical="true"
                         app:tint="@color/AppBottomGrayColor"/>
@@ -206,11 +208,11 @@
                         android:id="@+id/txt_comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:visibility="visible"
                         android:layout_centerVertical="true"
                         android:textColor="@color/AppBlackColor"
-                        android:fontFamily="@font/omnes_regular"
+                        android:fontFamily="@font/omnes_semibold_regular"
                         android:layout_marginStart="5dp"
                         android:layout_toEndOf="@+id/img_comment"/>
                 </RelativeLayout>
@@ -221,11 +223,10 @@
                     android:layout_weight="1">
                     <ImageView
                         android:id="@+id/img_share"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
                         android:src="@drawable/ic_share"
-                        android:layout_centerInParent="true"
-                        app:tint="@color/AppBottomGrayColor"/>
+                        android:layout_centerInParent="true"/>
 
                 </RelativeLayout>
 
@@ -235,7 +236,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/feedbottomlineheight"
                 android:layout_below="@+id/lay_bottom"
-                android:layout_marginTop="10dp"
                 android:background="@color/AppLightGrayColor"/>
 
         </RelativeLayout>
@@ -244,168 +244,4 @@
 
 </layout>
 
-<!--
-<androidx.constraintlayout.widget.ConstraintLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:padding="10dp">
-<de.hdodenhof.circleimageview.CircleImageView
-    android:id="@+id/img_user"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:layout_marginTop="15dp"
-    android:src="@drawable/classes"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"/>
 
-<TextView
-    android:id="@+id/txt_username"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_marginTop="15dp"
-    android:layout_marginStart="15dp"
-    app:layout_constraintLeft_toRightOf="@+id/img_user"
-    android:RLText="@string/hidhruv"
-    android:fontFamily="@font/omnes_semibold_regular"
-    android:textColor="@color/AppBlackColor"
-    android:textSize="@dimen/text_title_size"/>
-
-<TextView
-    android:id="@+id/txt_userdatetime"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="3dp"
-    android:layout_marginStart="15dp"
-    app:layout_constraintLeft_toRightOf="@+id/img_user"
-    app:layout_constraintTop_toBottomOf="@+id/txt_username"
-    android:RLText="23/04/2024 16:57"
-    android:fontFamily="@font/omnes_regular"
-    android:textColor="@color/AppTextGrayColor"
-    android:textSize="@dimen/text_size"/>
-
-<ImageView
-    android:id="@+id/img_threedot"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/fd_options_gray"
-    app:tint="@color/AppBottomGrayColor"
-    app:layout_constraintTop_toBottomOf="@+id/txt_username"
-    app:layout_constraintEnd_toEndOf="parent"/>
-
-
-<ImageView
-    android:id="@+id/img_myride"
-    android:layout_width="35dp"
-    android:layout_height="35dp"
-    android:layout_marginTop="15dp"
-    android:padding="10dp"
-    android:background="@drawable/full_round"
-    android:src="@drawable/fd_ride_green"
-    app:layout_constraintTop_toBottomOf="@+id/img_user"
-    app:layout_constraintStart_toStartOf="parent"/>
-
-<TextView
-    android:id="@+id/txt_myride"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
-    android:layout_marginStart="15dp"
-    app:layout_constraintTop_toBottomOf="@+id/img_user"
-    app:layout_constraintLeft_toRightOf="@+id/img_myride"
-    android:RLText="@string/myride"
-    android:fontFamily="@font/omnes_regular"
-    android:textColor="@color/AppBlackColor"
-    android:textSize="@dimen/text_main_title_size"/>
-
-<LinearLayout
-    android:id="@+id/lay_all_common"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:weightSum="2"
-    app:layout_constraintTop_toBottomOf="@+id/img_myride"
-    app:layout_constraintStart_toStartOf="parent">
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/lay_time"
-            layout="@layout/rl_common_image_title_subtitle" />
-        <include
-            android:id="@+id/lay_calories"
-            layout="@layout/rl_common_image_title_subtitle" />
-        <include
-            android:id="@+id/lay_assumedeffort"
-            layout="@layout/rl_common_image_title_subtitle" />
-        <include
-            android:id="@+id/lay_steps"
-            layout="@layout/rl_common_image_title_subtitle" />
-    </LinearLayout>
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/img_nain"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        app:layout_constraintTop_toBottomOf="@+id/txt_myride"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/lay_all_common"
-        android:layout_margin="10dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/yourway"
-        app:shapeAppearanceOverlay="@style/CornerCut"/>
-</LinearLayout>
-
-<ImageView
-    android:id="@+id/img_thum"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/fd_thumbs_gray"
-    app:tint="@color/AppBottomGrayColor"
-    android:layout_marginTop="30dp"
-    android:layout_marginStart="30dp"
-    app:layout_constraintTop_toBottomOf="@+id/lay_all_common"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"/>
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:RLText="1"
-    android:visibility="gone"
-    android:textColor="@color/AppTextGrayColor"
-    android:layout_marginTop="30dp"
-    android:layout_marginStart="5dp"
-    app:layout_constraintTop_toBottomOf="@+id/lay_all_common"
-    app:layout_constraintStart_toEndOf="@+id/img_thum"
-    app:layout_constraintBottom_toBottomOf="parent"/>
-
-<ImageView
-    android:id="@+id/img_chat"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/fd_comment_gray"
-    app:tint="@color/AppBottomGrayColor"
-    android:layout_marginTop="30dp"
-    android:layout_marginRight="30dp"
-    app:layout_constraintTop_toBottomOf="@+id/lay_all_common"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"/>
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:RLText="1"
-    android:visibility="gone"
-    android:textColor="@color/AppTextGrayColor"
-    android:layout_marginTop="30dp"
-    android:layout_marginStart="5dp"
-    app:layout_constraintTop_toBottomOf="@+id/lay_all_common"
-    app:layout_constraintStart_toEndOf="@+id/img_chat"
-    app:layout_constraintBottom_toBottomOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>-->

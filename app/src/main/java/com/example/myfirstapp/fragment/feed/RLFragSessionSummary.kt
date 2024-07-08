@@ -74,18 +74,13 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-
         //Title list set
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
@@ -95,9 +90,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         fragBinding.ivTitle.setText(cardData.className.toString())
         fragBinding.ivTitleDate.setText(RLTools.RLconvertTimestampToDateTime(cardData.timestamp.toLong()))
-
         RLsummaryDataSet()
-
     }
     private fun RLrankingDataSet(){
         fragBinding.relaySummary.visibility=View.GONE

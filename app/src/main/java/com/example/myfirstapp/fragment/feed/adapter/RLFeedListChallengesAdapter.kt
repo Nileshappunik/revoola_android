@@ -81,9 +81,10 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.layTargetsteps.viewCommon.visibility = View.GONE
                 layoutBinding.layDaysremaining.viewCommon.visibility = View.GONE
 
+
                 layoutBinding.txtUsername.setText(cardData.username.toString())
                 layoutBinding.txtMyride.setText(cardData.challenge_name.toString())
-                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDate(cardData.startdate.toLong()))
+                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.startdate.toLong()))
                 layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
 
                 Glide.with(context!!).load(cardData.avatar)
@@ -97,15 +98,19 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                     .error(R.drawable.wellcome)
                     .into(layoutBinding.imgUser)
 
+                layoutBinding.txtOrganizerName.setText(cardData.adminfullname.toString())
 
-                layoutBinding.layStepssofar.txtTime.setText(cardData.metric.uppercase()+" SO FAR")
-                layoutBinding.layStepssofar.txtTimeNumber.setText(cardData.actualtotal.toString())//STEPS
+                layoutBinding.layStepssofar.imgTime.setImageResource(R.drawable.ic_calendar_today)
+                layoutBinding.layStepssofar.txtTime.setText("CHALLENGE PERIOD")
+                layoutBinding.layStepssofar.txtTimeNumber.setText(cardData.days_remaining.toString()+" of "+cardData.totaldays.toString()+" Days")
 
-                layoutBinding.layTargetsteps.txtTime.setText("TARGET "+cardData.metric.uppercase())
+                layoutBinding.layTargetsteps.imgTime.setImageResource(R.drawable.fd_steps_green)
+                layoutBinding.layTargetsteps.txtTime.setText("ACHIEVED SO FAR")
                 layoutBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.totaltarget.toDouble()))
 
-                layoutBinding.layDaysremaining.txtTime.setText("DAYS REMAINING")
-                layoutBinding.layDaysremaining.txtTimeNumber.setText(cardData.totaldays.toString()+" DAYS")
+                layoutBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_goal)
+                layoutBinding.layDaysremaining.txtTime.setText(cardData.targettype.uppercase()+" TARGET")
+                layoutBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.totaltarget.toDouble()))
 
             } catch (e: Exception) {
             Log.d(TAG, "exceptionAdaptermsg= " + e.message)

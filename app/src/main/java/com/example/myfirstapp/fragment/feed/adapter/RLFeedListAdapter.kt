@@ -97,7 +97,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                 } else if (cardData.from_third_party_source == 2) {
                     RLthirdPartyTwoBodySet(cardData, layoutBinding)
                 } else if (cardData.from_third_party_source > 10) {
-                    RLthirdPartyTenbodyset(cardData, layoutBinding)
+                    RLthirdPartyTenBodySet(cardData, layoutBinding)
                 }
             } catch (e: Exception) {
             Log.d(TAG, "exception= " + e.message)
@@ -133,7 +133,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (totlaaward > 0) {
             layoutBinding.txtAward.setText(totlaaward.toString())
         } else {
-            layoutBinding.txtAward.setText("")
+            layoutBinding.txtAward.setText("0")
         }
 
 
@@ -161,10 +161,11 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, RLFragSessionSummary::class.java.simpleName, false)
         }
     }
-    private fun RLthirdPartyTenbodyset(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calendar_today)
         layoutBinding.layTime.txtTime.setText(R.string.challengesfor)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.duration.toInt()))
+       // layoutBinding.layTime.relativeCard.visibility=View.GONE
 
         if (classType.toLowerCase().equals("challenge-effort")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
@@ -234,7 +235,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
 
         layoutBinding.laySteps.txtTime.setText(R.string.rank)
         layoutBinding.laySteps.txtTimeNumber.setText(cardData.hrm.toString())
-        layoutBinding.layBottom.visibility=View.GONE
+       layoutBinding.layBottom.visibility=View.VISIBLE
     }
     private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
@@ -256,7 +257,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
 
-        layoutBinding.layBottom.visibility=View.GONE
+        layoutBinding.layBottom.visibility=View.VISIBLE
 
     }
     private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -285,7 +286,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }
 
         layoutBinding.imgAward.visibility=View.GONE
-        layoutBinding.imgShare.visibility=View.GONE
+        layoutBinding.imgShare.visibility=View.VISIBLE
         layoutBinding.layBottom.visibility=View.VISIBLE
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
@@ -322,7 +323,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (currentUser.equals(cardData.userid)){
             layoutBinding.imgShare.visibility=View.VISIBLE
         }else{
-            layoutBinding.imgShare.visibility=View.GONE
+            layoutBinding.imgShare.visibility=View.VISIBLE
         }
     }
     private fun RLbodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -350,7 +351,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (currentUser.equals(cardData.userid.toString())){
             layoutBinding.imgShare.visibility=View.VISIBLE
         }else{
-            layoutBinding.imgShare.visibility=View.GONE
+            layoutBinding.imgShare.visibility=View.VISIBLE
         }
     }
     private fun RLmindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding) {
@@ -372,7 +373,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (currentUser.equals(cardData.userid)){
             layoutBinding.imgShare.visibility=View.VISIBLE
         }else{
-            layoutBinding.imgShare.visibility=View.GONE
+            layoutBinding.imgShare.visibility=View.VISIBLE
         }
     }
 

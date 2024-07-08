@@ -51,11 +51,7 @@ class RLFragYourFriends : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
@@ -97,9 +93,7 @@ class RLFragYourFriends : RLBaseFragment() {
         }
     }
     private fun RLyouFollowApiCall() {
-        val request = listOf(
-            RLSetsearch_userrequest(
-                search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
+        val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         Log.d(TAG,"setyouFollowdata= "+request)
 
         viewModel.RLfriendsYouFollow(request) { result ->
