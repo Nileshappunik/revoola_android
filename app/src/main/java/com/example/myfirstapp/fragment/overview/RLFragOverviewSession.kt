@@ -201,10 +201,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 when (i){
                     0-> datalist.add(RLSessionitemset("MAX CALORIES",RLTools.RLformatNumberWithCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                     1-> datalist.add(RLSessionitemset("AVG CALORIES","0",R.drawable.fd_calories_green))
-                    2-> datalist.add(RLSessionitemset("MAX DAILY TOTAL",RLTools.RLformatNumberWithCommas(carddate.maxcalories.toDouble()),R.drawable.ic_calendar_today))
-                    3-> datalist.add(RLSessionitemset("MAX DAILY ACTIVE","0",R.drawable.ic_calendar_today))
-                    4-> datalist.add(RLSessionitemset("AVG DAILY TOTAL",RLTools.RLformatNumberWithCommas(DAILYAVGTOTALCALORIES.toDouble()),R.drawable.ic_calendar_today))
-                    5-> datalist.add(RLSessionitemset("AVG DAILY ACTIVE","0",R.drawable.ic_calendar_today))
+                    2-> datalist.add(RLSessionitemset("MAX DAILY TOTAL",RLTools.RLformatNumberWithCommas(carddate.maxcalories.toDouble()),R.drawable.ic_max_calender_black))
+                    3-> datalist.add(RLSessionitemset("MAX DAILY ACTIVE","0",R.drawable.ic_max_calender_black))
+                    4-> datalist.add(RLSessionitemset("AVG DAILY TOTAL",RLTools.RLformatNumberWithCommas(DAILYAVGTOTALCALORIES.toDouble()),R.drawable.ic_avg_calender_black))
+                    5-> datalist.add(RLSessionitemset("AVG DAILY ACTIVE","0",R.drawable.ic_avg_calender_black))
                 }
             }
 

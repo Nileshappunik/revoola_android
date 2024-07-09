@@ -91,11 +91,12 @@ data class RLSetgoaled_challenges(var id:String, var type:String, var today:Stri
 data class RLFeedChallengesModel(var type: String, var text:RLFeedChallengesModelListData )
 data class RLFeedChallengesModelListData(var data:List<RLFeedChallengesModelData>)
 data class RLFeedChallengesModelData(var actualtotal:Int, var metric:String, var challenge_name:String,
-                                     var startdate:String, var enddate:String, var totaldays:Int, var totaltarget:Double, var userid:String,
+                                     var startdate:String, var enddate:String, var totaldays:Int, var totaltarget:Int, var userid:String,
                                      var username:String, var avatar:String, var first_name:String, var last_name:String, var full_name:String,
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
                                      var adminlastname:String, var adminfullname:String, var number_of_members:String, var challengeid:String,
-                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Double, var days_remaining:Double,
-                                     var percentage_of_time_elapsed:Double,val targettype:String)
+                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Double, var days_remaining:Int,
+                                     var percentage_of_time_elapsed:Double,val targettype:String,var totalmetric:String,var percentage_of_goal_display:String): Serializable
+
 
 

@@ -40,7 +40,27 @@ class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val conte
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             try{
-                RLGetVideoListBody(cardData.key,itemVIew)
+              //  RLGetVideoListBody(cardData.key,itemVIew)
+                layoutBinding.txtClasstime.setText(cardData.duration)
+                layoutBinding.txtUsername.setText(cardData.instructor)
+                layoutBinding.txtClassname.setText(cardData.rideTitle)
+                layoutBinding.txtVideoaudio.setText(cardData.difficulty)
+                Glide.with(context!!).load(cardData.imageLinkInstructor)
+                    //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .into(layoutBinding.imgUser)
+                Glide.with(context).load(cardData.imageLinkrectangleV2)
+                    // .placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .into(layoutBinding.imgMind)
+                itemVIew.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putString("VIDEODATA",cardData.key)
+                    bundle.putBoolean("Ride",ride)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, false)
+                }
+
+
+
+
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")
             }

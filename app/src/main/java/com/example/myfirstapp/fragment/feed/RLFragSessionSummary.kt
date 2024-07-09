@@ -490,6 +490,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         }else if(maptype.equals(RLConstants.PACE)) {
             val timeData = listOf(225, 165, 135, 132, 124, 131)
             fragBinding.includePace.webViewAnalysis.loadDataWithBaseURL(null, RLTools.RLgetPaceChartHtml( timeData.toString()), "text/html", "UTF-8", null)
+
         }
     }
 

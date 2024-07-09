@@ -3,7 +3,6 @@ package com.example.myfirstapp.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -18,14 +17,11 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
-import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.NumberPicker
-import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -35,6 +31,7 @@ import androidx.viewpager.widget.ViewPager
 import com.example.myfirstapp.R
 
 import com.google.android.material.snackbar.Snackbar
+import org.json.JSONArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -81,9 +78,9 @@ object RLTools {
        if( typename.toLowerCase().equals("walk")){
            return R.drawable.ic_walk
        }else if( typename.toLowerCase().equals("calories")){
-           return R.drawable.ic_walk
+           return R.drawable.fd_calories_green
        }else if( typename.toLowerCase().equals("steps")){
-           return R.drawable.ic_walk
+           return R.drawable.fd_steps_green
        }else if( typename.toLowerCase().equals("dance")){
            return R.drawable.ic_dance
        }else if( typename.toLowerCase().equals("run")){
@@ -1190,4 +1187,696 @@ object RLTools {
         """.trimIndent()
     }
 
+    fun RLgetChallengeChartHtml (steps_so_far:Int,target_steps:Int,time_gone:Int,total_time:Int) : String{
+        return """
+         <!DOCTYPE html>
+         <html>
+         <head>
+             <meta charset="utf-8">
+             <title>Progress</title>
+             <style>
+                 body { margin:0; position:fixed; top:0; right:0; bottom:0; left:0; }
+                 .yaxis path { stroke: none; }
+                 .yaxis line { stroke: none; }
+                 text { fill: #aaa; font-size: 40px; font-family: sans-serif; }
+                 .yaxis text { fill: #aaa; font-size: 50px; font-family: sans-serif; }
+             </style>
+             <!-- Load d3.js -->
+             <script src="https://d3js.org/d3.v4.js"></script>
+         </head>
+         <body>
+         <script>
+             let steps_so_far = '$steps_so_far'; //3364 number of steps taken
+             let target_steps = '$target_steps'; // 3333 total number of steps
+             let time_gone =' $time_gone'; //0 number of days passed away
+             let total_time = '$total_time'; //1total number of days for completing all steps
+             
+             if(steps_so_far > target_steps) {
+                 steps_so_far = target_steps;
+             }
+             if(time_gone > total_time || time_gone === 0.0) {
+                 time_gone = total_time;
+             } else {
+                 time_gone = (total_time - time_gone);
+             }
+             
+             const margin = { left: 35, right: 0, top: 35, bottom: 35 };
+             const chart_width = window.innerWidth;
+             const chart_height = window.innerHeight;
+             const width = (chart_width / 100) * 20; // Width of the progress bar
+             const height = chart_height - margin.top - margin.bottom; // Height of the progress bar
+
+             // Create an SVG container
+             const svg = d3.select('body').append('svg')
+                 .attr("width", chart_width)
+                 .attr("height", chart_height);
+
+             let x_mid = chart_width / 2 - (width / 2);
+             let shift_percentage = 45; // Increased percentage for more separation
+             let step_x = x_mid - ((x_mid / 100) * shift_percentage);
+             let time_x = x_mid + ((x_mid / 100) * shift_percentage);
+
+             var y = d3.scaleLinear().range([height, 0]);
+             var yAxis = d3.axisRight(y).ticks(3).tickValues([25, 50, 75]).tickFormat(d => d + "%");
+             y.domain([0, 100]);
+
+             svg.append("g").attr("transform", "translate(" + (x_mid + 60) + "," + 50 + ")")
+                 .attr("class", "yaxis").call(yAxis);
+
+             // Adjust text positions
+             svg.append("text")
+                 .attr("x", step_x + width / 2)
+                 .attr("y", 40)
+                 .attr("text-anchor", "middle")
+                 .text("STEPS");
+
+             svg.append("text")
+                 .attr("x", time_x + width / 2)
+                 .attr("y", 40)
+                 .attr("text-anchor", "middle")
+                 .text("TIME");
+
+             const progressBar = svg.append("g").attr("transform", "translate(" + step_x + "," + 50 + ")");
+             progressBar.append("rect")
+                 .attr("width", width)
+                 .attr("height", height)
+                 .attr("rx", 12)
+                 .attr("fill", "#ccc");
+
+             progressBar.append("rect")
+                 .data([steps_so_far / target_steps])
+                 .attr("width", width)
+                 .attr("height", 0)
+                 .attr("y", height)
+                 .attr("rx", 12)
+                 .attr("fill", "#4CAF50")
+                 .transition()
+                 .duration(1000)
+                 .attr("height", d => height * d)
+                 .attr("y", d => height * (1 - d));
+
+             const progressBar1 = svg.append("g").attr("transform", "translate(" + time_x + "," + 50 + ")");
+             progressBar1.append("rect")
+                 .attr("width", width)
+                 .attr("height", height)
+                 .attr("rx", 12)
+                 .attr("fill", "#ccc");
+
+             progressBar1.append("rect")
+                 .data([time_gone / total_time])
+                 .attr("width", width)
+                 .attr("height", 0)
+                 .attr("y", height)
+                 .attr("rx", 12)
+                 .attr("fill", "#118def")
+                 .transition()
+                 .duration(1000)
+                 .attr("height", d => height * d)
+                 .attr("y", d => height * (1 - d));
+         </script>
+         </body>
+         </html>
+
+        """.trimIndent()
+    }
+
+    fun RLgetRankingChartHtml(): String{
+        return """     
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Bar</title>
+                <style>
+                    body {
+                        margin: 0;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                    }
+                    .image {
+                        stroke: white;
+                        border-width: 1px;
+                        border-radius: 50%;
+                        overflow: hidden;
+                    }
+                    .x-axis text{
+                        fill: none;
+                        font-family: "Omnes";
+                    }
+                    .x-axis path{
+                        stroke: none;
+                    }
+
+                    .x-axis line{
+                        stroke: white;
+                    }
+                </style>
+                <!-- Load d3.js -->
+                <script src="https://d3js.org/d3.v7.js"></script>
+            </head>
+
+            <body>
+                <script>
+                    
+
+           // Define your data (sample data)
+                        var data = [{   "value" : 94,
+    "name" : "1 - Potty",
+    "number2" : "213,336",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/OtTfW5BUEybKtcqXGASkA3MmFHq1main.png?alt=media&token=2dd2d8fa-9a5d-4420-b69c-f9c9d37d446b",
+    "userid" : "OtTfW5BUEybKtcqXGASkA3MmFHq1"
+  },{   "value" : 83,
+    "name" : "2 - Josh Y",
+    "number2" : "187,143",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/MxDgu5sHE5antBQbKFimWVGn8pc2main.png?alt=media&token=23409753-2a79-49ce-aacc-d14095140d35",
+    "userid" : "MxDgu5sHE5antBQbKFimWVGn8pc2"
+  },{   "value" : 81,
+    "name" : "3 - Art",
+    "number2" : "183,120",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/MwiWEJY8aUcy4R6loydsqZDZOLj1main.png?alt=media&token=698531ae-c473-4ad6-bd36-a339c1b5864c",
+    "userid" : "MwiWEJY8aUcy4R6loydsqZDZOLj1"
+  },{   "value" : 79,
+    "name" : "4 - Nessie",
+    "number2" : "178,260",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/SYefycUC7dMipoLvxWiCAt8C5bB3main.png?alt=media&token=e9b76abf-6203-4359-8c6e-7fb95c174ad0",
+    "userid" : "SYefycUC7dMipoLvxWiCAt8C5bB3"
+  },{   "value" : 66,
+    "name" : "5 - Janie",
+    "number2" : "148,793",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/jmMZipZgfofBY6IQPCREn23XMBn2main.png?alt=media&token=ddbf2795-83ab-408c-8625-c46ddb2cbed5",
+    "userid" : "jmMZipZgfofBY6IQPCREn23XMBn2"
+  },{   "value" : 64,
+    "name" : "6 - PEG",
+    "number2" : "145,411",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/KOqJRtH2sBX7QBHfBmsPrsXRQr62main.png?alt=media&token=c6406abe-1102-468f-8b0c-adf8725b0424",
+    "userid" : "KOqJRtH2sBX7QBHfBmsPrsXRQr62"
+  },{   "value" : 60,
+    "name" : "7 - Milzo Tezza ",
+    "number2" : "136,115",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/zJk8IPL7IOOykgrJOQDER4NB4hv1main.png?alt=media&token=001b6368-783f-46db-b641-1f97385e3f2a",
+    "userid" : "zJk8IPL7IOOykgrJOQDER4NB4hv1"
+  },{   "value" : 45,
+    "name" : "8 - Goosey",
+    "number2" : "102,579",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/gGPNXIsMeoNDWMM1YFLjU6rRsBG2main.png?alt=media&token=2e88892e-a32d-4880-9dc1-84e302afd5a1",
+    "userid" : "gGPNXIsMeoNDWMM1YFLjU6rRsBG2"
+  },{   "value" : 35,
+    "name" : "9 - MG",
+    "number2" : "80,400",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/PEpcIeQShlQIMZHb9eI0G5aqmF73main.png?alt=media&token=cdc232df-4362-4b67-aceb-1dce20c5b51d",
+    "userid" : "PEpcIeQShlQIMZHb9eI0G5aqmF73"
+  },{   "value" : 31,
+    "name" : "10 - Goose",
+    "number2" : "71,231",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/mRlXSgu7ufaM08EtO5f2HjPX8VD3main.png?alt=media&token=8e8a3920-4d53-412a-bac6-7c7d9763a0f6",
+    "userid" : "mRlXSgu7ufaM08EtO5f2HjPX8VD3"},
+	{   "value" : 23,
+    "name" : "11 - Josh Y2",
+    "number2" : "67,143",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/MxDgu5sHE5antBQbKFimWVGn8pc2main.png?alt=media&token=23409753-2a79-49ce-aacc-d14095140d35",
+    "userid" : "MxDgu5sHE5antBQbKFimWVGn8pc3"
+  },{   "value" : 21,
+    "name" : "12 - Art2",
+    "number2" : "63,120",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/MwiWEJY8aUcy4R6loydsqZDZOLj1main.png?alt=media&token=698531ae-c473-4ad6-bd36-a339c1b5864c",
+    "userid" : "MwiWEJY8aUcy4R6loydsqZDZOLj2"
+  },{   "value" : 0,
+    "name" : "13 - Nessie2",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/SYefycUC7dMipoLvxWiCAt8C5bB3main.png?alt=media&token=e9b76abf-6203-4359-8c6e-7fb95c174ad0",
+    "userid" : "SYefycUC7dMipoLvxWiCAt8C5bB4"
+  },{   "value" : 0,
+    "name" : "14 - Janie2",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/jmMZipZgfofBY6IQPCREn23XMBn2main.png?alt=media&token=ddbf2795-83ab-408c-8625-c46ddb2cbed5",
+    "userid" : "jmMZipZgfofBY6IQPCREn23XMBn3"
+  },{   "value" : 0,
+    "name" : "15 - PEG3",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/KOqJRtH2sBX7QBHfBmsPrsXRQr62main.png?alt=media&token=c6406abe-1102-468f-8b0c-adf8725b0424",
+    "userid" : "KOqJRtH2sBX7QBHfBmsPrsXRQr63"
+  },{   "value" : 0,
+    "name" : "16 - Milzo Tezza2 ",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/zJk8IPL7IOOykgrJOQDER4NB4hv1main.png?alt=media&token=001b6368-783f-46db-b641-1f97385e3f2a",
+    "userid" : "zJk8IPL7IOOykgrJOQDER4NB4hv2"
+  },{   "value" : 0,
+    "name" : "17 - Goosey",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/gGPNXIsMeoNDWMM1YFLjU6rRsBG2main.png?alt=media&token=2e88892e-a32d-4880-9dc1-84e302afd5a1",
+    "userid" : "gGPNXIsMeoNDWMM1YFLjU6rRsBG4"
+  },{   "value" : 0,
+    "name" : "18 - MG9",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/PEpcIeQShlQIMZHb9eI0G5aqmF73main.png?alt=media&token=cdc232df-4362-4b67-aceb-1dce20c5b51d",
+    "userid" : "PEpcIeQShlQIMZHb9eI0G5aqmF76"
+  },{   "value" : 0,
+    "name" : "19 - Goose9",
+    "number2" : "0",
+    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/mRlXSgu7ufaM08EtO5f2HjPX8VD3main.png?alt=media&token=8e8a3920-4d53-412a-bac6-7c7d9763a0f6",
+    "userid" : "mRlXSgu7ufaM08EtO5f2HjPX8VD8"}
+  ,];
+              
+            		var bar_color = "#ebf7ed";
+                    var percentage_label_color = "#4a4c4f";
+                    var user_name_label_color = "#4a4c4f"; // Change user_name_label_color to white
+                    var name_label_color = "#4a4c4f";
+                    var index_label_color = "black";
+                    var name_font_size = "45px";
+                    var percentage_font_size = "45px";
+                    var index_font_size = "50px";
+                    var font_family = "Omnes, sans-serif";
+                    var barHeight = 65;
+                    var user_name = "zJk8IPL7IOOykgrJOQDER4NB4hv2";
+                    var font_vertical_pos = 13;
+
+              
+                   	 // Sort data by value in descending order
+                   data.sort((a, b) => b.value - a.value);
+
+
+
+
+                    // Find the index of the user's bar
+                    const userIndex = data.findIndex(d => d.userid === user_name);
+
+                    // Determine which bars to display
+                    let displayData=data;
+                    //if (userIndex <= userIndex) {
+                      //  displayData = data;
+            			
+            //			.slice(0, userIndex);
+                    //} else {
+                      //  displayData = data.slice(0, 14).concat(data[userIndex]);
+                    //}
+            		// Now, sort displayData in ascending order based on the value
+            //displayData.sort((a, b) => a.value - b.value);
+            	
+                    const svgWidth = (window.innerWidth / 100) * 90;
+                    //const svgHeight = data.length * 90;
+            		const svgHeight = data.length > 1 ? data.length * 90 : 180; // Adjust overall SVG height if only one bar
+                    const margin = {top: 20, right: 80, bottom: 40, left: 120};
+                    const width = svgWidth - margin.left - margin.right;
+                    const height = svgHeight - margin.top - margin.bottom;
+
+                    const svg = d3.select("body")
+                            .append("svg")
+                            .attr("width", svgWidth)
+                            .attr("height", svgHeight)
+                            .style("overflow", "visible")
+                            .append("g")
+                            .attr("transform", `translate(`+ margin.left +`,`+ margin.top +`)`);
+            		
+
+                    
+                    // Set the ranges
+                 //   const x = d3.scaleLinear().range([0, width]);
+                 //   const y = d3.scaleBand().range([height, 0]).padding(0.1);
+            			
+            				        // Create scales
+                    const xScale = d3.scaleLinear()
+                            .domain([0, d3.max(data, d => d.value)])
+                            .range([0, width]);
+
+                    const yScale = d3.scaleBand()
+                            .domain(displayData.map(d => d.name))
+                            .range([0, height])
+                            .padding(0.25);
+
+                    // Add axes if needed
+                    const xAxis = d3.axisBottom(xScale).tickSize(-height);
+                    svg.append("g")
+                            .attr("class", "x-axis")
+                            .attr("transform", `translate(0, `+ height +`)`)
+                            .call(xAxis);
+
+                    const yAxis = d3.axisLeft(yScale);
+                    svg.append("g")
+                            .attr("class", "y-axis")
+                            .style("display", "none")
+                            .call(yAxis);
+
+                    // Create bars
+                    svg.selectAll(".gap")
+                            .data(displayData)
+                            .enter()
+                            .append("rect")
+                            .attr("class", "gap")
+                            .attr("x", 10)
+                            .attr("y", d => yScale(d.name))
+                            .attr("width", d => xScale(d.value))
+                            .attr("height", yScale.bandwidth())
+                            .attr("rx", 12)
+                            //.style("fill", d => d.userid.startsWith(user_name) ? "#39b54a" : bar_color); // Dark blue color for user_name, bar_color for others
+            				 .style("fill", (d, i) => i === userIndex ? "#39b54a" : bar_color); // Use index to determine fill color
+                    svg
+                            .append("defs")
+                            .selectAll("pattern")
+                            .data(displayData)
+                            .enter()
+                            .append("pattern")
+                            .attr("id", (d, i) => "image-pattern-" + i)
+                            .attr("width", 1) // Adjust the width of the pattern as needed
+                            .attr("height", 1) // Adjust the height of the pattern as needed
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("patternContentUnits", "objectBoundingBox")
+                            .append("image")
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", 1)
+                            .attr("height", 1)
+                            .attr("xlink:href", (d) => d.image)
+                            .attr("preserveAspectRatio", "xMinYMin slice");
+
+                    svg.selectAll(".circle")
+                            .data(displayData)
+                            .enter()
+                            .append("circle")
+                            .attr("class", "circle")
+                            .attr("cx", -margin.left + 60)
+                            .attr("cy", d => yScale(d.name) + yScale.bandwidth() / 2 + 2)
+                            .attr("r", yScale.bandwidth() / 2) //
+                            .style("fill", (d, i) => `url(#image-pattern-`+ i+`)`);
+            				
+            				
+            				
+            				// This code goes after the section where you create the bars.
+
+            if (userIndex > userIndex) {
+                // Calculate the y-position of the 14th bar. Since bars are drawn using yScale,
+                // you can use yScale to find the y-position of the 14th item's name.
+                // We add half of the bandwidth to position the line below the 14th bar.
+                const yPositionOf14thBar = yScale(displayData[13].name) + yScale.bandwidth();
+
+                // Draw a horizontal line at the y-position of the 14th bar
+                svg.append("line")
+                    .style("stroke", "black") // Color of the line
+                    .style("stroke-width", 4) // Thickness of the line
+                     .style("stroke-dasharray", "10,10") // Make the line dashed: 10 pixels dash, 10 pixels gap
+            		.attr("x1", 0) // Starting x-position of the line
+                    .attr("y1", yPositionOf14thBar+25) // Starting y-position of the line (same as ending y-position)
+                    .attr("x2", width) // Ending x-position of the line
+                    .attr("y2", yPositionOf14thBar+25); // Ending y-position of the line
+            }
+
+            				
+            				
+            				
+            // metric values at right hand end of bars
+               svg.selectAll(".label3")
+                            .data(displayData)
+                            .enter()
+                            .append("text")
+                            .attr("class", "label")
+                            .attr("x", d => width - 10) // Adjust the position to right-align the text
+                            .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4) // Center the text vertically
+                            .style("fill", (d) => {
+                                if (d.userid.startsWith(user_name)) {
+                                    return user_name_label_color;
+                                } else {
+                                    return name_label_color;
+                                }
+                            })
+                            .style("font-size", name_font_size)
+                            .style("font-family", font_family)
+                            .style("text-anchor", "end") // Right-align the text
+                            .text(d => d.number2);
+
+            // right hand side % labels
+
+               svg.selectAll(".label4")
+                            .data(displayData)
+                            .enter()
+                            .append("text")
+                            .attr("class", "label")
+                            .attr("x", width + 150) // Adjust the position to right-align the text
+                            .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)
+                            .style("fill", percentage_label_color)
+                            .style("font-size", percentage_font_size)
+                            .style("font-family", font_family)
+                            .style("text-anchor", "end") // Right-align the text
+                            .text(d => d.value + "%");
+
+            // Find the index of the user in the data array
+            var userRowIndex = (data.findIndex(d => d.userid === user_name)+1);
+            	
+
+
+            // labels in bars
+            // Find the first index where the value is 0 to adjust ranking shown for users with value 0
+            const firstZeroValueIndex = data.findIndex(d => d.value === 0) + 1; // Adding 1 for 1-based indexing
+
+
+            // Determine the lowest ranking for users with a value of 0 among the bars
+            let ranksWithZeroValue = data
+              .map((d, i) => ({ value: d.value, rank: i + 1 }))
+              .filter(d => d.value === 0 && d.rank <= userRowIndex)
+              .map(d => d.rank);
+
+            let lowestRankForZeroValue = Math.min(...ranksWithZeroValue, data.length + 1); // Use a fallback if no 0 values
+
+
+            // labels in bars
+            svg.selectAll(".label1")
+                .data(displayData)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", d => 15)  // Position the label slightly right of the y-axis
+                .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)  // Vertically center the text in the bar
+                .style("fill", (d, i) => (i === userIndex && d.value === 0) ? "#39b54a" : name_label_color)  // Change font color to blue if bar length is zero and it's the userIndex
+                .style("font-size", name_font_size)
+                .style("font-family", font_family)
+                .text(d => {
+                    // Determine the ranking directly based on displayData for simplicity and clarity
+                    let ranking = displayData.findIndex(x => x.userid === d.userid) + 1;
+                    return ``+ ranking +` - `+  d.name.split(" - ")[1]+``;  // Display ranking and name
+                });
+
+            /*
+            
+           
+
+            svg.selectAll(".label1")
+              .data(displayData)
+              .enter()
+              .append("text")
+              .attr("class", "label")
+              .attr("x", d => 15)
+              .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)
+              .style("fill", d => d.userid === user_name ? user_name_label_color : name_label_color)
+              .style("font-size", name_font_size)
+              .style("font-family", font_family)
+              .text(d => {
+                  // Determine the ranking directly based on displayData for simplicity and clarity
+                  let directRanking = displayData.findIndex(x => x.userid === d.userid) + 1;
+                  let ranking = directRanking; // Default to direct ranking
+
+                  // Adjust for users with value 0 if they are within the first 15 bars
+                  if (d.value === 0 && directRanking <= 10000) {
+                      ranking = firstZeroValueIndex;
+                  }
+
+                  return ``+  ranking+` - `+  d.name.split(" - ")[1]+``;
+              });
+
+            */
+
+
+            						
+            // Append a text element to display userRowIndex at the top of the chart
+            /*svg.append("text")
+               .attr("x", width / 2) // Center the text horizontally within the chart area
+               .attr("y", (-margin.top / 2)+10) // Position it within the top margin area
+               .attr("text-anchor", "middle") // Center the text alignment
+               .style("font-size", "20px") // Set the font size
+               .style("font-family", font_family) // Use the same font family as the rest of the chart
+               .text("User Row Index: " + userRowIndex); // Display the text with the row index
+
+            // Append a text element to display firstZeroValueIndex at the top of the chart
+               svg.append("text")
+               .attr("x", width / 2) // Center the text horizontally within the chart area
+               .attr("y", (-margin.top / 2)+10) // Position it within the top margin area
+               .attr("text-anchor", "middle") // Center the text alignment
+               .style("font-size", "20px") // Set the font size
+               .style("font-family", font_family) // Use the same font family as the rest of the chart
+               .text("firstZeroValueIndex: " + firstZeroValueIndex); // Display the text with the row index
+            */
+
+            // update goaled_challenges_moengage_for_json set `ch_ranking` = userRowIndex where userid = '" . `+ id +` . "' and challengeid = '" . `+  challengeid +` . "'
+            				   
+                </script>
+            </body>
+            </html>
+        """.trimIndent()
+    }
+    fun RLgetIndividualStepsChartHtml(): String{
+        return """     
+           <!DOCTYPE html>
+           <html>
+           <head>
+             <script src="https://d3js.org/d3.v4.min.js"></script>
+             <style>
+               body {
+                 font: 25px sans-serif;
+               }
+               svg {
+                 font-family: Sans-Serif, Arial;
+                 padding-bottom: 135px; /* Add padding-bottom to create space for x-axis labels and values */
+               }
+               .axis path,
+               .axis line {
+                 stroke: black;
+               }
+               .bar {
+                 fill: #39B54A; /* Green color for the bars */
+               }
+               .tick line {
+                 stroke-opacity: 0.99;
+               }
+             </style>
+           </head>
+           <body>
+           <div id="chart"></div>
+           <script>
+               var array = [
+
+                 {
+                   name: "Challenge Metric",
+                   values: [
+                     { "date": "01\/02\/2024", "value": 5487 },
+                     { "date": "02\/02\/2024", "value": 16783 },
+                     { "date": "03\/02\/2024", "value": 9039 },
+                     { "date": "04\/02\/2024", "value": 3475 },
+                     { "date": "05\/02\/2024", "value": 5354 },
+                     { "date": "06\/02\/2024", "value": 2233 },
+                     { "date": "07\/02\/2024", "value": 2684 },
+                     { "date": "08\/02\/2024", "value": 10263 },
+                     { "date": "09\/02\/2024", "value": 814 },
+                     { "date": "10\/02\/2024", "value": 7017 },
+                     { "date": "11\/02\/2024", "value": 3706 },
+                     { "date": "12\/02\/2024", "value": 2622 },
+                     { "date": "13\/02\/2024", "value": 3171 },
+                     { "date": "14\/02\/2024", "value": 10004 },
+                     { "date": "15\/02\/2024", "value": 3723 },
+                     { "date": "16\/02\/2024", "value": 12987 },
+                     { "date": "17\/02\/2024", "value": 7981 },
+                     { "date": "18\/02\/2024", "value": 7049 },
+                     { "date": "19\/02\/2024", "value": 1599 },
+                     { "date": "20\/02\/2024", "value": 3188 },
+                     { "date": "21\/02\/2024", "value": 10073 },
+                     { "date": "22\/02\/2024", "value": 5321 },
+                     { "date": "23\/02\/2024", "value": 9670 },
+                     { "date": "24\/02\/2024", "value": 9328 },
+                     { "date": "25\/02\/2024", "value": 3360 },
+                     { "date": "26\/02\/2024", "value": 3061 },
+                     { "date": "27\/02\/2024", "value": 5279 },
+                     { "date": "28\/02\/2024", "value": 0 },
+                     { "date": "29\/02\/2024", "value": 10 }
+                     // Other data points...
+                   ]
+                 }
+               
+           ];
+
+           var challengeData = array.find(entry => entry.name === "Challenge Metric");
+           createGraph(challengeData);
+
+           function createGraph(data) {
+             var margin = { top: 20, right: 20, bottom: 85, left: 100 },
+                 barWidth = 56,
+                 width = data.values.length * barWidth + margin.left + margin.right, // Adjust the overall width based on the number of bars
+                 height = 600,
+                 gapWidth = barWidth / 2; // Adjust gapWidth to ensure the first tick starts under the middle of the first bar
+
+             /* Format Data */
+             var parseDate = d3.timeParse("%d/%m/%Y");
+             data.values.forEach(function(d) {
+               d.date = parseDate(d.date);
+               d.value = +d.value;
+             });
+
+             /* Scales */
+             var xScale = d3.scaleBand()
+                            .rangeRound([margin.left, width - margin.right])
+                            .paddingInner(0.1)
+                            .domain(data.values.map(d => d.date));
+
+             var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(data.values, d => d.value)])
+                            .range([height - margin.bottom, margin.top]);
+
+             var svg = d3.select("#chart").append("svg")
+                         .attr("width", width)
+                         .attr("height", height);
+
+             /* Add Axes */
+             var xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%d %b")),
+                 yAxis = d3.axisLeft(yScale).ticks(10);
+                var heightminusmarginbottom=height - margin.bottom
+             svg.append("g")
+                .attr("transform", `translate(0,`+heightminusmarginbottom+`)`)
+                .call(xAxis)
+                .selectAll("text")
+                  .style("text-anchor", "end")
+                  .attr("dx", "-.8em")
+                  .attr("dy", ".15em")
+           	   .style("font-size", 18)
+                  .attr("transform", "rotate(-65)");
+
+             svg.append("g")
+                .attr("transform", `translate(`+ margin.left +`,0)`)
+                .call(yAxis)
+           	   .style("font-size", 18);
+
+            /* Draw Bars with Rounded Tops Only */
+           svg.selectAll(".bar")
+              .data(data.values)
+              .enter().append("path")
+                .attr("d", function(d) {
+                  const x = xScale(d.date) + gapWidth - 28; // Adjust the starting x position
+                  const y = yScale(d.value);
+                  const barHeight = height - margin.bottom - yScale(d.value);
+                  const barWidth = xScale.bandwidth();
+                   const ybarheight=y + barHeight
+                    const barheightminusten= barHeight-10
+                    const barwidthminustwenty= barWidth-20
+                  
+                  // Move to the bottom left, draw line up to the start of top left curve,
+                  // arc for the top left corner, line across the top, arc for the top right corner,
+                  // then line down the right side and close the path.
+               
+                 return `M`+x+`,`+ybarheight+` ` + // Move to bottom left
+                    `v-`+ barheightminusten +` ` +   // Line up to start of top left curve
+                    `q0,-10 10,-10 ` +         // Top left corner curve
+                    `h`+barwidthminustwenty+` ` +     // Line across the top
+                    `q10,0 10,10 ` +           // Top right corner curve
+                    `v`+ barheightminusten +` ` +    // Line down the right side
+                    `h-`+barWidth+`z`;          // Close path
+                    })
+                    .attr("fill", "#39B54A");
+
+
+               /* Adjust label positions if you have them, assuming here how you might add them */
+           	svg.selectAll(".bar-label").data(data.values).enter().append("text")
+                .attr("class", "bar-label")
+                .attr("x", d => xScale(d.date) + 26) // Adjusted for 40px offset
+                .attr("y", d => yScale(d.value) - 5) // Example position above the bar
+                .attr("text-anchor", "middle")
+           	 .text(d => d3.format(",")(d.value)) // Format the value with commas
+              	 .style("font-size", 18)
+                .style("fill", "black");
+           	 
+           	   
+           }
+           </script>
+           </body>
+           </html>
+
+        """.trimIndent()
+
+    }
 }

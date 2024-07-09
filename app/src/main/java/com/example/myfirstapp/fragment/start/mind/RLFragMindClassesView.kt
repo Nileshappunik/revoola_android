@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragMindClassesViewBinding
 import com.example.myfirstapp.fragment.start.classes.RLClassesSchedule
 import com.example.myfirstapp.model.RLFulllVideoModel
@@ -50,37 +51,46 @@ class RLFragMindClassesView : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-        val data=  requireArguments().getString("VIDEODATA","")
-        val gson = Gson()
-        val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
+        val VideoID=  requireArguments().getString("VIDEODATA","")
+        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         fragBinding.layWorklog.visibility=View.GONE
         fragBinding.viewTimevideo.visibility=View.GONE
         fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved)
         fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+
         fragBinding.txtVideo.setText(audioVideoType)
         if (audioVideoType.equals("Video")){
             fragBinding.imgVideo.setImageResource(R.drawable.ic_video)
         }else{
             fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
         }
-        RLMindUiSetup(VideoCardData)
-        RLClickToSechedule(data,RLConstants.MIND,audioVideoType)
-        fragBinding.btnStartclass.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("VIDEODATA",data)
-            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
-            (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
-        }
-        fragBinding.imgDownload.setOnClickListener {
-            videoLink=VideoCardData.videoLinkiPhonex.toString()
-            if (checkPermissions()) {
-                downloadVideo(VideoCardData.videoLinkiPhonex)
-            } else {
-                requestPermissions()
+        val databaseManager= RLDatabaseManagerRead()
+        databaseManager.RLRevoolaVideosMindRead(VideoID){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
+                RLMindUiSetup(VideoData)
+                RLClickToSechedule(jsonObject,RLConstants.MIND,audioVideoType)
+                fragBinding.btnStartclass.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putString("VIDEODATA",jsonObject)
+                    bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
+                }
+                fragBinding.imgDownload.setOnClickListener {
+                    videoLink=VideoData.videoLinkiPhonex.toString()
+                    if (checkPermissions()) {
+                        downloadVideo(VideoData.videoLinkiPhonex)
+                    } else {
+                        requestPermissions()
+                    }
+                }
             }
         }
+
     }
+
     private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
         fragBinding.rlSchdual.setOnClickListener {
             val bundle = Bundle()

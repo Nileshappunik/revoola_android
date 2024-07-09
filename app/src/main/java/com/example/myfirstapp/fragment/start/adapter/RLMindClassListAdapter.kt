@@ -40,37 +40,25 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             try{
-                RLGetVideoListMind(cardData.key,itemVIew,cardData.classtype)
+                layoutBinding.txtClasstime.setText(cardData.duration)
+                layoutBinding.txtUsername.setText(cardData.instructor)
+                layoutBinding.txtClassname.setText(cardData.rideTitle)
+                layoutBinding.txtVideoaudio.setText(cardData.difficulty)
+                Glide.with(context!!).load(cardData.imageLinkInstructor)
+                    //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .into(layoutBinding.imgUser)
+                Glide.with(context).load(cardData.imageLinkrectangleV2)
+                    //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .into(layoutBinding.imgMind)
+
+                itemVIew.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putString("AUDIOVIDEOTYPE", cardData.classtype)
+                    bundle.putString("VIDEODATA",cardData.key)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, RLFragMindClassesView::class.java.simpleName, false)
+                }
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")
-            }
-        }
-        private fun RLGetVideoListMind(videoID:String,itemVIew: View,audioVideoType:String) {
-            val databaseManager= RLDatabaseManagerRead()
-            databaseManager.RLRevoolaVideosMindRead(videoID){ data, error ->
-                if (data != null) {
-                    val gson = Gson()
-                    val jsonObject = gson.toJson(data)
-                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
-                    layoutBinding.txtClasstime.setText(VideoData.duration)
-                    layoutBinding.txtUsername.setText(VideoData.instructor)
-                    layoutBinding.txtClassname.setText(VideoData.rideTitle)
-                    //layoutBinding.txtVideoaudio.setText(audioVideoType)
-                    layoutBinding.txtVideoaudio.setText(VideoData.difficulty)
-                    Glide.with(context!!).load(VideoData.imageLinkInstructor)
-                        //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
-                        .into(layoutBinding.imgUser)
-                    Glide.with(context).load(VideoData.imageLinkSquareV2)
-                        //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
-                        .into(layoutBinding.imgMind)
-                    itemVIew.setOnClickListener {
-                        val bundle = Bundle()
-                        bundle.putString("AUDIOVIDEOTYPE", audioVideoType)
-                        bundle.putString("VIDEODATA",jsonObject)
-                        (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, RLFragMindClassesView::class.java.simpleName, false)
-                    }
-
-                }
             }
         }
 

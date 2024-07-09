@@ -417,7 +417,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false
             RLfirsttimeApiCall(GroupId)
-
         } else if (valueslist[position].equals("GROUPS")) {
             fragBinding.relayGroupname.visibility=View.VISIBLE
             fragBinding.relayListview.visibility=View.VISIBLE
@@ -426,7 +425,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLgroupAPiCall()
             }
             RLgroupAPiCall()
-
         }else if (valueslist[position].equals("YOU")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
@@ -444,7 +442,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             } else {
                 RLshowDialogFullscreen()
             }
-
         }else if (valueslist[position].equals("CHALLENGES")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
@@ -454,7 +451,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             val adapterch = RLFeedListChallengesAdapter(activity)
             fragBinding.rvItemfeed.adapter = adapterch
             RLapicallChallenges(adapterch)
-
         }
 
     }

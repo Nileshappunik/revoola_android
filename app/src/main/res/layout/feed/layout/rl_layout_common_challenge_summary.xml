@@ -11,14 +11,14 @@
         android:id="@+id/img_time"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/fd_active_time_green"/>
 
     <TextView
         android:id="@+id/txt_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:layout_marginStart="15dp"
         android:layout_toEndOf="@+id/img_time"
         android:textStyle="bold"
@@ -31,6 +31,7 @@
         android:id="@+id/txt_time_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="15dp"
         android:layout_below="@+id/txt_time"
         android:layout_toEndOf="@+id/img_time"
@@ -41,14 +42,14 @@
 
     <View
         android:id="@+id/view_common"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:visibility="visible"
         android:layout_marginStart="15dp"
         android:layout_below="@+id/txt_time_number"
         android:layout_toEndOf="@+id/img_time"
-        android:layout_marginTop="10dp"
-        android:background="@color/AppBottomGrayColor"/>
+        android:layout_marginTop="20dp"
+        android:background="@color/AppLightGrayColor"/>
 
 </RelativeLayout>
 </layout>
