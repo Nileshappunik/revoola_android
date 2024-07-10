@@ -168,19 +168,19 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         if (valuetype.equals("SESSIONS")){
             RLwebviewurlload("sessions")
 
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatNumberWithCommas(carddate.session.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble()))
             totaldisplayitem=10
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
                 when (i){
                     0-> datalist.add(RLSessionitemset("LONGEST SESSION",RLTools.RLminutesget(carddate.max_time.toInt())+"m".toString(),R.drawable.fd_active_time_green))
                     1-> datalist.add(RLSessionitemset("AVG SESSION",RLTools.RLminutesget(carddate.avgtime.toInt())+"m".toString(),R.drawable.fd_active_time_green))
-                    2-> datalist.add(RLSessionitemset("EFFORT",RLTools.RLformatNumberWithCommas(carddate.totalREV.toDouble()),R.drawable.ic_heart))
+                    2-> datalist.add(RLSessionitemset("EFFORT",RLTools.RLformatCommas(carddate.totalREV.toDouble()),R.drawable.ic_heart))
                     3-> datalist.add(RLSessionitemset("RELAXATION",carddate.totalrms.toString(),R.drawable.ic_mind_read))
-                    4-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatNumberWithCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
+                    4-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                     5-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
                     6-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.distance.toString(),R.drawable.ic_distance))
-                    7-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                    7-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
                     8-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                     9-> datalist.add(RLSessionitemset("AWARDS",awards.toString(),R.drawable.ic_award))
                 }
@@ -189,7 +189,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("CALORIES")){
             RLwebviewurlload("calories")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatNumberWithCommas(carddate.burntcalories.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.burntcalories.toDouble()))
             totaldisplayitem=6
             val DAILYAVGTOTALCALORIES = if (carddate.countSessionBody != 0) {
                 carddate.burntcalories / carddate.countSessionBody
@@ -199,11 +199,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
          // val   DAILYAVGTOTALCALORIES=carddate.burntcalories/carddate.countSessionBody
             for (i in 0 until  totaldisplayitem){
                 when (i){
-                    0-> datalist.add(RLSessionitemset("MAX CALORIES",RLTools.RLformatNumberWithCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
+                    0-> datalist.add(RLSessionitemset("MAX CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                     1-> datalist.add(RLSessionitemset("AVG CALORIES","0",R.drawable.fd_calories_green))
-                    2-> datalist.add(RLSessionitemset("MAX DAILY TOTAL",RLTools.RLformatNumberWithCommas(carddate.maxcalories.toDouble()),R.drawable.ic_max_calender_black))
+                    2-> datalist.add(RLSessionitemset("MAX DAILY TOTAL",RLTools.RLformatCommas(carddate.maxcalories.toDouble()),R.drawable.ic_max_calender_black))
                     3-> datalist.add(RLSessionitemset("MAX DAILY ACTIVE","0",R.drawable.ic_max_calender_black))
-                    4-> datalist.add(RLSessionitemset("AVG DAILY TOTAL",RLTools.RLformatNumberWithCommas(DAILYAVGTOTALCALORIES.toDouble()),R.drawable.ic_avg_calender_black))
+                    4-> datalist.add(RLSessionitemset("AVG DAILY TOTAL",RLTools.RLformatCommas(DAILYAVGTOTALCALORIES.toDouble()),R.drawable.ic_avg_calender_black))
                     5-> datalist.add(RLSessionitemset("AVG DAILY ACTIVE","0",R.drawable.ic_avg_calender_black))
                 }
             }
@@ -231,16 +231,16 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 } else {
                     0 // or some default value if countSessionBody is zero
                 }
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatNumberWithCommas(carddate.totalREV.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.totalREV.toDouble()))
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
                 when (i){
                     0-> datalist.add(RLSessionitemset("MAX EFFORT",carddate.maxREV.toString(),R.drawable.ic_heart))
                     1-> datalist.add(RLSessionitemset("AVG EFFORT",avarageeffort.toString(),R.drawable.ic_heart))
-                    2-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatNumberWithCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
+                    2-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                     3-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
                     4-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.distance.toString(),R.drawable.ic_distance))
-                    5-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                    5-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
                     6-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                     7-> datalist.add(RLSessionitemset("AWARDS",awards.toString(),R.drawable.ic_award))
                 }
@@ -248,14 +248,14 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("STEPS")){
             RLwebviewurlload("steps")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.steps.toDouble()))
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
-                    0-> datalist.add(RLSessionitemset("MAX STEPS",RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                    1-> datalist.add(RLSessionitemset("AVG STEPS",RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                    2-> datalist.add(RLSessionitemset("MAX DAILY STEPS",RLTools.RLformatNumberWithCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                    3-> datalist.add(RLSessionitemset("AVG DAILY STEPS",RLTools.RLformatNumberWithCommas(carddate.avgsteps.toDouble()),R.drawable.fd_steps_green))
+                    0-> datalist.add(RLSessionitemset("MAX STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                    1-> datalist.add(RLSessionitemset("AVG STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                    2-> datalist.add(RLSessionitemset("MAX DAILY STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                    3-> datalist.add(RLSessionitemset("AVG DAILY STEPS",RLTools.RLformatCommas(carddate.avgsteps.toDouble()),R.drawable.fd_steps_green))
                 }
             }
         }

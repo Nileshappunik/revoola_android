@@ -119,17 +119,17 @@ class RLFragOverview : RLBaseFragment() {
                 try {
                     if (response.type.equals("success")){
 
-                        val effort=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].power.toDouble())
-                        val relaxation=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].rmm.toDouble())
+                        val effort=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].power.toDouble())
+                        val relaxation=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].rmm.toDouble())
 
-                        val session=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].session.toDouble())
-                        val activetime=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].hr.toDouble())
+                        val session=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].session.toDouble())
+                        val activetime=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].hr.toDouble())
 
-                        val totalcalories=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].calorie.toDouble())
-                        val activecalories=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].totalTime.toDouble())
+                        val totalcalories=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].calorie.toDouble())
+                        val activecalories=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].totalTime.toDouble())
 
-                        val distance=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].distance.toDouble())
-                        val steps=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].steps.toDouble())
+                        val distance=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].distance.toDouble())
+                        val steps=RLTools.RLformatCommas(response.RLText[0].RLAggregated[0].steps.toDouble())
 
                         fragBinding.inlayEffort.txtNumberLeft.setText(response.RLText[0].RLAggregated[0].power.toString())
                         fragBinding.inlayEffort.txtNumberRight.setText(response.RLText[0].RLAggregated[0].rmm.toString())

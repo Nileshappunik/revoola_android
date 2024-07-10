@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionSummryListAdapter
@@ -54,7 +55,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
-    val valueslist = arrayOf("SUMMARY", "ANALYSIS","EFFORT","RANKING")
+    val valueslist = arrayOf("SUMMARY", "ANALYSIS","EFFORT")//,"RANKING")
 
     private val binding by lazy {
         RlFragSessionSummaryBinding.inflate(layoutInflater)
@@ -310,15 +311,15 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
 
     }
     private fun RLsummaryDataSet() {
-        var totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set
-        var dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+        val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.Time to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatNumberWithCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatNumberWithCommas(cardData.steps.toDouble())),
-            RLTypeOfMetrics.Calories to RLMetricData(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble())),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Calories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData("0"),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
             RLTypeOfMetrics.Climbed to RLMetricData(cardData.elevation.toString()),
             RLTypeOfMetrics.AvgPace to RLMetricData("0"),
             RLTypeOfMetrics.AvgSpeed to RLMetricData(cardData.average_speed.toString()),
@@ -336,18 +337,21 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
+
+        Glide.with(requireContext()).load(cardData.imageLinkSmall)
+            .into(fragBinding.testImage)
     }
     private fun RLheightsetdisplaywebview(webView: WebView) {
        RLTools.RLheightsetdisplaywebview(webView,activity)
     }
     override fun onItemClick(position: Int) {
-        if (valueslist[position].equals("SUMMARY")){
+        if (valueslist[position].trim().equals("SUMMARY")){
             RLsummaryDataSet()
-        }else if (valueslist[position].equals("ANALYSIS")){
+        }else if (valueslist[position].trim().equals("ANALYSIS")){
             RLanalysisDataSet()
-        }else if (valueslist[position].equals("EFFORT")){
+        }else if (valueslist[position].trim().equals("EFFORT")){
             RLeffortDataSet()
-        }else if (valueslist[position].equals("RANKING")){
+        }else if (valueslist[position].trim().equals("RANKING")){
             RLrankingDataSet()
         }
     }

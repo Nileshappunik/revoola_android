@@ -52,6 +52,7 @@
     <string name="caloriessmall">Calories</string>
     <string name="caloriessmallkcal">Calories (Kcal)</string>
     <string name="distance">DISTANCE</string>
+    <string name="distancemiles">DISTANCE (miles)</string>
     <string name="standinghour">STANDING HOURS</string>
     <string name="distancesmall">Distance</string>
     <string name="distancesmallkm">Distance(km)</string>
@@ -115,6 +116,7 @@
     <string name="myride">MyRide</string>
     <string name="time">TIME</string>
     <string name="assumedeffort">ASSUMED EFFORT</string>
+    <string name="revoolaeffort">REVOOLA EFFORT</string>
     <string name="step">STEPS</string>
     <string name="calorie">CALORIES</string>
     <string name="weneedtosendverificationcode">We need to send verification code.please confirm your email address is correct.</string>

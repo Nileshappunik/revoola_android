@@ -1,5 +1,6 @@
 package com.example.myfirstapp.viewmodel
 import com.example.myfirstapp.api.RLNetworkService
+import com.example.myfirstapp.model.RLFeedChallengesMapModel
 import com.example.myfirstapp.model.RLFeedChallengesModel
 import com.example.myfirstapp.model.RLFeedModel
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
@@ -8,6 +9,7 @@ import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
 import com.example.myfirstapp.model.RLOverviewGraphResponse
 import com.example.myfirstapp.model.RLSetGroupRequest
+import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
@@ -112,6 +114,21 @@ class RLMainRepository(private val apiService: RLNetworkService) {
                 }
             }
             override fun onFailure(call: Call<RLFeedChallengesModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
+        apiService.RLMetricChartByDay(request).enqueue(object : Callback<RLFeedChallengesMapModel> {
+            override fun onResponse(call: Call<RLFeedChallengesMapModel>, response: Response<RLFeedChallengesMapModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedChallengesMapModel>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

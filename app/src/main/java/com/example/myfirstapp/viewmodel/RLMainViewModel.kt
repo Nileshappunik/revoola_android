@@ -1,5 +1,6 @@
 package com.example.myfirstapp.viewmodel
 import androidx.lifecycle.ViewModel
+import com.example.myfirstapp.model.RLFeedChallengesMapModel
 import com.example.myfirstapp.model.RLFeedChallengesModel
 import com.example.myfirstapp.model.RLFeedModel
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
@@ -8,6 +9,7 @@ import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
 import com.example.myfirstapp.model.RLOverviewGraphResponse
 import com.example.myfirstapp.model.RLSetGroupRequest
+import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
@@ -38,6 +40,10 @@ class RLMainViewModel(val mainRepository:RLMainRepository): ViewModel() {
 
     fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
         mainRepository.RLgoaled_challenges(request, callback)
+    }
+
+    fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
+        mainRepository.RLMetricChartByDay(request, callback)
     }
 
     fun RLfriendsYouFollow(request: List<RLSetsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {

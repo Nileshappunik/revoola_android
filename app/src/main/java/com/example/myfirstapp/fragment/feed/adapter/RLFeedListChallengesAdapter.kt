@@ -16,7 +16,6 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutChallengesListBinding
 import com.example.myfirstapp.fragment.feed.RLFragChallengeSummary
-import com.example.myfirstapp.fragment.feed.RLFragSessionSummary
 import com.example.myfirstapp.model.RLFeedChallengesModelData
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTools
@@ -112,11 +111,11 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 }
                 layoutBinding.layTargetsteps.imgTime.setImageResource(R.drawable.fd_steps_green)
                 layoutBinding.layTargetsteps.txtTime.setText("ACHIEVED SO FAR")
-                layoutBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.actualtotal.toDouble()))
+                layoutBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
 
                 layoutBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_goal)
                 layoutBinding.layDaysremaining.txtTime.setText(cardData.targettype.uppercase()+" TARGET")
-                layoutBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.totaltarget.toDouble()))
+                layoutBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totaltarget.toDouble()))
 
                 layoutBinding.cardChalengis.setOnClickListener {
                     val bundle = Bundle()

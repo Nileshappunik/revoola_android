@@ -79,7 +79,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val cardData:RLTextOverview= dataList[position]
-                RLcommonDataSet(cardData, layoutBinding)
+                RLcommonDataSet(cardData, layoutBinding,position+1)
                 if (cardData.from_third_party_source == 0) {
                     if (cardData.bmo == 0) {
                         //BODY
@@ -101,10 +101,11 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                 }
             } catch (e: Exception) {
             Log.d(TAG, "exception= " + e.message)
+                layoutBinding.temptext.setText("exception:- ${e.message.toString()}")
             }
         }
     }
-    private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{
@@ -136,6 +137,18 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.txtAward.setText("0")
         }
 
+        if (currentUser.equals(cardData.userid)){
+            layoutBinding.imgThreedot.visibility=View.VISIBLE
+            layoutBinding.layoutAward.visibility=View.VISIBLE
+            layoutBinding.layoutShare.visibility=View.VISIBLE
+            layoutBinding.blanckView.visibility=View.GONE
+        }else{
+            layoutBinding.imgThreedot.visibility=View.GONE
+            layoutBinding.layoutAward.visibility=View.GONE
+            layoutBinding.layoutShare.visibility=View.GONE
+            layoutBinding.blanckView.visibility=View.VISIBLE
+
+        }
 
         layoutBinding.txtUsername.setText(cardData.username.toString())
         layoutBinding.txtMyride.setText(cardData.className.toString())
@@ -149,11 +162,14 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             .error(R.drawable.wellcome)
             .into(layoutBinding.imgUser)
 
-        Glide.with(context).load(cardData.imageLinkSmall)
-            .placeholder(RLTools.RLgetImage(classType))
-            .error(RLTools.RLgetImage(classType))
-            .into(layoutBinding.imgNain)
-
+        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+            Glide.with(context).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+        }else if (!cardData.map_image.isNullOrEmpty()){
+            Glide.with(context).load(cardData.map_image).into(layoutBinding.imgNain)
+        }else{
+            layoutBinding.imgNain.setImageResource(RLTools.RLgetImage(classType))
+        }
+        layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}")
         layoutBinding.cardChalengis.setOnClickListener {
             val bundle = Bundle()
             bundle.putSerializable(RLConstants.CardData, cardData)
@@ -165,67 +181,67 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calendar_today)
         layoutBinding.layTime.txtTime.setText(R.string.challengesfor)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.duration.toInt()))
-       // layoutBinding.layTime.relativeCard.visibility=View.GONE
+        layoutBinding.layTime.relativeCard.visibility=View.GONE
 
         if (classType.toLowerCase().equals("challenge-effort")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targeteffort)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(cardData.steps.toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
         }else if (classType.toLowerCase().equals("challenge-steps")){
 
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetsteps)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_steps_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(cardData.steps.toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
         }else if (classType!!.toLowerCase().equals("challenge-calories")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetcalories)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         }else if (classType!!.toLowerCase().equals("challenge-distance")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetdistance)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else if (classType!!.toLowerCase().equals("challenge-climbed")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetclimbed)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_climb)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else if (classType!!.toLowerCase().equals("challenge-duration")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targettotalduration)
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.goal.toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_active_time_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(cardData.steps.toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
         }
 
@@ -241,14 +257,15 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
         layoutBinding.layTime.txtTime.setText(R.string.step)
         layoutBinding.layTime.txtTimeNumber.setText(cardData.steps.toString())
+        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
         layoutBinding.layCalories.txtTime.setText(R.string.calorie)
-        layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble()))
+        layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
         layoutBinding.laySteps.txtTime.setText(R.string.distance)
-        layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble()))
+        layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layAssumedeffort.txtTime.setText(R.string.standinghour)
@@ -264,9 +281,10 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
+        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.assumedeffort)
+        layoutBinding.layCalories.txtTime.setText(R.string.revoolaeffort)
         if (cardData.totalREV.roundToInt()>0){
             layoutBinding.layCalories.txtTimeNumber.setText(cardData.totalREV.roundToInt().toString())
         }else{
@@ -276,18 +294,15 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (classType!!.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.laySteps.txtTime.setText(R.string.distance)
-            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble()))
+            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance).toString())
 
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.activecalories)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         }
 
-        layoutBinding.imgAward.visibility=View.GONE
-        layoutBinding.imgShare.visibility=View.VISIBLE
-        layoutBinding.layBottom.visibility=View.VISIBLE
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
@@ -295,9 +310,10 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
+        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.assumedeffort)
+        layoutBinding.layCalories.txtTime.setText(R.string.effort)
         if (cardData.totalREV.roundToInt()>0){
             layoutBinding.layCalories.txtTimeNumber.setText(cardData.totalREV.roundToInt().toString())
         }else{
@@ -306,75 +322,57 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
 
         if (classType.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.distance.toDouble()))
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancemiles)
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.activecalories)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble()))
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layBottom.visibility=View.VISIBLE
-        layoutBinding.imgAward.visibility=View.VISIBLE
-        if (currentUser.equals(cardData.userid)){
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }else{
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }
     }
     private fun RLbodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()).toString())
+        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.assumedeffort)
+        layoutBinding.layCalories.txtTime.setText(R.string.effort)
         if (cardData.totalREV.roundToInt()>0){
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.totalREV.roundToInt().toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalREV.toDouble()).toString())
         }else{
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
 
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
-        layoutBinding.layAssumedeffort.txtTime.setText(R.string.activecalories)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.burntCalories.toDouble()).toString())
+        layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
+        layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()).toString())
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
 
-        layoutBinding.layBottom.visibility=View.VISIBLE
-        layoutBinding.imgAward.visibility=View.VISIBLE
-        if (currentUser.equals(cardData.userid.toString())){
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }else{
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }
+
     }
     private fun RLmindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding) {
 
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
+        layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_mind_read)
         layoutBinding.layTime.txtTime.setText(R.string.mindfulminutes)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
+        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_relax)
+        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_mind_read)
         layoutBinding.layCalories.txtTime.setText(R.string.relaxation)
-        layoutBinding.layCalories.txtTimeNumber.setText("no")
+        layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString())
 
 
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
 
-        layoutBinding.layBottom.visibility=View.VISIBLE
-        layoutBinding.imgAward.visibility=View.VISIBLE
-        if (currentUser.equals(cardData.userid)){
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }else{
-            layoutBinding.imgShare.visibility=View.VISIBLE
-        }
     }
 
 

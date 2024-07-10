@@ -104,8 +104,8 @@ object RLTools {
        }else if( typename.toLowerCase().equals("ride")){
            return R.drawable.fd_ride_green
        }else if( typename.toLowerCase().equals("energise")){
-           return R.drawable.ic_workout
-       }else if( typename.toLowerCase().equals("Workout")){
+           return R.drawable.ic_power
+       }else if( typename.toLowerCase().equals("workout")){
            return R.drawable.ic_workout
        }else{
            return R.drawable.ic_dance
@@ -125,7 +125,7 @@ object RLTools {
             return R.drawable.pilates
         }else if( typename.toLowerCase().equals("ride")){
             return R.drawable.ride
-        }else if( typename.toLowerCase().equals("Workout")){
+        }else if( typename.toLowerCase().equals("workout")){
             return R.drawable.workout
         }else if (typename.toLowerCase().equals("challenge-effort")){
             return R.drawable.challenges_start
@@ -639,9 +639,11 @@ object RLTools {
         return sdfr.format(c.time).toString()
     }
 
-     fun RLformatNumberWithCommas(number: Double): String {
+     fun RLformatCommas(number: Double): String {
         val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-        return numberFormat.format(number)
+         val integerPart = number.toInt()
+         val formattedInteger = numberFormat.format(integerPart)
+        return formattedInteger
     }
 
     fun RLnumberToUUID(number: Int): UUID {
@@ -1186,7 +1188,6 @@ object RLTools {
                                 </html>  
         """.trimIndent()
     }
-
     fun RLgetChallengeChartHtml (steps_so_far:Int,target_steps:Int,time_gone:Int,total_time:Int) : String{
         return """
          <!DOCTYPE html>
@@ -1299,8 +1300,7 @@ object RLTools {
 
         """.trimIndent()
     }
-
-    fun RLgetRankingChartHtml(): String{
+    fun RLgetRankingChartHtml(jsondata: JSONArray,userid:String): String{
         return """     
             <!DOCTYPE html>
             <html>
@@ -1341,104 +1341,13 @@ object RLTools {
                 <script>
                     
 
-           // Define your data (sample data)
-                        var data = [{   "value" : 94,
-    "name" : "1 - Potty",
-    "number2" : "213,336",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/OtTfW5BUEybKtcqXGASkA3MmFHq1main.png?alt=media&token=2dd2d8fa-9a5d-4420-b69c-f9c9d37d446b",
-    "userid" : "OtTfW5BUEybKtcqXGASkA3MmFHq1"
-  },{   "value" : 83,
-    "name" : "2 - Josh Y",
-    "number2" : "187,143",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/MxDgu5sHE5antBQbKFimWVGn8pc2main.png?alt=media&token=23409753-2a79-49ce-aacc-d14095140d35",
-    "userid" : "MxDgu5sHE5antBQbKFimWVGn8pc2"
-  },{   "value" : 81,
-    "name" : "3 - Art",
-    "number2" : "183,120",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/MwiWEJY8aUcy4R6loydsqZDZOLj1main.png?alt=media&token=698531ae-c473-4ad6-bd36-a339c1b5864c",
-    "userid" : "MwiWEJY8aUcy4R6loydsqZDZOLj1"
-  },{   "value" : 79,
-    "name" : "4 - Nessie",
-    "number2" : "178,260",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/SYefycUC7dMipoLvxWiCAt8C5bB3main.png?alt=media&token=e9b76abf-6203-4359-8c6e-7fb95c174ad0",
-    "userid" : "SYefycUC7dMipoLvxWiCAt8C5bB3"
-  },{   "value" : 66,
-    "name" : "5 - Janie",
-    "number2" : "148,793",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/jmMZipZgfofBY6IQPCREn23XMBn2main.png?alt=media&token=ddbf2795-83ab-408c-8625-c46ddb2cbed5",
-    "userid" : "jmMZipZgfofBY6IQPCREn23XMBn2"
-  },{   "value" : 64,
-    "name" : "6 - PEG",
-    "number2" : "145,411",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/KOqJRtH2sBX7QBHfBmsPrsXRQr62main.png?alt=media&token=c6406abe-1102-468f-8b0c-adf8725b0424",
-    "userid" : "KOqJRtH2sBX7QBHfBmsPrsXRQr62"
-  },{   "value" : 60,
-    "name" : "7 - Milzo Tezza ",
-    "number2" : "136,115",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/zJk8IPL7IOOykgrJOQDER4NB4hv1main.png?alt=media&token=001b6368-783f-46db-b641-1f97385e3f2a",
-    "userid" : "zJk8IPL7IOOykgrJOQDER4NB4hv1"
-  },{   "value" : 45,
-    "name" : "8 - Goosey",
-    "number2" : "102,579",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/gGPNXIsMeoNDWMM1YFLjU6rRsBG2main.png?alt=media&token=2e88892e-a32d-4880-9dc1-84e302afd5a1",
-    "userid" : "gGPNXIsMeoNDWMM1YFLjU6rRsBG2"
-  },{   "value" : 35,
-    "name" : "9 - MG",
-    "number2" : "80,400",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/PEpcIeQShlQIMZHb9eI0G5aqmF73main.png?alt=media&token=cdc232df-4362-4b67-aceb-1dce20c5b51d",
-    "userid" : "PEpcIeQShlQIMZHb9eI0G5aqmF73"
-  },{   "value" : 31,
-    "name" : "10 - Goose",
-    "number2" : "71,231",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/mRlXSgu7ufaM08EtO5f2HjPX8VD3main.png?alt=media&token=8e8a3920-4d53-412a-bac6-7c7d9763a0f6",
-    "userid" : "mRlXSgu7ufaM08EtO5f2HjPX8VD3"},
-	{   "value" : 23,
-    "name" : "11 - Josh Y2",
-    "number2" : "67,143",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/MxDgu5sHE5antBQbKFimWVGn8pc2main.png?alt=media&token=23409753-2a79-49ce-aacc-d14095140d35",
-    "userid" : "MxDgu5sHE5antBQbKFimWVGn8pc3"
-  },{   "value" : 21,
-    "name" : "12 - Art2",
-    "number2" : "63,120",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/MwiWEJY8aUcy4R6loydsqZDZOLj1main.png?alt=media&token=698531ae-c473-4ad6-bd36-a339c1b5864c",
-    "userid" : "MwiWEJY8aUcy4R6loydsqZDZOLj2"
-  },{   "value" : 0,
-    "name" : "13 - Nessie2",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/SYefycUC7dMipoLvxWiCAt8C5bB3main.png?alt=media&token=e9b76abf-6203-4359-8c6e-7fb95c174ad0",
-    "userid" : "SYefycUC7dMipoLvxWiCAt8C5bB4"
-  },{   "value" : 0,
-    "name" : "14 - Janie2",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/jmMZipZgfofBY6IQPCREn23XMBn2main.png?alt=media&token=ddbf2795-83ab-408c-8625-c46ddb2cbed5",
-    "userid" : "jmMZipZgfofBY6IQPCREn23XMBn3"
-  },{   "value" : 0,
-    "name" : "15 - PEG3",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/KOqJRtH2sBX7QBHfBmsPrsXRQr62main.png?alt=media&token=c6406abe-1102-468f-8b0c-adf8725b0424",
-    "userid" : "KOqJRtH2sBX7QBHfBmsPrsXRQr63"
-  },{   "value" : 0,
-    "name" : "16 - Milzo Tezza2 ",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/zJk8IPL7IOOykgrJOQDER4NB4hv1main.png?alt=media&token=001b6368-783f-46db-b641-1f97385e3f2a",
-    "userid" : "zJk8IPL7IOOykgrJOQDER4NB4hv2"
-  },{   "value" : 0,
-    "name" : "17 - Goosey",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/gGPNXIsMeoNDWMM1YFLjU6rRsBG2main.png?alt=media&token=2e88892e-a32d-4880-9dc1-84e302afd5a1",
-    "userid" : "gGPNXIsMeoNDWMM1YFLjU6rRsBG4"
-  },{   "value" : 0,
-    "name" : "18 - MG9",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/PEpcIeQShlQIMZHb9eI0G5aqmF73main.png?alt=media&token=cdc232df-4362-4b67-aceb-1dce20c5b51d",
-    "userid" : "PEpcIeQShlQIMZHb9eI0G5aqmF76"
-  },{   "value" : 0,
-    "name" : "19 - Goose9",
-    "number2" : "0",
-    "image" : "https://firebasestorage.googleapis.com:443/v0/b/rideathome-9080e.appspot.com/o/mRlXSgu7ufaM08EtO5f2HjPX8VD3main.png?alt=media&token=8e8a3920-4d53-412a-bac6-7c7d9763a0f6",
-    "userid" : "mRlXSgu7ufaM08EtO5f2HjPX8VD8"}
-  ,];
-              
+          
+         
+                
+               // Define your data (sample data)
+                       var data = $jsondata;
+                       
+                       
             		var bar_color = "#ebf7ed";
                     var percentage_label_color = "#4a4c4f";
                     var user_name_label_color = "#4a4c4f"; // Change user_name_label_color to white
@@ -1449,7 +1358,7 @@ object RLTools {
                     var index_font_size = "50px";
                     var font_family = "Omnes, sans-serif";
                     var barHeight = 65;
-                    var user_name = "zJk8IPL7IOOykgrJOQDER4NB4hv2";
+                    var user_name ='$userid';
                     var font_vertical_pos = 13;
 
               
@@ -1655,65 +1564,13 @@ object RLTools {
                     let ranking = displayData.findIndex(x => x.userid === d.userid) + 1;
                     return ``+ ranking +` - `+  d.name.split(" - ")[1]+``;  // Display ranking and name
                 });
-
-            /*
-            
-           
-
-            svg.selectAll(".label1")
-              .data(displayData)
-              .enter()
-              .append("text")
-              .attr("class", "label")
-              .attr("x", d => 15)
-              .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)
-              .style("fill", d => d.userid === user_name ? user_name_label_color : name_label_color)
-              .style("font-size", name_font_size)
-              .style("font-family", font_family)
-              .text(d => {
-                  // Determine the ranking directly based on displayData for simplicity and clarity
-                  let directRanking = displayData.findIndex(x => x.userid === d.userid) + 1;
-                  let ranking = directRanking; // Default to direct ranking
-
-                  // Adjust for users with value 0 if they are within the first 15 bars
-                  if (d.value === 0 && directRanking <= 10000) {
-                      ranking = firstZeroValueIndex;
-                  }
-
-                  return ``+  ranking+` - `+  d.name.split(" - ")[1]+``;
-              });
-
-            */
-
-
-            						
-            // Append a text element to display userRowIndex at the top of the chart
-            /*svg.append("text")
-               .attr("x", width / 2) // Center the text horizontally within the chart area
-               .attr("y", (-margin.top / 2)+10) // Position it within the top margin area
-               .attr("text-anchor", "middle") // Center the text alignment
-               .style("font-size", "20px") // Set the font size
-               .style("font-family", font_family) // Use the same font family as the rest of the chart
-               .text("User Row Index: " + userRowIndex); // Display the text with the row index
-
-            // Append a text element to display firstZeroValueIndex at the top of the chart
-               svg.append("text")
-               .attr("x", width / 2) // Center the text horizontally within the chart area
-               .attr("y", (-margin.top / 2)+10) // Position it within the top margin area
-               .attr("text-anchor", "middle") // Center the text alignment
-               .style("font-size", "20px") // Set the font size
-               .style("font-family", font_family) // Use the same font family as the rest of the chart
-               .text("firstZeroValueIndex: " + firstZeroValueIndex); // Display the text with the row index
-            */
-
-            // update goaled_challenges_moengage_for_json set `ch_ranking` = userRowIndex where userid = '" . `+ id +` . "' and challengeid = '" . `+  challengeid +` . "'
-            				   
+			   
                 </script>
             </body>
             </html>
         """.trimIndent()
     }
-    fun RLgetIndividualStepsChartHtml(): String{
+    fun RLgetIndividualStepsChartHtml(jsondata: JSONArray): String{
         return """     
            <!DOCTYPE html>
            <html>
@@ -1746,38 +1603,7 @@ object RLTools {
 
                  {
                    name: "Challenge Metric",
-                   values: [
-                     { "date": "01\/02\/2024", "value": 5487 },
-                     { "date": "02\/02\/2024", "value": 16783 },
-                     { "date": "03\/02\/2024", "value": 9039 },
-                     { "date": "04\/02\/2024", "value": 3475 },
-                     { "date": "05\/02\/2024", "value": 5354 },
-                     { "date": "06\/02\/2024", "value": 2233 },
-                     { "date": "07\/02\/2024", "value": 2684 },
-                     { "date": "08\/02\/2024", "value": 10263 },
-                     { "date": "09\/02\/2024", "value": 814 },
-                     { "date": "10\/02\/2024", "value": 7017 },
-                     { "date": "11\/02\/2024", "value": 3706 },
-                     { "date": "12\/02\/2024", "value": 2622 },
-                     { "date": "13\/02\/2024", "value": 3171 },
-                     { "date": "14\/02\/2024", "value": 10004 },
-                     { "date": "15\/02\/2024", "value": 3723 },
-                     { "date": "16\/02\/2024", "value": 12987 },
-                     { "date": "17\/02\/2024", "value": 7981 },
-                     { "date": "18\/02\/2024", "value": 7049 },
-                     { "date": "19\/02\/2024", "value": 1599 },
-                     { "date": "20\/02\/2024", "value": 3188 },
-                     { "date": "21\/02\/2024", "value": 10073 },
-                     { "date": "22\/02\/2024", "value": 5321 },
-                     { "date": "23\/02\/2024", "value": 9670 },
-                     { "date": "24\/02\/2024", "value": 9328 },
-                     { "date": "25\/02\/2024", "value": 3360 },
-                     { "date": "26\/02\/2024", "value": 3061 },
-                     { "date": "27\/02\/2024", "value": 5279 },
-                     { "date": "28\/02\/2024", "value": 0 },
-                     { "date": "29\/02\/2024", "value": 10 }
-                     // Other data points...
-                   ]
+                   values: $jsondata
                  }
                
            ];
@@ -1857,7 +1683,7 @@ object RLTools {
                     `v`+ barheightminusten +` ` +    // Line down the right side
                     `h-`+barWidth+`z`;          // Close path
                     })
-                    .attr("fill", "#39B54A");
+                    .attr("fill", "#ebf7ed");
 
 
                /* Adjust label positions if you have them, assuming here how you might add them */
@@ -1869,8 +1695,7 @@ object RLTools {
            	 .text(d => d3.format(",")(d.value)) // Format the value with commas
               	 .style("font-size", 18)
                 .style("fill", "black");
-           	 
-           	   
+         
            }
            </script>
            </body>
@@ -1878,5 +1703,97 @@ object RLTools {
 
         """.trimIndent()
 
+    }
+    fun RLGetNewZoneChartHtml(): String{
+        return """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Stacked Effort Zone Bar Chart</title>
+                <script src="https://d3js.org/d3.v6.min.js"></script>
+                <style>
+                    body { font: 12px Arial; background-color: #FFFFFF; }
+                    .axis { font-size:40px }
+                    .axis path, .axis line { fill: none; stroke: black; shape-rendering: crispEdges; }
+                </style>
+            </head>
+            <body>
+            <div id="chart"></div>
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var data = [
+                    { zone: "Zone1", value: 1829, color: "rgb(241, 119, 160)" },
+                    { zone: "Zone2", value: 2345, color: "rgb(255, 207, 47)" },
+                    { zone: "Zone3", value: 1230, color: "rgb(44, 174, 44)" },
+                    { zone: "Zone4", value: 2310, color: "rgb(0, 153, 218)" },
+                    { zone: "Zone5", value: 560, color: "rgb(254, 105, 02)" },
+                    { zone: "Zone6", value: 680, color: "rgb(153, 0, 204)" },
+                    { zone: "Zone7", value: 120, color: "rgb(237, 69, 65)" }
+                ];
+
+                var margin = { top: 20, right: 20, bottom: 40, left: 30 }, // Reduced left margin
+                width = window.innerWidth - margin.left - margin.right,
+                height = window.innerHeight - margin.top - margin.bottom;
+
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    var g = svg.append("g")
+                    .attr("transform", "translate(" + (width/2 - 120.0) + "," + margin.top + ")");
+
+                var barWidth = 240; // Set the bar width to 120 pixels
+
+                var y = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([0, d3.sum(data, function(d) { return d.value; }) / 60]); // Convert total seconds to minutes
+
+                var x = d3.scaleBand()
+                    .range([0, barWidth]) // Set the range for the single bar width
+                    .padding(0.1);
+
+                var runningTotal = 0;
+                var bar = g.selectAll(".bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", 10) // Set a smaller x value to reduce the gap
+                    .attr("width", barWidth)
+                    .attr("y", function(d) { var yVal = y(runningTotal + d.value / 60); runningTotal += d.value / 60; return yVal; })
+                    .attr("height", function(d) { return height - y(d.value / 60); })        
+                    .attr("fill", function(d) { return d.color; });
+                    
+
+                    // Add foreignObject
+                 const foreignObject = g.append("foreignObject")
+                     .attr("width", barWidth+13)
+                     .attr("height", height)
+                     .style("zIndex", 1)
+                     .attr("x", 4)
+                     .attr("y", -6);
+
+                 // Add div inside foreignObject
+                 const foreignDiv = foreignObject.append("xhtml:div")
+                     .style("width", "94%")
+                     .style("height", "100%")
+                     .style("fill", "none")
+                     .style("zIndex", 1)
+                     .style("border", "10px solid white")
+                     .style("border-top-right-radius", "20px")
+                     .style("border-top-left-radius", "20px");
+
+                // Add the Y Axis with exactly 5 ticks
+                var yAxis = d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+                     return d === 0 ? "Mins" : d; // Replace the 0 with 'Mins'
+                });
+                g.append("g")
+                    .attr("class", "axis")
+                    .call(yAxis);
+            });
+            </script>
+            </body>
+            </html>
+
+        """.trimIndent()
     }
 }

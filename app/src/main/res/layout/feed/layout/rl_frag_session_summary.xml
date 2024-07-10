@@ -30,7 +30,6 @@
             android:layout_marginTop="15dp"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
-            android:layout_toStartOf="@+id/ivFilter"
             android:layout_toEndOf="@+id/ivBack"/>
 
         <TextView
@@ -44,18 +43,7 @@
             android:layout_below="@+id/iv_title"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
-            android:layout_toStartOf="@+id/ivFilter"
             android:layout_toEndOf="@+id/ivBack"/>
-
-        <ImageView
-            android:id="@+id/ivFilter"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="visible"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_graphs"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_session_title"
