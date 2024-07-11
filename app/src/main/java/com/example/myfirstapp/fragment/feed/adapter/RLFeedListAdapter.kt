@@ -1,10 +1,16 @@
 package com.example.myfirstapp.fragment.feed.adapter
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -141,13 +147,18 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.imgThreedot.visibility=View.VISIBLE
             layoutBinding.layoutAward.visibility=View.VISIBLE
             layoutBinding.layoutShare.visibility=View.VISIBLE
+            layoutBinding.layoutThumb.visibility=View.VISIBLE
+            layoutBinding.layoutComment.visibility=View.VISIBLE
             layoutBinding.blanckView.visibility=View.GONE
+            layoutBinding.blanckView1.visibility=View.GONE
         }else{
             layoutBinding.imgThreedot.visibility=View.GONE
             layoutBinding.layoutAward.visibility=View.GONE
             layoutBinding.layoutShare.visibility=View.GONE
             layoutBinding.blanckView.visibility=View.VISIBLE
-
+            layoutBinding.layoutThumb.visibility=View.VISIBLE
+            layoutBinding.layoutComment.visibility=View.VISIBLE
+            layoutBinding.blanckView1.visibility=View.GONE
         }
 
         layoutBinding.txtUsername.setText(cardData.username.toString())
@@ -167,14 +178,22 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }else if (!cardData.map_image.isNullOrEmpty()){
             Glide.with(context).load(cardData.map_image).into(layoutBinding.imgNain)
         }else{
-            layoutBinding.imgNain.setImageResource(RLTools.RLgetImage(classType))
+            Glide.with(context).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgNain)
         }
         layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}")
         layoutBinding.cardChalengis.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putSerializable(RLConstants.CardData, cardData)
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, RLFragSessionSummary::class.java.simpleName, false)
+            if (cardData.from_third_party_source == 0){
+                val bundle = Bundle()
+                bundle.putSerializable(RLConstants.CardData, cardData)
+                (context as RLMainActivityRL).RLbottombarcolorwhite()
+                (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, RLFragSessionSummary::class.java.simpleName, false)
+            }else if(cardData.from_third_party_source > 10){
+                //new design
+            }
+            else{
+                RLshowAlertDialog()
+            }
+
         }
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -219,7 +238,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.txtTime.setText(R.string.targetdistance)
             layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
-
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
@@ -238,7 +256,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.txtTime.setText(R.string.targettotalduration)
             layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
-
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_active_time_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
@@ -250,13 +267,13 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.laySteps.txtTime.setText(R.string.rank)
-        layoutBinding.laySteps.txtTimeNumber.setText(cardData.hrm.toString())
+        layoutBinding.laySteps.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())
        layoutBinding.layBottom.visibility=View.VISIBLE
     }
     private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
         layoutBinding.layTime.txtTime.setText(R.string.step)
-        layoutBinding.layTime.txtTimeNumber.setText(cardData.steps.toString())
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()))
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
@@ -264,17 +281,26 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
-        layoutBinding.laySteps.txtTime.setText(R.string.distance)
+        layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
         layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
-        layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_active_time_green)
-        layoutBinding.layAssumedeffort.txtTime.setText(R.string.standinghour)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText("no")
 
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
+        layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
 
-        layoutBinding.layBottom.visibility=View.VISIBLE
+        layoutBinding.layoutAward.visibility=View.GONE
+        layoutBinding.layoutThumb.visibility=View.GONE
+        layoutBinding.layoutComment.visibility=View.GONE
+        layoutBinding.imgThreedot.visibility=View.GONE
+        layoutBinding.blanckView1.visibility=View.VISIBLE
+
+        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+        }else if (!cardData.map_image.isNullOrEmpty()){
+            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgNain)
+        }else{
+            Glide.with(context!!).load(R.drawable.healthheart).into(layoutBinding.imgNain)
+        }
 
     }
     private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -374,6 +400,16 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
 
     }
-
-
+    private fun RLshowAlertDialog() {
+        val sucDialog: Dialog = Dialog(context!!)
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
+        sucDialog.setCancelable(false)
+        val iv_ok: TextView = sucDialog.findViewById(R.id.iv_ok)
+        iv_ok.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
 }

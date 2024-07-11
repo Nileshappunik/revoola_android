@@ -44,7 +44,7 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
 
         fun bindData(position: Int, itemVIew: View) {
             val itemres = titleList[position]
-            layoutBinding.txtTitleSession.setText(itemres)
+            layoutBinding.txtTitleSession.setText(itemres.toUpperCase().toString())
             //layoutBinding.viewSession.width=layoutBinding.txtTitleSession.width
             if (texttypeset.equals(itemres)){
                 layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))

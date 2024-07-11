@@ -12,7 +12,8 @@ import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
 
 
-class RLFeedSessionSummryListAdapter(val context: FragmentActivity?, val  dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLFeedSessionSummryListAdapter
+    (val context: FragmentActivity?, val  dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "OverviewSessionSummryListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

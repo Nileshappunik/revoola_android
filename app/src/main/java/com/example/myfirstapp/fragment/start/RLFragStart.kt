@@ -13,6 +13,9 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.databinding.RlFragStartBinding
+import com.example.myfirstapp.enumclass.RLMetricData
+import com.example.myfirstapp.enumclass.RLTypeOfMetrics
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 
 class RLFragStart : RLBaseFragment() {
@@ -36,13 +39,8 @@ class RLFragStart : RLBaseFragment() {
         (context as RLMainActivityRL).RLbottombarcolorwhite()
         val linearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.rvStart.layoutManager = linearLayoutManager
-        val valueslist = arrayOf("Classes", "Your Way", "Challenges")
-        // Create an array of drawables
-        val drawableArray = arrayOf(
-            ContextCompat.getDrawable(requireContext(), R.drawable.classes),
-            ContextCompat.getDrawable(requireContext(), R.drawable.yourway),
-            ContextCompat.getDrawable(requireContext(), R.drawable.challenges_start))
-        val adapter = RLStartListAdapter(activity,valueslist,drawableArray)
+        val dataList:List<Pair<String, String>> = listOf("Classes" to RLConstants.WALKIMAGE, "Your Way" to RLConstants.img_yourway_start, "Challenges" to RLConstants.img_challenge_start,"end" to RLConstants.WALKIMAGE)
+        val adapter = RLStartListAdapter(activity,dataList)
 
        // val data: List<String> =ArrayList<String>()
        // adapter.setList(valueslist)

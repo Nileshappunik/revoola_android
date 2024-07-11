@@ -464,13 +464,14 @@ object RLTools {
         }
     }
 
-    fun RLconvertTimestampToMinutes(timestamp: Long): String {
+    fun RLconvertTimestampToDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-               // val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-                val formatter = DateTimeFormatter.ofPattern("mm")
+                val formatter = DateTimeFormatter.ofPattern("EEE, MMM dd")
+                val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
-                return dateTime.format(formatter)
+                val dateall=dateTime.format(formatter)+" | "+dateTime.format(formatter2)
+                return dateall
             }else{
                 return "0"
             }

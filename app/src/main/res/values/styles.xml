@@ -46,6 +46,11 @@
         <item name="cornerFamily">rounded</item>
     </style>
 
+    <style name="CornerCutfive">
+        <item name="cornerSize">5dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
     <style name="CornerRound" parent="">
         <item name="cornerSize">50%</item>
     </style>

@@ -69,7 +69,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/img_user"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="12sp"/>
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2"
                     android:src="@drawable/ride"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     android:layout_gravity="bottom"
                     app:shapeAppearanceOverlay="@style/CornerCut"/>
             </LinearLayout>
@@ -160,7 +160,15 @@
                     android:visibility="gone"
                     android:layout_weight="2"/>
 
+                <View
+                    android:id="@+id/blanck_view1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_weight="3"/>
+
                 <RelativeLayout
+                    android:id="@+id/layout_thumb"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -212,6 +220,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/layout_comment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"

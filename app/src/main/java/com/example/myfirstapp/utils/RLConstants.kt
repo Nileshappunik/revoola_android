@@ -55,6 +55,30 @@ package com.example.myfirstapp.utils
         const val URLALLV2: String = "getResponse_v2.php"
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
 
+        const val PILATESIMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+        const val RIDEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+        const val RUNIMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"
+        const val WALKIMAGE="https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+        const val WORKOUTIMAGE="https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+        const val YOGAIMAGE="https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+        const val APPLEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple.png"
+        const val APPLE32IMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple_3x2.png"
+
+        const val img_feed_strava = "https://video.revoola.com/v2/images/v3_app_strava.png"
+        const val img_feed_garmin = "https://video.revoola.com/v2/images/v3_app_connect.png"
+        const val img_feed_oura = "https://video.revoola.com/v2/images/v3_app_oura.png"
+        const val img_feed_apple_fitness = "https://video.revoola.com/v2/images/v3_app_apple.png"
+        const val img_feed_whoop = "https://video.revoola.com/v2/images/v3_app_whoop.png"
+        const val img_feed_bend = "https://video.revoola.com/v2/images/v3_app_bend.png"
+        const val img_feed_coros = "https://video.revoola.com/v2/images/v3_app_coros.png"
+        const val img_feed_fitbit = "https://video.revoola.com/v2/images/v3_app_fitbit.png"
+        const val img_feed_google_fit = "https://video.revoola.com/v2/images/v3_app_gfit.png"
+        const val img_feed_apple_health_app = "http://video.revoola.com/v2/images/v3_app_applehealth.png"
+        const val img_feed_google_health_connect = "https://video.revoola.com/v2/images/v3_app_healthconnect.png"
+        const val img_yourway_start = "https://video.revoola.com/v2/start/yourway_start.jpg"
+        const val img_challenge_start = "https://video.revoola.com/v2/start/challenges_start.jpg"
+        
+
         //Weight Array
         val valuesUsPounds = arrayOf(
             "40 lbs",

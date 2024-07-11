@@ -7,30 +7,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor"
+        android:background="@color/AppWhiteColor"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="25dp"
             android:fontFamily="@font/omnes_semibold_regular"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="35dp"
+            android:textAllCaps="true"
             android:text="@string/foryourmindandbody"
             android:textColor="@color/AppBlackColor"
-            android:textSize="35sp"/>
+            android:textSize="32sp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="40dp"
             android:fontFamily="@font/omnes_regular"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginEnd="20dp"
             android:text="@string/enjoyyourmindandbody"
-            android:textColor="@color/AppTextGrayColor"
-            android:textSize="20sp"/>
+            android:textColor="@color/AppBlackColor"
+            android:textSize="18sp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -40,7 +41,8 @@
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:layout_marginStart="5dp"
-               android:layout_marginTop="5dp"/>
+               android:layout_marginEnd="5dp"
+               android:layout_marginTop="30dp"/>
 
         </RelativeLayout>
     </LinearLayout>

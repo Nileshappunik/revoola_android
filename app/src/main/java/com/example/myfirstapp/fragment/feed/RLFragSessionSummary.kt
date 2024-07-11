@@ -90,7 +90,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         fragBinding.ivTitle.setText(cardData.className.toString())
-        fragBinding.ivTitleDate.setText(RLTools.RLconvertTimestampToDateTime(cardData.timestamp.toLong()))
+        fragBinding.ivTitleDate.setText(RLTools.RLconvertTimestampToDAte(cardData.timestamp.toLong()))
         RLsummaryDataSet()
     }
     private fun RLrankingDataSet(){
@@ -193,7 +193,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         Log.d(TAG,"NU")
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.EffortScore to RLMetricData("0"),
-            RLTypeOfMetrics.EffortZone to RLMetricData("Calm"),
+            RLTypeOfMetrics.EffortZone to RLMetricData("CALM"),
             RLTypeOfMetrics.AvgEffort to RLMetricData(cardData.elevation.toString()),
             RLTypeOfMetrics.MaxEffort to RLMetricData("0"),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.hr.toString()),
@@ -314,16 +314,11 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.Time to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
-            RLTypeOfMetrics.Calories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
-            RLTypeOfMetrics.AvgHeartRate to RLMetricData("0"),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.Climbed to RLMetricData(cardData.elevation.toString()),
-            RLTypeOfMetrics.AvgPace to RLMetricData("0"),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(cardData.average_speed.toString()),
-            RLTypeOfMetrics.Boosts to RLMetricData("0"),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
 
@@ -497,6 +492,8 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
 
         }
     }
+
+
 
     /*val imageList = listOf(
           "https://farm4.staticflickr.com/3224/3081748027_0ee3d59fea_z_d.jpg",

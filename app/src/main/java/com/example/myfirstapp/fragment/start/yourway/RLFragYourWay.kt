@@ -13,6 +13,7 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.start.adapter.RLYourWayListAdapter
 import com.example.myfirstapp.databinding.RlFragYoueWayBinding
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 
 
@@ -37,6 +38,15 @@ class RLFragYourWay : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
         val linearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.rvYourway.layoutManager = linearLayoutManager
+
+        val dataList:List<Pair<String, String>> = listOf("Pilates" to RLConstants.PILATESIMAGE,
+            "Ride" to RLConstants.RIDEIMAGE,
+            "Run" to RLConstants.RUNIMAGE,
+            "Walk" to RLConstants.WALKIMAGE,
+            "Workout" to RLConstants.WORKOUTIMAGE,
+            "Yoga" to RLConstants.YOGAIMAGE)
+
+
         val valueslist = arrayOf("Pilates","Ride","Run","Walk","Workout","Yoga")
         // Create an array of drawables
         val drawableArray = arrayOf(
@@ -46,7 +56,7 @@ class RLFragYourWay : RLBaseFragment() {
             ContextCompat.getDrawable(requireContext(), R.drawable.walk),
             ContextCompat.getDrawable(requireContext(), R.drawable.workout),
             ContextCompat.getDrawable(requireContext(), R.drawable.yoga))
-        val adapter = RLYourWayListAdapter(activity,valueslist,drawableArray)
+        val adapter = RLYourWayListAdapter(activity,dataList)
 
        // val data: List<String> =ArrayList<String>()
        // adapter.setList(valueslist)

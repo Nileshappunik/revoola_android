@@ -24,6 +24,7 @@ import com.example.myfirstapp.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragFeedBinding
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedGroupNameAdapter
+import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.example.myfirstapp.model.RLGroupCardModel
 import com.example.myfirstapp.model.RLSetGroupData
@@ -46,6 +47,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     lateinit var fragBinding: RlFragFeedBinding
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
+    private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
     //val valueslist = arrayOf("Friends", "Groups","You","Challenges")
     val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
     var adapter : RLFeedListAdapter?=null
@@ -84,15 +86,16 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             //CHALLENGES view back event get
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
-            val adaptertitle = RLOverviewSessionTitleListAdapter("CHALLENGES",this,valueslist,activity)
+             adaptertitle = RLOverviewSessionTitleListAdapter("CHALLENGES",this,valueslist,activity)
             fragBinding.recycleSessionTitle.adapter = adaptertitle
             RLChallengesUISet()
-        }else{
+        }
+        else{
             RLfirsttimeApiCall(GroupId)
             //do title
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
-            val adaptertitle = RLOverviewSessionTitleListAdapter("FRIENDS",this,valueslist,activity)
+             adaptertitle = RLOverviewSessionTitleListAdapter("FRIENDS",this,valueslist,activity)
             fragBinding.recycleSessionTitle.adapter = adaptertitle
         }
         // Add scroll listener for pagination
@@ -113,6 +116,12 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 }
             }
         })
+
+        fragBinding.imgPlus.setOnClickListener {
+            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+            (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
+        }
+
     }
     private fun RLapicall(groupid:String) {
         isLoading = true
@@ -241,10 +250,15 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_group_name)
         dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
+       /* val lp = WindowManager.LayoutParams()
         lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT*/
         val recyclerSelectAssign =  dialog.findViewById(R.id.listItems) as RecyclerView
         val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -260,6 +274,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                     //Detail Api
                     GroupId=selectionID
                      RLfirsttimeApiCall(selectionID)
+                     RlGroupNameSetTitle(selectioncName,true)
                 }
             }
         })
@@ -269,6 +284,14 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
+    private fun RlGroupNameSetTitle(selectioncName: String, b: Boolean) {
+        if (b){
+            adaptertitle.texttypeset=selectioncName
+        }
+        valueslist.set(1,selectioncName)
+        adaptertitle.notifyItemChanged(1,valueslist)
+    }
+
     fun RLfirsttimeApiCall(groupid:String){
           limit = 10
          index=0
@@ -320,11 +343,13 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false
+            RlGroupNameSetTitle("GROUPS",false)
             RLfirsttimeApiCall(GroupId)
         } else if (valueslist[position].equals("GROUPS")) {
             fragBinding.relayGroupname.visibility=View.VISIBLE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=false
+            RlGroupNameSetTitle("123",true)
             fragBinding.relayGroupname.setOnClickListener {
                 RLgroupAPiCall()
             }
@@ -333,6 +358,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
             clickyou=true
+            RlGroupNameSetTitle("GROUPS",false)
             if (RLApiClientRetrofit.RLisConnected()) {
                 //Detail Api
                 limit = 10
@@ -347,6 +373,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLshowDialogFullscreen()
             }
         }else if (valueslist[position].equals("CHALLENGES")) {
+            RlGroupNameSetTitle("GROUPS",false)
             RLChallengesUISet()
         }
 
