@@ -30,7 +30,10 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
     Totalclimbed("TOTAL CLIMBED(FEET)", R.drawable.ic_climb,false),
     Minelevation("MIN ELEVATION(FEET)", R.drawable.ic_climb,false),
     Maxelevation("MAX ELEVATION(FEET)", R.drawable.ic_climb,false),
-    ActiveCalories("ACTIVE CALORIES", R.drawable.fd_calories_green,false)
+    ActiveCalories("ACTIVE CALORIES", R.drawable.fd_calories_green,false),
+    MindfulMinutes("MINDFUL MINUTES", R.drawable.ic_mind_read,false),
+    Relaxation("RELAXATION", R.drawable.ic_mind_read,false),
+    Cadence("CADENCE(rpm)", R.drawable.ic_cadence,false)
 }
 
 

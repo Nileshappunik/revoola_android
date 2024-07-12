@@ -10,17 +10,20 @@
 
         <ImageView
             android:id="@+id/imgright"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
             android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_chevron_right" />
 
         <ImageView
             android:id="@+id/imgsessionimage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="15dp"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
             android:src="@drawable/fd_active_time_green" />
 
         <TextView
@@ -28,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="MINDFUL MINUTES"
-            android:layout_marginStart="10dp"
             android:layout_toStartOf="@+id/imgright"
             android:layout_toEndOf="@+id/imgsessionimage"
             android:textColor="@color/AppBlackColor"
@@ -39,12 +41,11 @@
             android:id="@+id/txt_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
             android:layout_below="@+id/txtsessiontitle"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:text="0h 20m"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:textStyle="bold"
             android:textColor="@color/AppBlackColor"
             android:layout_toEndOf="@+id/imgsessionimage"/>
         <View

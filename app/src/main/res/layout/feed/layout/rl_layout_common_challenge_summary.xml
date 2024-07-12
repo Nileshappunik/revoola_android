@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/img_time"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
         android:layout_marginTop="25dp"
         android:src="@drawable/fd_active_time_green"/>
 

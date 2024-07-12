@@ -18,7 +18,9 @@ import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
+import com.example.myfirstapp.fragment.feed.RLFragMindSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragSessionSummary
+import com.example.myfirstapp.fragment.feed.RLFragTenChallengeSummary
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTools
@@ -180,15 +182,29 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }else{
             Glide.with(context).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgNain)
         }
-        layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}")
+        layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}, HR:- ${cardData.hrm.toString()}")
         layoutBinding.cardChalengis.setOnClickListener {
             if (cardData.from_third_party_source == 0){
+                if (cardData.bmo == 1) {
+                    //MIND
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, false)
+                }else  if (cardData.bmo == 2){
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, false)
+
+                }
+            }else if(cardData.from_third_party_source > 10){
+                //new design
                 val bundle = Bundle()
                 bundle.putSerializable(RLConstants.CardData, cardData)
                 (context as RLMainActivityRL).RLbottombarcolorwhite()
-                (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, RLFragSessionSummary::class.java.simpleName, false)
-            }else if(cardData.from_third_party_source > 10){
-                //new design
+                (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, false)
+
             }
             else{
                 RLshowAlertDialog()
@@ -207,7 +223,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.txtTime.setText(R.string.targeteffort)
             layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
-
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
@@ -218,7 +233,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.txtTime.setText(R.string.targetsteps)
             layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
-
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_steps_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
@@ -227,7 +241,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetcalories)
             layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
-
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
@@ -284,7 +297,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
         layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
-
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
 
@@ -327,6 +339,15 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.activecalories)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
+        }
+
+
+        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+        }else if (!cardData.map_image.isNullOrEmpty()){
+            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgNain)
+        }else{
+            Glide.with(context!!).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgNain)
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE

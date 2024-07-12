@@ -111,7 +111,7 @@ object RLTools {
            return R.drawable.ic_dance
        }
     }
-    fun RLgetImage(typename:String): Int {
+    fun RLgetImage1(typename:String): Int {
         if (typename.isNullOrEmpty()){
             return R.drawable.walk
         }
@@ -141,6 +141,39 @@ object RLTools {
             return R.drawable.challenges_start
         }else{
             return R.drawable.walk
+        }
+    }
+
+    fun RLgetImage(typename:String): String {
+        if (typename.isNullOrEmpty()){
+            return  RLConstants.WALKIMAGE
+        }
+        if( typename.toLowerCase().equals("walk")){
+            return  RLConstants.WALKIMAGE
+        }else if( typename.toLowerCase().equals("run")){
+            return RLConstants.RUNIMAGE
+        }else if( typename.toLowerCase().equals("yoga")){
+            return RLConstants.YOGAIMAGE
+        }else if( typename.toLowerCase().equals("pilates")){
+            return RLConstants.PILATESIMAGE
+        }else if( typename.toLowerCase().equals("ride")){
+            return RLConstants.RIDEIMAGE
+        }else if( typename.toLowerCase().equals("workout")){
+            return RLConstants.WORKOUTIMAGE
+        }else if (typename.toLowerCase().equals("challenge-effort")){
+            return RLConstants.img_challenge_start
+        }else if (typename.toLowerCase().equals("challenge-steps")){
+            return RLConstants.img_challenge_start
+        }else if (typename.toLowerCase().equals("challenge-calories")){
+            return RLConstants.img_challenge_start
+        }else if (typename.toLowerCase().equals("challenge-distance")){
+            return RLConstants.img_challenge_start
+        }else if (typename.toLowerCase().equals("challenge-climbed")){
+            return RLConstants.img_challenge_start
+        }else if (typename.toLowerCase().equals("challenge-duration")){
+            return RLConstants.img_challenge_start
+        }else{
+            return  RLConstants.WALKIMAGE
         }
     }
 

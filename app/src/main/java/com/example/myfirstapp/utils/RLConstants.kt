@@ -77,6 +77,7 @@ package com.example.myfirstapp.utils
         const val img_feed_google_health_connect = "https://video.revoola.com/v2/images/v3_app_healthconnect.png"
         const val img_yourway_start = "https://video.revoola.com/v2/start/yourway_start.jpg"
         const val img_challenge_start = "https://video.revoola.com/v2/start/challenges_start.jpg"
+        const val img_app_applehealth ="https://video.revoola.com/v2/images/_app_applehealth.png"
         
 
         //Weight Array

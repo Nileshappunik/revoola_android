@@ -12,6 +12,7 @@ import com.example.myfirstapp.model.RLSetGroupRequest
 import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
+import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -106,6 +107,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
         apiService.RLgoaled_challenges(request).enqueue(object : Callback<RLFeedChallengesModel> {
+            override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedChallengesModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.RLgoaled_challenges_Single(request).enqueue(object : Callback<RLFeedChallengesModel> {
             override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

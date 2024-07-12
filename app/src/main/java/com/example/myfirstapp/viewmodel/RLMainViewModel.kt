@@ -12,6 +12,7 @@ import com.example.myfirstapp.model.RLSetGroupRequest
 import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
+import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -40,6 +41,10 @@ class RLMainViewModel(val mainRepository:RLMainRepository): ViewModel() {
 
     fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
         mainRepository.RLgoaled_challenges(request, callback)
+    }
+
+    fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        mainRepository.RLgoaled_challenges_Single(request, callback)
     }
 
     fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {

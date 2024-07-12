@@ -85,8 +85,10 @@ data class RLSetoverview_thumb_you(var timestampfrom: Int,
                                    var current_user:String, var isall:Int, var d:String)
 
 data class RLSetgoaled_challenges_request(var goaled_challenges:RLSetgoaled_challenges)
+data class RLSetgoaled_challenges_request_single(var goaled_challenges:RLSetgoaled_challengesSingle)
 
 data class RLSetgoaled_challenges(var id:String, var type:String, var today:String)
+data class RLSetgoaled_challengesSingle(var id:String, var type:String)
 
 data class RLFeedChallengesModel(var type: String, var text:RLFeedChallengesModelListData )
 data class RLFeedChallengesModelListData(var data:List<RLFeedChallengesModelData>)
@@ -95,7 +97,7 @@ data class RLFeedChallengesModelData(var actualtotal:Int, var metric:String, var
                                      var username:String, var avatar:String, var first_name:String, var last_name:String, var full_name:String,
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
                                      var adminlastname:String, var adminfullname:String, var number_of_members:String, var challengeid:String,
-                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Double, var days_remaining:Int,var ranking_by_challenge:Int,
+                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Int, var days_remaining:Int,var ranking_by_challenge:Int,
                                      var percentage_of_time_elapsed:Double,val targettype:String,var totalmetric:String,var percentage_of_goal_display:String): Serializable
 
 data class RLSetMetricChartByDay(var metric_chart_by_day:RLSetMetricChartByDayData)

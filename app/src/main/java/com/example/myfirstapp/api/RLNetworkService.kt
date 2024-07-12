@@ -12,6 +12,7 @@ import com.example.myfirstapp.model.RLSetGroupRequest
 import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
+import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -37,6 +38,9 @@ interface RLNetworkService {
 
     @POST(RLConstants.URLALL)
     fun RLgoaled_challenges(@Body request: List<RLSetgoaled_challenges_request>): Call<RLFeedChallengesModel>
+
+    @POST(RLConstants.URLALL)
+    fun RLgoaled_challenges_Single(@Body request: List<RLSetgoaled_challenges_request_single>): Call<RLFeedChallengesModel>
  @POST(RLConstants.URLALL)
     fun RLMetricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
 

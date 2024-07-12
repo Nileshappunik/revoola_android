@@ -48,14 +48,13 @@ import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
 import org.json.JSONArray
 import org.json.JSONObject
 
-class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
+class RLFragSessionSummary : RLBaseFragment() {
     val TAG: String = RLFragSessionSummary::class.java.simpleName
     lateinit var fragBinding: RlFragSessionSummaryBinding
     lateinit var cardData: RLTextOverview
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
-    val valueslist = arrayOf("SUMMARY", "ANALYSIS","EFFORT")//,"RANKING")
 
     private val binding by lazy {
         RlFragSessionSummaryBinding.inflate(layoutInflater)
@@ -82,74 +81,47 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-        //Title list set
-        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
-        val adaptertitle = RLOverviewSessionTitleListAdapter("SUMMARY",this,valueslist,activity)
-        fragBinding.recycleSessionTitle.adapter = adaptertitle
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         fragBinding.ivTitle.setText(cardData.className.toString())
         fragBinding.ivTitleDate.setText(RLTools.RLconvertTimestampToDAte(cardData.timestamp.toLong()))
         RLsummaryDataSet()
+        RLClickToSetUI()
     }
-    private fun RLrankingDataSet(){
-        fragBinding.relaySummary.visibility=View.GONE
-        fragBinding.relayAnalysis.visibility=View.GONE
-        fragBinding.relayEffort.visibility=View.GONE
-        fragBinding.relayRanking.visibility=View.VISIBLE
-        fragBinding.txtAlltime.setOnClickListener {
-            RLallTimeDialogOpen()
+
+    private fun RLClickToSetUI() {
+        fragBinding.inlayTitle.layoutSummary.setOnClickListener {
+            fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.inlayTitle.viewSummary.setBackgroundResource(R.color.AppMainColor)
+
+            fragBinding.inlayTitle.txtAnalysis.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewAnalysis.setBackgroundResource(R.color.AppWhiteColor)
+
+            fragBinding.inlayTitle.txtEffoert.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewEffort.setBackgroundResource(R.color.AppWhiteColor)
+            RLsummaryDataSet()
         }
-        fragBinding.txtWalk.setOnClickListener {
-             RLwalkDialogOpen()
+        fragBinding.inlayTitle.layoutAnalysis.setOnClickListener {
+            fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewSummary.setBackgroundResource(R.color.AppWhiteColor)
+
+            fragBinding.inlayTitle.txtAnalysis.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.inlayTitle.viewAnalysis.setBackgroundResource(R.color.AppMainColor)
+
+            fragBinding.inlayTitle.txtEffoert.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewEffort.setBackgroundResource(R.color.AppWhiteColor)
+            RLanalysisDataSet()
         }
+        fragBinding.inlayTitle.layoutEffort.setOnClickListener {
+            fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewSummary.setBackgroundResource(R.color.AppWhiteColor)
 
-        val linearLayoutManager = LinearLayoutManager(activity)
-        fragBinding.recycleRanking.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendYouListAdapter(activity,false)
-        fragBinding.recycleRanking.adapter = adapter
+            fragBinding.inlayTitle.txtAnalysis.setTextColor(resources.getColor(R.color.AppBlackColor))
+            fragBinding.inlayTitle.viewAnalysis.setBackgroundResource(R.color.AppWhiteColor)
 
-        fragBinding.txtYou.setOnClickListener {
-            fragBinding.txtYou.setTextColor(resources.getColor(R.color.AppMainColor))
-            fragBinding.viewYou.setBackgroundResource(R.color.AppMainColor)
-
-            fragBinding.txtFriend.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewFriend.setBackgroundResource(R.color.AppWhiteColor)
-
-            fragBinding.txtGroup.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewGroup.setBackgroundResource(R.color.AppWhiteColor)
-
-            val linearLayoutManager = LinearLayoutManager(activity)
-            fragBinding.recycleRanking.layoutManager = linearLayoutManager
-            val adapter = RLYourFriendYouListAdapter(activity,false)
-            fragBinding.recycleRanking.adapter = adapter
-        }
-        fragBinding.txtFriend.setOnClickListener {
-            fragBinding.txtFriend.setTextColor(resources.getColor(R.color.AppMainColor))
-            fragBinding.viewFriend.setBackgroundResource(R.color.AppMainColor)
-
-            fragBinding.txtGroup.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewGroup.setBackgroundResource(R.color.AppWhiteColor)
-
-            fragBinding.txtYou.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewYou.setBackgroundResource(R.color.AppWhiteColor)
-
-            val linearLayoutManager = LinearLayoutManager(activity)
-            fragBinding.recycleRanking.layoutManager = linearLayoutManager
-            val adapter = RLYourFriendYouListAdapter(activity,true)
-            fragBinding.recycleRanking.adapter = adapter
-        }
-        fragBinding.txtGroup.setOnClickListener {
-            fragBinding.txtGroup.setTextColor(resources.getColor(R.color.AppMainColor))
-            fragBinding.viewGroup.setBackgroundResource(R.color.AppMainColor)
-
-            fragBinding.txtFriend.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewFriend.setBackgroundResource(R.color.AppWhiteColor)
-
-            fragBinding.txtYou.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.viewYou.setBackgroundResource(R.color.AppWhiteColor)
-            RLgroupAPiCall()
+            fragBinding.inlayTitle.txtEffoert.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.inlayTitle.viewEffort.setBackgroundResource(R.color.AppMainColor)
+            RLeffortDataSet()
         }
     }
     private fun RLeffortDataSet(){
@@ -157,18 +129,34 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         fragBinding.relaySummary.visibility=View.GONE
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.VISIBLE
-        fragBinding.relayRanking.visibility=View.GONE
-        RLTools.RLheightsetdisplaywebview(fragBinding.webViewEffort,activity)
-        fragBinding.webViewEffort.webViewClient = WebViewClient()
+       
 
-        val webSettings: WebSettings = fragBinding.webViewEffort.settings
+        fragBinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
+        fragBinding.inlayChart.layEffortZone.txtNumber.setText(R.string.cardio)
+        fragBinding.inlayChart.layEffortZone.txtNumber.setTextColor(resources.getColor(R.color.AppMainColor))
+
+        fragBinding.inlayChart.layEffort.txtName.setText("EFFORT %")
+        fragBinding.inlayChart.layEffort.txtNumber.setText("57%")
+
+        fragBinding.inlayChart.layEffortScore.txtName.setText("EFFORT SCORE")
+        fragBinding.inlayChart.layEffortScore.txtNumber.setText("468")
+
+        fragBinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
+        fragBinding.inlayChart.layMaxEffort.txtNumber.setText("84%")
+
+        RLTools.RLheightsetdisplaywebview(fragBinding.inlayChart.webViewChart,activity)
+        fragBinding.inlayChart.webViewChart.webViewClient = WebViewClient()
+
+        val webSettings: WebSettings = fragBinding.inlayChart.webViewChart.settings
         webSettings.javaScriptEnabled = true
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
         webSettings.domStorageEnabled = true
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
 
-        fragBinding.webViewEffort.loadUrl("file:///android_asset/chart-android-effort.html")
+        fragBinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
+            RLTools.RLGetNewZoneChartHtml(), "text/html", "UTF-8", null)
+
 
         //Main list set
         val linearLayoutManager = LinearLayoutManager(activity)
@@ -180,7 +168,7 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
         fragBinding.relaySummary.visibility=View.GONE
         fragBinding.relayAnalysis.visibility=View.VISIBLE
         fragBinding.relayEffort.visibility=View.GONE
-        fragBinding.relayRanking.visibility=View.GONE
+       
 
         RLanalysisEffortUISetup()
         RLanalysisPaceUISetup()
@@ -311,158 +299,106 @@ class RLFragSessionSummary : RLBaseFragment(), RLItemClickListener {
 
     }
     private fun RLsummaryDataSet() {
+        fragBinding.relaySummary.visibility=View.VISIBLE
+        fragBinding.relayAnalysis.visibility=View.GONE
+        fragBinding.relayEffort.visibility=View.GONE
+
+        var classType=""
+        if (cardData.classType.isNullOrEmpty()){
+            classType=""
+        }else{
+            classType = cardData.classType!!
+        }
+        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(fragBinding.testImage)
+        }else if (!cardData.map_image.isNullOrEmpty()){
+            Glide.with(requireContext()).load(cardData.map_image).into(fragBinding.testImage)
+        }else{
+            Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(fragBinding.testImage)
+        }
+
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set
-        val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+        val rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()))
+
+        val rideListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Cadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+
+        val walkRunListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+
+        val workoutYogaPilatesListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
             RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
 
-        fragBinding.relaySummary.visibility=View.VISIBLE
-        fragBinding.relayAnalysis.visibility=View.GONE
-        fragBinding.relayEffort.visibility=View.GONE
-        fragBinding.relayRanking.visibility=View.GONE
+        if (cardData.hrm==0){
+            RLSummryListSet(rideListWithoutHr)
+        }else{
+            if( classType.toLowerCase().equals("walk")){
+                RLSummryListSet(walkRunListWithHr)
+            }else if( classType.toLowerCase().equals("run")){
+                RLSummryListSet(walkRunListWithHr)
+            }else if( classType.toLowerCase().equals("yoga")){
+                RLSummryListSet(workoutYogaPilatesListWithHr)
+            }else if( classType.toLowerCase().equals("pilates")){
+                RLSummryListSet(workoutYogaPilatesListWithHr)
+            }else if( classType.toLowerCase().equals("ride")){
+                RLSummryListSet(rideListWithHr)
+            }else if( classType.toLowerCase().equals("workout")){
+                RLSummryListSet(workoutYogaPilatesListWithHr)
+            }
+        }
+
+    }
+
+    private fun RLSummryListSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
-
-        Glide.with(requireContext()).load(cardData.imageLinkSmall)
-            .into(fragBinding.testImage)
     }
+
     private fun RLheightsetdisplaywebview(webView: WebView) {
        RLTools.RLheightsetdisplaywebview(webView,activity)
-    }
-    override fun onItemClick(position: Int) {
-        if (valueslist[position].trim().equals("SUMMARY")){
-            RLsummaryDataSet()
-        }else if (valueslist[position].trim().equals("ANALYSIS")){
-            RLanalysisDataSet()
-        }else if (valueslist[position].trim().equals("EFFORT")){
-            RLeffortDataSet()
-        }else if (valueslist[position].trim().equals("RANKING")){
-            RLrankingDataSet()
-        }
-    }
-    fun RLwalkDialogOpen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_group_name)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val recyclerSelectAssign =  dialog.findViewById(R.id.listItems) as RecyclerView
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-        btClear.setText(R.string.cancelsmall)
-        var dataList: List<String> = listOf(
-            "All","HIIT","Ride","Walk","Run","Yoga","Pilates","Dance","Warm","Workout")
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerSelectAssign.layoutManager = linearLayoutManager
-        val  simpleAdapter = RLFeedSimpleAdapter(dataList,requireActivity(),fragBinding.txtWalk.text.toString())
-        recyclerSelectAssign.adapter = simpleAdapter
-        simpleAdapter.seOnClickListners(object : RLFeedSimpleAdapter.ClickListner {
-            override fun onSelectClick(selectioncName: String, selectionID: String) {
-                fragBinding.txtWalk.setText(selectioncName)
-                dialog.dismiss()
-            }
-        })
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    fun RLallTimeDialogOpen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_group_name)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val recyclerSelectAssign =  dialog.findViewById(R.id.listItems) as RecyclerView
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-        btClear.setText(R.string.cancelsmall)
-        var dataList: List<String> = listOf("Last 4 Weeks","Last 12 Weeks","All Time")
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerSelectAssign.layoutManager = linearLayoutManager
-        val  simpleAdapter = RLFeedSimpleAdapter(dataList,requireActivity(),fragBinding.txtAlltime.text.toString())
-        recyclerSelectAssign.adapter = simpleAdapter
-        simpleAdapter.seOnClickListners(object : RLFeedSimpleAdapter.ClickListner {
-            override fun onSelectClick(selectioncName: String, selectionID: String) {
-                fragBinding.txtAlltime.setText(selectioncName)
-                dialog.dismiss()
-            }
-        })
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    private fun RLgroupAPiCall() {
-        val request = listOf(RLSetGroupRequest(group_data = RLSetGroupData(userid = currentUser, limit = 100, index=0)))
-        Log.d(TAG,"setGroupdata= "+request)
-        viewModel.RLgetGroupData(request) { result ->
-            result.onSuccess { response ->
-                try {
-                    if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
-                        //groupnamelistdialogopen(response.RLText)
-                        RLshowCustomAlertDialog(response.text)
-                    }else {
-                        Log.d(TAG,"Fail= "+response.type)
-                    }
-                }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
-                }
-            }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
-            }
-        }
-    }
-    private fun RLshowCustomAlertDialog(newData: List<RLGroupCardModel>) {
-        var selectionGroupcName=""
-        val inflater = layoutInflater
-        val dialogLayout = inflater.inflate(R.layout.rl_alertdailog_group_name, null)
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(R.string.selectgroup)
-        builder.setView(dialogLayout)
-        val recyclerSelectAssign =  dialogLayout.findViewById(R.id.listItems) as RecyclerView
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerSelectAssign.layoutManager = linearLayoutManager
-        val  dialogAdapter = RLFeedGroupNameAdapter(requireActivity(),true)
-        recyclerSelectAssign.adapter = dialogAdapter
-        dialogAdapter.RLaddData(newData)
-        dialogAdapter.seOnClickListners(object :RLFeedGroupNameAdapter.ClickListner {
-            override fun onSelectClick(selectioncName: String, selectionID: String) {
-                selectionGroupcName=selectioncName
-            }
-        })
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
-            // Handle input RLText
-            dialog.dismiss()
-        }
-        builder.setNegativeButton(R.string.cancelsmall) { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
-        // Change the color of the positive button
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.CYAN)
-        // Change the color of the negative button if needed
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.CYAN)
     }
     private fun RLinjectDataIntoWebView(maptype:String) {
         // Inject JSON data into WebView's JavaScript context

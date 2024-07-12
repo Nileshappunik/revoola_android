@@ -11,7 +11,7 @@
          android:id="@+id/ivBack"
          android:layout_width="30dp"
          android:layout_height="30dp"
-         android:layout_marginTop="30dp"
+         android:layout_marginTop="10dp"
          android:layout_marginStart="16dp"
          app:tint="@color/AppMainColor"
          android:src="@drawable/ic_arrow_back_ios"/>
@@ -23,7 +23,7 @@
          android:textSize="18sp"
          android:text="CHALLENGE SUMMARY"
          android:textAlignment="center"
-         android:layout_marginTop="30dp"
+         android:layout_marginTop="10dp"
          android:fontFamily="@font/omnes_regular"
          android:textColor="@color/AppTextGrayColor"
          android:layout_toStartOf="@+id/ivFilter"
@@ -31,20 +31,20 @@
 
      <ImageView
          android:id="@+id/ivFilter"
-         android:layout_width="30dp"
-         android:layout_height="30dp"
-         android:layout_marginTop="30dp"
+         android:layout_width="20dp"
+         android:layout_height="20dp"
+         android:layout_marginTop="10dp"
          android:layout_marginEnd="16dp"
          android:visibility="visible"
          android:layout_alignParentEnd="true"
-         android:src="@drawable/ic_graphs"/>
+         android:src="@drawable/ic_share"/>
 
 
 
      <ImageView
          android:id="@+id/img_myride"
-         android:layout_width="45dp"
-         android:layout_height="45dp"
+         android:layout_width="30dp"
+         android:layout_height="30dp"
          android:layout_marginTop="15dp"
          android:padding="5dp"
          android:layout_marginStart="10dp"
