@@ -6,6 +6,7 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
     Time("TIME", R.drawable.fd_active_time_green,false),
     TotalTime("TOTAL TIME", R.drawable.fd_active_time_green,false),
     Effort("EFFORT", R.drawable.ic_heart,false),
+    AssumedEffort("ASSUMED EFFORT", R.drawable.ic_heart,false),
     Steps("STEPS", R.drawable.fd_steps_green,false),
     Calories("CALORIES", R.drawable.fd_calories_green,false),
     AvgHeartRate("AVG HEART RATE(bpm)", R.drawable.ic_heartrate,false),
@@ -31,9 +32,11 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
     Minelevation("MIN ELEVATION(FEET)", R.drawable.ic_climb,false),
     Maxelevation("MAX ELEVATION(FEET)", R.drawable.ic_climb,false),
     ActiveCalories("ACTIVE CALORIES", R.drawable.fd_calories_green,false),
+    AssumedCalories("ASSUMED CALORIES", R.drawable.fd_calories_green,false),
     MindfulMinutes("MINDFUL MINUTES", R.drawable.ic_mind_read,false),
     Relaxation("RELAXATION", R.drawable.ic_mind_read,false),
-    Cadence("CADENCE(rpm)", R.drawable.ic_cadence,false)
+    Cadence("CADENCE(rpm)", R.drawable.ic_cadence,false),
+    AvgCadence("AVG CADENCE(rpm)", R.drawable.ic_cadence,false)
 }
 
 

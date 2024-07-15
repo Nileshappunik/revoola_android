@@ -1830,4 +1830,89 @@ object RLTools {
 
         """.trimIndent()
     }
+
+    fun RLGetNewZoneChartHtml1(jsonArray: JSONArray): String{
+        return """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <title>Stacked Effort Zone Bar Chart</title>
+                <script src="https://d3js.org/d3.v6.min.js"></script>
+                <style>
+                    body { font: 12px Arial; background-color: #FFFFFF; }
+                    .axis { font-size:40px }
+                    .axis path, .axis line { fill: none; stroke: black; shape-rendering: crispEdges; }
+                </style>
+            </head>
+            <body>
+            <div id="chart"></div>
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var data = $jsonArray
+
+                var margin = { top: 20, right: 20, bottom: 40, left: 30 }, // Reduced left margin
+                width = window.innerWidth - margin.left - margin.right,
+                height = window.innerHeight - margin.top - margin.bottom;
+
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    var g = svg.append("g")
+                    .attr("transform", "translate(" + (width/2 - 120.0) + "," + margin.top + ")");
+
+                var barWidth = 240; // Set the bar width to 120 pixels
+
+                var y = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([0, d3.sum(data, function(d) { return d.value; }) / 60]); // Convert total seconds to minutes
+
+                var x = d3.scaleBand()
+                    .range([0, barWidth]) // Set the range for the single bar width
+                    .padding(0.1);
+
+                var runningTotal = 0;
+                var bar = g.selectAll(".bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", 10) // Set a smaller x value to reduce the gap
+                    .attr("width", barWidth)
+                    .attr("y", function(d) { var yVal = y(runningTotal + d.value / 60); runningTotal += d.value / 60; return yVal; })
+                    .attr("height", function(d) { return height - y(d.value / 60); })        
+                    .attr("fill", function(d) { return d.color; });
+                    
+
+                    // Add foreignObject
+                 const foreignObject = g.append("foreignObject")
+                     .attr("width", barWidth+13)
+                     .attr("height", height)
+                     .style("zIndex", 1)
+                     .attr("x", 4)
+                     .attr("y", -6);
+
+                 // Add div inside foreignObject
+                 const foreignDiv = foreignObject.append("xhtml:div")
+                     .style("width", "94%")
+                     .style("height", "100%")
+                     .style("fill", "none")
+                     .style("zIndex", 1)
+                     .style("border", "10px solid white")
+                     .style("border-top-right-radius", "20px")
+                     .style("border-top-left-radius", "20px");
+
+                // Add the Y Axis with exactly 5 ticks
+                var yAxis = d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+                     return d === 0 ? "Mins" : d; // Replace the 0 with 'Mins'
+                });
+                g.append("g")
+                    .attr("class", "axis")
+                    .call(yAxis);
+            });
+            </script>
+            </body>
+            </html>
+
+        """.trimIndent()
+    }
 }

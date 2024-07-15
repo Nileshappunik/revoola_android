@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
+import com.example.myfirstapp.fragment.feed.RLFragBodySessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragMindSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragTenChallengeSummary
@@ -148,6 +149,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         if (currentUser.equals(cardData.userid)){
             layoutBinding.imgThreedot.visibility=View.VISIBLE
             layoutBinding.layoutAward.visibility=View.VISIBLE
+            layoutBinding.imgThum.visibility=View.VISIBLE
             layoutBinding.layoutShare.visibility=View.VISIBLE
             layoutBinding.layoutThumb.visibility=View.VISIBLE
             layoutBinding.layoutComment.visibility=View.VISIBLE
@@ -192,10 +194,18 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
                     (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, false)
                 }else  if (cardData.bmo == 2){
+                    //OTHER
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
                     (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, false)
+
+                }else  if (cardData.bmo == 0){
+                    //BODY
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, false)
 
                 }
             }else if(cardData.from_third_party_source > 10){

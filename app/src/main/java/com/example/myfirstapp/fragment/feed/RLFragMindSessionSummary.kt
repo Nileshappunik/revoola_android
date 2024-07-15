@@ -83,27 +83,10 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
-
         RLsummaryDataSet()
     }
 
     private fun RLsummaryDataSet() {
-        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
-        //Main Data List Set
-        val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Relaxation to RLMetricData(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString()),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
-
-        //Main Data List Set
-        val glinearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.recycleSession.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
-        fragBinding.recycleSession.adapter = adapterdata
-        RLTools.RLheightsetimageview( fragBinding.testImage)
-
         //Image Set
         var classType=""
         if (cardData.classType.isNullOrEmpty()){
@@ -119,6 +102,44 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         }else{
             Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(fragBinding.testImage)
         }
+
+        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+        //Main Data List Set
+        val dataListWithHR:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Relaxation to RLMetricData(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString()),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+
+        val dataListWithoutHR:List<Pair<RLTypeOfMetrics, RLMetricData>> =listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+
+
+
+        if (cardData.hrm==0) {
+            //WITHOUT HR
+            RLsummaryListDataSet(dataListWithoutHR)
+        }else{
+            //WITH HR
+            RLsummaryListDataSet(dataListWithHR)
+        }
+
+
+    }
+
+    private fun RLsummaryListDataSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
+        //Main Data List Set
+        val glinearLayoutManager = GridLayoutManager(activity, 2)
+        fragBinding.recycleSession.layoutManager = glinearLayoutManager
+        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
+        fragBinding.recycleSession.adapter = adapterdata
+        RLTools.RLheightsetimageview( fragBinding.testImage)
     }
 
 

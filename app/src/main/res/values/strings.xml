@@ -136,6 +136,7 @@
     <string name="challengessmall">Challenges</string>
     <string name="sessionsummery">Session Summary</string>
     <string name="sessionsummerys">Session summary</string>
+    <string name="withouthrmessage">Please connect a compatible  HR Sensor to see analysis</string>
 
     <!--friends-->
     <string name="findonrevoola">Find on Revoola</string>
