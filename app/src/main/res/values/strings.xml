@@ -156,6 +156,7 @@
     <string name="sendontwhatsapp">Send on WhatsApp</string>
     <string name="sendsms">Send SMS</string>
     <string name="sendemail">Send email</string>
+    <string name="send">Send</string>
     <string name="unfollow">Unfollow</string>
     <string name="members">Members</string>
     <string name="delete">Delete</string>
@@ -363,6 +364,9 @@
     <string name="thebestyoueveryday">The best\n you.\n Everyday.</string>
     <string name="effortzone">EFFORT ZONE</string>
     <string name="cardio">CARDIO</string>
+    <string name="addcomment">ADD COMMENT</string>
+    <string name="selectoption">SELECT OPTION</string>
+    <string name="edit">EDIT</string>
 
 
 </resources>

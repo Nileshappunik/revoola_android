@@ -33,6 +33,7 @@ import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 class RLFragSessionSummary : RLBaseFragment() {
     val TAG: String = RLFragSessionSummary::class.java.simpleName
@@ -67,7 +68,10 @@ class RLFragSessionSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+       // RLonBackPresAct(fragBinding.ivBack)
+        fragBinding.ivBack.setOnClickListener {
+            RLcloseFragment()
+        }
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         fragBinding.ivTitle.setText(cardData.className.toString())
@@ -207,12 +211,12 @@ class RLFragSessionSummary : RLBaseFragment() {
     private fun RLanalysisEffortUISetup(){
         Log.d(TAG,"NU")
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.EffortScore to RLMetricData("0"),
+            RLTypeOfMetrics.EffortScore to RLMetricData(cardData.totalREV.roundToInt().toString()),
             RLTypeOfMetrics.EffortZone to RLMetricData("CALM"),
-            RLTypeOfMetrics.AvgEffort to RLMetricData(cardData.elevation.toString()),
-            RLTypeOfMetrics.MaxEffort to RLMetricData("0"),
+            RLTypeOfMetrics.AvgEffort to RLMetricData(cardData.elevation.toString()+"%"),
+            RLTypeOfMetrics.MaxEffort to RLMetricData(cardData.maxRevPercentage.roundToInt().toString()+"%"),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.hr.toString()),
-            RLTypeOfMetrics.MaxHeartRate to RLMetricData("0"))
+            RLTypeOfMetrics.MaxHeartRate to RLMetricData(cardData.hr.toString()))
 
         RLheightsetdisplaywebview(fragBinding.includeEffort.webViewAnalysis)
         fragBinding.includeEffort.webViewAnalysis.webViewClient = WebViewClient()
@@ -356,10 +360,14 @@ class RLFragSessionSummary : RLBaseFragment() {
         val rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
             RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()))
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
         val danceHiitListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
@@ -421,7 +429,7 @@ class RLFragSessionSummary : RLBaseFragment() {
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
         val workoutYogaPilatesListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Effort to RLMetricData(cardData.totalREV.roundToInt().toString()),
             RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),

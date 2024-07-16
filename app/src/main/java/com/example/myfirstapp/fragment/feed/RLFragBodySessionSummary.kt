@@ -67,7 +67,10 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+       // RLonBackPresAct(fragBinding.ivBack)
+        fragBinding.ivBack.setOnClickListener {
+            RLcloseFragment()
+        }
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         fragBinding.ivTitle.setText(cardData.className.toString())
@@ -271,20 +274,20 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         val danceHiitYogaPilatesWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
             RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()))
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
         val rideListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
-            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Cadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
             RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()))
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
 
         if (cardData.hrm==0){
             //WITHOUT HR

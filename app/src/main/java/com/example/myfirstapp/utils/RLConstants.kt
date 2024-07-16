@@ -9,6 +9,7 @@ package com.example.myfirstapp.utils
         const val MIND = "Mind"
         const val BODY = "Body"
         const val CLASSTYPE = "classtype"
+        const val TYPE = "type"
         const val EFFORT = "effort"
         const val ELEVATION = "elevation"
         const val SPEED = "speed"

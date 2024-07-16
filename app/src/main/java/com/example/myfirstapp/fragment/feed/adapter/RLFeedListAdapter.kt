@@ -8,20 +8,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
 import com.example.myfirstapp.fragment.feed.RLFragBodySessionSummary
+import com.example.myfirstapp.fragment.feed.RLFragFeedCardLikeCommentView
 import com.example.myfirstapp.fragment.feed.RLFragMindSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragTenChallengeSummary
+import com.example.myfirstapp.model.RLGroupCardModel
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTools
@@ -142,8 +146,10 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         if (totlaaward > 0) {
             layoutBinding.txtAward.setText(totlaaward.toString())
+            layoutBinding.imgAward.setImageResource(R.drawable.ic_award)
         } else {
             layoutBinding.txtAward.setText("0")
+            layoutBinding.imgAward.setImageResource(R.drawable.ic_award_g)
         }
 
         if (currentUser.equals(cardData.userid)){
@@ -192,20 +198,20 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, true)
                 }else  if (cardData.bmo == 2){
                     //OTHER
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
 
                 }else  if (cardData.bmo == 0){
                     //BODY
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
 
                 }
             }else if(cardData.from_third_party_source > 10){
@@ -213,13 +219,29 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                 val bundle = Bundle()
                 bundle.putSerializable(RLConstants.CardData, cardData)
                 (context as RLMainActivityRL).RLbottombarcolorwhite()
-                (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, false)
-
+                (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, true)
             }
             else{
                 RLshowAlertDialog()
             }
 
+        }
+        layoutBinding.layoutComment.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable(RLConstants.CardData, cardData)
+            bundle.putString(RLConstants.TYPE, "Comment")
+            (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, true)
+
+        }
+        layoutBinding.layoutThumb.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putSerializable(RLConstants.CardData, cardData)
+            bundle.putString(RLConstants.TYPE, "Thumb")
+            (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, true)
+
+        }
+        layoutBinding.imgThreedot.setOnClickListener {
+            RLshowEditDeleteDialog(cardData)
         }
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -443,4 +465,29 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+
+    fun RLshowEditDeleteDialog(cardData: RLTextOverview) {
+        val  dialog: Dialog = Dialog(context!!)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.rl_dailog_edit_delete_feedcard)
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+
+        val tvEdit : TextView =  dialog.findViewById(R.id.txt_edit)
+        val tvDelete : TextView =  dialog.findViewById(R.id.txt_delete)
+        val btnClose : TextView = dialog.findViewById(R.id.btn_cancle)
+
+        tvEdit.setOnClickListener {
+            dialog.dismiss()
+        }
+        tvDelete.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+
 }
