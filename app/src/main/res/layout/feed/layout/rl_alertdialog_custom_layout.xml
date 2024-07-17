@@ -18,6 +18,13 @@
         android:fontFamily="@font/omnes_regular"
         android:textColor="@color/AppBlackColor" />
 
+    <View
+        android:id="@+id/view_v"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="@color/AppWhiteColor"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/iv_description"
         android:layout_width="match_parent"
@@ -35,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="20dp"
-        android:background="@color/AppDarkGrayColor"/>
+        android:background="@color/AppLightGrayColor"/>
 
     <TextView
         android:id="@+id/iv_ok"
@@ -45,7 +52,6 @@
         android:text="@string/okcaps"
         android:gravity="center"
         android:layout_marginTop="5dp"
-        android:fontFamily="@font/omnes_regular"
         android:textColor="@color/AppZone4Color" />
 
 </LinearLayout>

@@ -263,6 +263,7 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/view_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/feedbottomlineheight"
                 android:layout_below="@+id/lay_bottom"

@@ -43,6 +43,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.roundToInt
 
 object RLTools {
     fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
@@ -194,7 +195,7 @@ object RLTools {
 
     }
 
-    fun RLheightsetstartimage(relativeLayout: RelativeLayout) {
+    fun RLheightsetstartimage(relativeLayout: RelativeLayout, context: FragmentActivity?) {
         relativeLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // Remove the listener to avoid multiple calls
@@ -202,9 +203,16 @@ object RLTools {
 
                 // Get the current width of the RelativeLayout
                 val width = relativeLayout.width
+                //val newHeight= (width *0.99).toInt()
 
-                // Calculate the new height (75% of the width)
-                val newHeight = (width *1.75).toInt()
+                val displayMetrics = DisplayMetrics()
+                context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                val screenWidth = displayMetrics.widthPixels
+
+                val contentHeight:Int = (screenWidth - 50)
+                val cardHeight:Int= contentHeight / 2
+
+                val newHeight= cardHeight
 
                 // Set the new height
                 val layoutParams = relativeLayout.layoutParams

@@ -40,7 +40,10 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
 }
 
 
+
 data class RLMetricData(var value: String)
+
+
 
 //val metricValues: MutableMap<RLTypeOfMetrics, RLMetricData> = mutableMapOf(
 //    RLTypeOfMetrics.Time to RLMetricData("00m 00s"),

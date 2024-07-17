@@ -9,19 +9,22 @@
 
         <ImageView
             android:id="@+id/img_help_challenges"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="15dp"
             android:src="@drawable/fd_steps_green"/>
 
         <TextView
             android:id="@+id/txt_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginStart="5dp"
+            android:layout_height="24dp"
+            android:textSize="18sp"
+            android:textAllCaps="true"
+            android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/omnes_semibold_regular"
             android:layout_toEndOf="@+id/img_help_challenges"
             android:text="@string/stepsmall"
             android:textColor="@color/AppMainColor"/>
@@ -32,7 +35,9 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
+            android:textAllCaps="true"
+            android:fontFamily="@font/omnes_regular"
             android:layout_below="@+id/img_help_challenges"
             android:text="@string/asimplecount"
             android:textColor="@color/AppBlackColor"/>

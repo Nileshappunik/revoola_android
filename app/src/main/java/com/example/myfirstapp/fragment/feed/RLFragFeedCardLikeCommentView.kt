@@ -88,6 +88,8 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
         fragBinding.ivBackThumb.setOnClickListener {
             RLcloseFragment()
         }
+        fragBinding.inlayMain.viewBottom.visibility=View.GONE
+        fragBinding.inlayMainThumb.viewBottom.visibility=View.GONE
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         val  clickType = requireArguments().getString(RLConstants.TYPE)
         if (clickType.equals("Comment")){

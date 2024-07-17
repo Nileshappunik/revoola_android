@@ -2,6 +2,8 @@ package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,12 +12,20 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlFragChalengesTypeBinding
+import com.example.myfirstapp.enumclass.RLMetricData
+import com.example.myfirstapp.enumclass.RLTypeOfChallenges
+import com.example.myfirstapp.enumclass.RLTypeOfMetrics
+import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionSummryListAdapter
+import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengesListAdapter
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
+import kotlin.math.roundToInt
 
 
 class RLFragChalengesType : RLBaseFragment() {
@@ -30,22 +40,36 @@ class RLFragChalengesType : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesType" )
-
-        fragBinding.toolbar.tvTitle.visibility=View.GONE
-        fragBinding.toolbar.ivlogoapp.visibility=View.VISIBLE
-        fragBinding.toolbar.ivlogoapp.setImageResource(R.drawable.ic_challenge_flag)
-
-        fragBinding.toolbar.ivNotification.visibility=View.VISIBLE
-        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_circle)
-        fragBinding.toolbar.ivNotification.setOnClickListener {
-            RLshowHelpDialog()
-        }
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
+        RLonBackPresAct(fragBinding.ivBack)
+        val dataList:List<RLTypeOfChallenges> = listOf(
+            RLTypeOfChallenges.Steps,
+            RLTypeOfChallenges.Effort ,
+            RLTypeOfChallenges.Calories ,
+            RLTypeOfChallenges.Distance ,
+            RLTypeOfChallenges.Climbed,
+            RLTypeOfChallenges.Duration)
+
+        //Main list set
+        val glinearLayoutManager = GridLayoutManager(activity, 2)
+        fragBinding.recycleChallenges.layoutManager = glinearLayoutManager
+        val adapterdata = RLChallengesListAdapter(activity, dataList)
+        fragBinding.recycleChallenges.adapter = adapterdata
+
+        fragBinding.ivhelp.setOnClickListener {
+            RLshowHelpDialog()
+        }
+        RLTools.RLheightsetstartimage(fragBinding.relaySteps.cardChalengesst,requireActivity())
+        RLTools.RLheightsetstartimage(fragBinding.relayEffort.cardChalengesst,requireActivity())
+        RLTools.RLheightsetstartimage(fragBinding.relayCalories.cardChalengesst,requireActivity())
+        RLTools.RLheightsetstartimage(fragBinding.relayDistance.cardChalengesst,requireActivity())
+        RLTools.RLheightsetstartimage(fragBinding.relayClimbed.cardChalengesst,requireActivity())
+        RLTools.RLheightsetstartimage(fragBinding.relayDuration.cardChalengesst,requireActivity())
+
         fragBinding.relaySteps.cardChalengesst.setOnClickListener {
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType", "Steps" )
@@ -86,7 +110,7 @@ class RLFragChalengesType : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
         }
 
-        fragBinding.relayEffort.imgType.setImageResource(R.drawable.ic_heart_blanck)
+        fragBinding.relayEffort.imgType.setImageResource(R.drawable.ic_heart)
         fragBinding.relayEffort.txtTypeTitle.setText(R.string.effortsmall)
 
         fragBinding.relayCalories.imgType.setImageResource(R.drawable.fd_calories_green)
@@ -103,26 +127,24 @@ class RLFragChalengesType : RLBaseFragment() {
     }
 
     fun RLshowHelpDialog() {
-        val  dialog: Dialog = Dialog(requireContext())
+        val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpChallengesBinding = RlDialogHelpChallengesBinding.inflate(getLayoutInflater())
+        val dialogMainBinding: RlDialogHelpChallengesBinding =
+            RlDialogHelpChallengesBinding.inflate(getLayoutInflater())
         dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(true)
+        dialog.setCancelable(false)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
-
-        val window: Window = dialog.getWindow()!!
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.gravity=Gravity.RIGHT or Gravity.TOP
-        window.attributes = lp
+        dialogMainBinding.tvClose.setOnClickListener {
+            dialog.hide()
+        }
 
         dialogMainBinding.layStep.txtHeader.setText(R.string.stepdot)
 
         dialogMainBinding.layEffort.txtHeader.setText(R.string.effortdot)
         dialogMainBinding.layEffort.txtHeaderDescription.setText(R.string.revoolauniqueeffort)
-        dialogMainBinding.layEffort.imgHelpChallenges.setImageResource(R.drawable.ic_heart_blanck)
+        dialogMainBinding.layEffort.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
 
         dialogMainBinding.layCalories.txtHeader.setText(R.string.caloriesdot)
         dialogMainBinding.layCalories.txtHeaderDescription.setText(R.string.asimplecountcallery)
@@ -141,7 +163,6 @@ class RLFragChalengesType : RLBaseFragment() {
         dialogMainBinding.layDuration.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
 
         dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
 
     }
 

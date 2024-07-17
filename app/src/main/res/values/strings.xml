@@ -42,7 +42,7 @@
     <string name="effort">EFFORT</string>
     <string name="effortsmall">Effort</string>
     <string name="climbed">Climbed</string>
-    <string name="climbedm">Climbed(m)</string>
+    <string name="climbedm">CLIMBED (m)</string>
     <string name="mindfulminutes">MINDFUL MINUTES</string>
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
@@ -50,30 +50,30 @@
     <string name="heartrate">HEARTRATE</string>
     <string name="cadence">CADENCE</string>
     <string name="caloriessmall">Calories</string>
-    <string name="caloriessmallkcal">Calories (Kcal)</string>
+    <string name="caloriessmallkcal">CALORIES (Kcal)</string>
     <string name="distance">DISTANCE</string>
     <string name="distancemiles">DISTANCE (miles)</string>
     <string name="standinghour">STANDING HOURS</string>
     <string name="distancesmall">Distance</string>
-    <string name="distancesmallkm">Distance(km)</string>
+    <string name="distancesmallkm">DISTANCE(km)</string>
     <string name="steps">STEPS</string>
     <string name="stepsmall">Steps</string>
     <string name="thismonth">This Month</string>
     <string name="allactivity">All Activity</string>
     <string name="duration">Duration</string>
-    <string name="durationh">Duration(h)</string>
-    <string name="stepdot">Steps:</string>
-    <string name="effortdot">Effort:</string>
-    <string name="caloriesdot">Calories:</string>
-    <string name="distancedot">Distance:</string>
-    <string name="climbeddot">Climbed:</string>
-    <string name="durationdot">Duration:</string>
+    <string name="durationh">DURATION (h)</string>
+    <string name="stepdot">Steps</string>
+    <string name="effortdot">Effort</string>
+    <string name="caloriesdot">Calories</string>
+    <string name="distancedot">Distance</string>
+    <string name="climbeddot">Climbed</string>
+    <string name="durationdot">Duration</string>
     <string name="selectstart">Select the date the challenge should start</string>
     <string name="selectend">Select the date to complete challenge by</string>
     <string name="pleaseentertthestartdate">Please Enter the start date</string>
     <string name="pleaseenterttheenddate">Please Enter the end date</string>
     <string name="next">Next</string>
-    <string name="revoolaeffortscore">Revoola effort score</string>
+    <string name="revoolaeffortscore">REVOOLA EFFORT SCORE</string>
 
     <!--login-->
     <string name="emailaccount">Email Account</string>
@@ -147,7 +147,8 @@
     <string name="invitefriendsnotonyet">Invite Your Friends not yet on Revoola.</string>
     <string name="friend">Friends</string>
     <string name="invitefriendnotonrevoola">Invite your friends not on yet Revoola</string>
-    <string name="typeofchallenge">Type of Challenge?</string>
+    <string name="typeofchallenge">Select The Type of Challenge</string>
+    <string name="setyourtargetandselecttimeperiod">SET YOUR TARGET AND SELECT TIME PERIOD</string>
     <string name="setyourgoal">Set your Goal</string>
 
     <!--invite friends-->
@@ -367,6 +368,27 @@
     <string name="addcomment">ADD COMMENT</string>
     <string name="selectoption">SELECT OPTION</string>
     <string name="edit">EDIT</string>
+    <string name="info">INFO</string>
+    <string name="setyourtarget">SET YOUR TARGET</string>
+    <string name="daily">DAILY</string>
+    <string name="weekly">WEEKLY</string>
+    <string name="monthly">MONTHLY</string>
+    <string name="custom">CUSTOM</string>
+    <string name="pleasesetyourtarget">Please set your target steps before selectinh time period</string>
+
+    <string name="stepchallenge">STEPS CHALLENGE</string>
+    <string name="effortchallenge">EFFORT CHALLENGE</string>
+    <string name="calorieschallenge">CALORIES CHALLENGE</string>
+    <string name="distancechallenge">DISTANCE CHALLENGE</string>
+    <string name="climbedchallenge">CLIMBED CHALLENGE</string>
+    <string name="durationchallenge">DURATION CHALLENGE</string>
+
+    <string name="dailychallenge">DAILY CHALLENGE</string>
+    <string name="weeklychallenge">WEEKLY CHALLENGE</string>
+    <string name="monthlychallenge">MONTHLY CHALLENGE</string>
+    <string name="customchallenge">CUSTOM CHALLENGE</string>
+    <string name="from">FROM</string>
+    <string name="to">TO</string>
 
 
 </resources>
