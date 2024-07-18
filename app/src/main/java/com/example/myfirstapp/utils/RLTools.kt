@@ -186,7 +186,7 @@ object RLTools {
         val screenWidth = displayMetrics.widthPixels
 
         // Calculate the desired height (75% of screen width)
-        val desiredHeight = (screenWidth * 0.75).toInt()
+        val desiredHeight = (screenWidth * 0.76).toInt()
 
         // Set the ImageView height
         val layoutParams = imageView.layoutParams

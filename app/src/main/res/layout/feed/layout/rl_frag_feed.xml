@@ -19,6 +19,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/feedsmall"
+                android:textAllCaps="true"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="36sp"
                 android:layout_toStartOf="@+id/img_plus"
@@ -30,6 +31,7 @@
                 android:layout_height="30dp"
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"
+                android:visibility="gone"
                 android:src="@drawable/ic_plus"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_session_title"

@@ -368,7 +368,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
 
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.activecalories)
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         }
@@ -383,6 +383,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
+        layoutBinding.imgThreedot.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
     private fun RLotherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){

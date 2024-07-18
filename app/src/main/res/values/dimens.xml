@@ -13,7 +13,7 @@
     <dimen name="overviewcadtop">25dp</dimen>
     <dimen name="overviewcadheight">80dp</dimen>
     <dimen name="overviewcadtitlesize">16sp</dimen>
-    <dimen name="overviewcadnumbersize">24sp</dimen>
+    <dimen name="overviewcadnumbersize">26sp</dimen>
     <dimen name="overviewcadtextnumbertop">10dp</dimen>
     <dimen name="overviewsessiontitletextsize">24sp</dimen>
 
@@ -26,4 +26,8 @@
     <dimen name="progress_bar_min_height">50dp</dimen>
     <dimen name="_6sdp">3dp</dimen>
     <dimen name="_1sdp">1dp</dimen>
+
+    <!--Feed Card Screen Size-->
+    <dimen name="feedcardbottomiconwidth">16dp</dimen>
+    <dimen name="feedcardbottomiconheight">16dp</dimen>
 </resources>

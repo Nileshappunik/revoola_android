@@ -72,29 +72,75 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="150dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/square_border_black">
                     <TextView
                         android:id="@+id/tvFrom"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:gravity="center"
                         android:text="@string/from"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="15dp"
                         android:textColor="@color/AppBlackColor"
-                        android:textSize="28sp"
+                        android:textSize="24sp"
                         android:fontFamily="@font/omnes_semibold_regular" />
 
-                    <CalendarView
-                        android:id="@+id/calendar_view_from"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal"
+                        android:layout_marginEnd="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="15dp"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/previousMonthButtonFrom"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_chevron_left"
+                            app:tint="@color/AppMainColor"/>
+
+                        <TextView
+                            android:id="@+id/monthYearTextViewFrom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:gravity="center"
+                            android:text="JULY, 2024"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="24sp" />
+
+
+                        <ImageView
+                            android:id="@+id/nextMonthButtonFrom"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/AppMainColor"/>
+                    </LinearLayout>
+
+                    <include
+                        android:id="@+id/inlay_week_From"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:dateTextAppearance="?android:attr/textAppearanceSmall"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        layout="@layout/rl_item_week_header"
                         android:layout_below="@+id/tvFrom"/>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/calendarRecyclerViewFrom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/inlay_week_From"
+                        android:padding="16dp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -114,7 +160,7 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="15dp"
                         android:textColor="@color/AppBlackColor"
-                        android:textSize="28sp"
+                        android:textSize="24sp"
                         android:fontFamily="@font/omnes_semibold_regular" />
 
                     <LinearLayout
@@ -143,7 +189,7 @@
                             android:textAllCaps="true"
                             android:textStyle="bold"
                             android:textColor="@color/AppBlackColor"
-                            android:textSize="28sp" />
+                            android:textSize="24sp" />
 
 
                         <ImageView
@@ -160,10 +206,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         layout="@layout/rl_item_week_header"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:layout_below="@+id/tvTo"/>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/calendarRecyclerView"
+                        android:id="@+id/calendarRecyclerViewTo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/inlay_week"

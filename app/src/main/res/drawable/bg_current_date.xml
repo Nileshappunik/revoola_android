@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- res/drawable/bg_selected_date.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/AppZone3Color"/>
+    <solid android:color="@color/AppZone3BGColor"/>
     <corners android:radius="0dp"/>
 </shape>
 
