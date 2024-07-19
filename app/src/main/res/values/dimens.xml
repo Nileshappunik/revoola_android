@@ -10,11 +10,11 @@
     <dimen name="_100sdp">100dp</dimen>
 
     <!--overview Screen Size-->
-    <dimen name="overviewcadtop">25dp</dimen>
+    <dimen name="overviewcadtop">30dp</dimen>
     <dimen name="overviewcadheight">80dp</dimen>
     <dimen name="overviewcadtitlesize">16sp</dimen>
     <dimen name="overviewcadnumbersize">26sp</dimen>
-    <dimen name="overviewcadtextnumbertop">10dp</dimen>
+    <dimen name="overviewcadtextnumbertop">8dp</dimen>
     <dimen name="overviewsessiontitletextsize">24sp</dimen>
 
     <!--Bottom Bar Size-->

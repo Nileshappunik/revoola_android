@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/AppWhiteColor"
-        android:elevation="10dp"
+        android:elevation="0dp"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:scaleType="centerCrop"
@@ -26,7 +26,7 @@
                 android:layout_height="match_parent"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="5dp"
+                app:tint="@color/AppMainColor"
                 android:src="@drawable/ic_arrow_back_ios"
                 android:visibility="visible" />
 
@@ -48,12 +48,12 @@
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textAllCaps="true"
                 android:layout_centerHorizontal="true"
                 android:text="test"
                 android:visibility="visible"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
+                android:textColor="@color/AppBlackColor"
+                android:textSize="14sp" />
 
 
             <ImageView

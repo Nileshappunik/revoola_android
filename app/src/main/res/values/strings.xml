@@ -169,7 +169,7 @@
     <string name="creategroup">Create Group</string>
     <string name="contacts">Contacts</string>
     <string name="searchfriends">Search Friends</string>
-    <string name="alreadyusingrevoola">Find your contacts already using Revoola</string>
+    <string name="alreadyusingrevoola">Find your contacts already\n using Revoola</string>
     <string name="synccontacts">Sync Contacts</string>
 
     <!--more-->
@@ -389,6 +389,8 @@
     <string name="customchallenge">CUSTOM CHALLENGE</string>
     <string name="from">FROM</string>
     <string name="to">TO</string>
+    <string name="filters">FILTERS</string>
+    <string name="addfriends">ADD FRIENDS</string>
 
 
 </resources>

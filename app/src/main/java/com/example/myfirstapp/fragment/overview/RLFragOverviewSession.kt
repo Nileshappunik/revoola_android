@@ -2,6 +2,8 @@ package com.example.myfirstapp.fragment.overview
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
@@ -25,6 +28,7 @@ import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleLi
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragOverviewBinding
 import com.example.myfirstapp.databinding.RlFragOverviewSessionsBinding
+import com.example.myfirstapp.fragment.overview.adapter.RLAllDialogListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.example.myfirstapp.model.RLOverviewGraphResponseDataCard
 import com.example.myfirstapp.model.RLSessionitemset
@@ -34,7 +38,6 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
-
 
 class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     val TAG: String = RLFragOverviewSession::class.java.simpleName
@@ -99,40 +102,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         } else {
             RLshowDialogFullscreen()
         }
-    }
-    fun RLthismonthdialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_thismonth)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-
-        btClear.setOnClickListener {
-            dialog.dismiss()
+        fragBinding.layFlter.setOnClickListener {
+            RLallactivitydialogopen()
         }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    fun RLallactivitydialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_allactivity)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
     override fun onItemClick(position: Int) {
         fragBinding.txtTotalsession.setText(valueslist[position])
@@ -168,7 +140,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         if (valuetype.equals("SESSIONS")){
             RLwebviewurlload("sessions")
 
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble())+" $valuetype")
             totaldisplayitem=10
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
@@ -189,7 +161,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("CALORIES")){
             RLwebviewurlload("calories")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.burntcalories.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.burntcalories.toDouble())+" $valuetype")
             totaldisplayitem=6
             val DAILYAVGTOTALCALORIES = if (carddate.countSessionBody != 0) {
                 carddate.burntcalories / carddate.countSessionBody
@@ -211,7 +183,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("RELAXATION")){
             RLwebviewurlload("relaxation")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.totalrmm.toInt())+"m".toString())
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.totalrmm.toInt())+"m".toString()+" $valuetype")
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -231,7 +203,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 } else {
                     0 // or some default value if countSessionBody is zero
                 }
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.totalREV.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.totalREV.toDouble())+" $valuetype")
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -248,7 +220,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("STEPS")){
             RLwebviewurlload("steps")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.steps.toDouble()))
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.steps.toDouble())+" $valuetype")
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -261,7 +233,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("DISTANCE")){
             RLwebviewurlload("distance")
-            fragBinding.txtTotalsessionNumber.setText(carddate.maxdistance.toString())
+            fragBinding.txtTotalsessionNumber.setText(carddate.maxdistance.toString()+" $valuetype")
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -274,7 +246,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("CLIMBED")){
             RLwebviewurlload("climbed")
-            fragBinding.txtTotalsessionNumber.setText(carddate.maxelevation.toString())
+            fragBinding.txtTotalsessionNumber.setText(carddate.maxelevation.toString()+" $valuetype")
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -290,5 +262,64 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     fun RLwebviewurlload(type:String){
         val imageUrl=RLConstants.BASE_URL+"getResponse_v2.php?q=overviewGraphChartHTML&RLuser=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type="+type
         fragBinding.webView.loadUrl(imageUrl)
+    }
+    fun RLallactivitydialogopen() {
+        val  dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.rl_dailog_allactivity)
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+
+        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
+        val recycleDialog : RecyclerView = dialog.findViewById(R.id.recycle_dialog)
+        val namelist = arrayOf(getString(R.string.mindbody),
+            getString(R.string.allmind),
+            getString(R.string.allbody),
+            getString(R.string.selectbodyactivity),)
+        val adapter = RLAllDialogListAdapter(requireContext(), namelist) { clickdata ->
+            // Handle selection
+            if (clickdata.equals(getString(R.string.selectbodyactivity))){
+                dialog.dismiss()
+                RLSelectBodyActivityDialogOpen()
+            }
+        }
+        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        recycleDialog.layoutManager = linearLayoutManager
+        recycleDialog.adapter = adapter
+
+        btClear.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+    fun RLSelectBodyActivityDialogOpen() {
+        val  dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.rl_dailog_allactivity)
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
+        val tvTitleDialog : TextView = dialog.findViewById(R.id.tvTitle_dialog)
+        val recycleDialog : RecyclerView = dialog.findViewById(R.id.recycle_dialog)
+
+        tvTitleDialog.setText(getString(R.string.selectbodyactivity))
+        val namelist = arrayOf("DANCE", "HIIT","PILATES","RIDE","RUN","WALK","YOGA")
+
+        val adapter = RLAllDialogListAdapter(requireContext(), namelist) { clickdata ->
+            // Handle date selection
+            //clickdata
+        }
+        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        recycleDialog.layoutManager = linearLayoutManager
+        recycleDialog.adapter = adapter
+
+        btClear.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 }

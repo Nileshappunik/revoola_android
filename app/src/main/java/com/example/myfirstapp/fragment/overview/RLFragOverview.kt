@@ -80,6 +80,8 @@ class RLFragOverview : RLBaseFragment() {
             (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, RLFragNotification::class.java.simpleName, false)
         }
+
+
         fragBinding.inlaySession.cardOverview.setCardBackgroundColor(resources.getColor(R.color.AppOverviewCardColor))
         fragBinding.inlaySession.txtTitleLeft.setText(R.string.session)
         fragBinding.inlaySession.txtTitleRight.setText(R.string.activetime)
@@ -231,39 +233,7 @@ class RLFragOverview : RLBaseFragment() {
         }
     }
 
-    fun RLthismonthdialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_thismonth)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
 
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
 
-    fun RLallactivitydialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_allactivity)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
 
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
 }

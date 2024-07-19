@@ -75,7 +75,7 @@
         <RelativeLayout
             android:id="@+id/relay_listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="20dp">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -83,6 +83,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <TextView
+                android:id="@+id/btnAddFriend"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:text="@string/addfriends"
+                android:fontFamily="@font/aptos_regular"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/AppWhiteColor"
+                android:background="@drawable/full_round_green" />
         </RelativeLayout>
 
     </LinearLayout>

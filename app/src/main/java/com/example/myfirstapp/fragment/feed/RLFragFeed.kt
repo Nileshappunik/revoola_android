@@ -24,6 +24,7 @@ import com.example.myfirstapp.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragFeedBinding
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedGroupNameAdapter
+import com.example.myfirstapp.fragment.friends.RLFragFindOnRevoola
 import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.example.myfirstapp.model.RLGroupCardModel
@@ -120,6 +121,10 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.imgPlus.setOnClickListener {
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
+        }
+        fragBinding.btnAddFriend.setOnClickListener {
+            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+            (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
         }
 
     }
@@ -342,12 +347,14 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         if (valueslist[position].equals("FRIENDS")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
+            fragBinding.btnAddFriend.visibility=View.VISIBLE
             clickyou=false
             RlGroupNameSetTitle("GROUPS",false)
             RLfirsttimeApiCall(GroupId)
         } else if (valueslist[position].equals("GROUPS")) {
             fragBinding.relayGroupname.visibility=View.VISIBLE
             fragBinding.relayListview.visibility=View.VISIBLE
+            fragBinding.btnAddFriend.visibility=View.GONE
             clickyou=false
             RlGroupNameSetTitle("123",true)
             fragBinding.relayGroupname.setOnClickListener {
@@ -357,6 +364,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         }else if (valueslist[position].equals("YOU")) {
             fragBinding.relayGroupname.visibility=View.GONE
             fragBinding.relayListview.visibility=View.VISIBLE
+            fragBinding.btnAddFriend.visibility=View.GONE
             clickyou=true
             RlGroupNameSetTitle("GROUPS",false)
             if (RLApiClientRetrofit.RLisConnected()) {
@@ -373,6 +381,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLshowDialogFullscreen()
             }
         }else if (valueslist[position].equals("CHALLENGES")) {
+            fragBinding.btnAddFriend.visibility=View.GONE
             RlGroupNameSetTitle("GROUPS",false)
             RLChallengesUISet()
         }

@@ -31,17 +31,8 @@
             android:layout_marginTop="15dp"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
-            android:layout_toStartOf="@+id/ivFilter"
             android:layout_toEndOf="@+id/ivBack"/>
 
-        <ImageView
-            android:id="@+id/ivFilter"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="15dp"
-            android:visibility="gone"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_filter"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_session_title"
@@ -69,7 +60,7 @@
                     android:paddingEnd="2dp"
                     android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppBlackColor"
-                    android:textSize="36sp" />
+                    android:textSize="30sp" />
                 <TextView
                     android:id="@+id/txt_totalsession"
                     android:layout_width="wrap_content"
@@ -103,6 +94,39 @@
             </RelativeLayout>
 
         </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/layFlter"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/full_round_green">
+            <ImageView
+                android:id="@+id/ivFilter"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                app:tint="@color/AppWhiteColor"
+                android:src="@drawable/ic_filter"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filters"
+                android:fontFamily="@font/aptos_regular"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/AppWhiteColor"
+                android:layout_toEndOf="@+id/ivFilter"/>
+        </RelativeLayout>
+
+
 
     </RelativeLayout>
 </layout>

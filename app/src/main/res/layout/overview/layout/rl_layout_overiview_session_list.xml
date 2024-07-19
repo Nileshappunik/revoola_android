@@ -35,7 +35,7 @@
             android:layout_below="@+id/txtsessiontitle"
             android:textSize="24sp"
             android:text="30m"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/aptos_semibold"
             android:textColor="@color/AppBlackColor"
             android:layout_toEndOf="@+id/imgsessionimage"/>
 

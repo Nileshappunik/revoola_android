@@ -11,7 +11,6 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutOveriviewSessionListBinding
 import com.example.myfirstapp.model.RLSessionitemset
 
-
 class RLOverviewSessionListAdapter(val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLOverviewSessionListAdapter"

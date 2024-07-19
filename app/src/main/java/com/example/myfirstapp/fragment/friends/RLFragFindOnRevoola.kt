@@ -24,15 +24,14 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourFriends" )
-        fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
+        fragBinding.tvTitle.setText(R.string.searchfriends)
+        RLonBackPresAct(fragBinding.ivBack)
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
-
         fragBinding.txtInviteyourfriend.setOnClickListener {
             (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
