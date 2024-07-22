@@ -2,7 +2,6 @@ package com.example.myfirstapp.fragment.feed
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,7 +40,6 @@ import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
-import java.time.ZonedDateTime
 
 class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragFeed::class.java.simpleName

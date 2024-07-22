@@ -9,9 +9,68 @@
         android:layout_height="match_parent"
         android:background="@color/AppWhiteColor"
         android:orientation="vertical">
+
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical"
+            android:weightSum="6">
+            <include
+                android:id="@+id/inlay_steps"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+            <include
+                android:id="@+id/inlay_effort"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+            <include
+                android:id="@+id/inlay_calories"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+            <include
+                android:id="@+id/inlay_distance"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+            <include
+                android:id="@+id/inlay_climbed"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+            <include
+                android:id="@+id/inlay_duration"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_layout_start_menu"/>
+        </LinearLayout>
+
+
+       <!-- old Design bElow-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -49,19 +108,17 @@
                 android:src="@drawable/info"/>
 
         </RelativeLayout>
-
-
         <TextView
             android:id="@+id/tvpassupdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
            android:textAlignment="center"
+            android:visibility="gone"
             android:text="@string/typeofchallenge"
             android:textColor="@color/AppBlackColor"
             android:textAllCaps="true"
             android:textSize="14sp"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_challenges"
             android:layout_width="wrap_content"
@@ -71,7 +128,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

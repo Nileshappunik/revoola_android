@@ -1,6 +1,5 @@
 package com.example.myfirstapp.fragment.feed.adapter
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -9,12 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
@@ -25,7 +21,6 @@ import com.example.myfirstapp.fragment.feed.RLFragFeedCardLikeCommentView
 import com.example.myfirstapp.fragment.feed.RLFragMindSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragSessionSummary
 import com.example.myfirstapp.fragment.feed.RLFragTenChallengeSummary
-import com.example.myfirstapp.model.RLGroupCardModel
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTools
@@ -42,7 +37,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         private const val ITEM_TYPE_DATA = 0
         private const val ITEM_TYPE_LOADING = 1
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ITEM_TYPE_DATA) {
             val layoutbinding: RlLayoutFeedListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_feed_list , parent, false)
@@ -52,7 +46,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             LoadingViewHolder(view)
         }
     }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == ITEM_TYPE_DATA) {
             if (holder is MyViewHolder) {
@@ -60,33 +53,26 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             }
         }
     }
-
     override fun getItemViewType(position: Int): Int {
         return if (position == dataList.size - 1 && isLoadingAdded) ITEM_TYPE_LOADING else ITEM_TYPE_DATA
     }
-
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
     fun RLaddLoadingFooter() {
         isLoadingAdded = true
         notifyItemInserted(dataList.size)
     }
-
     fun RLremoveLoadingFooter() {
         isLoadingAdded = false
         notifyItemRemoved(dataList.size)
     }
-
     override fun getItemCount(): Int {
        return dataList.size
     }
-
     fun RLaddData(newData: List<RLTextOverview>) {
         val startPosition = dataList.size
         dataList.addAll(newData)
         notifyItemRangeInserted(startPosition, newData.size)
     }
-
     inner class MyViewHolder(layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
@@ -466,7 +452,6 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
-
     fun RLshowEditDeleteDialog(cardData: RLTextOverview) {
         val  dialog: Dialog = Dialog(context!!)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

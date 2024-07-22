@@ -40,7 +40,7 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             try{
-                layoutBinding.txtClasstime.setText(cardData.duration)
+                layoutBinding.txtClasstime.setText(cardData.duration+" CLASS")
                 layoutBinding.txtUsername.setText(cardData.instructor)
                 layoutBinding.txtClassname.setText(cardData.rideTitle)
                 layoutBinding.txtVideoaudio.setText(cardData.difficulty)

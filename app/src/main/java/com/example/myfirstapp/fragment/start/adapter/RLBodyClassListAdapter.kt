@@ -41,7 +41,7 @@ class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val conte
             val cardData = dataList[position]
             try{
               //  RLGetVideoListBody(cardData.key,itemVIew)
-                layoutBinding.txtClasstime.setText(cardData.duration)
+                layoutBinding.txtClasstime.setText(cardData.duration+" MINS CLASS")
                 layoutBinding.txtUsername.setText(cardData.instructor)
                 layoutBinding.txtClassname.setText(cardData.rideTitle)
                 layoutBinding.txtVideoaudio.setText(cardData.difficulty)

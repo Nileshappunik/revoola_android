@@ -45,6 +45,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
+
 object RLTools {
     fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -75,6 +76,8 @@ object RLTools {
         })
 
     }
+
+
     fun RLgeticon(typename:String): Int {
        if( typename.toLowerCase().equals("walk")){
            return R.drawable.ic_walk

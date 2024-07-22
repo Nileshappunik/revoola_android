@@ -13,12 +13,13 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutStartListBinding
 import com.example.myfirstapp.enumclass.RLMetricData
+import com.example.myfirstapp.enumclass.RLStartType
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
 import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
 import com.example.myfirstapp.fragment.start.classes.RLFragClasses
 import com.example.myfirstapp.fragment.start.yourway.RLFragYourWay
 
-class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<Pair<String, String>>) :
+class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLStartType>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartListAdapter"
     var bundle: Bundle = Bundle()
@@ -52,13 +53,20 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<Pai
                 layoutParams.height = newHeight
                 itemVIew.layoutParams = layoutParams
             }*/
-            val (name , image) = dataList[position]
+            val cardData = dataList[position]
+            layoutBinding.txtTypename.setText(cardData.title)
+            layoutBinding.txtDescription.setText(context!!.getString(cardData.description))
+            Glide.with(context).load(cardData.image).into(layoutBinding.imgType)
+            Glide.with(context).load(cardData.icon_image).into(layoutBinding.imgTypeicon)
+            layoutBinding.relayStart.visibility=View.GONE
+            layoutBinding.relayStartNew.visibility=View.VISIBLE
 
-            if (name.equals("end")){
+           /* if (name.equals("end")){
                 layoutBinding.txtName.visibility=View.GONE
                 layoutBinding.imgFull.visibility=View.GONE
                 layoutBinding.txtLast.visibility=View.VISIBLE
-            }else{
+            }
+            else{
                 layoutBinding.txtName.visibility=View.VISIBLE
                 layoutBinding.imgFull.visibility=View.VISIBLE
                 layoutBinding.txtLast.visibility=View.GONE
@@ -81,11 +89,10 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<Pai
                     }else if (name.equals("Classes")){
                         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
                         (context as RLMainActivityRL).RLloadFrag(RLFragClasses(), TAG, true, RLFragClasses::class.java.simpleName, false)
-
                     }
 
                 }
-            }
+            }*/
 
         }
     }

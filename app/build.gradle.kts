@@ -104,7 +104,8 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")
     implementation ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0")
 
-    implementation ("com.github.bumptech.glide:glide:4.11.0")
+  //  implementation ("com.github.bumptech.glide:glide:4.11.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
     //implementation ("com.squareup.picasso:picasso:2.71828")
 
@@ -126,5 +127,6 @@ dependencies {
 
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("com.caverock:androidsvg:1.4")
 }
 

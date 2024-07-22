@@ -227,7 +227,7 @@
     <string name="facebook_client_token">23148b487e52d13bea40029f58943f10</string>
     <string name="cancle">Cancle</string>
 
-    <string name="foryourmindandbody">For Your Mind\n and Body</string>
+    <string name="foryourmindandbody">Mind &amp; Body</string>
     <string name="foryourbody">For Your Body</string>
     <string name="foryourmind">For Your Mind</string>
     <string name="all">ALL</string>
@@ -251,6 +251,7 @@
     <string name="descriptionofvideo">Laughing is good for wellbeing; it reduce stress and release endorphins; but please so be careful if you are watching this in public!</string>
 
     <string name="enjoyyourmindandbody">Enjoy our mind&amp;body classes,track your own workouts or bemotivated together with friends.</string>
+    <string name="whatdoyouwanttoday">What do you want to do today?</string>
     <string name="yourway">Your Way</string>
     <string name="pilates">Pilates</string>
     <string name="ride">Ride</string>
@@ -391,6 +392,12 @@
     <string name="to">TO</string>
     <string name="filters">FILTERS</string>
     <string name="addfriends">ADD FRIENDS</string>
+    <string name="mindclassdescription">Relaxation, Sleep, and Happiness are all key to your overall health. We have created classes to help you achieve the best you.</string>
+    <string name="bodyclassdescription">Need to get energized? We have body classes for you including Dance, Ride, HIIT, Yoga, and Pilates.</string>
+    <string name="yourwaydescription">Fancy doing something still record your effort, steps, distance. Try a walk, a run, a ride or even a workout!</string>
+    <string name="challengesdescription">Key to your motivation might be taking part in a challenge against friends, family or even yourself.</string>
+    <string name="youractivityyourway">Your Activity-Your Way!</string>
+    <string name="manageyourrevoolacommunity">Manage Your Revoola Community</string>
 
 
 </resources>
