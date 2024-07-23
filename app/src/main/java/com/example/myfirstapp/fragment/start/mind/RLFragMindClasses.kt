@@ -2,6 +2,8 @@ package com.example.myfirstapp.fragment.start.mind
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
+import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
@@ -46,18 +49,24 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        fragBinding.toolbar.tvTitle.setTextColor(resources.getColor(R.color.AppBlackColor))
         RLonBackPresAct(fragBinding.toolbar.ivBack)
-        fragBinding.toolbar.ivNotification.visibility=View.VISIBLE
-        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_filter)
-        fragBinding.toolbar.ivNotification.setOnClickListener {
-           //filter click open dialog
+        //val tintColor = requireContext().getColor(R.color.AppDarkGrayColor)
+       // fragBinding.toolbar.ivBack.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+        fragBinding.toolbar.ivTitle.setText(R.string.mindclasses)
+        fragBinding.toolbar.ivDescription.setText(R.string.selectamindfulclass)
+
+        val typeface: Typeface? = ResourcesCompat.getFont(requireContext(), R.font.omnes_regular)
+        fragBinding.toolbar.ivTitle.typeface = typeface
+        fragBinding.toolbar.ivDescription.typeface = typeface
+
+        fragBinding.inlayFilter.ivFilter.setOnClickListener {
+            //filter click open dialog
             RLfilterdialogopen()
         }
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
-        fragBinding.toolbar.tvTitle.setText(R.string.mindclasses)
+        //Main Recyclerview
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistMind,activity)
         fragBinding.recycleSessionTitle.adapter = adaptertitle
         val linearLayoutMain = LinearLayoutManager(activity)

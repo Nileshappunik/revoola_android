@@ -16,9 +16,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginStart="@dimen/all_menu_start_margin"
+            android:layout_marginEnd="@dimen/all_menu_end_margin"
+            android:layout_marginBottom="@dimen/all_menu_bottom_margin"
             android:orientation="vertical"
             android:weightSum="6">
             <include
@@ -26,42 +26,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
             <include
                 android:id="@+id/inlay_effort"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
             <include
                 android:id="@+id/inlay_calories"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
             <include
                 android:id="@+id/inlay_distance"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
             <include
                 android:id="@+id/inlay_climbed"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
             <include
                 android:id="@+id/inlay_duration"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
         </LinearLayout>
 

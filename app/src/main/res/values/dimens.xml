@@ -30,4 +30,13 @@
     <!--Feed Card Screen Size-->
     <dimen name="feedcardbottomiconwidth">16dp</dimen>
     <dimen name="feedcardbottomiconheight">16dp</dimen>
+
+    <!--all Menu-->
+    <dimen name="all_menu_top_margin">30dp</dimen>
+    <dimen name="all_menu_start_margin">20dp</dimen>
+    <dimen name="all_menu_end_margin">20dp</dimen>
+    <dimen name="all_menu_bottom_margin">30dp</dimen>
+
+    <dimen name="filter_margin_end">20dp</dimen>
+    <dimen name="filter_margin_bottom">30dp</dimen>
 </resources>

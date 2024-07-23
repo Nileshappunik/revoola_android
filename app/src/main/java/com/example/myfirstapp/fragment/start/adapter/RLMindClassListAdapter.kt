@@ -14,12 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlLayoutMindClassesListBinding
 import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesView
-import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.model.RLVideoModel
-import com.google.gson.Gson
 
 class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val context: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLMindClassListAdapter"
@@ -55,7 +52,7 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
                     val bundle = Bundle()
                     bundle.putString("AUDIOVIDEOTYPE", cardData.classtype)
                     bundle.putString("VIDEODATA",cardData.key)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, RLFragMindClassesView::class.java.simpleName, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, null, true)
                 }
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")

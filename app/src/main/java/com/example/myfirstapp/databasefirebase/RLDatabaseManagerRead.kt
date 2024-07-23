@@ -28,6 +28,18 @@ class RLDatabaseManagerRead {
             }
         }
     }
+
+    fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.CODESECTION)
+            .child(RLConstants.AVAILABLEMENUS).child(classname)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(task.result?.value, null)
+                } else {
+                    callback(null, task.exception)
+                }
+            }
+    }
     fun RLRevoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOKEYS)
             .child(classname).child(RLConstants.LISTOFVIDEOS)

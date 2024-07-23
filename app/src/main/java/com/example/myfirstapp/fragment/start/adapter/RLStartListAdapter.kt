@@ -1,6 +1,5 @@
 package com.example.myfirstapp.fragment.start.adapter
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,14 +9,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutStartListBinding
-import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLStartType
-import com.example.myfirstapp.enumclass.RLTypeOfMetrics
-import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
-import com.example.myfirstapp.fragment.start.classes.RLFragClasses
-import com.example.myfirstapp.fragment.start.yourway.RLFragYourWay
 
 class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLStartType>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -56,8 +49,8 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLS
             val cardData = dataList[position]
             layoutBinding.txtTypename.setText(cardData.title)
             layoutBinding.txtDescription.setText(context!!.getString(cardData.description))
-            Glide.with(context).load(cardData.image).into(layoutBinding.imgType)
-            Glide.with(context).load(cardData.icon_image).into(layoutBinding.imgTypeicon)
+            Glide.with(context).load(cardData.img).into(layoutBinding.imgType)
+            Glide.with(context).load(cardData.type).into(layoutBinding.imgTypeicon)
             layoutBinding.relayStart.visibility=View.GONE
             layoutBinding.relayStartNew.visibility=View.VISIBLE
 

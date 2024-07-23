@@ -8,14 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+        android:layout_marginEnd="5dp">
 
         <ImageView
             android:id="@+id/ivBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:padding="5dp"
             android:layout_centerVertical="true"
-            app:tint="@color/AppMainColor"
+            app:tint="@color/AppDarkGrayColor"
             android:src="@drawable/ic_arrow_back_ios"/>
 
         <TextView
@@ -25,29 +26,28 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/omnes_semibold_regular"
             android:layout_marginEnd="10dp"
-            android:layout_toEndOf="@+id/ivBack"
-            android:layout_toStartOf="@+id/ivhelp"
             android:textAllCaps="true"
             android:textAlignment="center"
             android:text="@string/yourway"
             android:textColor="@color/AppBlackColor"
-            android:textSize="32sp"/>
-
+            android:textSize="26sp"/>
+        <!--android:layout_toEndOf="@+id/ivBack"
+        android:layout_toStartOf="@+id/ivhelp"
+        android:layout_toEndOf="@+id/ivBack"
+            android:layout_toStartOf="@+id/ivhelp"-->
         <TextView
             android:id="@+id/iv_Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/omnes_regular"
             android:layout_marginEnd="10dp"
             android:layout_below="@+id/iv_Title"
-            android:layout_toEndOf="@+id/ivBack"
-            android:layout_toStartOf="@+id/ivhelp"
             android:textAllCaps="true"
             android:textAlignment="center"
             android:text="@string/youractivityyourway"
             android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <ImageView
             android:id="@+id/ivhelp"
@@ -56,7 +56,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/info"/>
+            android:src="@drawable/ic_info"/>
 
     </RelativeLayout>
 </layout>

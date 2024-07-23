@@ -38,6 +38,8 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import java.util.Calendar
+import java.util.TimeZone
 
 class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     val TAG: String = RLFragOverviewSession::class.java.simpleName
@@ -102,7 +104,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         } else {
             RLshowDialogFullscreen()
         }
-        fragBinding.layFlter.setOnClickListener {
+        fragBinding.inlayFilter.ivFilter.setOnClickListener {
             RLallactivitydialogopen()
         }
     }
@@ -117,7 +119,15 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
     private fun RLAPiCall(valuetype:String) {
-        viewModel.RLgetOverviewGraph("overviewGraph",currentUser,1714521600,1716812869,"all") { result ->
+        val date = Calendar.getInstance()
+        val firstDay = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val offset = TimeZone.getDefault().rawOffset / 1000
+        val timestampFrom = (firstDay.timeInMillis / 1000) - offset
+        val timestampTo = (date.timeInMillis / 1000) - offset
+
+        viewModel.RLgetOverviewGraph("overviewGraph",currentUser,timestampFrom,timestampTo,"all") { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
@@ -140,7 +150,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         if (valuetype.equals("SESSIONS")){
             RLwebviewurlload("sessions")
 
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble())+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble()))
             totaldisplayitem=10
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
@@ -161,7 +171,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("CALORIES")){
             RLwebviewurlload("calories")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.burntcalories.toDouble())+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.burntcalories.toDouble()))
             totaldisplayitem=6
             val DAILYAVGTOTALCALORIES = if (carddate.countSessionBody != 0) {
                 carddate.burntcalories / carddate.countSessionBody
@@ -183,7 +193,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("RELAXATION")){
             RLwebviewurlload("relaxation")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.totalrmm.toInt())+"m".toString()+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.totalrmm.toInt())+"m".toString())
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -203,7 +213,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 } else {
                     0 // or some default value if countSessionBody is zero
                 }
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.totalREV.toDouble())+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.totalREV.toDouble()))
             val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -220,7 +230,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("STEPS")){
             RLwebviewurlload("steps")
-            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.steps.toDouble())+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.steps.toDouble()))
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -233,7 +243,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("DISTANCE")){
             RLwebviewurlload("distance")
-            fragBinding.txtTotalsessionNumber.setText(carddate.maxdistance.toString()+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(carddate.maxdistance.toString())
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){
@@ -246,7 +256,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         else if (valuetype.equals("CLIMBED")){
             RLwebviewurlload("climbed")
-            fragBinding.txtTotalsessionNumber.setText(carddate.maxelevation.toString()+" $valuetype")
+            fragBinding.txtTotalsessionNumber.setText(carddate.maxelevation.toString())
             totaldisplayitem=4
             for (i in 0 until  totaldisplayitem){
                 when (i){

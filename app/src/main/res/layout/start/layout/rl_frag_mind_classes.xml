@@ -12,11 +12,11 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/rl_toolbar_common"/>
+            layout="@layout/rl_layout_common_start_top"/>
         <RelativeLayout
             android:id="@+id/relay_listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_session_title"
                 android:layout_width="wrap_content"
@@ -39,7 +39,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/view_mind"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="5dp"/>
+
+            <include
+                android:id="@+id/inlay_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/filter_margin_end"
+                android:layout_marginBottom="@dimen/filter_margin_bottom"
+                layout="@layout/rl_layout_filter_bottom_mrnu"/>
 
         </RelativeLayout>
     </LinearLayout>

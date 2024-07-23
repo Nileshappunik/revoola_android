@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textAllCaps="true"
+            android:singleLine="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/img_user"
@@ -51,6 +52,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
             android:textAllCaps="true"
+            android:singleLine="true"
             android:layout_toEndOf="@+id/img_mind"
             android:layout_toStartOf="@+id/img_right"
             android:layout_below="@+id/txt_username"
@@ -65,17 +67,17 @@
             android:textAllCaps="true"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/img_mind"
             android:layout_below="@+id/txt_classname"
             android:textColor="@color/AppTextGrayColor" />
 
         <View
             android:id="@+id/viewdivider"
-            android:layout_width="1dp"
-            android:layout_height="15dp"
-            android:background="@color/AppBottomGrayColor"
-            android:layout_marginTop="15dp"
+            android:layout_width="2dp"
+            android:layout_height="20dp"
+            android:background="@color/AppLightGrayColor"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/txt_classtime"
             android:layout_below="@+id/txt_classname"/>
 
@@ -87,7 +89,7 @@
             android:textAllCaps="true"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/viewdivider"
             android:layout_below="@+id/txt_classname"
             android:textColor="@color/AppTextGrayColor"/>

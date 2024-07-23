@@ -32,6 +32,12 @@ package com.example.myfirstapp.utils
         const val REVOOLAVIDEOKEYS= "revoolaVideoKeys"
         const val REVOOLAVIDEOS= "revoolaVideos"
         const val REVOOLAVIDEOSMIND= "revoolaVideosMind"
+        const val CODESECTION= "codeSection"
+        const val AVAILABLEMENUS= "availableMenus"
+        const val CHALLENGES= "challenges"
+        const val FRIENDS= "friends"
+        const val MAIN= "main"
+        const val YOURWAY= "yourWay"
 
         const val FORALL= "forAll"
         const val FORENERGISE= "forEnergise"

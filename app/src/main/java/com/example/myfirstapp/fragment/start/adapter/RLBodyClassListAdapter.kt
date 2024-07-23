@@ -55,11 +55,8 @@ class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val conte
                     val bundle = Bundle()
                     bundle.putString("VIDEODATA",cardData.key)
                     bundle.putBoolean("Ride",ride)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
                 }
-
-
-
 
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")

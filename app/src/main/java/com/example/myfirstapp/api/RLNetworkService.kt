@@ -47,7 +47,7 @@ interface RLNetworkService {
     @GET(RLConstants.URLALLV2)
     fun RLgetOverviewGraph(
         @Query("q") query: String,
-        @Query("RLuser") user: String,
+        @Query("user") user: String,
         @Query("timestampfrom") timestampFrom: Long,
         @Query("timestampto") timestampTo: Long,
         @Query("classtype") classType: String
@@ -65,7 +65,7 @@ interface RLNetworkService {
     @GET(RLConstants.URLALLV2)
     fun RLgetNotificationData(
         @Query("q") q: String,
-        @Query("RLuser") user: String,
+        @Query("user") user: String,
         @Query("limit") limit: Int,
         @Query("index") index: Int): Call<RLNotificationModel>
 

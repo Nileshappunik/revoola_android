@@ -58,7 +58,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:paddingEnd="2dp"
-                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:fontFamily="@font/aptos_semibold"
                     android:textColor="@color/AppBlackColor"
                     android:textSize="30sp" />
                 <TextView
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:paddingEnd="10dp"
                     android:paddingStart="2dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@+id/txt_totalsession_number"
                     android:text="@string/session"
@@ -95,12 +95,23 @@
 
         </ScrollView>
 
+        <include
+            android:id="@+id/inlay_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/filter_margin_end"
+            android:layout_marginBottom="@dimen/filter_margin_bottom"
+            layout="@layout/rl_layout_filter_bottom_mrnu"/>
+
         <RelativeLayout
             android:id="@+id/layFlter"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:visibility="gone"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"

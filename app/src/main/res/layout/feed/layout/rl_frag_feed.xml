@@ -83,8 +83,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <include
+                android:id="@+id/inlay_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/filter_margin_end"
+                android:layout_marginBottom="@dimen/filter_margin_bottom"
+                layout="@layout/rl_layout_filter_bottom_mrnu"/>
+
             <TextView
-                android:id="@+id/btnAddFriend"
+                android:id="@+id/btnAddFriend1"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:paddingStart="30dp"
@@ -94,6 +104,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_alignParentEnd="true"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 android:text="@string/addfriends"
                 android:fontFamily="@font/aptos_regular"
                 android:layout_marginStart="10dp"

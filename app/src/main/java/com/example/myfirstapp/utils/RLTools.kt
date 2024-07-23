@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
@@ -508,6 +509,38 @@ object RLTools {
         }
     }
 
+    fun RLformatTime(secs: Int, isSec: Boolean): String {
+        val secNum = secs
+        val hours = secNum / 3600
+        val minutes = (secNum / 60) % 60
+        val seconds = secNum % 60
+
+        var time = ""
+        if (hours > 0) {
+            time += "${hours}h "
+        }
+        if (minutes > 0) {
+            time += if (minutes < 10) {
+                "0${minutes}m"
+            } else {
+                "${minutes}m"
+            }
+        }
+        if (hours == 0 && seconds > 0 && isSec) {
+            time += if (seconds < 10) {
+                "0${seconds}sec"
+            } else {
+                "${seconds}sec"
+            }
+        }
+
+        if (time.isEmpty()) {
+            time = "00min"
+        }
+
+        return time
+    }
+
     fun RLconvertTimestampToDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -686,7 +719,7 @@ object RLTools {
 
      fun RLformatCommas(number: Double): String {
         val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-         val integerPart = number.toInt()
+         val integerPart = number.roundToInt()
          val formattedInteger = numberFormat.format(integerPart)
         return formattedInteger
     }

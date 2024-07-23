@@ -46,7 +46,7 @@ val img_friend_find = "https://video.revoola.com/v3/menu/your_way/walk.png"
 val img_friend_friends = "https://video.revoola.com/v3/menu/your_way/run.png"
 val img_friend_group = "https://video.revoola.com/v3/menu/your_way/ride.png"
 val img_friend_invite = "https://video.revoola.com/v3/menu/your_way/workout.png"
-enum class RLStartType (val title: String, val icon_image: String, val description:Int,val image:String) {
+enum class RLStartType (val title: String, val type: String, val description:Int, val img:String) {
     MindClasses("MIND CLASSES", ic_menu_mind,R.string.mindclassdescription,img_menu_mind),
     BodyClasses("BODY CLASSES", ic_menu_body,R.string.bodyclassdescription,img_menu_body),
     YourWay("YOUR WAY",ic_menu_yourWay,R.string.yourwaydescription,img_menu_yourWay),
@@ -66,4 +66,12 @@ enum class RLStartType (val title: String, val icon_image: String, val descripti
     YourGroup("YOUR GROUPS", ic_friend_group,R.string.mindclassdescription,img_friend_group),
     InviteToJoin("INVITE TO JOIN", ic_friend_invite,R.string.mindclassdescription,img_friend_invite)
 }
+
+data class RLStartAllMenuModel(
+    val img: String,
+    val description: String,
+    val title: String,
+    val type: String
+)
+
 
