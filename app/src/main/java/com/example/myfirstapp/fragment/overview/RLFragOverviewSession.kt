@@ -250,7 +250,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     0-> datalist.add(RLSessionitemset("MAX DISTANCE(miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
                     1-> datalist.add(RLSessionitemset("AVG DISTANCE(miles)",carddate.avgdistance.toString(),R.drawable.ic_distance))
                     2-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
-                    3-> datalist.add(RLSessionitemset("AVG EFFORT PER",RLTools.RLminutesget(carddate.totalrmm.toInt()).toString(),R.drawable.ic_heart))
+                    3-> datalist.add(RLSessionitemset("AVG EFFORT PER(miles)",RLTools.RLminutesget(carddate.totalrmm.toInt()).toString(),R.drawable.ic_heart))
                 }
             }
         }
@@ -263,12 +263,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     0-> datalist.add(RLSessionitemset("MAX CLIMBED(ft)",carddate.elevation.toString(),R.drawable.ic_climb))
                     1-> datalist.add(RLSessionitemset("AVG CLIMBED(ft)",carddate.avgelevation.toString(),R.drawable.ic_climb))
                     2-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
-                    3-> datalist.add(RLSessionitemset("AVG EFFORT PER",carddate.elevation.toString(),R.drawable.ic_heart))
+                    3-> datalist.add(RLSessionitemset("AVG EFFORT PER(ft)",carddate.elevation.toString(),R.drawable.ic_heart))
                 }
             }
         }
         adapterdata.RLsetList(datalist)
     }
+
     fun RLwebviewurlload(type:String){
         val imageUrl=RLConstants.BASE_URL+"getResponse_v2.php?q=overviewGraphChartHTML&RLuser=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type="+type
         fragBinding.webView.loadUrl(imageUrl)

@@ -31,6 +31,7 @@ import com.example.myfirstapp.databinding.RlFragMindSessionSummaryBinding
 import com.example.myfirstapp.databinding.RlFragSessionSummaryBinding
 import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
+import com.example.myfirstapp.enumclass.RLYourWayName
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedGroupNameAdapter
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionEffortListAdapter
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedSimpleAdapter
@@ -106,7 +107,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set
         val dataListWithHR:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
             RLTypeOfMetrics.Relaxation to RLMetricData(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString()),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
@@ -119,8 +120,6 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
-
-
 
         if (cardData.hrm==0) {
             //WITHOUT HR

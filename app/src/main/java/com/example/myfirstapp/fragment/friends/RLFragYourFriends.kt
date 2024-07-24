@@ -139,9 +139,9 @@ class RLFragYourFriends : RLBaseFragment() {
     }
     private fun RLresponsehandle(userdata: List<RLuserData>, youFollow:Boolean) {
         if (youFollow){
-            fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsyoufollow))
+           // fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsyoufollow))
         }else{
-            fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsfollowingyou))
+           // fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsfollowingyou))
         }
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager

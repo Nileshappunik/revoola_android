@@ -79,6 +79,10 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             try {
                 val cardData:RLTextOverview= dataList[position]
                 RLcommonDataSet(cardData, layoutBinding,position+1)
+
+                layoutBinding.imgNain2.visibility=View.GONE
+                layoutBinding.imgNain.visibility=View.VISIBLE
+
                 if (cardData.from_third_party_source == 0) {
                     if (cardData.bmo == 0) {
                         //BODY
@@ -206,8 +210,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                 bundle.putSerializable(RLConstants.CardData, cardData)
                 (context as RLMainActivityRL).RLbottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, true)
-            }
-            else{
+            }else{
                 RLshowAlertDialog()
             }
 
@@ -300,6 +303,13 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.laySteps.txtTime.setText(R.string.rank)
         layoutBinding.laySteps.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())
        layoutBinding.layBottom.visibility=View.VISIBLE
+
+        layoutBinding.blanckView1.visibility=View.VISIBLE
+        layoutBinding.layoutShare.visibility=View.VISIBLE
+        layoutBinding.layoutThumb.visibility=View.GONE
+        layoutBinding.layoutComment.visibility=View.GONE
+        layoutBinding.blanckView.visibility=View.GONE
+        layoutBinding.layoutAward.visibility=View.GONE
     }
     private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
@@ -329,7 +339,10 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }else if (!cardData.map_image.isNullOrEmpty()){
             Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgNain)
         }else{
-            Glide.with(context!!).load(R.drawable.healthheart).into(layoutBinding.imgNain)
+            layoutBinding.imgNain2.visibility=View.VISIBLE
+            layoutBinding.imgNain.visibility=View.GONE
+           // Glide.with(context!!).load(R.drawable.healthheart).into(layoutBinding.imgNain2)
+            Glide.with(context!!).load("https://video.revoola.com/v2/images/_app_applehealth.png").into(layoutBinding.imgNain2)
         }
 
     }

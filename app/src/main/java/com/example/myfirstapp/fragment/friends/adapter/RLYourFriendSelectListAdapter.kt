@@ -1,6 +1,9 @@
 package com.example.myfirstapp.fragment.friends.adapter
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +17,7 @@ import com.example.myfirstapp.databinding.RlLayoutYourFriendBinding
 import com.example.myfirstapp.model.RLuserData
 
 class RLYourFriendSelectListAdapter(val context: FragmentActivity?, val friendList: List<RLuserData>, val txtInviteyourfriend: TextView) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLYourFriendListAdapter"
+    val TAG = "RLYourFriendSelectListAdapter"
     var bundle: Bundle = Bundle()
     var datalist:List<RLuserData> = friendList
     var totalselect:Int=0
@@ -47,17 +50,21 @@ class RLYourFriendSelectListAdapter(val context: FragmentActivity?, val friendLi
             layoutBinding.checkboxFriend.isChecked=cardData.isSelected
 
             layoutBinding.checkboxFriend.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked){
-                    txtInviteyourfriend.visibility=View.VISIBLE
-                    totalselect= totalselect+1
-                }else{
-                    totalselect= totalselect-1
-                    if (totalselect==0){
-                        txtInviteyourfriend.visibility=View.GONE
+                try {
+                    if (isChecked){
+                        txtInviteyourfriend.visibility=View.VISIBLE
+                        totalselect= totalselect+1
+                    }else{
+                        totalselect= totalselect-1
+                        if (totalselect==0){
+                            txtInviteyourfriend.visibility=View.GONE
+                        }
                     }
+                    cardData.isSelected=isChecked
+                    notifyItemChanged(position)
+                }catch (e:Exception){
+                    Log.e(TAG,"EXCEPTION:- ${e.message}")
                 }
-                cardData.isSelected=isChecked
-                notifyDataSetChanged()
             }
         }
     }

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragSessionSummaryBinding
 import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
+import com.example.myfirstapp.enumclass.RLYourWayName
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionEffortListAdapter
 import com.example.myfirstapp.fragment.feed.adapter.RLImagePagerAdapter
 import com.example.myfirstapp.model.RLTextOverview
@@ -329,6 +331,349 @@ class RLFragSessionSummary : RLBaseFragment() {
 
 
     }
+
+
+    private fun RLgetWayName(wayname: RLYourWayName) {
+        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+        var isHrConnected:Boolean
+        var isClass:Boolean
+        if (cardData.hrm==0) {
+            //WITHOUT HR
+            isHrConnected=false
+        }else{
+            isHrConnected=true
+        }
+        if (cardData.bmo==0){
+            isClass=true
+        }else{
+            isClass=false
+        }
+
+       val  maxCadence=2
+        var rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = mutableListOf()
+         when (wayname) {
+            RLYourWayName.Ride -> {
+                if(isHrConnected){
+                    if(isClass){
+                        // cells = [ .Time, .Effort, .HR, .Cadence, .ActiveCalories, .Kudos, .Comments ,.Awards]
+                       //done
+                        rideListWithoutHr=  listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                            RLTypeOfMetrics.Cadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                    else{
+                       // cells = [ .Time, .Cadence, .Distance, .Elevation, .AvgMaxSpeed, .Speed,
+                    // .HR, .Effort, .ActiveCalories, .Kudos, .Comments ,.Awards]
+                        //done
+                        rideListWithoutHr=  listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                }
+                else if(maxCadence > 0){
+                    if(isClass){
+                      //  cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Cadence, .Kudos, .Comments ,.Awards]
+                        //done
+                        rideListWithoutHr=  listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                    else{
+                      //  cells = [ .Time, .Cadence, .Distance, .Elevation, .AvgMaxSpeed, .Speed,
+                        //  .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                       //done
+                        rideListWithoutHr=  listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                }
+                else{
+                    if(isClass){
+                       // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                        //done
+                        rideListWithoutHr=  listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                    else{
+                       // cells = [ .Time, .EstimatedEffort, .Distance, .EstimatedCalories,
+                        // .AvgMaxSpeed, .Elevation, .Speed, .Kudos, .Comments ,.Awards]
+                      //done
+                        rideListWithoutHr= listOf(
+                            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                    }
+                }
+            }
+             RLYourWayName.Run -> {
+             if(isHrConnected){
+                // cells = [ .Time, .Steps, .Distance, .Elevation, .AvgMaxSpeed,
+                 // .Speed, .HR, .Effort, .ActiveCalories, .Kudos, .Comments ,.Awards]
+                 //done
+                 rideListWithoutHr=   listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                     RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                     RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+             else{
+                /// cells = [ .Time, .Steps, .Distance, .Elevation, .AvgMaxSpeed, .Speed,
+             // .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                 //done
+                 rideListWithoutHr=   listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                     RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+            }
+             RLYourWayName.Walk -> {
+             if(isHrConnected){
+                 // cells = [ .Time, .Steps, .Distance, .Elevation, .AvgMaxSpeed, .Speed, .HR, .Effort, .ActiveCalories, .Kudos, .Comments ,.Awards]
+                 //done
+                 rideListWithoutHr=   listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                     RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                     RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+             else{
+                 /// cells = [ .Time, .Steps, .Distance, .Elevation, .AvgMaxSpeed, .Speed, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                 //done
+                 rideListWithoutHr=   listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+                     RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+            }
+             RLYourWayName.Pilates -> {
+             if(isHrConnected){
+                // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                 //done
+                 rideListWithoutHr= listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+             else{
+                // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+               //done
+                 rideListWithoutHr=listOf(
+                     RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                     RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                     RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                     RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                     RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+             }
+            }
+             RLYourWayName.Warm -> {
+                 if(isHrConnected){
+                     // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr= listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+                 else{
+                     // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr=listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+             }
+             RLYourWayName.Workout -> {
+                 if(isHrConnected){
+                     // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr= listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+                 else{
+                     // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr=listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+             }
+             RLYourWayName.Dance -> {
+                 if(isHrConnected){
+                     // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr= listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+                 else{
+                     // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr=listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+             }
+             RLYourWayName.Hiit -> {
+                 if(isHrConnected){
+                     // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr= listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+                 else{
+                     // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr=listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+             }
+             RLYourWayName.Yoga -> {
+                 if(isHrConnected){
+                     // cells = [ .Time, .Effort, .ActiveCalories, .HR, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr= listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+                 else{
+                     // cells = [ .Time, .EstimatedEffort, .EstimatedCalories, .Kudos, .Comments ,.Awards]
+                     //done
+                     rideListWithoutHr=listOf(
+                         RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+                         RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+                         RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                         RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+                         RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+                         RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
+                 }
+             }
+        }
+
+        RLSummryListSet(rideListWithoutHr)
+    }
+
     private fun RLsummaryDataSet() {
         fragBinding.relaySummary.visibility=View.VISIBLE
         fragBinding.relayAnalysis.visibility=View.GONE
@@ -356,6 +701,7 @@ class RLFragSessionSummary : RLBaseFragment() {
 
 
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+
         //Main Data List Set
         val rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
@@ -436,7 +782,29 @@ class RLFragSessionSummary : RLBaseFragment() {
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
 
-        if (cardData.hrm==0){
+        if (classType.toLowerCase().equals("ride")){
+            RLgetWayName(RLYourWayName.Ride)
+        }else if (classType.toLowerCase().equals("run")){
+            RLgetWayName(RLYourWayName.Run)
+        }else if (classType.toLowerCase().equals("walk")){
+            RLgetWayName(RLYourWayName.Walk)
+        }else if (classType.toLowerCase().equals("pilates")){
+            RLgetWayName(RLYourWayName.Pilates)
+        }else if (classType.toLowerCase().equals("warm")){
+            RLgetWayName(RLYourWayName.Warm)
+        }else if (classType.toLowerCase().equals("workout")){
+            RLgetWayName(RLYourWayName.Workout)
+        }else if (classType.toLowerCase().equals("dance")){
+            RLgetWayName(RLYourWayName.Dance)
+        }else if (classType.toLowerCase().equals("hiit")){
+            RLgetWayName(RLYourWayName.Hiit)
+        }else if (classType.toLowerCase().equals("yoga")){
+            RLgetWayName(RLYourWayName.Yoga)
+        }else{
+            RLgetWayName(RLYourWayName.Yoga)
+        }
+
+        /*if (cardData.hrm==0){
             //WITHOUT HR
             if( classType.toLowerCase().equals("dance")||classType.toLowerCase().equals("hiit")||classType.toLowerCase().equals("run")||classType.toLowerCase().equals("walk")){
                 RLSummryListSet(danceHiitListWithoutHr)
@@ -461,7 +829,7 @@ class RLFragSessionSummary : RLBaseFragment() {
             }else{
                 RLSummryListSet(rideListWithHr)
             }
-        }
+        }*/
 
     }
     private fun RLSummryListSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {

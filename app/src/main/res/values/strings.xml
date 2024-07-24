@@ -162,10 +162,11 @@
     <string name="members">Members</string>
     <string name="delete">Delete</string>
     <string name="sync">Sync</string>
-    <string name="enternameoremailtofindonrevoola">Enter name or email to find on Revoola</string>
-    <string name="friendsyoufollow">Friends You Follow</string>
-    <string name="friendsfollowingyou">Friends Following You</string>
-    <string name="mygroup">My Group</string>
+    <string name="enternameoremailtofindonrevoola">Enter Email Or Name To Search On Revoola</string>
+    <string name="enternameemailtofindonrevoola">Enter name/email to find on Revoola</string>
+    <string name="friendsyoufollow">You Follow</string>
+    <string name="friendsfollowingyou">Following You</string>
+    <string name="mygroup">Your Groups</string>
     <string name="creategroup">Create Group</string>
     <string name="contacts">Contacts</string>
     <string name="searchfriends">Search Friends</string>
@@ -400,6 +401,7 @@
     <string name="manageyourrevoolacommunity">Manage Your Revoola Community</string>
     <string name="selectamindfulclass">Select a Mindful Class</string>
     <string name="selectabodyclass">Select a Body Class</string>
+    <string name="revoolafriends">Revoola Friends</string>
 
 
 </resources>

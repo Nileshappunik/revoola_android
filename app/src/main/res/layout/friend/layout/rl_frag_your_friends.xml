@@ -45,8 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/rl_search"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:weightSum="2"
             android:background="@drawable/full_round_border"
             android:orientation="horizontal">
@@ -57,6 +57,8 @@
                 android:layout_weight="1"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
+                android:textSize="14sp"
+                android:textAllCaps="true"
                 android:background="@drawable/full_round_green"
                 android:textAlignment="center"
                 android:text="@string/friendsyoufollow"
@@ -69,6 +71,8 @@
                 android:layout_weight="1"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
+                android:textSize="14sp"
+                android:textAllCaps="true"
                 android:textAlignment="center"
                 android:text="@string/friendsfollowingyou"
                 android:textColor="@color/AppTextGrayColor"/>
@@ -90,33 +94,40 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:paddingStart="10dp"
+            android:textAllCaps="true"
+            android:text="@string/revoolafriends"
             android:background="@color/AppTextLightGrayColor"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="@color/AppBlackColor"/>
+
+        <View
+            android:id="@+id/view_3"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/txt_friend_followcount"
+            android:background="@color/AppTextGrayColor"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_yourfriend"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/demo_invite"
-            android:layout_below="@+id/txt_friend_followcount"/>
+            android:layout_below="@+id/view_3"/>
 
         <TextView
             android:id="@+id/txt_inviteyourfriend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="30dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:background="@drawable/login_btn"
-            android:backgroundTint="@color/AppMainColor"
-            android:padding="10dp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:background="@drawable/full_round_green"
             android:text="@string/invite"
             android:textColor="@color/AppWhiteColor"
-            android:textSize="@dimen/text_title_size"
+            android:textSize="16sp"
             android:fontFamily="@font/omnes_regular" />
 
         <TextView
@@ -128,8 +139,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/invitefriendsnotonyet"
             android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"
-            android:fontFamily="@font/omnes_regular" />
+            android:textSize="14sp"/>
 
 
     </RelativeLayout>

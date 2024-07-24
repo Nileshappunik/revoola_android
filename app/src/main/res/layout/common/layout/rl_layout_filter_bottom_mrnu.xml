@@ -5,16 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:id="@+id/ivLayoutFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:padding="10dp"
         android:background="@drawable/full_round_green">
 
         <ImageView
             android:id="@+id/iv_Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:padding="2dp"
             app:tint="@color/AppWhiteColor"
             android:src="@drawable/ic_filter" />
     </RelativeLayout>
