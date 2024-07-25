@@ -25,7 +25,7 @@
          android:textAlignment="center"
          android:layout_marginTop="10dp"
          android:fontFamily="@font/omnes_regular"
-         android:textColor="@color/AppTextGrayColor"
+         android:textColor="@color/AppBlackColor"
          android:layout_toStartOf="@+id/ivFilter"
          android:layout_toEndOf="@+id/ivBack"/>
 
@@ -106,7 +106,8 @@
                  <RelativeLayout
                      android:id="@+id/relay_chart"
                      android:layout_width="0dp"
-                     android:layout_height="360dp"
+                     android:layout_height="300dp"
+                     android:layout_gravity="bottom"
                      android:layout_weight="1.6">
                      <WebView
                          android:id="@+id/webView_chart"

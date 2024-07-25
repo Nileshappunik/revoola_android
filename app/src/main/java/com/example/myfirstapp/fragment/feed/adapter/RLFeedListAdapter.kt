@@ -342,7 +342,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.imgNain2.visibility=View.VISIBLE
             layoutBinding.imgNain.visibility=View.GONE
            // Glide.with(context!!).load(R.drawable.healthheart).into(layoutBinding.imgNain2)
-            Glide.with(context!!).load("https://video.revoola.com/v2/images/_app_applehealth.png").into(layoutBinding.imgNain2)
+            Glide.with(context!!).load(RLConstants.img_app_applehealth).into(layoutBinding.imgNain2)
         }
 
     }

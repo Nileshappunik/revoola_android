@@ -77,12 +77,11 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/round_green"
                 android:backgroundTint="@color/AppLightGrayColor"
-                android:drawableStart="@drawable/fr_search_green"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/AppTextGrayColor"
+                android:drawableStart="@drawable/ic_search_g"
+                android:drawablePadding="15dp"
                 android:hint="@string/enternameemailtofindonrevoola"
                 android:minHeight="40dp"
-                android:paddingStart="10dp"
+                android:textSize="16sp"
                 android:textColor="@color/AppBlackColor" />
         </RelativeLayout>
 

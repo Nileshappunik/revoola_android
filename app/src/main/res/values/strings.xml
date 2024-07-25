@@ -76,12 +76,13 @@
     <string name="revoolaeffortscore">REVOOLA EFFORT SCORE</string>
 
     <!--login-->
-    <string name="emailaccount">Email Account</string>
-    <string name="facebookaccount">Facebook Account</string>
-    <string name="googleaccount">Google Account</string>
+    <string name="emailaccount">Email</string>
+    <string name="facebookaccount">Facebook</string>
+    <string name="googleaccount">Google</string>
     <string name="justhereforaquickpeak">Just here for a quick peak</string>
     <string name="fullrevoolaexperience">Full Revoola Experience</string>
     <string name="taptoADDYOURPROFILEPICTURE">Tap to add your profile picture</string>
+    <string name="justsettingthingsupforyou">Just setting things up for you. This will only take a few moments.</string>
 
 
     <string name="signuplogin">Signup/Login</string>
@@ -365,6 +366,8 @@
     <string name="applehealth">Apple Health</string>
     <string name="appledescription">This card was derived from non-revoola activity recorded in Apple Health</string>
     <string name="thebestyoueveryday">The best\n you.\n Everyday.</string>
+    <string name="thebestyou">The Best You.</string>
+    <string name="everyday">Everyday.</string>
     <string name="effortzone">EFFORT ZONE</string>
     <string name="cardio">CARDIO</string>
     <string name="addcomment">ADD COMMENT</string>

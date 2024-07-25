@@ -98,7 +98,7 @@ data class RLFeedChallengesModelData(var actualtotal:Int, var metric:String, var
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
                                      var adminlastname:String, var adminfullname:String, var number_of_members:String, var challengeid:String,
                                      var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Int, var days_remaining:Int,var ranking_by_challenge:Int,
-                                     var percentage_of_time_elapsed:Double,val targettype:String,var totalmetric:String,var percentage_of_goal_display:String): Serializable
+                                     var percentage_of_time_elapsed:Double,val targettype:String,var totalmetric:Int,var percentage_of_goal_display:String,var goalvalue:Int): Serializable
 
 data class RLSetMetricChartByDay(var metric_chart_by_day:RLSetMetricChartByDayData)
 

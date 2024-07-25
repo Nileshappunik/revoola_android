@@ -131,7 +131,8 @@ class RLFragMore : RLBaseFragment() {
 
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
-           // Firebase.auth.signOut()
+            Firebase.auth.signOut()
+            RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
             activity?.finish()
         })
         sucDialog.show()

@@ -528,9 +528,9 @@ object RLTools {
         }
         if (hours == 0 && seconds > 0 && isSec) {
             time += if (seconds < 10) {
-                "0${seconds}sec"
+                " 0${seconds}s"
             } else {
-                "${seconds}sec"
+                " ${seconds}s"
             }
         }
 
@@ -1376,6 +1376,105 @@ object RLTools {
          </body>
          </html>
 
+        """.trimIndent()
+    }
+    fun RLgetChallengeSessionChartHtml (steps_so_far:Int,target_steps:Int) : String{
+        return """
+       
+       <!DOCTYPE html>
+       <html>
+       <head>
+           <meta charset="utf-8">
+           <title>Progress</title>
+           <style>
+               body {
+                   margin: 0;
+                   position: fixed;
+                   top: 0;
+                   right: 0;
+                   bottom: 0;
+                   left: 0;
+               }
+               text {
+                   fill: #aaa;
+                   font-size: 40px;
+                   font-family: sans-serif;
+               }
+           </style>
+           <!-- Load d3.js -->
+           <script src="https://d3js.org/d3.v4.js"></script>
+       </head>
+       <body>
+           <script>
+               let steps_so_far = '$steps_so_far'; // \(achieved);  // Number of steps taken
+               let target_steps ='$target_steps';  // \(target);  // Total number of steps target
+
+              const margin = { left: 35, right: 35, top: 50, bottom: 35 };
+                      const chart_width = window.innerWidth - margin.left - margin.right;
+                      const chart_height = window.innerHeight - margin.top - margin.bottom;
+                      const bar_width = 250;  // Width of each progress bar
+                      const gap = 100;  // Gap between bars
+
+                      // Create an SVG container
+                      const svg = d3.select('body').append('svg')
+                          .attr("width", window.innerWidth)
+                          .attr("height", window.innerHeight);
+
+                      // Calculate bar positions
+                      let x_firstBar = (window.innerWidth / 2) - bar_width - (gap / 2);
+                      let x_secondBar = (window.innerWidth / 2) + (gap / 2);
+
+                      // Scale for the bars
+                      var y = d3.scaleLinear()
+                          .range([chart_height, 0])
+                          .domain([0, Math.max(steps_so_far, target_steps)]);
+
+                      // First Bar: Steps Achieved
+                      const achievedBar = svg.append("g")
+                          .attr("transform", `translate(`+ x_firstBar +`, `+margin.top+`)`);
+                      achievedBar.append("rect")
+                          .attr("width", bar_width)
+                          .attr("height", chart_height)
+                          .attr("rx", 12)  // Rounded corners
+                          .attr("fill", "#ccc");  // Background color
+
+                      achievedBar.append("rect")
+                          .attr("width", bar_width)
+                          .attr("height", y(0) - y(steps_so_far))
+                          .attr("y", y(steps_so_far))
+                          .attr("rx", 12)  // Rounded corners
+                          .attr("fill", "#4CAF50");  // Fill color
+
+                      achievedBar.append("text")
+                          .attr("x", bar_width / 2)
+                          .attr("y", -20)
+                          .attr("text-anchor", "middle")
+                          .text("ACHIEVED");
+
+                      // Second Bar: Target Steps
+                      const targetBar = svg.append("g")
+                          .attr("transform", `translate(` + x_secondBar + `, `+ margin.top +`)`);
+                      targetBar.append("rect")
+                          .attr("width", bar_width)
+                          .attr("height", chart_height)
+                          .attr("rx", 12)  // Rounded corners
+                          .attr("fill", "#ccc");  // Background color
+
+                      targetBar.append("rect")
+                          .attr("width", bar_width)
+                          .attr("height", y(0) - y(target_steps))
+                          .attr("y", y(target_steps))
+                          .attr("rx", 12)  // Rounded corners
+                          .attr("fill", "#118def");  // Fill color
+
+                      targetBar.append("text")
+                          .attr("x", bar_width / 2)
+                          .attr("y", -20)
+                          .attr("text-anchor", "middle")
+                          .text("TARGET");
+                  </script>
+              </body>
+              </html>
         """.trimIndent()
     }
     fun RLgetRankingChartHtml(jsondata: JSONArray,userid:String): String{

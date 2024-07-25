@@ -69,7 +69,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/img_user"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="12sp"/>
@@ -94,6 +94,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/temptext"
                 android:layout_toEndOf="@+id/img_myride"
+                android:singleLine="true"
                 android:text="@string/myride"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"

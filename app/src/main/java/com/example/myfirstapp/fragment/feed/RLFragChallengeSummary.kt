@@ -170,7 +170,6 @@ class RLFragChallengeSummary : RLBaseFragment() {
         }
 
     }
-
     private fun RLStepDataGetApi(challengeid:String,userid:String){
         val jasonArray=JSONArray()
         val request = listOf(RLSetMetricChartByDay(metric_chart_by_day = RLSetMetricChartByDayData(
@@ -206,12 +205,11 @@ class RLFragChallengeSummary : RLBaseFragment() {
             }
         }
     }
-
     private fun RLRankingMapSet(jasonArray: JSONArray){
-        Log.e(TAG,"RLRankingMapSet")
+       // Log.e(TAG,"RLRankingMapSet")
 
         val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
-        Log.d(TAG,"MAp:- $htmltext")
+        //Log.d(TAG,"MAp:- $htmltext")
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
             htmltext, "text/html", "UTF-8", null)
 

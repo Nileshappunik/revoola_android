@@ -12,16 +12,12 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
+import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragChallengeSummaryBinding
 import com.example.myfirstapp.model.RLFeedChallengesModelData
-import com.example.myfirstapp.model.RLSetMetricChartByDay
-import com.example.myfirstapp.model.RLSetMetricChartByDayData
-import com.example.myfirstapp.model.RLSetgoaled_challenges
 import com.example.myfirstapp.model.RLSetgoaled_challengesSingle
-import com.example.myfirstapp.model.RLSetgoaled_challenges_request
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
@@ -32,8 +28,6 @@ import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.Date
 import kotlin.math.roundToInt
 
 class RLFragTenChallengeSummary : RLBaseFragment() {
@@ -79,7 +73,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.txtDailystep.visibility=View.GONE
         fragBinding.webViewStepChart.visibility=View.GONE
         fragBinding.txtMyride.setText(cardData.className.toString())
-        fragBinding.imgMyride.setImageResource(RLTools.RLgeticon(classType))
+        fragBinding.imgMyride.setImageResource(R.drawable.ic_distance)
         
 
         fragBinding.layStepssofar.imgTime.setImageResource(R.drawable.ic_calender_daily)
@@ -148,12 +142,18 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.layRank.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())
 
 
-      /*  var stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+      /*var stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
         var targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
 
         var remainingDays = cardData.days_remaining ?: 0
         var timeGone = if (remainingDays >0) remainingDays else 0
-        var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
+        var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0 */
+
+        val stepsSoFar = 3364
+        val targetSteps = 3333
+        val timeGone = 0
+        val totalTime = 1
+
 
         val webSettings: WebSettings = fragBinding.webViewChart.settings
         webSettings.javaScriptEnabled = true
@@ -167,7 +167,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.webViewClient = WebViewClient()
         fragBinding.webViewChart.loadDataWithBaseURL(null,
             RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
-*/
+
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
         webRankingSettings.javaScriptEnabled = true
         webRankingSettings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -181,9 +181,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         val jasonArray=JSONArray()
         val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,htmltext, "text/html", "UTF-8", null)
-
         RLRankingDataGetApi(cardData.mainTitle)
-        
+
     }
     private fun RLRankingDataGetApi(challengeid:String){
         val jasonArray=JSONArray()
@@ -193,6 +192,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         viewModel.RLgoaled_challenges_Single(request) { result ->
             result.onSuccess { response ->
                 try {
+                    var selfUserData=""
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
                         var rank=0
@@ -200,15 +200,23 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                             val jsonObject=JSONObject()
                             val intValue = response.text.data[i].percentage_of_goal_display.toDouble().roundToInt()
                             jsonObject.put("value",intValue)
-                            jsonObject.put("name",response.text.data[i].username)
+                            jsonObject.put("name","${i + 1} - ${response.text.data[i].username}")
                             jsonObject.put("number2",response.text.data[i].totalmetric)
                             jsonObject.put("image",response.text.data[i].avatar)
                             jsonObject.put("userid",response.text.data[i].userid)
                             jasonArray.put(jsonObject)
+                           // Log.d(TAG,"jsonObject= $jsonObject")
                             rank=response.text.data[i].length_of_challenge
+                            if(response.text.data[i].userid == cardData.userid) {
+                                selfUserData = cardData.userid
+                            }
+                        }
+                        if (response.text.data.size>0){
+                            val myChallengeData=response.text.data[0]
+                            RLStepTimeMapSet(myChallengeData)
                         }
                         fragBinding.layStepssofar.txtTimeNumber.setText("${rank.toString()} Days")
-                        RLRankingMapSet(jasonArray)
+                        RLRankingMapSet(jasonArray,selfUserData)
                     }else {
                         Log.d(TAG,"Fail= "+response.type)
                     }
@@ -223,13 +231,23 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         }
 
     }
-    
-    private fun RLRankingMapSet(jasonArray: JSONArray){
-        Log.e(TAG,"RLRankingMapSet")
-        val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
-        Log.d(TAG,"MAp:- $htmltext")
+    private fun RLRankingMapSet(jasonArray: JSONArray,selfUserData:String){
+        val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,selfUserData)
+       // Log.d(TAG,"htmltext:-   $htmltext ")
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
             htmltext, "text/html", "UTF-8", null)
+    }
+    private fun RLStepTimeMapSet(myChallengeData: RLFeedChallengesModelData) {
+        val stepsSoFar:Int = if (myChallengeData.totalmetric != null && myChallengeData.totalmetric > 0) myChallengeData.totalmetric else 0
+        val targetSteps = if (myChallengeData.goalvalue != null && myChallengeData.goalvalue > 0) myChallengeData.goalvalue else 0
+
+        Log.d(TAG,"stepsSoFar:- $stepsSoFar ")
+        Log.d(TAG,"targetSteps:- $targetSteps ")
+
+        val htmltext=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
+        // Log.d(TAG,"htmltext:-   $htmltext ")
+        fragBinding.webViewChart.loadDataWithBaseURL(null,
+            htmltext , "text/html", "UTF-8", null)
 
     }
  

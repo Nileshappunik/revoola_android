@@ -114,7 +114,8 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
 
         val dataListWithoutHR:List<Pair<RLTypeOfMetrics, RLMetricData>> =listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            //RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
             RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
             RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
