@@ -79,13 +79,13 @@
     <string name="emailaccount">Email</string>
     <string name="facebookaccount">Facebook</string>
     <string name="googleaccount">Google</string>
-    <string name="justhereforaquickpeak">Just here for a quick peak</string>
-    <string name="fullrevoolaexperience">Full Revoola Experience</string>
-    <string name="taptoADDYOURPROFILEPICTURE">Tap to add your profile picture</string>
+    <string name="justhereforaquickpeak">I am not sure why i am here, so let me have a quick peak.</string>
+    <string name="fullrevoolaexperience">I want to sign up for the full Revoola Experience!</string>
+    <string name="taptoADDYOURPROFILEPICTURE">Tap to edit your photo</string>
     <string name="justsettingthingsupforyou">Just setting things up for you. This will only take a few moments.</string>
 
 
-    <string name="signuplogin">Signup/Login</string>
+    <string name="signuplogin">Sign up/Sign in</string>
     <string name="signup">Signup</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -120,16 +120,16 @@
     <string name="revoolaeffort">REVOOLA EFFORT</string>
     <string name="step">STEPS</string>
     <string name="calorie">CALORIES</string>
-    <string name="weneedtosendverificationcode">We need to send verification code.please confirm your email address is correct.</string>
+    <string name="weneedtosendverificationcode">We need to send verification code.please confirm your email here.</string>
     <string name="looksgood">LOOKS GOOD</string>
     <string name="changeemail">CHANGE EMAIL</string>
-    <string name="pleaseenterverificationcode">Please enter the verification code that we sent to your email address here.</string>
-    <string name="didntreceivethecode">Didn\'t receive the code?</string>
+    <string name="pleaseenterverificationcode">Please enter you verification code sent to your email address here.</string>
+    <string name="didntreceivethecode">Did not receive your code?</string>
     <string name="resend">Resend</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
     <string name="nickname">Nick Name</string>
-    <string name="nicknameappearon">Your nickname will appear on leaderboard and...</string>
+    <string name="nicknameappearon">Your nickname is the name that will appear on the leaderboards and be seen by other revoola members</string>
     <string name="feedsmall">Feed</string>
     <string name="friendssmall">Friends</string>
     <string name="groupsmall">Groups</string>
@@ -405,6 +405,13 @@
     <string name="selectamindfulclass">Select a Mindful Class</string>
     <string name="selectabodyclass">Select a Body Class</string>
     <string name="revoolafriends">Revoola Friends</string>
+    <string name="resetpassword">Reset Password</string>
+    <string name="verificationcode">Verification Code</string>
+    <string name="addyourfirstname">Add your First Name</string>
+    <string name="addyourlastname">Add your Last Name</string>
+    <string name="addyournickname">Add your Nick Name</string>
+    <string name="basicdetails">Basic Details</string>
+    <string name="revoolaisafully">REVOOLA IS A FULLY INTERACTIVE PERSONALISED EXPERIENCE. TO ENABLE THIS WE COLLECT CERTAIN INFORMATION ABOUT YOU, THIS WILL ALLOW US TO CALCULATE YOUR REVOOLA EFFORT VALUE, CALORIES BURNT, EXERCISE ZONES ETC</string>
 
 
 </resources>

@@ -114,8 +114,6 @@ dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.0.2")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
-    //pinview
-    implementation ("com.github.GoodieBag:Pinview:v1.4")
 
     //VIDEO PLAY
     implementation ("androidx.media3:media3-exoplayer:1.0.0")

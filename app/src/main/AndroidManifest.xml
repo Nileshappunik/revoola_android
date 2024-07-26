@@ -36,12 +36,12 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RLSplashFirstActivity"
-            android:exported="false" >
-          <!--  <intent-filter>
+            android:exported="true" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <activity
@@ -71,12 +71,12 @@
             android:exported="false" />
         <activity
             android:name=".activity.RLSplashActivityRL"
-            android:exported="true">
-            <intent-filter>
+            android:exported="false">
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
 
         <meta-data

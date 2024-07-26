@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -34,18 +36,50 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         RLUisetup()
     }
     private fun RLUisetup() {
-        activityBinding.toolbarLogin.tvTitle.setText(R.string.signuplogin)
-        activityBinding.toolbarLogin.ivBack.visibility=View.VISIBLE
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+       activityBinding.toolbarLogin.tvTitle.setText(R.string.signuplogin)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             if (RLvalidation()) {
-                RLshowDialog(emailID)
-                //RLloginUserExitsornot()
+                RLloginapicall()
             }
         })
         activityBinding.txtClickme.setOnClickListener(View.OnClickListener {
            startActivity(Intent(this, RLForgotPasswordActivityRL::class.java))
         })
+
+        activityBinding.etemailid.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length ==0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }else if ( activityBinding.etPassword.text.toString().isNotEmpty()){
+                    activityBinding.tvLogin.visibility=View.VISIBLE
+                    activityBinding.tvLoginNoClick.visibility=View.GONE
+                }else{
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        activityBinding.etPassword.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length ==0) {
+                   activityBinding.tvLogin.visibility=View.GONE
+                   activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }else if ( activityBinding.etemailid.text.toString().isNotEmpty()){
+                    activityBinding.tvLogin.visibility=View.VISIBLE
+                    activityBinding.tvLoginNoClick.visibility=View.GONE
+                }else{
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
     }
     private fun RLopentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
@@ -53,18 +87,11 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     private fun RLvalidation(): Boolean {
         emailID = activityBinding.etemailid.text.toString().trim()
         password = activityBinding.etPassword.text.toString().trim()
-
-        if (emailID.isEmpty()) {
-            activityBinding.etemailid.setError("Please Enter a EmailId")
-            activityBinding.etemailid.requestFocus()
+        if (!RLTools.RLisEmailValid(emailID)) {
+            RLshowDialog("Please Enter Valid Email and 6+ digit Password.")
             return false
-        }else if (!RLTools.RLisEmailValid(emailID)) {
-                activityBinding.etemailid.setError("Please Enter a valid EmailId")
-                activityBinding.etemailid.requestFocus()
-                return false
-        } else if (password.isEmpty()) {
-            activityBinding.etPassword.setError("Please Enter a Password")
-            activityBinding.etPassword.requestFocus()
+        }else if (password.length<6){
+            RLshowDialog("Please Enter 6+ digit Password.")
             return false
         }
         return true
@@ -98,7 +125,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         // Handle case where password is incorrect
-                        RLopentoast("Invalid Credentials")
+                        RLshowDialog("The password is invalid or the user does not have a password.")
                         Log.e(TAG, "Invalid credentials: ${exception.message}")
                     }
                     else -> {
@@ -113,24 +140,19 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     private fun RLshowDialog( emaildid: String) {
         sucDialog = Dialog(activity)
         sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        sucDialog!!.setContentView(R.layout.rl_layout_dailog_login)
+        sucDialog!!.setContentView(R.layout.rl_dailog_login_error)
         sucDialog!!.setCancelable(true)
         val lp = WindowManager.LayoutParams()
         lp.copyFrom(sucDialog!!.window!!.attributes)
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val tvNo: TextView = sucDialog!!.findViewById(R.id.tvNo)
+        val tvTitle: TextView = sucDialog!!.findViewById(R.id.tvTitle)
         val tvYes: TextView = sucDialog!!.findViewById(R.id.tvYes)
-        val tvemailid: TextView = sucDialog!!.findViewById(R.id.tvemailid)
-        tvemailid.setText(emaildid)
 
-        tvNo.setOnClickListener(View.OnClickListener {
-            sucDialog!!.dismiss()
-        })
+        tvTitle.setText(emaildid)
 
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog!!.dismiss()
-            RLloginapicall()
         })
         sucDialog!!.show()
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)

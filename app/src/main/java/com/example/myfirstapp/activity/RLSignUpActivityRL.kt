@@ -9,11 +9,16 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.widget.DatePicker
 import android.widget.NumberPicker
@@ -32,6 +37,8 @@ import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerWrite
 import com.example.myfirstapp.databinding.RlActivitySignUpBinding
+import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
+import com.example.myfirstapp.databinding.RlDialogHelpSigninBinding
 import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.utils.RLConstants
 import com.google.firebase.messaging.FirebaseMessaging
@@ -70,7 +77,6 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     private fun RLUisetup() {
         activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
-        activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         RLGetFcmToken()
         //Read DataBase
@@ -92,9 +98,11 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             }
         }
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            if (RLvalidation()) {
-                RLRevoolaUserSettingWrite()
-            }
+            RLRevoolaUserSettingWrite()
+        })
+
+        activityBinding.imgHelp.setOnClickListener(View.OnClickListener {
+            RLshowHelpDialog()
         })
         activityBinding.imgUseriamge.setOnClickListener {
             RLopencameragallerydialog()
@@ -111,6 +119,53 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         activityBinding.edWeight.setOnClickListener {
             RLshowWeightDialog(activity)
         }
+
+        activityBinding.edFirstname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length == 0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                    activityBinding.edFirstname.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+                }else{
+                    val drawable = getDrawable(R.drawable.ic_check)
+                    activityBinding.edFirstname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+                    RLvalidation()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        activityBinding.edLastname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length == 0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                    activityBinding.edLastname.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+                }else{
+                    val drawable = getDrawable(R.drawable.ic_check)
+                    activityBinding.edLastname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+                    RLvalidation()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        activityBinding.edNickname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length == 0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                    activityBinding.edNickname.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+                }else{
+                    val drawable = getDrawable(R.drawable.ic_check)
+                    activityBinding.edNickname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+                    RLvalidation()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
     private fun RLGetFcmToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
@@ -213,11 +268,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
 
 
         tvNo.setOnClickListener(View.OnClickListener {
+            RLvalidation()
+            if (displayheight.isEmpty()){
+                activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+            }
             sucDialog!!.dismiss()
         })
 
         tvYes.setOnClickListener(View.OnClickListener {
             activityBinding.edHeight.setText(displayheight)
+            val drawable = getDrawable(R.drawable.ic_check)
+            activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+            RLvalidation()
             sucDialog!!.dismiss()
         })
 
@@ -312,11 +374,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
 
 
         tvNo.setOnClickListener(View.OnClickListener {
+            RLvalidation()
+            if (displayweight.isEmpty()){
+                activityBinding.edWeight.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+            }
             sucDialog.dismiss()
         })
 
         tvYes.setOnClickListener(View.OnClickListener {
             activityBinding.edWeight.setText(displayweight)
+            val drawable = getDrawable(R.drawable.ic_check)
+            activityBinding.edWeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+            RLvalidation()
             sucDialog.dismiss()
         })
         sucDialog.show()
@@ -334,6 +403,10 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         radioGroup.check(R.id.radioButtonFemale)
 
         tvNo.setOnClickListener(View.OnClickListener {
+            RLvalidation()
+            if (selectedGender.isEmpty()){
+                activityBinding.edGender.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
+            }
             sucDialog.dismiss()
         })
 
@@ -342,6 +415,9 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             val radioButton = sucDialog.findViewById<RadioButton>(selectedId)
              selectedGender = radioButton.text.toString()
             activityBinding.edGender.setText(selectedGender)
+            val drawable = getDrawable(R.drawable.ic_check)
+            activityBinding.edGender.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+            RLvalidation()
             sucDialog.dismiss()
         })
 
@@ -357,33 +433,40 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         nickName = activityBinding.edNickname.text.toString().trim()
 
         if (firstName.isEmpty()) {
-            activityBinding.edFirstname.setError("Please Enter a FirstName")
-            activityBinding.edFirstname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (lastName.isEmpty()) {
-            activityBinding.edLastname.setError("Please Enter a LastName")
-            activityBinding.edLastname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (nickName.isEmpty()) {
-            activityBinding.edNickname.setError("Please Enter a NickName")
-            activityBinding.edNickname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (DateTime.isEmpty()) {
-            RLopentoast("Please Select a Date of Birth")
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (selectedGender.isEmpty()) {
-            RLopentoast("Please Select a Gender")
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (displayheight.isEmpty()) {
-            RLopentoast("Please Select a Height")
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (displayweight.isEmpty()) {
-            RLopentoast("Please Select a Weight")
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (chooseimagefile.isEmpty()) {
-            RLopentoast("Please Select a Profile Photo")
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }
+        activityBinding.tvLogin.visibility=View.VISIBLE
+        activityBinding.tvLoginNoClick.visibility=View.GONE
         return true
     }
     private fun RLRevoolaUserSettingWrite() {
@@ -512,6 +595,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             uploadTask.addOnSuccessListener {
                 ref.downloadUrl.addOnSuccessListener { uri ->
                     chooseimagefile = uri.toString()
+                    RLvalidation()
                     Log.d(TAG,"imageUrl:- $chooseimagefile")
                 }
             }.addOnFailureListener {
@@ -528,6 +612,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val datePickerDialog = DatePickerDialog(this, this, day, month, year)
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis() - 1000
         datePickerDialog.show()
+
     }
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
         var myMonth: Int = 0
@@ -546,6 +631,9 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         }
          DateTime = "" + Day + "/" + Month + "/" + year
         activityBinding.edDateofbirth.setText(DateTime).toString()
+        val drawable = getDrawable(R.drawable.ic_check)
+        activityBinding.edDateofbirth.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
+        RLvalidation()
     }
     private fun RLisStoragePermissionGranted(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -554,6 +642,27 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     private fun RLrequestStoragePermission() {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_REQUEST_CODE)
+    }
+
+    private fun RLshowHelpDialog() {
+        val dialog: Dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val dialogMainBinding: RlDialogHelpSigninBinding=
+            RlDialogHelpSigninBinding.inflate(getLayoutInflater())
+        dialog.setContentView(dialogMainBinding.getRoot())
+        dialog.setCancelable(false)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        //dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_dialog_background))
+
+        dialogMainBinding.tvClose.setOnClickListener {
+            dialog.hide()
+        }
+
+
+        dialog.show()
+
     }
     // Handle permission request result
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

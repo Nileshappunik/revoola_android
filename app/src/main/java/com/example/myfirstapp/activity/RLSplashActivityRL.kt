@@ -32,8 +32,8 @@ class RLSplashActivityRL : RLBaseActivity() {
         // Initialize Firebase
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         FirebaseApp.initializeApp(this)
+        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
        val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
-      //  RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
         if (userId.isNullOrEmpty()){
             activityBinding.txtFullrevoolaexperience.setOnClickListener {
                 startActivity(Intent(this, RLLoginActivityRL::class.java))
@@ -43,6 +43,7 @@ class RLSplashActivityRL : RLBaseActivity() {
             }
         }else{
             startActivity(Intent(this, RLMainActivityRL::class.java))
+           // startActivity(Intent(this, RLSignUpActivityRL::class.java))
         }
     }
 

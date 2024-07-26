@@ -15,36 +15,46 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
+            android:layout_marginTop="100dp"
             android:src="@drawable/ic_revoola_logo"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="28sp"
+            android:textSize="32sp"
+            android:layout_marginTop="30dp"
             android:gravity="center"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/aptos_semibold"
             android:textColor="@color/AppBlackColor"
             android:text="@string/thebestyou"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:gravity="center"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/aptos_semibold"
             android:textColor="@color/AppBlackColor"
             android:text="@string/everyday"/>
 
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:gravity="center"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:fontFamily="@font/omnes_regular"
-            android:textColor="@color/AppBlackColor"
-            android:text="@string/justsettingthingsupforyou"/>
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="50dp"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppBlackColor"
+                android:text="@string/justsettingthingsupforyou"/>
+
+        </RelativeLayout>
+
 
     </LinearLayout>
 </layout>
