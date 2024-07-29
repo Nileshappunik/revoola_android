@@ -157,8 +157,8 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
 
 
         Glide.with(requireContext()).load(cardData.avatar)
-            .placeholder(R.drawable.wellcome)
-            .error(R.drawable.wellcome)
+            .placeholder(R.drawable.sample_user)
+            .error(R.drawable.sample_user)
             .into(layoutBinding.imgUser)
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){

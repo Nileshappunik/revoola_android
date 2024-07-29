@@ -78,6 +78,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     private fun RLUisetup() {
         activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+
         RLGetFcmToken()
         //Read DataBase
         val databaseManager:RLDatabaseManagerRead= RLDatabaseManagerRead()

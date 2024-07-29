@@ -36,8 +36,7 @@ class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: Li
         fun bindData(position: Int, itemVIew: View) {
             val cardData = datalist[position]
             Glide.with(context!!).load(cardData.avatar)
-                .placeholder(R.drawable.wellcome)
-                .error(R.drawable.wellcome)
+                .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                 .into(layoutBinding.imgFriend)
             layoutBinding.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
         }

@@ -37,27 +37,30 @@ class RLFragMore : RLBaseFragment() {
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorwhite()
 
+        //fragBinding.layAccount.layMoreClick.visibility=View.GONE
+        fragBinding.layAccount.txtAccount.setText(R.string.account)
+        fragBinding.layAccount.imgAccount.setImageResource(R.drawable.ic_account_g)
+
         fragBinding.laySetting.txtAccount.setText(R.string.settings)
-        fragBinding.laySetting.imgAccount.setImageResource(R.drawable.ic_settings)
+        fragBinding.laySetting.imgAccount.setImageResource(R.drawable.ic_settings_g)
 
         fragBinding.layChangepassword.txtAccount.setText(R.string.changepassword)
-        fragBinding.layChangepassword.imgAccount.setImageResource(R.drawable.ic_change_password)
+        fragBinding.layChangepassword.imgAccount.setImageResource(R.drawable.ic_envelope_g)
 
         fragBinding.layHelp.txtAccount.setText(R.string.help)
-        fragBinding.layHelp.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.layHelp.imgAccount.setImageResource(R.drawable.ic_help_g)
 
-        fragBinding.layConnecttohealthconnect.txtAccount.setText(R.string.connecttohealthconnect)
-        fragBinding.layConnecttohealthconnect.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.laySyncwatchdara.txtAccount.setText(R.string.syncwatchdata)
+        fragBinding.laySyncwatchdara.imgAccount.setImageResource(R.drawable.ic_sensors_g)
+
+        fragBinding.layRestorepurchase.txtAccount.setText(R.string.restorepurchase)
+        fragBinding.layRestorepurchase.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.layRequesttodeletedata.txtAccount.setText(R.string.requesttodeleteyourdata)
-        fragBinding.layRequesttodeletedata.imgAccount.setImageResource(R.drawable.ic_help)
-
-        fragBinding.layLinktoaccount.txtAccount.setText(R.string.linktoaccount)
-        fragBinding.layLinktoaccount.imgAccount.setImageResource(R.drawable.ic_person)
+        fragBinding.layRequesttodeletedata.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.laySignout.txtAccount.setText(R.string.signout)
-        fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_signout)
-        fragBinding.laySignout.viewimgtxt.visibility=View.GONE
+        fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_sign_out_g)
 
         fragBinding.cardNotification.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, RLFragNotification::class.java.simpleName, false)
@@ -86,9 +89,9 @@ class RLFragMore : RLBaseFragment() {
         fragBinding.laySignout.layMoreClick.setOnClickListener {
             RLshowDialog(RLConstants.LOGOUT_D,RLConstants.SCHEDULE)
         }
-        fragBinding.layConnecttohealthconnect.layMoreClick.setOnClickListener {
+        /*fragBinding.layConnecttohealthconnect.layMoreClick.setOnClickListener {
             RLshowBasicAlertDialog()
-        }
+        }*/
     }
 
     private fun RLshowBasicAlertDialog() {

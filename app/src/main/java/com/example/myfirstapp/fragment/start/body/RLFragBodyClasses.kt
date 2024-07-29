@@ -64,9 +64,11 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
 
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
+        fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
-        fragBinding.recycleSessionTitle.adapter = adaptertitle
+        fragBinding.toolbar.recyclerTitle.adapter = adaptertitle
+
+        //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
         RLGetBodyVideoList(RLConstants.FORALL,false)

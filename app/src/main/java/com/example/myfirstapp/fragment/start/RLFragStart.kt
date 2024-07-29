@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
@@ -16,6 +17,7 @@ import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.enumclass.RLStartType
+import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.fragment.start.body.RLFragBodyClasses
 import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
 import com.example.myfirstapp.fragment.start.mind.RLFragMindClasses
@@ -48,9 +50,14 @@ class RLFragStart : RLBaseFragment() {
         (context as RLMainActivityRL).RLbottombarcolorwhite()
 
         fragBinding.inlayTop.ivBack.visibility=View.GONE
-        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.whatdoyouwanttoday))
+
+        /*val linearLayoutMain = LinearLayoutManager(activity)
+        fragBinding.rvStart.layoutManager = linearLayoutMain
+        val adapter = RLStartListAdapter(activity,dataList)
+        fragBinding.rvStart.adapter=adapter*/
 
         /*val linearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.rvStart.layoutManager = linearLayoutManager
@@ -64,8 +71,6 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayBodyclass.imgType.RLadjustWidthToHeight()
         fragBinding.inlayYourway.imgType.RLadjustWidthToHeight()
         fragBinding.inlayChallenges.imgType.RLadjustWidthToHeight()
-
-
 
 
         fragBinding.inlayMindclass.txtTypename.setText(dataList[0].title)

@@ -71,13 +71,15 @@ class RLFragSessionSummary : RLBaseFragment() {
     }
     private fun RLuisetup() {
        // RLonBackPresAct(fragBinding.ivBack)
-        fragBinding.ivBack.setOnClickListener {
+        fragBinding.inlayTop.ivBack.setOnClickListener {
             RLcloseFragment()
         }
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
-        fragBinding.ivTitle.setText(cardData.className.toString())
-        fragBinding.ivTitleDate.setText(RLTools.RLconvertTimestampToDAte(cardData.timestamp.toLong()))
+        fragBinding.inlayTop.recyclerTitle.visibility=View.GONE
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setText(cardData.className.toString())
+        fragBinding.inlayTop.ivDescription.setText(RLTools.RLconvertTimestampToDAte(cardData.timestamp.toLong()))
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{

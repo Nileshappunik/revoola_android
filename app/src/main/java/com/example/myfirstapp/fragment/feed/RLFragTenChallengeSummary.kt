@@ -62,7 +62,11 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivhelp.setImageResource(R.drawable.ic_share)
+        fragBinding.inlayTop.ivTitle.setText(R.string.challengesummery)
+        fragBinding.inlayTop.ivDescription.setText("")
+
         var classType=""
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         if (cardData.classType.isNullOrEmpty()){

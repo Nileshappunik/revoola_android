@@ -61,39 +61,39 @@ class RLFragChalengesCalender : RLBaseFragment() {
     }
 
     private fun RLuisetup(){
-        RLonBackPresAct(fragBinding.ivBack)
-        fragBinding.ivhelp.setOnClickListener {
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         val calenderType = requireArguments().getString("CalenderType").toString().trim()
         if (challengeType.equals("Steps")){
-            fragBinding.tvTitle.setText(R.string.stepchallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.stepchallenge)
         } else if (challengeType.equals("Effort")){
-            fragBinding.tvTitle.setText(R.string.effortchallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.effortchallenge)
         }else if (challengeType.equals("Calories")){
-            fragBinding.tvTitle.setText(R.string.calorieschallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.calorieschallenge)
         }else if (challengeType.equals("Distance")){
-            fragBinding.tvTitle.setText(R.string.distancechallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.distancechallenge)
         }else if (challengeType.equals("Climbed")){
-            fragBinding.tvTitle.setText(R.string.climbedchallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.climbedchallenge)
         }else if (challengeType.equals("Duration")){
-            fragBinding.tvTitle.setText(R.string.durationchallenge)
+            fragBinding.inlayTop.ivTitle.setText(R.string.durationchallenge)
         }
         calendarFrom = Calendar.getInstance()
         calendarTo = Calendar.getInstance()
         if (calenderType.equals("Daily")){
             RLDailyCalenderShow()
-            fragBinding.tvpassupdate.setText(R.string.dailychallenge)
+            fragBinding.inlayTop.ivDescription.setText(R.string.dailychallenge)
         } else if (calenderType.equals("Weekly")){
             RLWeeklyCalenderShow()
-            fragBinding.tvpassupdate.setText(R.string.weeklychallenge)
+            fragBinding.inlayTop.ivDescription.setText(R.string.weeklychallenge)
         }else if (calenderType.equals("Monthly")){
             RLMonthlyCalenderShow()
-            fragBinding.tvpassupdate.setText(R.string.monthlychallenge)
+            fragBinding.inlayTop.ivDescription.setText(R.string.monthlychallenge)
         }else if (calenderType.equals("Custom")){
             RLDailyCalenderShow()
-            fragBinding.tvpassupdate.setText(R.string.customchallenge)
+            fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)
         }
         fragBinding.btnNext.setOnClickListener {
             var bundle: Bundle = Bundle()

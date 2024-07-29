@@ -42,10 +42,10 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
                 layoutBinding.txtClassname.setText(cardData.rideTitle)
                 layoutBinding.txtVideoaudio.setText(cardData.difficulty)
                 Glide.with(context!!).load(cardData.imageLinkInstructor)
-                    //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgUser)
                 Glide.with(context).load(cardData.imageLinkrectangleV2)
-                    //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgMind)
 
                 itemVIew.setOnClickListener {

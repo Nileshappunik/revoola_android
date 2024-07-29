@@ -107,10 +107,10 @@ class RLFragBodyClassesView : RLBaseFragment() {
         fragBinding.txtWorkoutMinutes.setText(VideoData.mininstruction+" MIN")
 
         Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+            //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgTraner)
         Glide.with(requireContext()).load(VideoData.imageLinkSquareV2)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+           // .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgMainBanner)
 
         fragBinding.txtVideo.setText(VideoData.difficulty)

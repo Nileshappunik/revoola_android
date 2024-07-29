@@ -412,6 +412,9 @@
     <string name="addyournickname">Add your Nick Name</string>
     <string name="basicdetails">Basic Details</string>
     <string name="revoolaisafully">REVOOLA IS A FULLY INTERACTIVE PERSONALISED EXPERIENCE. TO ENABLE THIS WE COLLECT CERTAIN INFORMATION ABOUT YOU, THIS WILL ALLOW US TO CALCULATE YOUR REVOOLA EFFORT VALUE, CALORIES BURNT, EXERCISE ZONES ETC</string>
+    <string name="restorepurchase">Restore Purchases</string>
+    <string name="syncwatchdata">Sync Watch Data</string>
+    <string name="challengesummery">CHALLENGE SUMMARY</string>
 
 
 </resources>

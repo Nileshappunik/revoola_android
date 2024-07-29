@@ -92,11 +92,11 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.startdate.toLong()))
                 layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
                 Glide.with(context!!).load(cardData.avatar)
-                    .placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgUser)
 
                 Glide.with(context).load(cardData.adminavatar)
-                    .placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgOrganizerUser)
 
                 layoutBinding.txtOrganizerName.setText(cardData.adminfullname.toString())

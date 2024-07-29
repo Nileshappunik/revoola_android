@@ -81,7 +81,11 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.sessionsummerys))
+        fragBinding.inlayTop.ivDescription.setText("")
+
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         RLsummaryDataSet()

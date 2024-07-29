@@ -17,28 +17,11 @@
             android:id="@+id/relay_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycle_session_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop= "15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
-
-            <View
-                android:id="@+id/view_mind"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="0dp"
-                android:layout_below="@+id/recycle_session_title"
-                android:background="@color/AppLightGrayColor"/>
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_itemmindclass"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/view_mind"
                 android:layout_marginTop="5dp"/>
 
             <include

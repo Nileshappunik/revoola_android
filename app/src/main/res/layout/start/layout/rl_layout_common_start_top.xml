@@ -14,16 +14,20 @@
             android:id="@+id/ivBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:padding="5dp"
-            android:layout_centerVertical="true"
             app:tint="@color/AppDarkGrayColor"
             android:src="@drawable/ic_arrow_back_ios"/>
+
+        <ImageView
+            android:id="@+id/ivhelp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_info"/>
 
         <TextView
             android:id="@+id/iv_Title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_height="30dp"
             android:fontFamily="@font/omnes_semibold_regular"
             android:layout_marginEnd="10dp"
             android:textAllCaps="true"
@@ -31,32 +35,28 @@
             android:text="@string/yourway"
             android:textColor="@color/AppBlackColor"
             android:textSize="26sp"/>
-        <!--android:layout_toEndOf="@+id/ivBack"
-        android:layout_toStartOf="@+id/ivhelp"
-        android:layout_toEndOf="@+id/ivBack"
-            android:layout_toStartOf="@+id/ivhelp"-->
+
         <TextView
             android:id="@+id/iv_Description"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_height="30dp"
             android:fontFamily="@font/omnes_regular"
             android:layout_marginEnd="10dp"
             android:layout_below="@+id/iv_Title"
             android:textAllCaps="true"
+            android:gravity="center"
             android:textAlignment="center"
             android:text="@string/youractivityyourway"
             android:textColor="@color/AppBlackColor"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
 
-        <ImageView
-            android:id="@+id/ivhelp"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="5dp"
-            android:src="@drawable/ic_info"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTitle"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:foregroundGravity="bottom"
+            android:layout_marginStart="6dp"
+            android:layout_below="@+id/iv_Description"/>
 
     </RelativeLayout>
 </layout>

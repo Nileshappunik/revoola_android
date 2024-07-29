@@ -42,8 +42,8 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
             layoutBinding.txtGroupName.setText(carddata.group_name)
             layoutBinding.txtGroupNoofmembers.setText("Number of Members: " +carddata.number_of_members.toString())
             Glide.with(context!!).load(carddata.group_avatar)
-                .placeholder(R.drawable.wellcome)
-                .error(R.drawable.wellcome)
+                .placeholder(R.drawable.sample_user)
+                .error(R.drawable.sample_user)
                 .into(layoutBinding.imgGroup)
         }
     }

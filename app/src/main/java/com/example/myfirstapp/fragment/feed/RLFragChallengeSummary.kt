@@ -65,7 +65,11 @@ class RLFragChallengeSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivhelp.setImageResource(R.drawable.ic_share)
+        fragBinding.inlayTop.ivTitle.setText(R.string.challengesummery)
+        fragBinding.inlayTop.ivDescription.setText("")
+
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLFeedChallengesModelData
 
         fragBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))

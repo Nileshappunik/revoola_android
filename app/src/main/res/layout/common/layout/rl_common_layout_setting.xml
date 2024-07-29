@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:text="@string/firstname"
             android:textColor="@color/AppTextGrayColor"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/txttermtitle"
@@ -30,15 +30,15 @@
             android:layout_centerVertical="true"
             android:text="@string/termandcondition"
             android:textColor="@color/AppTextGrayColor"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_user"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:visibility="gone"
             android:layout_toEndOf="@+id/txtusertitle"
-            android:src="@drawable/wellcome"/>
+            android:src="@drawable/sample_user"/>
 
         <TextView
             android:id="@+id/txt_username"
@@ -52,7 +52,7 @@
             android:text="@string/hidhruv"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/edt_username"
@@ -65,14 +65,14 @@
             android:layout_toEndOf="@+id/txtusertitle"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <ImageView
             android:id="@+id/img_edit"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/ic_edit"/>
 
         <ImageView
@@ -81,7 +81,7 @@
             android:layout_height="40dp"
             android:visibility="gone"
             android:padding="10dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/ic_check_g_right"/>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -89,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             app:thumbTint="@color/AppWhiteColor"
             android:checked="true"
             app:track="@drawable/custom_track"/>
@@ -107,7 +107,7 @@
             android:paddingEnd="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:background="@drawable/round_border_white"
             android:backgroundTint="@color/AppPrivacyEveryOneBGColor"
             android:fontFamily="@font/omnes_regular" />

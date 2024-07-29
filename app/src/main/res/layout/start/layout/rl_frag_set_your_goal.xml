@@ -9,47 +9,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/AppWhiteColor">
-        <RelativeLayout
-            android:id="@+id/rl_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal">
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
 
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="5dp"
-                android:layout_marginStart="10dp"
-                app:tint="@color/AppMainColor"
-                android:src="@drawable/ic_arrow_back_ios"
-                android:visibility="visible" />
-
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
-                android:text="@string/setyourtarget"
-                android:textColor="@color/AppBlackColor"
-                android:textSize="26sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-
-            <ImageView
-                android:id="@+id/ivhelp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="10dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="5dp"
-                android:src="@drawable/info"/>
-
-        </RelativeLayout>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -57,24 +20,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/txtsetyourgoal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop= "10dp"
-                    android:textAlignment="center"
-                    android:text="@string/setyourtargetandselecttimeperiod"
-                    android:textColor="@color/AppBlackColor"
-                    android:textAllCaps="true"
-                    android:textSize="14sp"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/square_border_green_ten"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginEnd="15dp">
 
                     <LinearLayout
                         android:id="@+id/lay_help_challenges"

@@ -37,12 +37,15 @@ class RLSplashActivityRL : RLBaseActivity() {
         if (userId.isNullOrEmpty()){
             activityBinding.txtFullrevoolaexperience.setOnClickListener {
                 startActivity(Intent(this, RLLoginActivityRL::class.java))
+                finish()
             }
             activityBinding.txtJusthereforaquickpeak.setOnClickListener {
                 startActivity(Intent(this, RLMainActivityRL::class.java))
+                finish()
             }
         }else{
             startActivity(Intent(this, RLMainActivityRL::class.java))
+            finish()
            // startActivity(Intent(this, RLSignUpActivityRL::class.java))
         }
     }

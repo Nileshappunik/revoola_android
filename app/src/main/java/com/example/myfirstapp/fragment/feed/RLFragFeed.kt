@@ -79,23 +79,31 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         return fragBinding.root
     }
     private fun RLuisetup() {
+
+        fragBinding.inlayTop.ivBack.visibility=View.GONE
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.feedsmall))
+        fragBinding.inlayTop.ivDescription.setText("")
+        
+
+
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorwhite()
         if (lastfragmentopen.equals("RLFragChallengeSummary")){
             //CHALLENGES view back event get
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-            fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
+            fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
              adaptertitle = RLOverviewSessionTitleListAdapter("CHALLENGES",this,valueslist,activity)
-            fragBinding.recycleSessionTitle.adapter = adaptertitle
+            fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
             RLChallengesUISet()
         }
         else{
             RLfirsttimeApiCall(GroupId)
             //do title
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-            fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
+            fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
              adaptertitle = RLOverviewSessionTitleListAdapter("FRIENDS",this,valueslist,activity)
-            fragBinding.recycleSessionTitle.adapter = adaptertitle
+            fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
         }
         // Add scroll listener for pagination
         fragBinding.rvItemfeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -116,10 +124,10 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             }
         })
 
-        fragBinding.imgPlus.setOnClickListener {
+      /*  fragBinding.imgPlus.setOnClickListener {
             (context as RLMainActivityRL).RLshowbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
-        }
+        }*/
         fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_group)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()

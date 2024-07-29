@@ -7,50 +7,17 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppWhiteColor"
-        android:orientation="vertical">
+        android:background="@color/AppWhiteColor">
 
-        <!--android:background="@drawable/full_round"-->
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginStart="16dp"
-            app:tint="@color/AppMainColor"
-            android:src="@drawable/ic_arrow_back_ios"/>
-
-        <TextView
-            android:id="@+id/iv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="@string/winditdown"
-            android:textAlignment="center"
-            android:layout_marginTop="3dp"
-            android:textAllCaps="true"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/AppBlackColor"/>
-
-        <TextView
-            android:id="@+id/iv_title_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="12/04/2023 at 08:46"
-            android:textAlignment="center"
-            android:layout_marginTop="1dp"
-            android:textAllCaps="true"
-            android:layout_below="@+id/iv_title"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/AppBlackColor" />
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
 
         <include
             android:id="@+id/inlay_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop= "5dp"
-            android:layout_below="@+id/iv_title_date"
+            android:layout_below="@+id/inlayTop"
             layout="@layout/rl_frag_session_summary_title"/>
 
 
@@ -250,3 +217,42 @@
         </RelativeLayout>
     </RelativeLayout>
 </layout>
+
+    <!--android:background="@drawable/full_round"-->
+<!--
+<ImageView
+android:id="@+id/ivBack"
+android:layout_width="30dp"
+android:layout_height="30dp"
+android:padding="5dp"
+android:visibility="gone"
+android:layout_marginStart="16dp"
+app:tint="@color/AppMainColor"
+android:src="@drawable/ic_arrow_back_ios"/>
+
+<TextView
+android:id="@+id/iv_title"
+android:layout_width="wrap_content"
+android:layout_height="30dp"
+android:textSize="14sp"
+android:text="@string/winditdown"
+android:textAlignment="center"
+android:gravity="center"
+android:visibility="gone"
+android:textAllCaps="true"
+android:layout_centerHorizontal="true"
+android:textColor="@color/AppBlackColor"/>
+
+<TextView
+android:id="@+id/iv_title_date"
+android:layout_width="wrap_content"
+android:layout_height="30dp"
+android:textSize="12sp"
+android:gravity="center"
+android:textAlignment="center"
+android:layout_marginTop="1dp"
+android:textAllCaps="true"
+android:visibility="gone"
+android:layout_below="@+id/iv_title"
+android:layout_centerHorizontal="true"
+android:textColor="@color/AppBlackColor" />-->

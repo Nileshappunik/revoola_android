@@ -66,22 +66,25 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
     }
     fun  RLuisetup(){
-        RLonBackPresAct(fragBinding.ivBack)
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+
+        fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.session))
+        fragBinding.inlayTop.ivDescription.setText("")
         //do
        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
+        //fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
+        fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("SESSIONS",this,valueslist,activity)
-        fragBinding.recycleSessionTitle.adapter = adaptertitle
+       // fragBinding.recycleSessionTitle.adapter = adaptertitle
+        fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
         //DATA SET
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
@@ -110,7 +113,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     }
     override fun onItemClick(position: Int) {
         fragBinding.txtTotalsession.setText(valueslist[position])
-        fragBinding.ivTitle.setText(valueslist[position])
+        fragBinding.inlayTop.ivTitle.setText(valueslist[position])
         if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
             RLAPiCall(valueslist[position])

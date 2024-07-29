@@ -10,16 +10,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutStartListBinding
+import com.example.myfirstapp.databinding.RlLayoutStartMenuBinding
+import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.enumclass.RLStartType
+import com.example.myfirstapp.utils.loadSvg
 
-class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLStartType>) :
+class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLStartAllMenuModel>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartListAdapter"
     var bundle: Bundle = Bundle()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutStartListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_start_list , parent, false)
+        val layoutbinding: RlLayoutStartMenuBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_start_menu , parent, false)
         return MyViewHolder(layoutbinding)
     }
 
@@ -34,8 +37,8 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLS
     }
 
 
-    inner class MyViewHolder(layoutBinding: RlLayoutStartListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutStartListBinding = layoutBinding
+    inner class MyViewHolder(layoutBinding: RlLayoutStartMenuBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        private val layoutBinding: RlLayoutStartMenuBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
 
            /* itemVIew.post{
@@ -47,12 +50,17 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLS
                 itemVIew.layoutParams = layoutParams
             }*/
             val cardData = dataList[position]
-            layoutBinding.txtTypename.setText(cardData.title)
+           /* layoutBinding.txtTypename.setText(cardData.title)
             layoutBinding.txtDescription.setText(context!!.getString(cardData.description))
             Glide.with(context).load(cardData.img).into(layoutBinding.imgType)
             Glide.with(context).load(cardData.type).into(layoutBinding.imgTypeicon)
             layoutBinding.relayStart.visibility=View.GONE
-            layoutBinding.relayStartNew.visibility=View.VISIBLE
+            layoutBinding.relayStartNew.visibility=View.VISIBLE*/
+
+            layoutBinding.txtTypename.setText(cardData.title)
+            layoutBinding.txtDescription.setText(cardData.description)
+            Glide.with(context!!).load(cardData.img).into(layoutBinding.imgType)
+            layoutBinding.imgTypeicon.loadSvg(cardData.type)
 
            /* if (name.equals("end")){
                 layoutBinding.txtName.visibility=View.GONE

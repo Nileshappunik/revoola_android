@@ -109,10 +109,10 @@ class RLFragMindClassesView : RLBaseFragment() {
         fragBinding.txtVideoDescription.setText(VideoData.rideDescription)
         fragBinding.txtMinutes.setText(VideoData.duration)
         Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+            //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgTraner)
         Glide.with(requireContext()).load(VideoData.imageLinkSquareV2)
-            //.placeholder(R.drawable.wellcome).error(R.drawable.wellcome)
+            //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgMainBanner)
     }
     private fun checkPermissions(): Boolean {
