@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
@@ -16,6 +17,7 @@ import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragFriendsBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.enumclass.RLStartType
+import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.loadSvg
@@ -44,6 +46,22 @@ class RLFragFriends : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.friends))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.manageyourrevoolacommunity))
+
+        fragBinding.rvFriend.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                fragBinding.rvFriend.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                val height =  fragBinding.rvFriend.height
+                println("RelativeLayout total height: $height pixels")
+
+                val linearLayoutMain = LinearLayoutManager(activity)
+                fragBinding.rvFriend.layoutManager = linearLayoutMain
+                val adapter = RLStartListAdapter(activity,dataList,height)
+                fragBinding.rvFriend.adapter=adapter
+
+            }
+        })
 
        // val dataList:List<RLStartType> = listOf(RLStartType.FindOnRevoola,RLStartType.YourFriend,RLStartType.YourGroup,RLStartType.InviteToJoin)
 

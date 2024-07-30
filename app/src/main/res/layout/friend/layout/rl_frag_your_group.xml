@@ -5,28 +5,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/AppWhiteColor">
-            <include
-                android:id="@+id/toolbar"
-                layout="@layout/rl_toolbar_common" />
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/rl_toolbar_common" />
 
-            <View
-                android:id="@+id/view_1"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_below="@+id/toolbar"
-                android:background="@color/AppLightGrayColor"/>
+        <View
+            android:id="@+id/view_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/toolbar"
+            android:background="@color/AppBlack10Color"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSelectedFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view_1"/>
 
         <LinearLayout
             android:id="@+id/lay_invite_common"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/view_1"
+            android:layout_below="@+id/rvSelectedFriend"
             android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
             android:weightSum="2"
             android:background="@drawable/full_round_border"
             android:orientation="horizontal">
@@ -59,30 +66,42 @@
 
         </LinearLayout>
 
+        <View
+            android:id="@+id/view_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/lay_invite_common"
+            android:background="@color/AppBlack10Color"/>
         <RelativeLayout
             android:id="@+id/rl_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/lay_invite_common"
-            android:background="@color/AppTextLightGrayColor">
+            android:layout_below="@+id/view_2"
+            android:background="@color/AppLightGrayColor">
 
-            <EditText
-                android:id="@+id/edt_group_search"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/round_green"
-                android:backgroundTint="@color/AppLightGrayColor"
-                android:drawableStart="@drawable/ic_search_g"
-                android:drawablePadding="15dp"
-                android:hint="@string/enternameemailtofindonrevoola"
-                android:minHeight="40dp"
-                android:textSize="16sp"
-                android:textColor="@color/AppBlackColor" />
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/AppBlack05Color"
+                android:background="@drawable/round_green">
+
+                <EditText
+                    android:id="@+id/edt_group_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_search_g"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/enternameemailtofindonrevoola"
+                    android:minHeight="40dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/AppBlackColor" />
+            </RelativeLayout>
         </RelativeLayout>
 
 
@@ -95,6 +114,41 @@
             android:layout_below="@+id/rl_search"/>
 
         <TextView
+            android:id="@+id/tvCreate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight= "15dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/round_border_login_green"
+           android:backgroundTint="@color/AppDarkGrayColor"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:text="@string/create"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="16sp"
+            android:fontFamily="@font/omnes_semibold_regular" />
+
+        <TextView
+            android:id="@+id/tvCreateClick"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight= "15dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/round_border_login_green"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:text="@string/create"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="16sp"
+            android:fontFamily="@font/omnes_semibold_regular" />
+
+        <TextView
             android:id="@+id/txt_inviteyourfriend"
             android:layout_width="200dp"
             android:layout_height="40dp"
@@ -105,6 +159,7 @@
             android:background="@drawable/full_round_green"
             android:text="@string/invite"
             android:gravity="center"
+            android:visibility="gone"
             android:textColor="@color/AppWhiteColor"
             android:textSize="16sp"
             android:textAllCaps="true"
@@ -117,6 +172,7 @@
             android:layout_above="@+id/txt_inviteyourfriend"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
+            android:visibility="gone"
             android:text="@string/invitefriendsnotonyet"
             android:textColor="@color/AppBlackColor"
             android:textSize="16sp"/>

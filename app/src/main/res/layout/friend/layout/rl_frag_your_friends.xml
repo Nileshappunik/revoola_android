@@ -5,107 +5,122 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/AppWhiteColor">
-            <include
-                android:id="@+id/toolbar"
-                layout="@layout/rl_toolbar_common" />
 
-        <RelativeLayout
-            android:id="@+id/rl_search"
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/rl_toolbar_common" />
+
+        <LinearLayout
+            android:id="@+id/lay_lable_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:background="@color/AppTextLightGrayColor">
-
-            <EditText
-                android:id="@+id/edt_friend_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/round_green"
-                android:backgroundTint="@color/AppLightGrayColor"
-                android:drawableStart="@drawable/ic_search_g"
-                android:drawablePadding="10dp"
-                android:hint="@string/enternameoremailtofindonrevoola"
-                android:minHeight="40dp"
-                android:textSize="16sp"
-                android:textColor="@color/AppBlackColor" />
-        </RelativeLayout>
-
-
-
-        <LinearLayout
-            android:id="@+id/lay_invite_common"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/rl_search"
-            android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:weightSum="2"
-            android:background="@drawable/full_round_border"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/txt_friend_youfollow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:textSize="14sp"
                 android:textAllCaps="true"
-                android:background="@drawable/full_round_green"
                 android:textAlignment="center"
                 android:text="@string/friendsyoufollow"
-                android:textColor="@color/AppWhiteColor"/>
+                android:textColor="@color/AppMainColor"/>
 
             <TextView
                 android:id="@+id/txt_friend_followingyou"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:textSize="14sp"
                 android:textAllCaps="true"
                 android:textAlignment="center"
                 android:text="@string/friendsfollowingyou"
-                android:textColor="@color/AppTextGrayColor"/>
+                android:textColor="@color/AppBlackColor"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/lay_lable_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lay_lable_text"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/viewlableleft"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_weight="1"
+                android:background="@color/AppMainColor"/>
+            <View
+                android:id="@+id/viewlablelright"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_weight="1"
+                android:background="@color/AppWhiteColor"/>
 
         </LinearLayout>
 
-        <View
-            android:id="@+id/view_2"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@+id/lay_invite_common"
-            android:layout_marginTop="10dp"
-            android:background="@color/AppTextGrayColor"/>
-        <TextView
-            android:id="@+id/txt_friend_followcount"
+        <RelativeLayout
+            android:id="@+id/relay_serch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/view_2"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingStart="10dp"
-            android:textAllCaps="true"
-            android:text="@string/revoolafriends"
-            android:background="@color/AppTextLightGrayColor"
-            android:textSize="14sp"
-            android:textColor="@color/AppBlackColor"/>
+            android:layout_below="@+id/lay_lable_view"
+            android:background="@color/AppLightGrayColor">
+            <RelativeLayout
+                android:id="@+id/rl_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/AppBlack05Color"
+                android:background="@drawable/round_green">
+
+                <EditText
+                    android:id="@+id/edt_friend_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_search_g"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/enternameoremailtofindonrevoola"
+                    android:minHeight="40dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/AppBlackColor" />
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/txt_friend_followcount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rl_search"
+                android:textAllCaps="true"
+                android:text="@string/revoolafriends"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textSize="14sp"
+                android:textColor="@color/AppBlackColor"/>
+        </RelativeLayout>
 
         <View
             android:id="@+id/view_3"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@+id/txt_friend_followcount"
-            android:background="@color/AppTextGrayColor"/>
+            android:layout_height="1dp"
+            android:layout_below="@+id/relay_serch"
+            android:background="@color/AppBlack10Color"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_yourfriend"
@@ -124,6 +139,7 @@
             android:layout_marginBottom="30dp"
             android:textAllCaps="true"
             android:gravity="center"
+            android:visibility="gone"
             android:background="@drawable/full_round_green"
             android:text="@string/invite"
             android:textColor="@color/AppWhiteColor"
@@ -136,6 +152,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/txt_inviteyourfriend"
             android:layout_centerHorizontal="true"
+            android:visibility="gone"
             android:layout_marginTop="15dp"
             android:text="@string/invitefriendsnotonyet"
             android:textColor="@color/AppBlackColor"

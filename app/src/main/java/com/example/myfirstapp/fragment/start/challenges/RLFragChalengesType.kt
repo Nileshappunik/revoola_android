@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.Window
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
@@ -22,11 +22,10 @@ import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlFragChalengesTypeBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
-import com.example.myfirstapp.enumclass.RLTypeOfChallenges
+import com.example.myfirstapp.enumclass.RLStartType
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengesListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.utils.loadSvg
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -44,15 +43,23 @@ class RLFragChalengesType : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesType" )
-        //RLuisetup()
-        //RLuisetupNew(dataList)
-        RLChallengesList()
         return fragBinding.root
     }
-    private fun RLuisetupNew(dataList: List<RLStartAllMenuModel>) {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
-       // val dataList:List<RLStartType> = listOf(RLStartType.Steps, RLStartType.Effort , RLStartType.Calories , RLStartType.Distance , RLStartType.Climbed, RLStartType.Duration)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragBinding.rvChallenges.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                fragBinding.rvChallenges.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val height =  fragBinding.rvChallenges.height
+                Log.d(TAG,"RelativeLayout total height: $height pixels")
+                RLChallengesList(height)
+            }
+        })
+    }
+
+    private fun RLuisetupOld(){
+         val dataList:List<RLStartType> = listOf(RLStartType.Steps, RLStartType.Effort , RLStartType.Calories , RLStartType.Distance , RLStartType.Climbed, RLStartType.Duration)
         fragBinding.inlaySteps.imgType.RLadjustWidthToHeight()
         fragBinding.inlayEffort.imgType.RLadjustWidthToHeight()
         fragBinding.inlayCalories.imgType.RLadjustWidthToHeight()
@@ -118,20 +125,32 @@ class RLFragChalengesType : RLBaseFragment() {
             RLNextViewOpen( "Duration" )
         }
     }
-    private fun RLChallengesList() {
+    private fun RLChallengesList(height: Int) {
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.challengessmall))
+        fragBinding.inlayTop.ivDescription.setText(getString(R.string.typeofchallenge))
+        fragBinding.inlayTop.ivhelp.setOnClickListener {
+            RLshowHelpDialog()
+        }
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLALLMENULISTRead(RLConstants.CHALLENGES){ data, error ->
             if (data != null) {
                 try {
                     val gson = Gson()
                     val jsonArray = gson.toJson(data)
-                    Log.d(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
-                    RLuisetupNew(dataList)
+                    //Recyclerview Set
+                    val linearLayoutMain = LinearLayoutManager(activity)
+                    fragBinding.rvChallenges.layoutManager = linearLayoutMain
+                    val adapter = RLChallengesListAdapter(activity,dataList,height)
+                    fragBinding.rvChallenges.adapter=adapter
+                   // RLuisetupNew(dataList)
                 }catch (e:Exception){
                     Log.e(TAG,"Catch:- ${e.message}")
                 }
+            }else{
+                Log.e(TAG,"Null Data:- $data")
             }
         }
     }
@@ -208,85 +227,5 @@ class RLFragChalengesType : RLBaseFragment() {
         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, true)
     }
-   /* private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
-        val dataList:List<RLTypeOfChallenges> = listOf(
-            RLTypeOfChallenges.Steps,
-            RLTypeOfChallenges.Effort ,
-            RLTypeOfChallenges.Calories ,
-            RLTypeOfChallenges.Distance ,
-            RLTypeOfChallenges.Climbed,
-            RLTypeOfChallenges.Duration)
 
-        //Main list set
-        val glinearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.recycleChallenges.layoutManager = glinearLayoutManager
-        val adapterdata = RLChallengesListAdapter(activity, dataList)
-        fragBinding.recycleChallenges.adapter = adapterdata
-
-        fragBinding.ivhelp.setOnClickListener {
-            RLshowHelpDialog()
-        }
-        RLTools.RLheightsetstartimage(fragBinding.relaySteps.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayEffort.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayCalories.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayDistance.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayClimbed.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayDuration.cardChalengesst,requireActivity())
-
-        fragBinding.relaySteps.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Steps" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-
-        fragBinding.relayEffort.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Effort" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-
-        fragBinding.relayCalories.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Calories" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-
-        fragBinding.relayDistance.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Distance" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-        fragBinding.relayClimbed.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Climbed" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-        fragBinding.relayDuration.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType", "Duration" )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, RLFragSetYourGoal::class.java.simpleName, false)
-        }
-
-        fragBinding.relayEffort.imgType.setImageResource(R.drawable.ic_heart)
-        fragBinding.relayEffort.txtTypeTitle.setText(R.string.effortsmall)
-
-        fragBinding.relayCalories.imgType.setImageResource(R.drawable.fd_calories_green)
-        fragBinding.relayCalories.txtTypeTitle.setText(R.string.caloriessmall)
-
-        fragBinding.relayDistance.imgType.setImageResource(R.drawable.ic_distance)
-        fragBinding.relayDistance.txtTypeTitle.setText(R.string.distancesmall)
-
-        fragBinding.relayClimbed.imgType.setImageResource(R.drawable.ic_climb)
-        fragBinding.relayClimbed.txtTypeTitle.setText(R.string.climbed)
-
-        fragBinding.relayDuration.imgType.setImageResource(R.drawable.fd_active_time_green)
-        fragBinding.relayDuration.txtTypeTitle.setText(R.string.duration)
-    }*/
 }

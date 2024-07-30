@@ -16,7 +16,6 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
-import com.example.myfirstapp.enumclass.RLStartType
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.fragment.start.body.RLFragBodyClasses
 import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
@@ -27,6 +26,11 @@ import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.loadSvg
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import android.content.Context
+import android.util.DisplayMetrics
+import android.util.TypedValue
+import android.view.WindowManager
+import androidx.recyclerview.widget.RecyclerView
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -54,18 +58,21 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.whatdoyouwanttoday))
 
-        /*val linearLayoutMain = LinearLayoutManager(activity)
-        fragBinding.rvStart.layoutManager = linearLayoutMain
-        val adapter = RLStartListAdapter(activity,dataList)
-        fragBinding.rvStart.adapter=adapter*/
+        fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                fragBinding.rvStart.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-        /*val linearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.rvStart.layoutManager = linearLayoutManager
-        val dataList1:List<Pair<String, String>> = listOf("Classes" to RLConstants.WALKIMAGE, "Your Way" to RLConstants.img_yourway_start, "Challenges" to RLConstants.img_challenge_start,"end" to RLConstants.WALKIMAGE)
-        val adapter = RLStartListAdapter(activity,dataList1)*/
+                val height =  fragBinding.rvStart.height
+                println("RelativeLayout total height: $height pixels")
 
+                val linearLayoutMain = LinearLayoutManager(activity)
+                fragBinding.rvStart.layoutManager = linearLayoutMain
+                val adapter = RLStartListAdapter(activity,dataList,height)
+                fragBinding.rvStart.adapter=adapter
 
-        //val dataList:List<RLStartType> = listOf(RLStartType.MindClasses,RLStartType.BodyClasses,RLStartType.YourWay,RLStartType.Challenges)
+            }
+        })
 
         fragBinding.inlayMindclass.imgType.RLadjustWidthToHeight()
         fragBinding.inlayBodyclass.imgType.RLadjustWidthToHeight()
@@ -133,7 +140,6 @@ class RLFragStart : RLBaseFragment() {
             }
         }
     }
-
     fun View.RLadjustWidthToHeight() {
         this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {

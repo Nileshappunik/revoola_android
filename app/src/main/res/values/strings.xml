@@ -415,6 +415,8 @@
     <string name="restorepurchase">Restore Purchases</string>
     <string name="syncwatchdata">Sync Watch Data</string>
     <string name="challengesummery">CHALLENGE SUMMARY</string>
+    <string name="create">Create</string>
+    <string name="addmembers">Add Members</string>
 
 
 </resources>

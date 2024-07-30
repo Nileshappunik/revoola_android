@@ -58,10 +58,10 @@ class RLFragYourFriends : RLBaseFragment() {
     private fun RLuisetup() {
 
         fragBinding.txtFriendYoufollow.setOnClickListener {
-            fragBinding.txtFriendYoufollow.setBackgroundResource(R.drawable.full_round_green)
-            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.txtFriendFollowingyou.background=null
+            fragBinding.viewlableleft.setBackgroundResource(R.color.AppMainColor)
+            fragBinding.viewlablelright.setBackgroundResource(R.color.AppWhiteColor)
+            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppBlackColor))
             if (RLApiClientRetrofit.RLisConnected()) {
                 RLyouFollowApiCall()
             } else {
@@ -70,10 +70,10 @@ class RLFragYourFriends : RLBaseFragment() {
         }
 
         fragBinding.txtFriendFollowingyou.setOnClickListener {
-            fragBinding.txtFriendFollowingyou.setBackgroundResource(R.drawable.full_round_green)
-            fragBinding.txtFriendYoufollow.background=null
-            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppTextGrayColor))
+            fragBinding.viewlablelright.setBackgroundResource(R.color.AppMainColor)
+            fragBinding.viewlableleft.setBackgroundResource(R.color.AppWhiteColor)
+            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppBlackColor))
             if (RLApiClientRetrofit.RLisConnected()) {
                 RLfollowingYouApiCall()
             } else {

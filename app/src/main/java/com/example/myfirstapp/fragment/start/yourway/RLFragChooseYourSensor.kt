@@ -80,7 +80,14 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        //RLonBackPresAct(fragBinding.ivBack)
+
+        fragBinding.ivBack.setOnClickListener {
+            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+            (context as RLMainActivityRL).RLbottombarcolorwhite()
+            RLcloseFragment()
+        }
+
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvHeartrateSensorList.layoutManager = linearLayoutManager
         adapter = RLSensorHeartListAdapter(activity,this)
@@ -123,6 +130,9 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             RLclickToNextScreenOpen(yourWayType)
         }
     }
+
+
+
     private fun RLclickToNextScreenOpen(yourWayType:String){
         var bundle: Bundle = Bundle()
         bundle.putString("YourWayType", yourWayType)

@@ -4,18 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
-import com.example.myfirstapp.databinding.RlLayoutStartListBinding
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutStartMenuBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
-import com.example.myfirstapp.enumclass.RLStartType
+import com.example.myfirstapp.fragment.friends.RLFragFindOnRevoola
+import com.example.myfirstapp.fragment.friends.RLFragInviteFriends
+import com.example.myfirstapp.fragment.friends.RLFragYourFriends
+import com.example.myfirstapp.fragment.friends.RLFragYourGroup
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClasses
+import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
+import com.example.myfirstapp.fragment.start.classes.RLFragClasses
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClasses
+import com.example.myfirstapp.fragment.start.yourway.RLFragYourWay
 import com.example.myfirstapp.utils.loadSvg
 
-class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLStartAllMenuModel>) :
+class RLStartListAdapter(
+    val context: FragmentActivity?,
+    val dataList: List<RLStartAllMenuModel>,
+   val heightTotal: Int
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartListAdapter"
     var bundle: Bundle = Bundle()
@@ -33,70 +46,69 @@ class RLStartListAdapter(val context: FragmentActivity?, val  dataList: List<RLS
     }
 
     override fun getItemCount(): Int {
-        return dataList.size
+        return  dataList.size
     }
 
 
     inner class MyViewHolder(layoutBinding: RlLayoutStartMenuBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlLayoutStartMenuBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
-
-           /* itemVIew.post{
-                val width = itemVIew.width
-                val newHeight = width * 1
-                // Set the new height to the itemView
-                val layoutParams =itemVIew.layoutParams
-                layoutParams.height = newHeight
-                itemVIew.layoutParams = layoutParams
-            }*/
             val cardData = dataList[position]
-           /* layoutBinding.txtTypename.setText(cardData.title)
-            layoutBinding.txtDescription.setText(context!!.getString(cardData.description))
-            Glide.with(context).load(cardData.img).into(layoutBinding.imgType)
-            Glide.with(context).load(cardData.type).into(layoutBinding.imgTypeicon)
-            layoutBinding.relayStart.visibility=View.GONE
-            layoutBinding.relayStartNew.visibility=View.VISIBLE*/
-
             layoutBinding.txtTypename.setText(cardData.title)
             layoutBinding.txtDescription.setText(cardData.description)
             Glide.with(context!!).load(cardData.img).into(layoutBinding.imgType)
             layoutBinding.imgTypeicon.loadSvg(cardData.type)
 
-           /* if (name.equals("end")){
-                layoutBinding.txtName.visibility=View.GONE
-                layoutBinding.imgFull.visibility=View.GONE
-                layoutBinding.txtLast.visibility=View.VISIBLE
+            //RelativeLayout Height set
+            val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayStartNew.layoutParams
+            layoutParams.height =  heightTotal/4
+            layoutBinding.relayStartNew.layoutParams =layoutParams
+
+            //Image Height Width set
+            val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
+            layoutParamsImage.height =  heightTotal/4
+            layoutParamsImage.width =  heightTotal/4
+            layoutBinding.imgType.layoutParams =layoutParamsImage
+
+            layoutBinding.relayStartNew.setOnClickListener {
+                if (cardData.title.toLowerCase().equals("challenges")){
+                    (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("your way")){
+                    (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourWay(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("mind classes")){
+                    (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("body classes")){
+                    (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("find on revoola")){
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("your friends")){
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, true)
+
+                }else if (cardData.title.toLowerCase().equals("your groups")){
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
+
+                }else if (cardData.title.toLowerCase().equals("invite to join")){
+                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, true)
+
+                }
+
             }
-            else{
-                layoutBinding.txtName.visibility=View.VISIBLE
-                layoutBinding.imgFull.visibility=View.VISIBLE
-                layoutBinding.txtLast.visibility=View.GONE
-                layoutBinding.txtName.setText(name.toUpperCase())
-                if (name.equals("Classes")){
-                    Glide.with(context!!).load(R.drawable.classes).into(layoutBinding.imgFull)
-                }else{
-                    Glide.with(context!!).load(image).into(layoutBinding.imgFull)
-                }
-
-                layoutBinding.relayStart.setOnClickListener {
-                    if (name.equals("Challenges")){
-                        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, RLFragChalengesType::class.java.simpleName, false)
-
-                    }else if (name.equals("Your Way")){
-                        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragYourWay(), TAG, true, RLFragYourWay::class.java.simpleName, false)
-
-                    }else if (name.equals("Classes")){
-                        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragClasses(), TAG, true, RLFragClasses::class.java.simpleName, false)
-                    }
-
-                }
-            }*/
-
         }
     }
-
 
 }

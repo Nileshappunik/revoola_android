@@ -1,12 +1,11 @@
 package com.example.myfirstapp.fragment.friends.adapter
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -15,8 +14,16 @@ import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutYourFriendBinding
 import com.example.myfirstapp.model.RLuserData
+import java.util.Date
 
-class RLYourFriendSelectListAdapter(val context: FragmentActivity?, val friendList: List<RLuserData>, val txtInviteyourfriend: TextView) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLYourFriendSelectListAdapter(
+    val context: FragmentActivity?,
+    val friendList: List<RLuserData>,
+    val tvCreate: TextView,
+    val tvCreateClick: TextView,
+    val layInviteCommon: LinearLayout,
+    private val onSelected: (RLuserData) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLYourFriendSelectListAdapter"
     var bundle: Bundle = Bundle()
     var datalist:List<RLuserData> = friendList
@@ -48,20 +55,29 @@ class RLYourFriendSelectListAdapter(val context: FragmentActivity?, val friendLi
             layoutBinding.txtFriendUnfollow.visibility=View.GONE
             layoutBinding.checkboxFriend.visibility=View.VISIBLE
             layoutBinding.checkboxFriend.isChecked=cardData.isSelected
+            layoutBinding.viewSelectFriend.visibility=View.VISIBLE
+            layoutBinding.viewFriend.visibility=View.GONE
 
             layoutBinding.checkboxFriend.setOnCheckedChangeListener { buttonView, isChecked ->
+                Log.e(TAG,"totalselect First:- $totalselect")
                 try {
+                    cardData.isSelected=isChecked
+                    notifyItemChanged(position)
+                    onSelected(cardData)
                     if (isChecked){
-                        txtInviteyourfriend.visibility=View.VISIBLE
+                        tvCreateClick.visibility=View.VISIBLE
+                        tvCreate.visibility=View.GONE
+                        layInviteCommon.visibility=View.GONE
                         totalselect= totalselect+1
                     }else{
                         totalselect= totalselect-1
                         if (totalselect==0){
-                            txtInviteyourfriend.visibility=View.GONE
+                            tvCreate.visibility=View.VISIBLE
+                            layInviteCommon.visibility=View.VISIBLE
+                            tvCreateClick.visibility=View.GONE
                         }
                     }
-                    cardData.isSelected=isChecked
-                    notifyItemChanged(position)
+                    Log.e(TAG,"totalselect Last:- $totalselect")
                 }catch (e:Exception){
                     Log.e(TAG,"EXCEPTION:- ${e.message}")
                 }

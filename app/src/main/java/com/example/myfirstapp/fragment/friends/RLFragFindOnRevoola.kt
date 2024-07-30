@@ -25,8 +25,8 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
-        fragBinding.tvTitle.setText(R.string.searchfriends)
-        RLonBackPresAct(fragBinding.ivBack)
+        fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
+        RLonBackPresAct(fragBinding.toolbar.ivBack)
         RLuisetup()
         return fragBinding.root
     }

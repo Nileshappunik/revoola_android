@@ -42,7 +42,11 @@ class RLFragSetYourGoal : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivBack.setOnClickListener {
+            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+            (context as RLMainActivityRL).RLbottombarcolorwhite()
+            RLcloseFragment()
+        }
         fragBinding.inlayTop.ivTitle.setText(R.string.setyourtarget)
         fragBinding.inlayTop.ivDescription.setText(R.string.setyourtargetandselecttimeperiod)
         fragBinding.inlayTop.ivhelp.setOnClickListener {

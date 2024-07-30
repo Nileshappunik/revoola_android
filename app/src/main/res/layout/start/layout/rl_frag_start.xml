@@ -21,6 +21,7 @@
             android:layout_marginEnd="@dimen/all_menu_end_margin"
             android:layout_marginBottom="@dimen/all_menu_bottom_margin"
             android:orientation="vertical"
+            android:visibility="gone"
             android:weightSum="4">
             <include
                 android:id="@+id/inlay_mindclass"
@@ -51,19 +52,14 @@
                 layout="@layout/rl_layout_start_menu"/>
         </LinearLayout>
 
-
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
            <androidx.recyclerview.widget.RecyclerView
                android:id="@+id/rv_start"
                android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:layout_marginStart="5dp"
-               android:layout_marginEnd="5dp"
-               android:layout_marginTop="@dimen/all_menu_top_margin"/>
+               android:layout_height="match_parent"/>
 
         </RelativeLayout>
     </LinearLayout>

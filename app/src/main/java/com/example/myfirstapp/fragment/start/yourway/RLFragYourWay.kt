@@ -8,8 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
@@ -18,7 +17,6 @@ import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.fragment.start.adapter.RLYourWayListAdapter
 import com.example.myfirstapp.databinding.RlFragYoueWayBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
-import com.example.myfirstapp.enumclass.RLStartType
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.loadSvg
@@ -38,40 +36,20 @@ class RLFragYourWay : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_youe_way, container) as RlFragYoueWayBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourWay" )
-      //  RLuisetup(dataList)
-        RLYourwayList()
         return fragBinding.root
     }
-    private fun RLuisetup(dataList: List<RLStartAllMenuModel>) {
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        /* val linearLayoutManager = GridLayoutManager(activity, 2)
-         fragBinding.rvYourway.layoutManager = linearLayoutManager
-         val dataList1:List<Pair<String, String>> = listOf("Pilates" to RLConstants.PILATESIMAGE,
-             "Ride" to RLConstants.RIDEIMAGE,
-             "Run" to RLConstants.RUNIMAGE,
-             "Walk" to RLConstants.WALKIMAGE,
-             "Workout" to RLConstants.WORKOUTIMAGE,
-             "Yoga" to RLConstants.YOGAIMAGE)
-         val valueslist = arrayOf("Pilates","Ride","Run","Walk","Workout","Yoga")
-         // Create an array of drawables
-         val drawableArray = arrayOf(
-             ContextCompat.getDrawable(requireContext(), R.drawable.pilates),
-             ContextCompat.getDrawable(requireContext(), R.drawable.ride),
-             ContextCompat.getDrawable(requireContext(), R.drawable.run),
-             ContextCompat.getDrawable(requireContext(), R.drawable.walk),
-             ContextCompat.getDrawable(requireContext(), R.drawable.workout),
-             ContextCompat.getDrawable(requireContext(), R.drawable.yoga))
-         val adapter = RLYourWayListAdapter(activity,dataList1)
-         val data: List<String> =ArrayList<String>()
-         adapter.setList(valueslist)
-         fragBinding.rvYourway.adapter = adapter */
-
-         fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
-         fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))
-
-        // val dataList:List<RLStartType> = listOf(RLStartType.Walk, RLStartType.Run, RLStartType.Ride, RLStartType.Workout)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragBinding.rvYourway.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                fragBinding.rvYourway.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val height =  fragBinding.rvYourway.height
+                Log.d(TAG,"RelativeLayout total height: $height pixels")
+                RLYourwayList(height)
+            }
+        })
+    }
+    private fun RLuisetup(dataList: List<RLStartAllMenuModel>,height: Int) {
 
          fragBinding.inlayWalk.imgType.RLadjustWidthToHeight()
          fragBinding.inlayRun.imgType.RLadjustWidthToHeight()
@@ -112,7 +90,13 @@ class RLFragYourWay : RLBaseFragment() {
          }
     }
 
-    private fun RLYourwayList() {
+    private fun RLYourwayList(height: Int) {
+        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+        (context as RLMainActivityRL).RLbottombarcolorwhite()
+        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
+        fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))
+
          val databaseManager= RLDatabaseManagerRead()
          databaseManager.RLALLMENULISTRead(RLConstants.YOURWAY){ data, error ->
              if (data != null) {
@@ -122,7 +106,11 @@ class RLFragYourWay : RLBaseFragment() {
                      Log.d(TAG,"Response:- $jsonArray")
                      val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                      val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
-                     RLuisetup(dataList)
+                    //Recyclerview Set
+                     val linearLayoutMain = LinearLayoutManager(activity)
+                     fragBinding.rvYourway.layoutManager = linearLayoutMain
+                     val adapter = RLYourWayListAdapter(activity,dataList,height)
+                     fragBinding.rvYourway.adapter=adapter
                  }catch (e:Exception){
                      Log.e(TAG,"Catch:- ${e.message}")
                  }

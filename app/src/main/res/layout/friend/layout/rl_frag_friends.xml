@@ -19,6 +19,7 @@
             android:layout_marginEnd="@dimen/all_menu_end_margin"
             android:layout_marginBottom="@dimen/all_menu_bottom_margin"
             android:orientation="vertical"
+            android:visibility="gone"
             android:weightSum="4">
             <include
                 android:id="@+id/inlay_findonRevoola"
@@ -49,6 +50,16 @@
                 android:layout_marginTop="@dimen/all_menu_top_margin"
                 layout="@layout/rl_layout_start_menu"/>
         </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_friend"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </RelativeLayout>
        <!-- old Design Below-->
         <RelativeLayout
             android:layout_width="match_parent"

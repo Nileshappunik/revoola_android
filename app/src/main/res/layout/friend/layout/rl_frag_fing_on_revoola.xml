@@ -8,54 +8,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/AppWhiteColor">
-        <RelativeLayout
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp">
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                app:tint="@color/AppMainColor"
-                android:src="@drawable/ic_arrow_back_ios"/>
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="true"
-                android:fontFamily="@font/aptos_regular"
-                android:gravity="center_vertical"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/AppBlackColor"
-                android:textSize="16sp" />
-        </RelativeLayout>
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/rl_toolbar_common" />
 
         <RelativeLayout
             android:id="@+id/rl_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:background="@color/AppTextLightGrayColor">
+            android:background="@color/AppLightGrayColor">
 
-            <EditText
-                android:id="@+id/edt_friend_search"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/round_green"
-                android:backgroundTint="@color/AppLightGrayColor"
-                android:drawableStart="@drawable/fr_search_green"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/AppTextGrayColor"
-                android:hint="@string/enternameoremailtofindonrevoola"
-                android:minHeight="40dp"
-                android:paddingStart="10dp"
-                android:textColor="@color/AppBlackColor" />
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/AppBlack05Color"
+                android:background="@drawable/round_green">
+
+                <EditText
+                    android:id="@+id/edt_friend_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_search_g"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/enternameoremailtofindonrevoola"
+                    android:minHeight="40dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/AppBlackColor" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout
@@ -87,19 +74,25 @@
                 android:text="@string/contacts"
                 android:textColor="@color/AppBlackColor"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/view_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lay_contact"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="140dp"
+                android:layout_height="1dp"
+                android:background="@color/AppMainColor"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/AppMainColor"/>
+                android:background="@color/AppBottomGrayColor"/>
         </LinearLayout>
 
-        <View
-            android:id="@+id/view_2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/lay_contact"
-            android:background="@color/AppBottomGrayColor"/>
 
         <RelativeLayout
             android:id="@+id/relay_synccontact"
@@ -195,6 +188,7 @@
             android:paddingEnd="70dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
+            android:visibility="gone"
             android:textAllCaps="true"
             android:background="@drawable/login_btn"
             android:backgroundTint="@color/AppMainColor"
@@ -210,6 +204,7 @@
             android:layout_above="@+id/txt_inviteyourfriend"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
+            android:visibility="gone"
             android:text="@string/invitefriendsnotonyet"
             android:textColor="@color/AppBlackColor"
             android:textSize="16sp"
@@ -219,6 +214,7 @@
             android:id="@+id/view_bottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:visibility="gone"
             android:layout_above="@+id/demo_invite"
             android:background="@color/AppBlackColor"/>
 

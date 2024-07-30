@@ -53,7 +53,7 @@
                 android:text="test"
                 android:visibility="visible"
                 android:textColor="@color/AppBlackColor"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
 
             <ImageView
