@@ -1,5 +1,6 @@
 package com.example.myfirstapp.fragment.start.adapter
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +68,7 @@ class RLStartListAdapter(
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
             layoutParamsImage.height =  heightTotal/4
-            layoutParamsImage.width =  heightTotal/4
+            layoutParamsImage.width =  heightTotal/5
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {
@@ -102,8 +103,14 @@ class RLStartListAdapter(
                     (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, true)
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "SHARE LINK")
+                        type = "text/plain"
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                  //  (context as RLMainActivityRL).RLbottombarcolorwhite()
+                  //  (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, true)
 
                 }
 

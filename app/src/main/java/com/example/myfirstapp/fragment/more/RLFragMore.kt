@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.myfirstapp.RLBaseFragment
@@ -37,7 +38,7 @@ class RLFragMore : RLBaseFragment() {
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorwhite()
 
-        //fragBinding.layAccount.layMoreClick.visibility=View.GONE
+        fragBinding.layAccount.layMoreClick.visibility=View.GONE
         fragBinding.layAccount.txtAccount.setText(R.string.account)
         fragBinding.layAccount.imgAccount.setImageResource(R.drawable.ic_account_g)
 
@@ -84,33 +85,31 @@ class RLFragMore : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, RLFragSetting::class.java.simpleName, false)
         }
         fragBinding.layRequesttodeletedata.layMoreClick.setOnClickListener {
-            RLshowDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
+            RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
         }
         fragBinding.laySignout.layMoreClick.setOnClickListener {
-            RLshowDialog(RLConstants.LOGOUT_D,RLConstants.SCHEDULE)
+            RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
         }
-        /*fragBinding.layConnecttohealthconnect.layMoreClick.setOnClickListener {
-            RLshowBasicAlertDialog()
-        }*/
+        fragBinding.layRestorepurchase.layMoreClick.setOnClickListener {
+            RLshowDialogAlert(getString(R.string.youhavesuccessfullyrestored))
+        }
     }
 
     private fun RLshowBasicAlertDialog() {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage(getString(R.string.youalreadyconnecthealth))
+        builder.setMessage(getString(R.string.youhavesuccessfullyrestored))
         builder.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-            dialog.dismiss() // Dismisses the dialog when the button is clicked
+            dialog.dismiss()
         }
 
         val alertDialog = builder.create()
         alertDialog.show()
     }
 
-    private fun RLshowDialog(type: String, schedule: String) {
+    private fun RLshowDialog(type: String, message: String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        if (schedule == RLConstants.SCHEDULE) {
-            sucDialog.setContentView(R.layout.rl_layout_dailog)
-        }
+        sucDialog.setContentView(R.layout.rl_layout_dailog)
         sucDialog.setCancelable(true)
         val lp = WindowManager.LayoutParams()
         lp.copyFrom(sucDialog.window!!.attributes)
@@ -118,15 +117,9 @@ class RLFragMore : RLBaseFragment() {
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
         val tvNo: TextView = sucDialog.findViewById(R.id.tvNo)
         val tvYes: TextView = sucDialog.findViewById(R.id.tvYes)
-        tvNo.setText(R.string.cancel)
-        tvYes.setText(R.string.confirm)
-
-        if(type.equals(RLConstants.EXIT)) {
-            val tvSubTitle: TextView = sucDialog.findViewById(R.id.tvSubTitle)
-            val tvTitle: TextView = sucDialog.findViewById(R.id.tvTitle)
-            tvTitle.text =""
-            tvSubTitle.text = resources.getString(R.string.areyousurewanttodeletedata)
-        }
+        val tvTitle: TextView = sucDialog.findViewById(R.id.tvTitle)
+        val tvSubTitle: TextView = sucDialog.findViewById(R.id.tvSubTitle)
+        tvSubTitle.setText(message)
 
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
@@ -134,10 +127,32 @@ class RLFragMore : RLBaseFragment() {
 
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
-            Firebase.auth.signOut()
-            RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
-            activity?.finish()
+            if (type.equals(RLConstants.LOGOUT_D)){
+                Firebase.auth.signOut()
+                RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
+                activity?.finish()
+            }
         })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+    private fun RLshowDialogAlert( message: String) {
+        val sucDialog: Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_layout_dailog_alert)
+        sucDialog.setCancelable(true)
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(sucDialog.window!!.attributes)
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        val tvSubTitle: TextView = sucDialog.findViewById(R.id.tvSubTitle)
+        val tvOk: TextView = sucDialog.findViewById(R.id.tvOk)
+        tvSubTitle.setText(message)
+
+        tvOk.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }

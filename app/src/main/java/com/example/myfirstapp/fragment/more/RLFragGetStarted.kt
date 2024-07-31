@@ -34,23 +34,23 @@ class RLFragGetStarted : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
 
         fragBinding.relayApplewatch.txtAccount.setText(R.string.connectionapplewatch)
-        fragBinding.relayApplewatch.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayApplewatch.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayRatesensor.txtAccount.setText(R.string.heartratesensor)
-        fragBinding.relayRatesensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayRatesensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relaySpeedsensor.txtAccount.setText(R.string.connectingaspeedsensor)
-        fragBinding.relaySpeedsensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relaySpeedsensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayYourensor.txtAccount.setText(R.string.nameyoursensor)
-        fragBinding.relayYourensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayYourensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayTourofrevoola.txtAccount.setText(R.string.aquicktourofrevoola)
-        fragBinding.relayTourofrevoola.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayTourofrevoola.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayCantfindmysensor.txtAccount.setText(R.string.icantfindmysensor)
-        fragBinding.relayCantfindmysensor.imgAccount.setImageResource(R.drawable.ic_help)
-        fragBinding.relayCantfindmysensor.viewimgtxt.visibility=View.GONE
+        fragBinding.relayCantfindmysensor.imgAccount.setImageResource(R.drawable.ic_help_g)
+        //fragBinding.relayCantfindmysensor.viewimgtxt.visibility=View.GONE
 
     }
 

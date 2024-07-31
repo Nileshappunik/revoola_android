@@ -210,12 +210,17 @@ class RLFragChallengeSummary : RLBaseFragment() {
         }
     }
     private fun RLRankingMapSet(jasonArray: JSONArray){
-       // Log.e(TAG,"RLRankingMapSet")
+        if (jasonArray.length()>0){
+            fragBinding.webViewRankingChart.visibility=View.VISIBLE
+            val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
+            //Log.d(TAG,"MAp:- $htmltext")
+            fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
+                htmltext, "text/html", "UTF-8", null)
+        }else{
+            fragBinding.webViewRankingChart.visibility=View.GONE
+        }
 
-        val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
-        //Log.d(TAG,"MAp:- $htmltext")
-        fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
-            htmltext, "text/html", "UTF-8", null)
+
 
     }
     private fun RLStepMapSet(jasonArray: JSONArray) {

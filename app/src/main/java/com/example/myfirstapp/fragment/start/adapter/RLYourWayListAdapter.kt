@@ -55,7 +55,7 @@ class RLYourWayListAdapter(val context: FragmentActivity?,
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
             layoutParamsImage.height =  heightTotal/4
-            layoutParamsImage.width =  heightTotal/4
+            layoutParamsImage.width =  heightTotal/5
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {

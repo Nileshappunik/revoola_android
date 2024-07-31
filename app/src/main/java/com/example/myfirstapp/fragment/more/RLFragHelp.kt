@@ -35,14 +35,17 @@ class RLFragHelp : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
 
         fragBinding.relayGettingStarted.txtAccount.setText(R.string.getttingstarted)
-        fragBinding.relayGettingStarted.imgAccount.setImageResource(R.drawable.ic_email)
+        fragBinding.relayGettingStarted.imgAccount.setImageResource(R.drawable.ic_account_g)
+        fragBinding.relayGettingStarted.viewimgtxt.visibility=View.GONE
 
         fragBinding.relayFaqus.txtAccount.setText(R.string.faqs)
-        fragBinding.relayFaqus.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayFaqus.imgAccount.setImageResource(R.drawable.ic_settings_g)
+        fragBinding.relayFaqus.viewimgtxt.visibility=View.GONE
 
         fragBinding.relayLogs.imgAccount.setImageResource(R.drawable.ic_help)
         fragBinding.relayLogs.txtAccount.setText(R.string.logs)
         fragBinding.relayLogs.viewimgtxt.visibility=View.GONE
+        fragBinding.relayLogs.layMoreClick.visibility=View.GONE
 
         fragBinding.relayGettingStarted.layMoreClick.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)

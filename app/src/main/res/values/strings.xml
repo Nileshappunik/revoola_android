@@ -8,12 +8,13 @@
     <string name="exit_app">Do You Want To Logout?</string>
     <string name="exit">Exit</string>
     <string name="exit_app1">Do You Want To Exit?</string>
-    <string name="areyousurewanttodeletedata">Are you sure want to delete data?</string>
+    <string name="areyousurewanttodeletedata">are you sure you want to delete your account and data?</string>
     <string name="confirm">CONFIRM</string>
     <string name="cancel">CANCLE</string>
     <string name="showallclasses">SHOW ALL CLASSES</string>
     <string name="availablefilter">Available Filters</string>
     <string name="youalreadyconnecthealth">You have already Connected to Health Connect</string>
+    <string name="youhavesuccessfullyrestored">You have successfully restored purchases</string>
     <string name="ok">ok</string>
     <string name="okcaps">OK</string>
     <string name="instructor">Instructor</string>
@@ -176,6 +177,7 @@
 
     <!--more-->
     <string name="schduledclasses">Scheduled Classes</string>
+    <string name="schduled">Scheduled</string>
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
     <string name="settings">Settings</string>
@@ -214,14 +216,14 @@
     <string name="profile">Profile</string>
     <string name="surname">Surname</string>
     <string name="avatar">Avatar</string>
-    <string name="maxheartrateestimated">Max heart\n rate Estimated</string>
-    <string name="restingheartrate">Resting Heartrate</string>
+    <string name="maxheartrateestimated">Max heartrate</string>
+    <string name="restingheartrate">Base Heartrate</string>
     <string name="restinghr">Resting HR</string>
     <string name="location">Location</string>
     <string name="activities">Activites</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
-    <string name="termandcondition">Terms and Conditions</string>
+    <string name="termandcondition">Terms &amp; Conditions</string>
 
     <!--facebook-->
     <string name="facebook_app_id">423254927013835</string>
@@ -295,6 +297,7 @@
     <string name="sharemap">Share Map?</string>
     <string name="privatetx">Private</string>
     <string name="anyone">Anyone</string>
+    <string name="everyone">Everyone</string>
     <string name="friendstx">Friends</string>
     <string name="name">Name</string>
     <string name="revoolaclasses">Revoola Classes</string>
@@ -417,6 +420,8 @@
     <string name="challengesummery">CHALLENGE SUMMARY</string>
     <string name="create">Create</string>
     <string name="addmembers">Add Members</string>
+    <string name="privacypolicy">Privacy Policy</string>
+    <string name="alert">Alert</string>
 
 
 </resources>

@@ -118,7 +118,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_distance)
-            fragBinding.layDaysremaining.txtTime.setText(R.string.distance)
+            fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
             fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else if (classType!!.toLowerCase().equals("challenge-climbed")){

@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor"
+        android:background="@color/AppWhiteColor"
         android:orientation="vertical">
         <ImageView
             android:id="@+id/ivBack"
@@ -23,6 +23,7 @@
             android:layout_marginTop= "10dp"
             android:layout_marginStart="15dp"
             android:text="@string/getstarted"
+            android:textAllCaps="true"
             android:textColor="@color/AppBlackColor"
             android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />
@@ -33,10 +34,10 @@
             android:layout_marginStart="60dp"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="20dp"
-            android:background="@color/AppMainBGColor"/>
+            android:background="@color/AppWhiteColor"/>
 
         <include
-            android:id="@+id/relay_applewatch"
+            android:id="@+id/relay_tourofrevoola"
             layout="@layout/rl_common_image_text_image_rl" />
 
         <include
@@ -44,16 +45,17 @@
             layout="@layout/rl_common_image_text_image_rl" />
 
         <include
-            android:id="@+id/relay_speedsensor"
-            layout="@layout/rl_common_image_text_image_rl" />
-
-        <include
             android:id="@+id/relay_yourensor"
             layout="@layout/rl_common_image_text_image_rl" />
 
         <include
-            android:id="@+id/relay_tourofrevoola"
+            android:id="@+id/relay_applewatch"
             layout="@layout/rl_common_image_text_image_rl" />
+
+        <include
+            android:id="@+id/relay_speedsensor"
+            layout="@layout/rl_common_image_text_image_rl" />
+
 
         <include
             android:id="@+id/relay_cantfindmysensor"
