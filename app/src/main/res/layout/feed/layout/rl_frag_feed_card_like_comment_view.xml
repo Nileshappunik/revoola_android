@@ -11,14 +11,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
-            android:background="@color/AppMainBGColor">
+            android:background="@color/AppLightGrayColor">
 
             <ImageView
                 android:id="@+id/ivBack"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="15dp"
                 app:tint="@color/AppMainColor"
                 android:src="@drawable/ic_arrow_back_ios"/>
 
@@ -26,11 +26,11 @@
                 android:id="@+id/iv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="28sp"
+                android:textSize="26sp"
                 android:text="COMMENTS"
                 android:textAlignment="textStart"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="36dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:layout_below="@+id/ivBack"/>
@@ -40,36 +40,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/iv_title"
-                android:layout_above="@+id/txt_addcomment"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:paddingStart="10dp"
                 layout="@layout/rl_layout_feed_list"/>
+            <View
+                android:id="@+id/view_2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/inlay_main"
+                android:background="@color/AppLightGrayColor"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_commentList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/view_2"
+                android:layout_above="@+id/txt_addcomment"
+                android:background="@color/AppWhiteColor"
+                tools:listitem="@layout/rl_layout_comment_user"/>
 
             <TextView
                 android:id="@+id/txt_addcomment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/addcomment"
                 android:layout_above="@+id/ed_comment"
                 android:fontFamily="@font/omnes_semibold_regular"
-                android:textSize="18sp"
-                android:textColor="@color/AppDarkGrayColor"/>
+                android:textSize="14sp"
+                android:textColor="@color/AppTextGrayColor"/>
 
             <EditText
                 android:id="@+id/ed_comment"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="5dp"
                 android:paddingStart="20dp"
                 android:gravity="center_vertical"
                 android:hint="Comments"
                 android:background="@drawable/rounded_corners"
                 android:layout_above="@+id/btn_send"
                 android:textColor="@color/AppBlackColor"
+                android:textColorHint="@color/AppTextGrayColor"
                 android:textSize="@dimen/text_main_title_size"
                 android:fontFamily="@font/omnes_semibold_regular" />
 
@@ -77,11 +93,12 @@
             <TextView
                 android:id="@+id/btn_send"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="45dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
                 android:text="@string/send"
                 android:textAllCaps="true"
                 android:textAlignment="center"
@@ -89,7 +106,8 @@
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textSize="16sp"
                 android:textColor="@color/AppWhiteColor"
-                android:background="@drawable/full_round_green"/>
+                android:backgroundTint="@color/AppMainColor"
+                android:background="@drawable/full_round"/>
         </RelativeLayout>
         <LinearLayout
             android:id="@+id/relative_thumb"

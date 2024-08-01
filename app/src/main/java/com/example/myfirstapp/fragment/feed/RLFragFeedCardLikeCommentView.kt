@@ -1,44 +1,22 @@
 package com.example.myfirstapp.fragment.feed
 
-import android.app.Dialog
 import android.content.pm.ActivityInfo
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedListAdapter
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.example.myfirstapp.api.RLApiClientRet
-import com.example.myfirstapp.databinding.RlFragFeedBinding
 import com.example.myfirstapp.databinding.RlFragFeedCardLikeCommentViewBinding
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedGroupNameAdapter
-import com.example.myfirstapp.fragment.start.challenges.RLFragChalengesType
-import com.example.myfirstapp.interfaceall.RLItemClickListener
-import com.example.myfirstapp.model.RLGroupCardModel
-import com.example.myfirstapp.model.RLSetGroupData
-import com.example.myfirstapp.model.RLSetGroupRequest
-import com.example.myfirstapp.model.RLSetgoaled_challenges
-import com.example.myfirstapp.model.RLSetgoaled_challenges_request
-import com.example.myfirstapp.model.RLSetoverview_thumb
-import com.example.myfirstapp.model.RLSetoverview_thumbRequest
-import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
-import com.example.myfirstapp.model.RLSetoverview_thumb_you
+import com.example.myfirstapp.fragment.feed.adapter.RLFeedCommentListAdapter
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -46,10 +24,9 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
-import java.time.ZonedDateTime
 import kotlin.math.roundToInt
 
-class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
+class RLFragFeedCardLikeCommentView : RLBaseFragment(){
     val TAG: String = RLFragFeedCardLikeCommentView::class.java.simpleName
     lateinit var fragBinding: RlFragFeedCardLikeCommentViewBinding
     lateinit var RLApiClientRetrofit: RLApiClientRet
@@ -57,7 +34,6 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
     var currentUser:String=""
     var classType:String=""
     lateinit var cardData: RLTextOverview
-
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragFeedCardLikeCommentView()
         fragment.arguments = bundle
@@ -106,6 +82,14 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
             RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgNain)
             RLCommentThumbUiSet(cardData,fragBinding.inlayMainThumb)
         }
+        fragBinding.btnSend.setOnClickListener {
+            //Do Something
+        }
+        val dataList = listOf<String>()
+        val linearLayoutManager = LinearLayoutManager(activity)
+        fragBinding.rvCommentList.layoutManager = linearLayoutManager
+        val adapter = RLFeedCommentListAdapter(dataList,activity)
+        fragBinding.rvCommentList.adapter = adapter
     }
     private fun RLCommentThumbUiSet(cardData: RLTextOverview, inlayMain: RlLayoutFeedListBinding) {
         RLcommonDataSet(cardData, inlayMain)
@@ -148,13 +132,11 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
         layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(classType))
         layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.timestamp.toLong()))
 
-
         if (currentUser.equals(cardData.userid)){
             layoutBinding.imgThreedot.visibility=View.VISIBLE
         }else{
             layoutBinding.imgThreedot.visibility=View.GONE
         }
-
 
         Glide.with(requireContext()).load(cardData.avatar)
             .placeholder(R.drawable.sample_user)
@@ -168,7 +150,6 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
         }else{
             Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgNain)
         }
-
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calendar_today)
@@ -357,7 +338,6 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
 
-
     }
     private fun RLmindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding) {
 
@@ -369,7 +349,6 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment()  {
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_mind_read)
         layoutBinding.layCalories.txtTime.setText(R.string.relaxation)
         layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString())
-
 
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
         layoutBinding.laySteps.relativeCard.visibility=View.GONE

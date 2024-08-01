@@ -85,7 +85,33 @@ package com.example.myfirstapp.utils
         const val img_yourway_start = "https://video.revoola.com/v2/start/yourway_start.jpg"
         const val img_challenge_start = "https://video.revoola.com/v2/start/challenges_start.jpg"
         const val img_app_applehealth ="https://video.revoola.com/v2/images/_app_applehealth.png"
-        
+
+        //Challenges List
+        const val effort_custom_challenges ="effort-custom-challenges"
+        const val steps_custom_challenges ="steps-custom-challenges"
+        const val calories_custom_challenges ="calories-custom-challenges"
+        const val duration_custom_challenges ="duration-custom-challenges"
+        const val climbed_custom_challenges ="climbed-custom-challenges"
+        const val distance_custom_challenges ="distance-custom-challenges"
+        const val effort_daily_challenges ="effort-daily-challenges"
+        const val steps_daily_challenges ="steps-daily-challenges"
+        const val calories_daily_challenges ="calories-daily-challenges"
+        const val duration_daily_challenges ="duration-daily-challenges"
+        const val climbed_daily_challenges ="climbed-daily-challenges"
+        const val distance_daily_challenges ="distance-daily-challenges"
+        const val effort_weekly_challenges ="effort-weekly-challenges"
+        const val steps_weekly_challenges ="steps-weekly-challenges"
+        const val calories_weekly_challenges ="calories-weekly-challenges"
+        const val duration_weekly_challenges ="duration-weekly-challenges"
+        const val climbed_weekly_challenges ="climbed-weekly-challenges"
+        const val distance_weekly_challenges ="distance-weekly-challenges"
+        const val effort_monthly_challenges ="effort-monthly-challenges"
+        const val steps_monthly_challenges ="steps-monthly-challenges"
+        const val calories_monthly_challenges ="calories-monthly-challenges"
+        const val duration_monthly_challenges ="duration-monthly-challenges"
+        const val climbed_monthly_challenges ="climbed-monthly-challenges"
+        const val distance_monthly_challenges ="distance-monthly-challenges"
+
 
         //Weight Array
         val valuesUsPounds = arrayOf(
@@ -172,4 +198,54 @@ package com.example.myfirstapp.utils
             "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
             "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")
     }
+
+    /* else if (classType.equals(RLConstants.effort_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_monthly_challenges)){
+
+     }*/
 }

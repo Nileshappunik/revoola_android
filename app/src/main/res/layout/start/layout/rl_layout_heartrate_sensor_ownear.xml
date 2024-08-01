@@ -24,7 +24,7 @@
             android:layout_toEndOf="@+id/image_close"
             android:scaleType="centerCrop"
             app:shapeAppearance="@style/CornerRound"
-            android:src="@drawable/wellcome"/>
+            android:src="@drawable/sample_user"/>
 
         <TextView
             android:id="@+id/txt_count_number"

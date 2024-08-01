@@ -18,8 +18,8 @@
             android:padding="1dp">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_user"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/classes"/>
@@ -54,12 +54,11 @@
 
             <ImageView
                 android:id="@+id/img_threedot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/fd_options_gray"
+                android:layout_width="20dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_options_g"
                 android:layout_marginEnd="15dp"
                 android:layout_alignParentRight="true"
-                app:tint="@color/AppBottomGrayColor"
                 android:layout_below="@+id/txt_username"/>
 
             <TextView

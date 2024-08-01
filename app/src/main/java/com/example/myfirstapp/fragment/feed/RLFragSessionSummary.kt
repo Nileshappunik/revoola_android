@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -236,7 +235,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         //Main list set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.includeEffort.recycleAnalysis.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeEffort.recycleAnalysis.adapter = adapterdata
 
         fragBinding.includeEffort.txtTitleAnalysis.setOnClickListener {
@@ -265,7 +264,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         //Main list set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.includePace.recycleAnalysis.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includePace.recycleAnalysis.adapter = adapterdata
 
         fragBinding.includePace.txtTitleAnalysis.setOnClickListener {
@@ -294,7 +293,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         //Main list set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.includeSpeed.recycleAnalysis.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeSpeed.recycleAnalysis.adapter = adapterdata
 
         fragBinding.includeSpeed.txtTitleAnalysis.setOnClickListener {
@@ -324,7 +323,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         //Main list set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.includeElevation.recycleAnalysis.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeElevation.recycleAnalysis.adapter = adapterdata
 
         fragBinding.includeElevation.txtTitleAnalysis.setOnClickListener {
@@ -858,7 +857,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
     }

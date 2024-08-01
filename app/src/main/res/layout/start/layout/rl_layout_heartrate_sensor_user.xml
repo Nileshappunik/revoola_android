@@ -16,7 +16,7 @@
             android:layout_gravity="center_vertical"
             android:scaleType="centerCrop"
             app:shapeAppearance="@style/CornerRound"
-            android:src="@drawable/wellcome"/>
+            android:src="@drawable/sample_user"/>
 
 
         <ImageView

@@ -16,7 +16,7 @@
             android:layout_centerHorizontal="true"
             android:scaleType="fitXY"
             app:shapeAppearance="@style/CornerRound"
-            android:src="@drawable/wellcome"/>
+            android:src="@drawable/sample_user"/>
 
 
         <TextView

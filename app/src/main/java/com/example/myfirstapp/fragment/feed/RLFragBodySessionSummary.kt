@@ -221,7 +221,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         //Main list set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.includeEffort.recycleAnalysis.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeEffort.recycleAnalysis.adapter = adapterdata
 
         fragBinding.includeEffort.txtTitleAnalysis.setOnClickListener {
@@ -698,7 +698,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList,cardData)
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
     }

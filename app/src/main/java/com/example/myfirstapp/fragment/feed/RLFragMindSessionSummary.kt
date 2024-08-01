@@ -1,45 +1,22 @@
 package com.example.myfirstapp.fragment.feed
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionSummryListAdapter
-import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlFragMindSessionSummaryBinding
-import com.example.myfirstapp.databinding.RlFragSessionSummaryBinding
 import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
-import com.example.myfirstapp.enumclass.RLYourWayName
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedGroupNameAdapter
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedSessionEffortListAdapter
-import com.example.myfirstapp.fragment.feed.adapter.RLFeedSimpleAdapter
-import com.example.myfirstapp.fragment.feed.adapter.RLYourFriendYouListAdapter
-import com.example.myfirstapp.interfaceall.RLItemClickListener
-import com.example.myfirstapp.model.RLGroupCardModel
-import com.example.myfirstapp.model.RLSetGroupData
-import com.example.myfirstapp.model.RLSetGroupRequest
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -47,8 +24,6 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
-import org.json.JSONArray
-import org.json.JSONObject
 
 class RLFragMindSessionSummary : RLBaseFragment() {
     val TAG: String = RLFragMindSessionSummary::class.java.simpleName
@@ -141,7 +116,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
-        val adapterdata = RLFeedSessionSummryListAdapter(activity,dataList)
+        val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
     }

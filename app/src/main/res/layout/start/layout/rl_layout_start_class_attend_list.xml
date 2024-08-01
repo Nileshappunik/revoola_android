@@ -26,7 +26,7 @@
                 android:scaleType="fitXY"
                 android:layout_toEndOf="@+id/txt_srno"
                 app:shapeAppearance="@style/CornerRound"
-                android:src="@drawable/wellcome"/>
+                android:src="@drawable/sample_user"/>
 
             <ImageView
                 android:id="@+id/img_country_flag"

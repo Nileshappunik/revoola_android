@@ -215,7 +215,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             }
 
         }
-        layoutBinding.layoutComment.setOnClickListener {
+       /* layoutBinding.layoutComment.setOnClickListener {
             val bundle = Bundle()
             bundle.putSerializable(RLConstants.CardData, cardData)
             bundle.putString(RLConstants.TYPE, "Comment")
@@ -228,7 +228,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             bundle.putString(RLConstants.TYPE, "Thumb")
             (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, true)
 
-        }
+        }*/
         layoutBinding.imgThreedot.setOnClickListener {
             RLshowEditDeleteDialog(cardData)
         }
@@ -360,7 +360,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
 
-        if (classType!!.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
+        if (classType.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.laySteps.txtTime.setText(R.string.distance)
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance).toString())
