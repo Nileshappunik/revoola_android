@@ -360,8 +360,7 @@
     <string name="selectgroup">Select Group</string>
     <string name="selectgroupcaps">SELECT GROUP</string>
 
-    <string name="subscribedescription">Your account is currently a Free account to access this content please subscribe to Premium.</string>
-    <string name="subscribe">SUBSCRIBE</string>
+    <string name="subscribe">Subscribe</string>
     <string name="invitefriendorgrouptosession">Invite Friends or Groups to join  your session.</string>
     <string name="enternametosearch">Enter name to search</string>
     <string name="follow">Follow</string>
@@ -422,6 +421,9 @@
     <string name="addmembers">Add Members</string>
     <string name="privacypolicy">Privacy Policy</string>
     <string name="alert">Alert</string>
+    <string name="share">share</string>
+    <string name="subscribedescription">Your Account is currently a Free account to access this  content please subscribe to Premium</string>
+
 
 
 </resources>

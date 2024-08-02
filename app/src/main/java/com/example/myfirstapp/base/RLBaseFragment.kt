@@ -2,6 +2,7 @@ package com.example.myfirstapp
 
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -97,7 +98,16 @@ open class RLBaseFragment : Fragment() {
     }*/
 
     open fun RLcommonToast(message:String){
-        Toast.makeText(activity,message, Toast.LENGTH_SHORT).show()
+        try{
+            if (isAdded) {
+                context?.let {
+                    Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }catch (e:Exception){
+            Log.e(TAG1,"TOAST EXCEPTION:- ${e.message}")
+        }
+
     }
 
 

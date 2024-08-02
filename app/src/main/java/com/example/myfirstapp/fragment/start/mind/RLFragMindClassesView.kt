@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.start.mind
 
 import android.Manifest
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -11,6 +12,8 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -55,8 +58,18 @@ class RLFragMindClassesView : RLBaseFragment() {
         val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         fragBinding.layWorklog.visibility=View.GONE
         fragBinding.viewTimevideo.visibility=View.GONE
-        fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved)
         fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppTextGrayColor))
+
+        fragBinding.inlaySchdual.txtTitle.setText(R.string.schedule)
+        fragBinding.inlaySchdual.imgIcon.setImageResource(R.drawable.ic_calendar_today)
+        fragBinding.inlayDownload.txtTitle.setText(R.string.download)
+        fragBinding.inlayDownload.imgIcon.setImageResource(R.drawable.ic_download)
+        fragBinding.inlayFavourite.txtTitle.setText(R.string.favourite)
+        fragBinding.inlayFavourite.imgIcon.setImageResource(R.drawable.ic_saved)
+        fragBinding.linearLayout.weightSum = 3f
+        fragBinding.inlayShare.txtTitle.setText(R.string.share)
+        fragBinding.inlayShare.imgIcon.setImageResource(R.drawable.ic_share)
+        fragBinding.inlayShare.relativeCommon.visibility=View.GONE
 
         fragBinding.txtVideo.setText(audioVideoType)
         if (audioVideoType.equals("Video")){
@@ -78,12 +91,12 @@ class RLFragMindClassesView : RLBaseFragment() {
                     bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
                     (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
                 }
-                fragBinding.imgDownload.setOnClickListener {
+                fragBinding.inlayDownload.imgIcon.setOnClickListener {
                     videoLink=VideoData.videoLinkiPhonex.toString()
-                    if (checkPermissions()) {
-                        downloadVideo(VideoData.videoLinkiPhonex)
+                    if (RLCheckPermissions()) {
+                        RLDownloadVideo(VideoData.videoLinkiPhonex)
                     } else {
-                        requestPermissions()
+                        RLRequestPermissions()
                     }
                 }
             }
@@ -92,7 +105,8 @@ class RLFragMindClassesView : RLBaseFragment() {
     }
 
     private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
-        fragBinding.rlSchdual.setOnClickListener {
+        //RLshowSubscribeDialog()
+        fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,classtype)
@@ -107,7 +121,7 @@ class RLFragMindClassesView : RLBaseFragment() {
         fragBinding.txtTrainerName.setText(VideoData.instructor)
         fragBinding.txtTotalClass.setText(VideoData.instructorClasses+" CLASSES")
         fragBinding.txtVideoDescription.setText(VideoData.rideDescription)
-        fragBinding.txtMinutes.setText(VideoData.duration)
+        fragBinding.txtMinutes.setText(VideoData.duration+" CLASS")
         Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
             //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgTraner)
@@ -115,22 +129,22 @@ class RLFragMindClassesView : RLBaseFragment() {
             //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgMainBanner)
     }
-    private fun checkPermissions(): Boolean {
+    private fun RLCheckPermissions(): Boolean {
         val writePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return writePermission == PackageManager.PERMISSION_GRANTED
     }
-    private fun requestPermissions() {
+    private fun RLRequestPermissions() {
         ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadVideo(videoLink)
+                RLDownloadVideo(videoLink)
             }
         }
     }
-    private fun downloadVideo(url: String) {
+    private fun RLDownloadVideo(url: String) {
         val uniqueFileName = "video_${UUID.randomUUID()}.mp4"
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle("Downloading video")
@@ -142,6 +156,23 @@ class RLFragMindClassesView : RLBaseFragment() {
 
         val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
+    }
+
+    private fun RLshowSubscribeDialog() {
+        val sucDialog: Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_dialog_subscribe)
+        sucDialog.setCancelable(true)
+        val tvCancel: TextView = sucDialog.findViewById(R.id.tvCancel)
+        val tvSubscribe: TextView = sucDialog.findViewById(R.id.tvSubscribe)
+        tvCancel.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        tvSubscribe.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
 }

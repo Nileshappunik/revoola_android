@@ -155,7 +155,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
         dialogMainBinding.tvClose.setOnClickListener {
-            dialog.hide()
+            dialog.dismiss()
         }
 
         dialogMainBinding.laySartdate.txtHeader.setText(R.string.pleaseenterstartdate)

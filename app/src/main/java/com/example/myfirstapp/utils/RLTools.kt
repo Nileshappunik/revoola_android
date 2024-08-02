@@ -48,6 +48,19 @@ import kotlin.math.roundToInt
 
 
 object RLTools {
+
+    fun View.RLadjustWidthToHeight() {
+        this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val height = this@RLadjustWidthToHeight.height
+                if (height > 0) {
+                    this@RLadjustWidthToHeight.layoutParams.width = height
+                    this@RLadjustWidthToHeight.requestLayout()
+                    this@RLadjustWidthToHeight.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            }
+        })
+    }
     fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = act.window

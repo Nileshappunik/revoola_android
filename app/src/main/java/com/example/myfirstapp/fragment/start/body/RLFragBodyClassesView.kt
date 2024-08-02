@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.start.body
 
 import android.Manifest
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -11,6 +12,8 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -56,7 +59,22 @@ class RLFragBodyClassesView : RLBaseFragment() {
         val ride=  requireArguments().getBoolean("Ride")
         fragBinding.layWorklog.visibility=View.VISIBLE
         fragBinding.viewTimevideo.visibility=View.VISIBLE
-        fragBinding.imgFavourite.setImageResource(R.drawable.ic_saved_gray)
+
+        fragBinding.inlayWarmup.txtSubtitle.setText(R.string.warmup)
+        fragBinding.inlayWarmup.imgIcon.setImageResource(R.drawable.ic_warmuptime)
+        fragBinding.inlayWorkout.txtSubtitle.setText(R.string.workoutcaps)
+        fragBinding.inlayWorkout.imgIcon.setImageResource(R.drawable.ic_work_time)
+        fragBinding.inlayCooldown.txtSubtitle.setText(R.string.cooldown)
+        fragBinding.inlayCooldown.imgIcon.setImageResource(R.drawable.ic_cooldown_time)
+
+        fragBinding.inlaySchdual.txtTitle.setText(R.string.schedule)
+        fragBinding.inlaySchdual.imgIcon.setImageResource(R.drawable.ic_calendar_today)
+        fragBinding.inlayDownload.txtTitle.setText(R.string.download)
+        fragBinding.inlayDownload.imgIcon.setImageResource(R.drawable.ic_download)
+        fragBinding.inlayFavourite.txtTitle.setText(R.string.favourite)
+        fragBinding.inlayFavourite.imgIcon.setImageResource(R.drawable.ic_saved)
+        fragBinding.inlayShare.txtTitle.setText(R.string.share)
+        fragBinding.inlayShare.imgIcon.setImageResource(R.drawable.ic_share)
 
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLRevoolaVideosRead(videoID){ data, error ->
@@ -72,12 +90,12 @@ class RLFragBodyClassesView : RLBaseFragment() {
                     bundle.putBoolean("Ride",ride)
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassSensorChooes().newInstance(bundle), TAG, true,null, false)
                 }
-                fragBinding.imgDownload.setOnClickListener {
+                fragBinding.inlayDownload.imgIcon.setOnClickListener {
                     videoLink=VideoData.videoLinkiPhonex.toString()
-                    if (checkPermissions()) {
-                        downloadVideo(VideoData.videoLinkiPhonex)
+                    if (RLcheckPermissions()) {
+                        RLDownloadVideo(VideoData.videoLinkiPhonex)
                     } else {
-                        requestPermissions()
+                        RlrequestPermissions()
                     }
                 }
             }
@@ -85,7 +103,8 @@ class RLFragBodyClassesView : RLBaseFragment() {
 
     }
     private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
-        fragBinding.rlSchdual.setOnClickListener {
+        fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
+            //RLshowSubscribeDialog()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,classtype)
@@ -98,13 +117,13 @@ class RLFragBodyClassesView : RLBaseFragment() {
         fragBinding.txtVideoTitle.setText(VideoData.rideTitle)
         fragBinding.txtNamewith.setText(VideoData.instructor)
         fragBinding.txtTrainerName.setText(VideoData.instructor)
-        fragBinding.txtMinutes.setText(VideoData.duration)
+        fragBinding.txtMinutes.setText(VideoData.duration+" CLASS")
         fragBinding.txtVideoDescription.setText(VideoData.rideDescription)
         fragBinding.txtTotalClass.setText(VideoData.instructorClasses+" CLASSES")
 
-        fragBinding.txtWarmupMinutes.setText(VideoData.minwarmup+" MIN")
-        fragBinding.txtCooldownMinutes.setText(VideoData.mincooldown+" MIN")
-        fragBinding.txtWorkoutMinutes.setText(VideoData.mininstruction+" MIN")
+        fragBinding.inlayWarmup.txtTitle.setText(VideoData.minwarmup+" MIN")
+        fragBinding.inlayCooldown.txtTitle.setText(VideoData.mincooldown+" MIN")
+        fragBinding.inlayWorkout.txtTitle.setText(VideoData.mininstruction+" MIN")
 
         Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
             //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
@@ -126,22 +145,22 @@ class RLFragBodyClassesView : RLBaseFragment() {
         }
 
     }
-    private fun checkPermissions(): Boolean {
+    private fun RLcheckPermissions(): Boolean {
         val writePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return writePermission == PackageManager.PERMISSION_GRANTED
     }
-    private fun requestPermissions() {
+    private fun RlrequestPermissions() {
         ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadVideo(videoLink)
+                RLDownloadVideo(videoLink)
             }
         }
     }
-    private fun downloadVideo(url: String) {
+    private fun RLDownloadVideo(url: String) {
         val uniqueFileName = "video_${UUID.randomUUID()}.mp4"
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle("Downloading video")
@@ -153,5 +172,22 @@ class RLFragBodyClassesView : RLBaseFragment() {
 
         val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
+    }
+
+    private fun RLshowSubscribeDialog() {
+        val sucDialog: Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_dialog_subscribe)
+        sucDialog.setCancelable(true)
+        val tvCancel: TextView = sucDialog.findViewById(R.id.tvCancel)
+        val tvSubscribe: TextView = sucDialog.findViewById(R.id.tvSubscribe)
+        tvCancel.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        tvSubscribe.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 }

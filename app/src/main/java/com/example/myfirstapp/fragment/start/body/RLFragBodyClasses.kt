@@ -106,35 +106,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         dialogMainBinding.cardTakenbyme.txtCardTitle.setText(R.string.takenbyme)
         dialogMainBinding.cardClasstype.txtCardTitle.setText(R.string.classtype)
 
-        dialogMainBinding.cardInstructor.txtCardTitle.setOnClickListener {
-            dialogMainBinding.cardInstructor.lay1.visibility=View.VISIBLE
-            dialogMainBinding.cardInstructor.lay2.visibility=View.VISIBLE
-            dialogMainBinding.cardInstructor.txtSubtitle4.visibility=View.GONE
-            dialogMainBinding.cardInstructor.txtSubtitle3.setText("Marcus Bain")
-        }
 
-        dialogMainBinding.cardDuration.txtCardTitle.setOnClickListener {
-            dialogMainBinding.cardDuration.lay1.visibility=View.VISIBLE
-            dialogMainBinding.cardDuration.lay2.visibility=View.VISIBLE
-            dialogMainBinding.cardDuration.lay3.visibility=View.VISIBLE
-            dialogMainBinding.cardDuration.lay4.visibility=View.VISIBLE
-
-            dialogMainBinding.cardDuration.txtSubtitle1.setText("6")
-            dialogMainBinding.cardDuration.txtSubtitle2.setText("7")
-            dialogMainBinding.cardDuration.txtSubtitle3.setText("8")
-            dialogMainBinding.cardDuration.txtSubtitle4.setText("9")
-        }
-        dialogMainBinding.cardTakenbyme.txtCardTitle.setOnClickListener {
-            dialogMainBinding.cardTakenbyme.lay1.visibility=View.VISIBLE
-            dialogMainBinding.cardTakenbyme.txtSubtitle1.setText(R.string.takenbyme)
-            dialogMainBinding.cardTakenbyme.txtSubtitle2.visibility=View.GONE
-        }
-        dialogMainBinding.cardClasstype.txtCardTitle.setOnClickListener {
-            dialogMainBinding.cardClasstype.lay1.visibility=View.VISIBLE
-            dialogMainBinding.cardClasstype.txtSubtitle1.setText("Video")
-            dialogMainBinding.cardClasstype.txtSubtitle2.setText("Audio")
-
-        }
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
         }

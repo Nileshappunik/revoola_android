@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:text="@string/subscribedescription"
         android:layout_margin="16dp"
-        android:fontFamily="@font/omnes_semibold_regular"
+        android:textStyle="bold"
+        android:fontFamily="@font/omnes_regular"
         android:textSize="18sp"
         android:textColor="@color/AppBlackColor"
         android:gravity="center"/>
@@ -22,13 +23,13 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="20dp"
-        android:background="@color/AppDarkGrayColor" />
+        android:background="@color/AppBlack10Color" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:weightSum="2"
-        android:background="@color/AppDarkGrayColor"
+        android:background="@color/AppBlack10Color"
         android:orientation="horizontal">
 
         <TextView
@@ -37,11 +38,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/subscribe"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/omnes_regular"
             android:background="@color/AppWhiteColor"
             android:textSize="18sp"
+            android:textStyle="bold"
             android:layout_marginEnd="1dp"
-            android:textColor="@color/AppMainColor"
+            android:textColor="@color/AppZone4Color"
             android:gravity="center"/>
 
         <TextView
@@ -49,11 +51,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/cancel"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:text="@string/cancelsmall"
+            android:fontFamily="@font/omnes_regular"
             android:textSize="18sp"
+            android:textStyle="bold"
             android:background="@color/AppWhiteColor"
-            android:textColor="@color/AppMainColor"
+            android:textColor="@color/AppZone4Color"
             android:gravity="center"/>
 
     </LinearLayout>

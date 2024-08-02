@@ -49,46 +49,6 @@ class RLFragYourWay : RLBaseFragment() {
             }
         })
     }
-    private fun RLuisetup(dataList: List<RLStartAllMenuModel>,height: Int) {
-
-         fragBinding.inlayWalk.imgType.RLadjustWidthToHeight()
-         fragBinding.inlayRun.imgType.RLadjustWidthToHeight()
-         fragBinding.inlayRide.imgType.RLadjustWidthToHeight()
-         fragBinding.inlayWorkout.imgType.RLadjustWidthToHeight()
-
-         fragBinding.inlayWalk.txtTypename.setText(dataList[0].title)
-         fragBinding.inlayWalk.txtDescription.setText(dataList[0].description)
-         Glide.with(requireContext()).load(dataList[0].img).into(fragBinding.inlayWalk.imgType)
-         fragBinding.inlayWalk.imgTypeicon.loadSvg(dataList[0].type)
-
-         fragBinding.inlayRun.txtTypename.setText(dataList[1].title)
-         fragBinding.inlayRun.txtDescription.setText(dataList[1].description)
-         Glide.with(requireContext()).load(dataList[1].img).into(fragBinding.inlayRun.imgType)
-         fragBinding.inlayRun.imgTypeicon.loadSvg(dataList[1].type)
-
-         fragBinding.inlayRide.txtTypename.setText(dataList[2].title)
-         fragBinding.inlayRide.txtDescription.setText(dataList[2].description)
-         Glide.with(requireContext()).load(dataList[2].img).into(fragBinding.inlayRide.imgType)
-         fragBinding.inlayRide.imgTypeicon.loadSvg(dataList[2].type)
-
-         fragBinding.inlayWorkout.txtTypename.setText(dataList[3].title)
-         fragBinding.inlayWorkout.txtDescription.setText(dataList[3].description)
-         Glide.with(requireContext()).load(dataList[3].img).into(fragBinding.inlayWorkout.imgType)
-         fragBinding.inlayWorkout.imgTypeicon.loadSvg(dataList[3].type)
-
-         fragBinding.inlayWalk.relayStartNew.setOnClickListener {
-             RLNextViewOpen("Walk")
-         }
-         fragBinding.inlayRun.relayStartNew.setOnClickListener {
-             RLNextViewOpen("Run")
-         }
-         fragBinding.inlayRide.relayStartNew.setOnClickListener {
-             RLNextViewOpen("Ride")
-         }
-         fragBinding.inlayWorkout.relayStartNew.setOnClickListener {
-             RLNextViewOpen("Workout")
-         }
-    }
 
     private fun RLYourwayList(height: Int) {
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
@@ -118,24 +78,4 @@ class RLFragYourWay : RLBaseFragment() {
          }
     }
 
-    fun RLNextViewOpen(name:String){
-         var bundle: Bundle = Bundle()
-         bundle.putString("YourWayType",name)
-         (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-         (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, true)
-
-    }
-
-    fun View.RLadjustWidthToHeight() {
-         this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-             override fun onGlobalLayout() {
-                 val height = this@RLadjustWidthToHeight.height
-                 if (height > 0) {
-                     this@RLadjustWidthToHeight.layoutParams.width = height
-                     this@RLadjustWidthToHeight.requestLayout()
-                     this@RLadjustWidthToHeight.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                 }
-             }
-         })
-    }
 }

@@ -658,7 +658,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         //dialog.window?.setBackgroundDrawable(getDrawable(R.drawable.rounded_dialog_background))
 
         dialogMainBinding.tvClose.setOnClickListener {
-            dialog.hide()
+            dialog.dismiss()
         }
 
 

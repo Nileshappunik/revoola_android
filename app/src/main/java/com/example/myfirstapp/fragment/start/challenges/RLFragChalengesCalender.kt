@@ -183,7 +183,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
         dialogMainBinding.tvClose.setOnClickListener {
-            dialog.hide()
+            dialog.dismiss()
         }
 
         dialogMainBinding.laySartdate.txtHeader.setText(R.string.pleaseenterstartdate)
@@ -384,6 +384,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val lastDayOfMonth = calendar.time
 
         val dateIterator = Calendar.getInstance()
+
         dateIterator.time = firstDayOfMonth
         val date = dateIterator.time
         if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {

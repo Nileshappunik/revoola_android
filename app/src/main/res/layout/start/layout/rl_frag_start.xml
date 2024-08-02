@@ -14,44 +14,6 @@
             android:id="@+id/inlayTop"
             layout="@layout/rl_layout_common_start_top"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/all_menu_start_margin"
-            android:layout_marginEnd="@dimen/all_menu_end_margin"
-            android:layout_marginBottom="@dimen/all_menu_bottom_margin"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:weightSum="4">
-            <include
-                android:id="@+id/inlay_mindclass"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_bodyclass"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_yourway"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_challenges"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-        </LinearLayout>
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

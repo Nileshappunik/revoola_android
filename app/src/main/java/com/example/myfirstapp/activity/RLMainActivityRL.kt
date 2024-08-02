@@ -48,32 +48,32 @@ class RLMainActivityRL  : RLBaseActivity() {
                 R.id.overview -> {
                     activityMainBinding.bottomNav.setBackgroundResource(R.color.AppNEWBGColor)
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragOverview(), TAG, true, RLFragOverview::class.java.simpleName, false)
+                    RLloadFrag(RLFragOverview(), TAG, false, null, false)
                     true
                 }
                 R.id.feed -> {
                     RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragFeed(), TAG, true, RLFragFeed::class.java.simpleName, false)
+                    RLloadFrag(RLFragFeed(), TAG, false, null, false)
                     true
                 }
                 R.id.start -> {
                     RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                   RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+                   RLloadFrag(RLFragStart(), TAG, false, null, false)
 
                     true
                 }
                 R.id.friends -> {
                     RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragFriends(), TAG, true, RLFragFriends::class.java.simpleName, false)
+                    RLloadFrag(RLFragFriends(), TAG, false, null, false)
                     true
                 }
                 R.id.more -> {
                     RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragMore(), TAG, true, RLFragMore::class.java.simpleName, false)
+                    RLloadFrag(RLFragMore(), TAG, false, null, false)
                     true
                 }
                 else -> {
@@ -179,44 +179,5 @@ class RLMainActivityRL  : RLBaseActivity() {
                 super.onBackPressed()
             }
         }
-    }
-
-    private fun showDialog(type: String, schedule: String) {
-        sucDialog = Dialog(activity)
-        sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        if (schedule == RLConstants.SCHEDULE) {
-            sucDialog!!.setContentView(R.layout.rl_layout_dailog)
-        }
-        sucDialog!!.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(sucDialog!!.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val tvNo: TextView = sucDialog!!.findViewById(R.id.tvNo)
-        val tvYes: TextView = sucDialog!!.findViewById(R.id.tvYes)
-
-        if(type.equals(RLConstants.EXIT)) {
-            val tvSubTitle: TextView = sucDialog!!.findViewById(R.id.tvSubTitle)
-            val tvTitle: TextView = sucDialog!!.findViewById(R.id.tvTitle)
-
-            tvTitle.RLText = resources.getString(R.string.exit)
-            tvSubTitle.RLText = resources.getString(R.string.exit_app1)
-        }
-
-        tvNo.setOnClickListener(View.OnClickListener {
-            sucDialog!!.dismiss()
-        })
-
-        tvYes.setOnClickListener(View.OnClickListener {
-            if (type.equals(RLConstants.LOGOUT_D)) {
-                sucDialog!!.dismiss()
-                // logoutapicall()
-            }else if (type.equals(RLConstants.EXIT)){
-                sucDialog!!.dismiss()
-                finishAffinity()
-            }
-        })
-        sucDialog!!.show()
-        sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }*/
 }

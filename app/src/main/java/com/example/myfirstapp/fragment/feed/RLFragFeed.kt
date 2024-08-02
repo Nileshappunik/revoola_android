@@ -49,17 +49,17 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
     //val valueslist = arrayOf("Friends", "Groups","You","Challenges")
-    val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
-    var adapter : RLFeedListAdapter?=null
+    private val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
+    private var adapter : RLFeedListAdapter?=null
     private var clickyou:Boolean=false
     private var currentState:String="FRIENDS"
 
     private var isLoading = false
-    var  limit = 10
-    var index=0
-    var currentUser:String=""
-    var GroupId:String="w2p8SQCvE3emjEEDo66f02eF6fG2_friends"
-    var lastfragmentopen=""
+    private var  limit = 10
+    private var index=0
+    private var currentUser:String=""
+    private var GroupId:String="w2p8SQCvE3emjEEDo66f02eF6fG2_friends"
+    private var lastfragmentopen=""
 
     private val binding by lazy {
         RlFragFeedBinding.inflate(layoutInflater)
@@ -264,24 +264,18 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         }
     }
     fun RLgroupnamelistdialogopen(newData: List<RLGroupCardModel>) {
-        val  dialog: Dialog = Dialog(requireContext())
+        val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_group_name)
         dialog.setCancelable(true)
         dialog.window?.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
+            WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
 
-       /* val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT*/
-        val recyclerSelectAssign =  dialog.findViewById(R.id.listItems) as RecyclerView
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
+        val recyclerSelectAssign = dialog.findViewById(R.id.listItems) as RecyclerView
+        val btClear: TextView = dialog.findViewById(R.id.txtx_cancle)
         val linearLayoutManager = LinearLayoutManager(context)
         recyclerSelectAssign.layoutManager = linearLayoutManager
-        val  dialogAdapter = RLFeedGroupNameAdapter(requireActivity(),false)
+        val dialogAdapter = RLFeedGroupNameAdapter(requireActivity(), false)
         recyclerSelectAssign.adapter = dialogAdapter
         dialogAdapter.RLaddData(newData)
         dialogAdapter.seOnClickListners(object : RLFeedGroupNameAdapter.ClickListner {
@@ -290,9 +284,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 dialog.dismiss()
                 if (RLApiClientRetrofit.RLisConnected()) {
                     //Detail Api
-                    GroupId=selectionID
-                     RLfirsttimeApiCall(selectionID)
-                     RlGroupNameSetTitle(selectioncName,true)
+                    GroupId = selectionID
+                    RLfirsttimeApiCall(selectionID)
+                    RlGroupNameSetTitle(selectioncName, true)
                 }
             }
         })

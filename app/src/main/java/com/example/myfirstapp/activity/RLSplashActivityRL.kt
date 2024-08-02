@@ -30,8 +30,8 @@ class RLSplashActivityRL : RLBaseActivity() {
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
         RLlocatiobpermissioncheck()
         // Initialize Firebase
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        FirebaseApp.initializeApp(this)
+//        FirebaseApp.initializeApp(this)
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
        val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){

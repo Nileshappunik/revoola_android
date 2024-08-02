@@ -12,44 +12,6 @@
         <include
             android:id="@+id/inlayTop"
             layout="@layout/rl_layout_common_start_top"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/all_menu_start_margin"
-            android:layout_marginEnd="@dimen/all_menu_end_margin"
-            android:layout_marginBottom="@dimen/all_menu_bottom_margin"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:weightSum="4">
-            <include
-                android:id="@+id/inlay_findonRevoola"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_yourFriend"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_YourGroup"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-            <include
-                android:id="@+id/inlay_invitetoJoin"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/all_menu_top_margin"
-                layout="@layout/rl_layout_start_menu"/>
-        </LinearLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -58,97 +20,8 @@
                 android:id="@+id/rv_friend"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-
         </RelativeLayout>
-       <!-- old Design Below-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/AppWhiteColor"
-            android:visibility="gone"
-            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txt_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/friend"
-                android:textColor="@color/AppBlackColor"
-                android:textSize="22sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-
-            <LinearLayout
-                android:id="@+id/lay_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txt_name"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp">
-                <include
-                    android:id="@+id/lay_findonrevolla"
-                    layout="@layout/rl_common_image_text_image" />
-                <include
-                    android:id="@+id/lay_your_friend"
-                    layout="@layout/rl_common_image_text_image" />
-                <include
-                    android:id="@+id/lay_your_group"
-                    layout="@layout/rl_common_image_text_image" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txt_invitefriend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="30dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:background="@drawable/login_btn"
-                android:backgroundTint="@color/AppMainColor"
-                android:padding="5dp"
-                android:text="@string/invitefriends"
-                android:textColor="@color/AppWhiteColor"
-                android:textSize="@dimen/text_title_size"
-                android:fontFamily="@font/omnes_regular" />
-
-            <TextView
-                android:id="@+id/txt_invitefriend_revolla"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/txt_invitefriend"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
-                android:text="@string/invitefriendsnotonyet"
-                android:textColor="@color/AppTextGrayColor"
-                android:textSize="@dimen/text_size"
-                android:fontFamily="@font/omnes_regular" />
-
-            <TextView
-                android:id="@+id/txt_invitefriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/txt_invitefriend_revolla"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:text="@string/invitefriends"
-                android:textColor="@color/AppBlackColor"
-                android:textSize="@dimen/text_title_size"
-                android:fontFamily="@font/omnes_regular" />
-
-            <ImageView
-                android:id="@+id/img_invitefriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/fr_groups_green"
-                android:layout_above="@+id/txt_invitefriends"
-                android:layout_centerHorizontal="true"/>
-
-        </RelativeLayout>
     </LinearLayout>
 
 
