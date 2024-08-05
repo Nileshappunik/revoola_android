@@ -100,7 +100,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             bundle.putString("ChallengeType",challengeType )
             bundle.putString("CalenderType",calenderType )
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            //(context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
         }
 
     }
@@ -306,7 +306,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
     }
 
     private fun RLupdateMonthYearTextView(monthYearTextView: TextView, calendar: Calendar) {
-        val dateFormat = SimpleDateFormat("MMMM, yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("MMM, yyyy", Locale.getDefault())
         val monthYear = dateFormat.format(calendar.time)
         monthYearTextView.text = monthYear
     }

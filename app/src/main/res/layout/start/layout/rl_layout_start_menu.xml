@@ -7,8 +7,8 @@
         android:id="@+id/relay_start_new"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:paddingBottom="30dp">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_type"
@@ -18,14 +18,23 @@
             android:layout_marginEnd="20dp"
             app:shapeAppearanceOverlay="@style/CornerCutfive"/>
 
+    <RelativeLayout
+        android:id="@+id/relay_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true">
+
         <ImageView
             android:id="@+id/img_right"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="5dp"
-            android:src="@drawable/ic_chevron_right"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_chevron_right"/>
+
+    </RelativeLayout>
+
+
 
         <ImageView
             android:id="@+id/img_typeicon"
@@ -42,7 +51,7 @@
             android:fontFamily="@font/omnes_semibold_regular"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/img_typeicon"
-            android:layout_toStartOf="@+id/img_right"
+            android:layout_toStartOf="@+id/relay_right"
             android:textColor="@color/AppBlackColor"/>
 
         <TextView
@@ -52,7 +61,7 @@
             android:textSize="14sp"
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/img_type"
-            android:layout_toStartOf="@+id/img_right"
+            android:layout_toStartOf="@+id/relay_right"
             android:layout_below="@+id/txt_typename"
             android:textColor="@color/AppBlackColor"
             android:fontFamily="@font/omnes_regular"/>

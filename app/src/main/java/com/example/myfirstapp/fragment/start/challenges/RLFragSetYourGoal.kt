@@ -62,19 +62,24 @@ class RLFragSetYourGoal : RLBaseFragment() {
             fragBinding.txtHeader.setText(R.string.stepsmall)
         }else if (challengeType.equals("Effort")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
-            fragBinding.txtHeader.setText(R.string.revoolaeffortscore)
+            //fragBinding.txtHeader.setText(R.string.revoolaeffortscore)
+            fragBinding.txtHeader.setText(R.string.effort)
         }else if (challengeType.equals("Calories")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
-            fragBinding.txtHeader.setText(R.string.caloriessmallkcal)
+           // fragBinding.txtHeader.setText(R.string.caloriessmallkcal)
+            fragBinding.txtHeader.setText(R.string.calories)
         }else if (challengeType.equals("Distance")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
-            fragBinding.txtHeader.setText(R.string.distancesmallkm)
+           // fragBinding.txtHeader.setText(R.string.distancesmallkm)
+            fragBinding.txtHeader.setText(R.string.distance)
         }else if (challengeType.equals("Climbed")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
-            fragBinding.txtHeader.setText(R.string.climbedm)
+           // fragBinding.txtHeader.setText(R.string.climbedm)
+            fragBinding.txtHeader.setText(R.string.climbed)
         }else if (challengeType.equals("Duration")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-            fragBinding.txtHeader.setText(R.string.durationh)
+           // fragBinding.txtHeader.setText(R.string.durationh)
+            fragBinding.txtHeader.setText(R.string.duration)
         }
 
         RLTools.RLheightsetstartimage(fragBinding.relayDaily.cardChalengesst,requireActivity())

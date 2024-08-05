@@ -28,9 +28,7 @@ import com.example.myfirstapp.utils.loadSvg
 class RLStartListAdapter(
     val context: FragmentActivity?,
     val dataList: List<RLStartAllMenuModel>,
-   val heightTotal: Int
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+   val heightTotal: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartListAdapter"
     var bundle: Bundle = Bundle()
 
@@ -64,6 +62,7 @@ class RLStartListAdapter(
             val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayStartNew.layoutParams
             layoutParams.height =  heightTotal/4
             layoutBinding.relayStartNew.layoutParams =layoutParams
+
 
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams

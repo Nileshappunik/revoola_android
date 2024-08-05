@@ -94,6 +94,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx:21.1.0")
     implementation ("com.google.firebase:firebase-storage:20.1.0")
     implementation(platform("com.google.firebase:firebase-bom:29.3.0"))
+    implementation ("com.google.firebase:firebase-config-ktx:21.1.1")
 
     implementation ("com.squareup.retrofit2:retrofit:2.5.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.5.0")

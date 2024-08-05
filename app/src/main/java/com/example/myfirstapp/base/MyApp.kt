@@ -1,8 +1,13 @@
 package com.example.myfirstapp.base
 
 import android.app.Application
+import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+
 class MyApp : Application() {
 
     override fun onCreate() {
@@ -13,5 +18,9 @@ class MyApp : Application() {
         // Enable Firebase Database persistence
         val database = FirebaseDatabase.getInstance()
         database.setPersistenceEnabled(true)
+
+
     }
 }
+
+

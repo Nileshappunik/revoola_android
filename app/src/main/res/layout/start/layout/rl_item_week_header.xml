@@ -12,7 +12,7 @@
         android:textColor="@color/AppBlackColor"
         android:text="M"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -22,7 +22,7 @@
         android:textColor="@color/AppBlackColor"
         android:text="T"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -32,7 +32,7 @@
         android:textColor="@color/AppBlackColor"
         android:text="W"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -42,7 +42,7 @@
         android:textColor="@color/AppBlackColor"
         android:text="T"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -52,7 +52,7 @@
         android:textColor="@color/AppBlackColor"
         android:text="F"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -62,7 +62,7 @@
         android:text="S"
         android:textColor="@color/AppBlackColor"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="0dp"
@@ -72,5 +72,5 @@
         android:textColor="@color/AppBlackColor"
         android:text="S"
         android:textStyle="bold"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 </LinearLayout>

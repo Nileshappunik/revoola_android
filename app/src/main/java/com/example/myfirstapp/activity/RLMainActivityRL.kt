@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -22,6 +23,9 @@ import com.example.myfirstapp.fragment.friends.RLFragFriends
 import com.example.myfirstapp.fragment.more.RLFragMore
 import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.fragment.start.RLFragStart
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 class RLMainActivityRL  : RLBaseActivity() {
     val TAG: String = RLMainActivityRL::class.java.simpleName
@@ -42,6 +46,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
         RLchepermissionphysicalActivity()
+
 
         activityMainBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -83,6 +88,8 @@ class RLMainActivityRL  : RLBaseActivity() {
             }
         }
     }
+
+
 
     private fun RLresizeDrawable(drawableId: Int, size: Int): Drawable? {
         val drawable = ContextCompat.getDrawable(this, drawableId)

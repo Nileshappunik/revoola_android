@@ -21,87 +21,28 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/square_border_black"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
-
-                    <LinearLayout
-                        android:id="@+id/lay_help_challenges"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:id="@+id/img_help_challenges"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginStart="30dp"
-                            android:src="@drawable/fd_steps_green"/>
-
-                        <TextView
-                            android:id="@+id/txt_header"
-                            android:layout_width="match_parent"
-                            android:layout_height="60dp"
-                            android:textSize="16sp"
-                            android:gravity="center_vertical"
-                            android:layout_marginStart="15dp"
-                            android:layout_marginTop="20dp"
-                            android:textAllCaps="true"
-                            android:text="@string/stepsmall"
-                            android:fontFamily="@font/omnes_semibold_regular"
-                            android:textColor="@color/AppBlackColor"/>
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/edt_step_count"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="70dp"
-                        android:textSize="14sp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:textAlignment="center"
-                        android:fontFamily="@font/omnes_regular"
-                        android:inputType="numberDecimal"
-                        android:hint="eg 100,000"
-                        android:background="@drawable/square_border_offwhite"
-                        android:layout_below="@+id/lay_help_challenges"
-                        android:textColor="@color/AppBlackColor"/>
-
-                </RelativeLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:weightSum="2"
-                    android:layout_marginTop="10dp"
                     android:orientation="horizontal">
                     <include
-                        android:id="@+id/relay_daily"
+                        android:id="@+id/relay_you"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="15dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:visibility="visible"
                         layout="@layout/rl_common_challenges_type_card"/>
                     <include
-                        android:id="@+id/relay_weekly"
+                        android:id="@+id/relay_friends"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="15dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:visibility="visible"
                         layout="@layout/rl_common_challenges_type_card"/>
@@ -112,7 +53,7 @@
                     android:weightSum="2"
                     android:orientation="horizontal">
                     <include
-                        android:id="@+id/relay_monthly"
+                        android:id="@+id/relay_group"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -123,7 +64,7 @@
                         android:visibility="visible"
                         layout="@layout/rl_common_challenges_type_card"/>
                     <include
-                        android:id="@+id/relay_custom"
+                        android:id="@+id/relay_group_v_group"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

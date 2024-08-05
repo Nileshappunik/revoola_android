@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -12,8 +13,11 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databinding.RlActivitySplashBinding
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 class RLSplashActivityRL : RLBaseActivity() {
     val TAG: String = RLSplashActivityRL::class.java.simpleName
@@ -32,6 +36,7 @@ class RLSplashActivityRL : RLBaseActivity() {
         // Initialize Firebase
 //        FirebaseApp.initializeApp(this)
 //        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        RLRemoteConfig()
         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
        val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){
@@ -48,6 +53,30 @@ class RLSplashActivityRL : RLBaseActivity() {
             finish()
            // startActivity(Intent(this, RLSignUpActivityRL::class.java))
         }
+    }
+
+    private fun RLRemoteConfig() {
+
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
+        // Set default values
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600) // 1 hour
+            .build()
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(R.xml.rlremote_config_defaults)
+        remoteConfig.fetchAndActivate()
+            .addOnCompleteListener(this,OnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val updated = task.result
+                    Log.e(TAG, "Config params updated: $updated")
+                    val message = remoteConfig.getString("test")
+                    Log.e(TAG, "message: $message")
+                } else {
+                    Log.e(TAG, "Fetch failed")
+                }
+
+            })
     }
 
     fun RLlocatiobpermissioncheck(){
