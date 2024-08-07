@@ -102,8 +102,8 @@ class RLFragYourGroup : RLBaseFragment() {
             }
         }
         fragBinding.tvCreateClick.setOnClickListener {
-           //GROUP CREATE IMPLEMENT
-            //rvSelectedFriend
+           //Friend CREATE IMPLEMENT
+
         }
     }
     private fun RLfriendsApiCall() {

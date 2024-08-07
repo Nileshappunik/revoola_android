@@ -1,4 +1,4 @@
-package com.example.myfirstapp.fragment.start.challenges.model
+package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
 import android.content.pm.ActivityInfo
@@ -11,20 +11,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlDialogHelpChallengesForBinding
-import com.example.myfirstapp.databinding.RlDialogHelpSetyourgoalBinding
-import com.example.myfirstapp.databinding.RlFragChallengesForBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForNameBinding
-import com.example.myfirstapp.databinding.RlFragSetYourGoalBinding
 import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.utils.RLTools
 
 class RLFragChallengesForName : RLBaseFragment() {
     val TAG: String = RLFragChallengesForName::class.java.simpleName

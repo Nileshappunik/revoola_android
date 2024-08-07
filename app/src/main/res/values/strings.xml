@@ -429,6 +429,11 @@
     <string name="nameyourchallenge">Name Your Challenge</string>
     <string name="setchallenge">Set Challenge</string>
     <string name="selectfriends">Select friends</string>
+    <string name="select">Select</string>
+    <string name="enternamehere">Enter name here</string>
+    <string name="individualtarget">Individual Target</string>
+    <string name="sharedtarget">Shared Target</string>
+    <string name="individualorsharedtarget">Individual or shared Target?</string>
 
 
 </resources>

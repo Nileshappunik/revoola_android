@@ -6,6 +6,16 @@
         android:layout_width="match_parent"
         android:layout_height="100dp">
 
+        <CheckBox
+            android:id="@+id/checkbox_friend"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:button="@drawable/custom_checkbox"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"/>
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_group"
             android:layout_width="35dp"

@@ -27,6 +27,8 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
+
+
     <application
         android:name=".base.MyApp"
         android:allowBackup="true"
@@ -43,6 +45,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
 
