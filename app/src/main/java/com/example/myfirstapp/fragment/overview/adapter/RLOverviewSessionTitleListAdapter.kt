@@ -46,19 +46,37 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
             val itemres = titleList[position]
             layoutBinding.txtTitleSession.setText(itemres.toUpperCase().toString())
             //layoutBinding.viewSession.width=layoutBinding.txtTitleSession.width
-            if (texttypeset.equals(itemres)){
-                layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
-                layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+
+            if (texttypeset.equals("OVERVIEW")){
+                if (texttypeset.equals(itemres)){
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+                }else{
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppWhiteColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppNEWBGColor)
+                }
             }else{
-                layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
-                layoutBinding.viewSession.setBackgroundResource(R.color.AppWhiteColor)
+                if (texttypeset.equals(itemres)){
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+                }else{
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppWhiteColor)
+                }
             }
-            layoutBinding.txtTitleSession.setOnClickListener {
+
+            itemVIew.setOnClickListener {
+                texttypeset=itemres
+                RLItemClickListener.onItemClick(position)
+                notifyDataSetChanged()
+            }
+
+            /*layoutBinding.txtTitleSession.setOnClickListener {
                 texttypeset=itemres
                 RLItemClickListener.onItemClick(position)
                notifyDataSetChanged()
 
-            }
+            }*/
         }
 
     }

@@ -29,7 +29,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     var sucDialog: Dialog? = null
     private lateinit var authManager: RLAuthManager
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_login_email) as RlActivityLoginEmailBinding

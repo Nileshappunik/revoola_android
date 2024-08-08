@@ -41,7 +41,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     //val valueslistBody = arrayOf("All", "HIIT","Ride","Yoga","Pilates","Dance","Warm")
     val valueslistBody = arrayOf("ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )

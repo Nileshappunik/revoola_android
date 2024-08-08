@@ -27,8 +27,6 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
-
-
     <application
         android:name=".base.MyApp"
         android:allowBackup="true"
@@ -36,11 +34,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RLSplashFirstActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

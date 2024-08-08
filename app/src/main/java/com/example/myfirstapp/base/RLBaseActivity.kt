@@ -2,7 +2,11 @@ package com.example.myfirstapp.base
 
 import android.R
 import android.app.Activity
+import android.app.UiModeManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
@@ -72,6 +76,25 @@ open class  RLBaseActivity: AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
+    }
+
+    open fun RLScreenSet(isLandScape:Boolean) {
+        val uiModeManager =  getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        val currentModeType = uiModeManager.currentModeType
+
+        if (currentModeType == Configuration.UI_MODE_TYPE_TELEVISION) {
+            // The device is running in TV mode (Android TV)
+           setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+        } else {
+            // The device is not running in TV mode
+            if (isLandScape){
+              setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+            }else{
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            }
+
+        }
+
     }
 
 }

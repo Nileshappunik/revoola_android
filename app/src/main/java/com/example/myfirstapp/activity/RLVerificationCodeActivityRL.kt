@@ -22,7 +22,7 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
     private lateinit var viewModel: RLMainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_verification_code) as RlActivityVerificationCodeBinding

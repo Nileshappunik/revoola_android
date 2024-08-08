@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -46,7 +47,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+         RLScreenSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_normal_video_start, container) as RlFragMindClassesNormalVideoStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClassesNormalVideoStart" )
@@ -71,7 +72,6 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
-
         fragBinding.inlayCountdown.txtTitle.setText(VideoCardData.rideTitle)
         fragBinding.inlayCountdown.txtNamewith.setText(VideoCardData.instructor)
         RLVideoUISet(VideoCardData,data)

@@ -23,7 +23,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     var emailID: String = ""
     var password: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_sign_up_name) as RlActivitySignUpNameBinding

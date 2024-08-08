@@ -27,7 +27,7 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
     var sucDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_forgot_password) as RlActivityForgotPasswordBinding

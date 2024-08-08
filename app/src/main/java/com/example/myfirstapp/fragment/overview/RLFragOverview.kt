@@ -47,7 +47,7 @@ class RLFragOverview : RLBaseFragment() {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview, container) as RlFragOverviewBinding
         currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
@@ -58,12 +58,7 @@ class RLFragOverview : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
-
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
@@ -74,11 +69,11 @@ class RLFragOverview : RLBaseFragment() {
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
         fragBinding.inlaySession.cardOverview.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true, RLFragOverviewSession::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true,null, false)
         }
         fragBinding.ivNotification.setOnClickListener {
             (context as RLMainActivityRL).RLbottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, RLFragNotification::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
         }
 
 

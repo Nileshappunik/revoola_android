@@ -9,6 +9,7 @@
         android:paddingRight="10dp"
         android:orientation="vertical">
 
+
         <ImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"

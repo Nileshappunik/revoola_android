@@ -29,7 +29,7 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+         RLScreenSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_right_body_heart_video, container) as RlFragRightBodyHeartVideoBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragRightBodyWithHeartVideo" )

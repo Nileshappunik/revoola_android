@@ -2,7 +2,11 @@ package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Dialog
+import android.app.UiModeManager
+import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.MenuItem
@@ -22,6 +26,7 @@ import com.example.myfirstapp.fragment.feed.RLFragFeed
 import com.example.myfirstapp.fragment.friends.RLFragFriends
 import com.example.myfirstapp.fragment.more.RLFragMore
 import com.example.myfirstapp.fragment.overview.RLFragOverview
+import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -47,13 +52,12 @@ class RLMainActivityRL  : RLBaseActivity() {
         item.setChecked(true)
         RLchepermissionphysicalActivity()
 
-
         activityMainBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.overview -> {
                     activityMainBinding.bottomNav.setBackgroundResource(R.color.AppNEWBGColor)
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragOverview(), TAG, false, null, false)
+                    RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     true
                 }
                 R.id.feed -> {

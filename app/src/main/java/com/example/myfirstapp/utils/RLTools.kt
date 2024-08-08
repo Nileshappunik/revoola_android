@@ -3,7 +3,10 @@ package com.example.myfirstapp.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.UiModeManager
 import android.content.*
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
@@ -61,6 +64,8 @@ object RLTools {
             }
         })
     }
+
+
     fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = act.window

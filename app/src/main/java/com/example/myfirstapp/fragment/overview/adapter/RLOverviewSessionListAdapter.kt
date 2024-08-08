@@ -11,11 +11,11 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutOveriviewSessionListBinding
 import com.example.myfirstapp.model.RLSessionitemset
 
-class RLOverviewSessionListAdapter(val context: FragmentActivity?) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLOverviewSessionListAdapter(val context: FragmentActivity?, val textColorSetWhite:Boolean) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLOverviewSessionListAdapter"
     var bundle: Bundle = Bundle()
     var sessionList= mutableListOf<RLSessionitemset>()
+    var istextColorSetWhite= textColorSetWhite
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlLayoutOveriviewSessionListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_overiview_session_list , parent, false)
@@ -35,9 +35,10 @@ class RLOverviewSessionListAdapter(val context: FragmentActivity?) :
 
     }
 
-    fun RLsetList(newData: List<RLSessionitemset>) {
+    fun RLsetList(newData: List<RLSessionitemset>,textColorSetWhite:Boolean) {
         sessionList.clear()
         sessionList.addAll(newData)
+        istextColorSetWhite=textColorSetWhite
         notifyDataSetChanged()
     }
 
@@ -48,6 +49,14 @@ class RLOverviewSessionListAdapter(val context: FragmentActivity?) :
             layoutBinding.txtsessiontitle.setText(carddata.name)
             layoutBinding.txtNumber.setText(carddata.number)
             layoutBinding.imgsessionimage.setImageResource(carddata.imageset)
+
+            if(istextColorSetWhite){
+                layoutBinding.txtsessiontitle.setTextColor(context!!.resources.getColor(R.color.AppWhiteColor))
+                layoutBinding.txtNumber.setTextColor(context!!.resources.getColor(R.color.AppWhiteColor))
+            }else{
+                layoutBinding.txtsessiontitle.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
+                layoutBinding.txtNumber.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
+            }
 
             if (position % 2 == 0) {
                 // Even positionget

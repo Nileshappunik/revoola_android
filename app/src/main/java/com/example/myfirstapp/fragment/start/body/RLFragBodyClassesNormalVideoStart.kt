@@ -1,6 +1,9 @@
 package com.example.myfirstapp.fragment.start.body
 
+import android.app.UiModeManager
+import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -45,7 +48,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        RLScreenSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_normal_video_start, container) as RlFragBodyClassesNormalVideoStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesNormalVideoStart" )
@@ -60,6 +63,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             gestureDetector.onTouchEvent(event)
             true
         }
+
         return fragBinding.root
     }
     private fun RLuisetup() {

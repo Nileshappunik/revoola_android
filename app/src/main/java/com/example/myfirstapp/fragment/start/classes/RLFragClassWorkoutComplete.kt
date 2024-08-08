@@ -13,6 +13,7 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlClassWorkoutCompleteBinding
 import com.example.myfirstapp.fragment.overview.RLFragOverview
+import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 
@@ -34,7 +35,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         RlClassWorkoutCompleteBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_class_workout_complete, container) as RlClassWorkoutCompleteBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragClassWorkoutComplete" )
@@ -76,12 +77,12 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding.imgCancle.setOnClickListener {
             (context as RLMainActivityRL).RLshowbottombarcolorwhite()
             (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverview(), TAG, false, RLFragOverview::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false,null, false)
         }
         fragBinding.tvsave.setOnClickListener {
             (context as RLMainActivityRL).RLshowbottombarcolorwhite()
             (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverview(), TAG, false, RLFragOverview::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
         }
 
 

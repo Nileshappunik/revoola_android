@@ -1,6 +1,10 @@
 package com.example.myfirstapp
 
+import android.app.UiModeManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import android.view.*
@@ -114,6 +118,25 @@ open class RLBaseFragment : Fragment() {
     open fun RLcloseFragment() {
         // Close the fragment by popping it from the back stack
         parentFragmentManager.popBackStack()
+    }
+
+    open fun RLScreenSet(isLandScape:Boolean) {
+        val uiModeManager =  activity?.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        val currentModeType = uiModeManager.currentModeType
+
+        if (currentModeType == Configuration.UI_MODE_TYPE_TELEVISION) {
+            // The device is running in TV mode (Android TV)
+            activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+        } else {
+            // The device is not running in TV mode
+            if (isLandScape){
+                activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+            }else{
+                activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            }
+
+        }
+
     }
 
 }
