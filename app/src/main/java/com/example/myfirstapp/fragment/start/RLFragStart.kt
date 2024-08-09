@@ -1,6 +1,9 @@
 package com.example.myfirstapp.fragment.start
 
+import android.app.Dialog
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,11 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
+import android.view.Window
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
+import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
@@ -28,7 +34,6 @@ class RLFragStart : RLBaseFragment() {
     private val binding by lazy {
         RlFragStartBinding.inflate(layoutInflater)
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -44,7 +49,9 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
-        fragBinding.inlayTop.ivDescription.setText(getString(R.string.whatdoyouwanttoday))
+        fragBinding.inlayTop.smallLogo.visibility=View.VISIBLE
+        fragBinding.inlayTop.ivTitle.visibility=View.GONE
+        fragBinding.inlayTop.ivDescription.setText(getString(R.string.thebestyoueveryday))
 
         fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -61,8 +68,11 @@ class RLFragStart : RLBaseFragment() {
 
             }
         })
-    }
 
+        fragBinding.inlayTop.ivhelp.setOnClickListener {
+            RLshowHelpDialog()
+        }
+    }
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLALLMENULISTRead(RLConstants.MAIN){ data, error ->
@@ -79,6 +89,21 @@ class RLFragStart : RLBaseFragment() {
                 }
             }
         }
+    }
+    private fun RLshowHelpDialog() {
+        val dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val dialogMainBinding: RlDialogHelpStartBinding= RlDialogHelpStartBinding.inflate(getLayoutInflater())
+        dialog.setContentView(dialogMainBinding.getRoot())
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+
+        dialogMainBinding.tvClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
 }

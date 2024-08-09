@@ -3,6 +3,7 @@ package com.example.myfirstapp.fragment.start.classes
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,29 +50,29 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         fragBinding.edtname.setText(VideoCardData.rideTitle)
+        fragBinding.txtTitleText.setText("ACTIVITY COMPLETE!")
 
         fragBinding.layPrivacy.setOnClickListener {
-            val titletxt:String=fragBinding.tvsharetitle.text.toString()
-
-            if (titletxt.equals("Friends")){
-                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
-                fragBinding.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
-                fragBinding.tvsharetitle.setText(R.string.anyone)
-                fragBinding.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-
-            }else if (titletxt.equals("Anyone")){
+            val titletxt:String=fragBinding.tvsharetitle.text.toString().toUpperCase()
+            Log.e(TAG,"TITLE:_ $titletxt")
+            if (titletxt.equals("FRIENDS")){
                 fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
                 fragBinding.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
                 fragBinding.tvsharetitle.setText(R.string.privatetx)
                 fragBinding.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
 
-            }else if (titletxt.equals("Private")){
+            }else if (titletxt.equals("EVERYONE")){
                 fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
                 fragBinding.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
                 fragBinding.tvsharetitle.setText(R.string.friendstx)
                 fragBinding.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-            }
 
+            }else if (titletxt.equals("PRIVATE")){
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                fragBinding.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
+                fragBinding.tvsharetitle.setText(R.string.everyone)
+                fragBinding.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+            }
         }
 
         fragBinding.imgCancle.setOnClickListener {

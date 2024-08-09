@@ -44,6 +44,7 @@
     <string name="effortsmall">Effort</string>
     <string name="climbed">Climbed</string>
     <string name="climbedm">CLIMBED (m)</string>
+    <string name="climbedft">CLIMBED(ft)</string>
     <string name="mindfulminutes">MINDFUL MINUTES</string>
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
@@ -188,8 +189,8 @@
     <string name="linktoaccount">Link to Account</string>
     <string name="signout">Sign Out</string>
     <string name="unlockrevoolapremium">Unlock Revoola Premium</string>
-    <string name="freerevoolauser">free REVOOLA user</string>
-    <string name="sincedate">since 26/04/2025</string>
+    <string name="freerevoolauser">Premium REVOOLA user</string>
+    <string name="sincedate">since 06/09/71</string>
     <string name="mindandbodyclasses">Entire library of exclusive Mind &amp; Body Classes</string>
     <string name="trackyourprogress">Permanently record activities and track your progress</string>
     <string name="classandactivities">Join your friends for your own group classes and activities</string>
@@ -281,6 +282,7 @@
     <string name="paceperkm">PACE(PER KM)</string>
     <string name="heartratebpm">HEART RATE(BPM)</string>
     <string name="avarageeffortsofar">AVERAGAE EFFORT SO FAR</string>
+    <string name="avgeffortpersentage">AVG EFFORT %</string>
     <string name="pause">PAUSE</string>
     <string name="resume">RESUME</string>
     <string name="stop">STOP</string>
@@ -368,7 +370,7 @@
     <string name="leaderboard">LEADERBOARD</string>
     <string name="applehealth">Apple Health</string>
     <string name="appledescription">This card was derived from non-revoola activity recorded in Apple Health</string>
-    <string name="thebestyoueveryday">The best\n you.\n Everyday.</string>
+    <string name="thebestyoueveryday">The best you.Everyday.</string>
     <string name="thebestyou">The Best You.</string>
     <string name="everyday">Everyday.</string>
     <string name="effortzone">EFFORT ZONE</string>
@@ -434,6 +436,11 @@
     <string name="individualtarget">Individual Target</string>
     <string name="sharedtarget">Shared Target</string>
     <string name="individualorsharedtarget">Individual or shared Target?</string>
+    <string name="welcometorevoola">Welcome to Revoola!</string>
+    <string name="thisisourmainpage">This is our Main PAge where you can start different activities.</string>
+    <string name="choosewhatdonext">Choose What to do next:</string>
+    <string name="currentzone">CurrentZone</string>
+    <string name="maxeffort">MAxEffort</string>
 
 
 </resources>

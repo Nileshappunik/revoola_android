@@ -81,7 +81,7 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, true)
+            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
         }
     }
 

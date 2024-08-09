@@ -15,23 +15,20 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:background="@drawable/full_round"
-            android:src="@drawable/ic_back_g"/>
+            android:layout_marginStart="10dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
 
         <TextView
             android:id="@+id/tvtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_marginStart="20dp"
             android:text="@string/chooseyoursensor"
             android:textColor="@color/AppBlackColor"
-            android:textSize="36dp"
+            android:textAllCaps="true"
+            android:textSize="26dp"
             android:fontFamily="@font/omnes_semibold_regular" />
 
 
@@ -54,7 +51,8 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="15dp">
 
                             <TextView
                                 android:id="@+id/txtspeeddistance"
@@ -63,8 +61,10 @@
                                 android:layout_marginTop="15dp"
                                 android:layout_marginStart="15dp"
                                 android:text="@string/speeddistance"
+                                android:textAllCaps="true"
                                 android:textColor="@color/AppTextGrayColor"
-                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
                                 android:fontFamily="@font/omnes_regular" />
 
                             <ImageView
@@ -85,7 +85,7 @@
                                 android:layout_height="30dp"
                                 android:layout_marginEnd="15dp"
                                 android:layout_below="@+id/txtgps"
-                                android:layout_alignParentRight="true"
+                                android:layout_alignParentEnd="true"
                                 android:src="@drawable/ic_checkboxchecked"/>
 
                             <ImageView
@@ -105,9 +105,11 @@
                                 android:layout_marginStart="15dp"
                                 android:layout_marginTop="25dp"
                                 android:layout_toEndOf="@+id/img1"
+                                android:textAllCaps="true"
                                 android:layout_below="@+id/txtspeeddistance"
                                 android:text="@string/gpssatellitesfound"
                                 android:textColor="@color/AppBlackColor"
+                                android:textStyle="bold"
                                 android:textSize="16sp"
                                 android:fontFamily="@font/omnes_regular" />
 

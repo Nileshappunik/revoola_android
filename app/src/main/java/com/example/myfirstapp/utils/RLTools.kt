@@ -217,6 +217,23 @@ object RLTools {
 
     }
 
+    fun RLheightsetdisplayAll(relativeLayout: RelativeLayout, context: FragmentActivity?) {
+        // Ensure the layout has been completed before getting the width
+        // Get the screen width
+        val displayMetrics = DisplayMetrics()
+        context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenWidth = displayMetrics.widthPixels
+
+        // Calculate the desired height (75% of screen width)
+        val desiredHeight = (screenWidth * 0.76).toInt()
+
+        // Set the ImageView height
+        val layoutParams = relativeLayout.layoutParams
+        layoutParams.height = desiredHeight
+        relativeLayout.layoutParams = layoutParams
+
+    }
+
     fun RLheightsetstartimage(relativeLayout: RelativeLayout, context: FragmentActivity?) {
         relativeLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {

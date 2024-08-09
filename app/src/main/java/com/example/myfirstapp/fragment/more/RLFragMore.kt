@@ -38,7 +38,7 @@ class RLFragMore : RLBaseFragment() {
         (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorwhite()
 
-        fragBinding.layAccount.layMoreClick.visibility=View.GONE
+        fragBinding.layAccount.layMoreClick.visibility=View.VISIBLE
         fragBinding.layAccount.txtAccount.setText(R.string.account)
         fragBinding.layAccount.imgAccount.setImageResource(R.drawable.ic_account_g)
 
@@ -64,25 +64,25 @@ class RLFragMore : RLBaseFragment() {
         fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_sign_out_g)
 
         fragBinding.cardNotification.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, RLFragNotification::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
         }
         fragBinding.cardSchdualedclasses.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true, RLFragScheduledClasses::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
 
         fragBinding.layChangepassword.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragChangePassword(), TAG, true, RLFragChangePassword::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragChangePassword(), TAG, true, null, false)
         }
         fragBinding.layAccount.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, RLFragAccount::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
         }
 
         fragBinding.layHelp.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, RLFragHelp::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
         }
 
         fragBinding.laySetting.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, RLFragSetting::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
         }
         fragBinding.layRequesttodeletedata.layMoreClick.setOnClickListener {
             RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))

@@ -73,33 +73,33 @@ class RLStartListAdapter(
             layoutBinding.relayStartNew.setOnClickListener {
                 if (cardData.title.toLowerCase().equals("challenges")){
                     (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your way")){
                     (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourWay(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourWay(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("mind classes")){
                     (context as RLMainActivityRL).RLshowbottombarcolorwhite()
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("body classes")){
                     (context as RLMainActivityRL).RLshowbottombarcolorwhite()
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("find on revoola")){
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
                     (context as RLMainActivityRL).RLbottombarcolorwhite()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
                     val shareIntent = Intent().apply {

@@ -101,6 +101,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.recycleSession.adapter = adapterdata
 
         RLTools.RLheightsetdisplaywebview(fragBinding.webView,activity)
+        RLTools.RLheightsetdisplayAll(fragBinding.relayOverviewName,activity)
+
         fragBinding.webView.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = fragBinding.webView.settings
@@ -168,29 +170,28 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         var istextColorSetWhite=false
 
         (context as RLMainActivityRL).RLbottombarcolorwhite()
-        fragBinding.relayOverviewTop.visibility=View.GONE
-        fragBinding.relayOverviewName.visibility=View.GONE
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.visibility=View.VISIBLE
+        fragBinding.inlayTop.logo.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+
+        fragBinding.relayOverviewName.visibility=View.GONE
         fragBinding.txtTotalsessionNumber.visibility=View.VISIBLE
         fragBinding.txtTotalsession.visibility=View.VISIBLE
         fragBinding.webView.visibility=View.VISIBLE
-       // fragBinding.inlayTop.logo.visibility=View.GONE
         fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppWhiteColor))
 
         when (valuetype){
             "OVERVIEW"->{
                 (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                 (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-                fragBinding.relayOverviewTop.visibility=View.VISIBLE
-                fragBinding.relayOverviewName.visibility=View.VISIBLE
                 fragBinding.inlayTop.ivBack.visibility=View.GONE
                 fragBinding.inlayTop.ivTitle.visibility=View.GONE
                 fragBinding.inlayTop.ivDescription.visibility=View.GONE
-                fragBinding.inlayTop.ivhelp.visibility=View.GONE
-               // fragBinding.inlayTop.logo.visibility=View.VISIBLE
+                fragBinding.inlayTop.logo.visibility=View.VISIBLE
+
+                fragBinding.relayOverviewName.visibility=View.VISIBLE
                 fragBinding.txtTotalsessionNumber.visibility=View.GONE
                 fragBinding.txtTotalsession.visibility=View.GONE
                 fragBinding.webView.visibility=View.GONE

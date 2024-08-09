@@ -42,7 +42,7 @@ class RLFragFriends : RLBaseFragment() {
     }
     private fun  RLuisetupNew(dataList: List<RLStartAllMenuModel>) {
         fragBinding.inlayTop.ivBack.visibility=View.GONE
-        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.friends))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.manageyourrevoolacommunity))
 

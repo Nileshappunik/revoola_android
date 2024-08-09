@@ -39,8 +39,6 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
     AvgCadence("AVG CADENCE(rpm)", R.drawable.ic_cadence,false)
 }
 
-
-
 data class RLMetricData(var value: String)
 
 

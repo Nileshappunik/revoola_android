@@ -2,6 +2,7 @@ package com.example.myfirstapp.fragment.start.yourway
 
 import android.content.pm.ActivityInfo
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.BroadcastReceiver
@@ -35,6 +36,7 @@ import com.example.myfirstapp.databinding.RlFragHeartrateSensorProgressBinding
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
 import com.example.myfirstapp.utils.RLTimerManager
+import com.example.myfirstapp.utils.RLTools
 import java.lang.Math.round
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(){
@@ -71,7 +73,15 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private fun RLuisetup() {
         RLstartCountdown()
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
-        fragBinding.txtMaintitle.setText(yourWayType)
+        //fragBinding.txtMaintitle.setText(yourWayType)
+
+        fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
+        fragBinding.inlayTop.ivTitle.setText(yourWayType)
+        fragBinding.inlayTop.ivDescription.setText("")
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivBack.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setTextColor(resources.getColor(R.color.AppWhiteColor))
+
 
         fragBinding.circularProgressBar.RLsetProgress(100)
         fragBinding.circularProgressBar.RLsetMaxProgress(100)
@@ -80,16 +90,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragBinding.circularProgressBar.RLsetStrokeWidth(15f)
 
         fragBinding.inlayCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
-        fragBinding.inlayCalories.txtProgressTime.setText(R.string.calorie)
+        fragBinding.inlayCalories.txtProgressTime.setText(R.string.activecalories)
         fragBinding.inlayCalories.txtProgressTimeNumber.setText("0")
 
         fragBinding.inlayHeartrate.imgTime.setImageResource(R.drawable.ic_heartrate)
         fragBinding.inlayHeartrate.txtProgressTime.setText(R.string.heartratebpm)
         fragBinding.inlayHeartrate.layAvg.visibility=View.VISIBLE
         fragBinding.inlayHeartrate.layMax.visibility=View.VISIBLE
-
-        fragBinding.inlayTime.progressView2.visibility=View.VISIBLE
-        fragBinding.inlayCadence.progressView2.visibility=View.VISIBLE
 
         RLwayTypeDesignSet(yourWayType)
 
@@ -135,21 +142,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     }
     fun  RLwayTypeDesignSet(yourWayType:String){
         if (yourWayType.equals("Pilates")||yourWayType.equals("Workout")||yourWayType.equals("Yoga")){
-            fragBinding.inlayCalories.relaySensorProgress.visibility=View.GONE
-            fragBinding.inlayDistance.relaySensorProgress.visibility=View.GONE
-            fragBinding.inlayPace.relaySensorProgress.visibility=View.GONE
+            fragBinding.layout2.visibility=View.GONE
+            fragBinding.layout3.visibility=View.GONE
 
-            fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.ic_heart)
-            fragBinding.inlayCadence.txtProgressTime.setText(R.string.avarageeffortsofar)
+            fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.ic_effort_avg)
+            fragBinding.inlayCadence.txtProgressTime.setText(R.string.avgeffortpersentage)
             fragBinding.inlayCadence.txtProgressTimeNumber.setText("0")
-
-            fragBinding.inlaySpeed.imgTime.setImageResource(R.drawable.fd_calories_green)
-            fragBinding.inlaySpeed.txtProgressTime.setText(R.string.activecalories)
-            fragBinding.inlaySpeed.txtProgressTimeNumber.setText("0")
-
-            fragBinding.inlaySpeed.progressView1.visibility=View.GONE
-            fragBinding.inlayHeartrate.progressView1.visibility=View.GONE
-
 
         }else if (yourWayType.equals("Ride")){
 
@@ -160,6 +158,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             fragBinding.inlayDistance.imgTime.setImageResource(R.drawable.ic_distance)
             fragBinding.inlayDistance.txtProgressTime.setText(R.string.distancekm)
 
+            fragBinding.inlayClimbed.imgTime.setImageResource(R.drawable.ic_climb)
+            fragBinding.inlayClimbed.txtProgressTime.setText(R.string.climbedft)
+            fragBinding.inlayClimbed.txtProgressTimeNumber.setText("0")
+
             fragBinding.inlaySpeed.imgTime.setImageResource(R.drawable.ic_speeed)
             fragBinding.inlaySpeed.txtProgressTime.setText(R.string.speedkmh)
             fragBinding.inlaySpeed.layAvg.visibility=View.VISIBLE
@@ -172,8 +174,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             fragBinding.inlayPace.layMax.visibility=View.VISIBLE
             fragBinding.inlayPace.txtMaxNumber.setText("0")
             fragBinding.inlayPace.txtAvgNumber.setText("0")
-            fragBinding.inlayPace.progressView1.visibility=View.GONE
-
 
         }else if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
             fragBinding.inlayCadence.imgTime.setImageResource(R.drawable.fd_steps_green)
@@ -183,6 +183,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             fragBinding.inlayDistance.imgTime.setImageResource(R.drawable.ic_distance)
             fragBinding.inlayDistance.txtProgressTime.setText(R.string.distancekm)
 
+            fragBinding.inlayClimbed.imgTime.setImageResource(R.drawable.ic_climb)
+            fragBinding.inlayClimbed.txtProgressTime.setText(R.string.climbedft)
+            fragBinding.inlayClimbed.txtProgressTimeNumber.setText("0")
+
             fragBinding.inlaySpeed.imgTime.setImageResource(R.drawable.ic_speeed)
             fragBinding.inlaySpeed.txtProgressTime.setText(R.string.speedkmh)
             fragBinding.inlaySpeed.layAvg.visibility=View.VISIBLE
@@ -195,7 +199,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             fragBinding.inlayPace.layMax.visibility=View.VISIBLE
             fragBinding.inlayPace.txtMaxNumber.setText("0")
             fragBinding.inlayPace.txtAvgNumber.setText("0")
-            fragBinding.inlayPace.progressView1.visibility=View.GONE
 
         }
     }
@@ -298,7 +301,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
     }
     //BLE DEVICE CODE CLOSE
-    private fun RLstartCountdown() {
+    private fun RLstartCountdown1() {
         var count = 5
         var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
             override fun onTick(millisUntilFinished: Long) {
@@ -311,6 +314,37 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
         }.start()
     }
+
+    private fun RLstartCountdown() {
+        val countdownTimeInMillis = 6000L // 5 seconds
+        val intervalInMillis = 1000L // 1 second interval
+
+        object : CountDownTimer(countdownTimeInMillis, intervalInMillis) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsRemaining = millisUntilFinished / 1000
+                fragBinding.countdownText.text = secondsRemaining.toString()
+
+                // Animate the text scale
+                val scaleX = ObjectAnimator.ofFloat(fragBinding.countdownText, "scaleX", 0.5f, 1f)
+                val scaleY = ObjectAnimator.ofFloat(fragBinding.countdownText, "scaleY", 0.5f, 1f)
+
+                scaleX.duration = 500
+                scaleY.duration = 500
+
+                scaleX.start()
+                scaleY.start()
+            }
+
+            override fun onFinish() {
+                fragBinding.countdownText.visibility=View.GONE
+                fragBinding.relayCountDown.visibility=View.GONE
+                RLtimerMain()
+                // You can add additional animations or actions here when the countdown ends
+            }
+        }.start()
+    }
+
     fun RLtimerMain() {
         timerManager.RLstart { elapsedTime ->
             activity?.runOnUiThread {
