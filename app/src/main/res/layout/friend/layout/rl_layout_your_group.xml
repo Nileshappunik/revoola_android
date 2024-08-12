@@ -6,6 +6,16 @@
         android:layout_width="match_parent"
         android:layout_height="100dp">
 
+        <ImageView
+            android:id="@+id/checkboxImage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:button="@drawable/ic_checkbox_empty"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"/>
+
         <CheckBox
             android:id="@+id/checkbox_friend"
             android:layout_width="30dp"

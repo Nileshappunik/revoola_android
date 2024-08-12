@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppWhiteColor">
+        android:background="@color/AppLightGrayColor">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -21,24 +21,26 @@
                     android:layout_height="400dp"
                     android:src="@drawable/ride"
                     android:scaleType="fitXY"/>
+
                 <ImageView
                     android:id="@+id/ivBack"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginStart="16dp"
-                    android:padding="10dp"
-                    android:background="@drawable/full_round"
-                    android:src="@drawable/ic_back_g"/>
+                    android:layout_marginTop="10dp"
+                    android:padding="3dp"
+                    app:tint="@color/AppMainColor"
+                    android:src="@drawable/ic_chevron_left"/>
+
 
                 <TextView
                     android:id="@+id/txt_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="200dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="36sp"
+                    android:textSize="32sp"
+                    android:textAllCaps="true"
                     android:text="Set Personal Targets"
                     android:layout_below="@+id/ivBack"
                     android:fontFamily="@font/omnes_semibold_regular"
@@ -50,10 +52,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="3dp"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     android:layout_below="@+id/txt_title"
                     android:text="@string/with"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:fontFamily="@font/omnes_regular"
                     android:textColor="@color/AppWhiteColor"
                     android:gravity="start"/>
@@ -61,10 +64,12 @@
                     android:id="@+id/txt_namewith"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_toEndOf="@+id/txt_with"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="John MArtimore"
+                    android:textAllCaps="true"
                     android:layout_below="@+id/txt_title"
                     android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppWhiteColor"
@@ -73,19 +78,19 @@
                     android:id="@+id/card_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_below="@+id/txt_namewith"
-                    app:cardCornerRadius="10dp"
+                    app:cardCornerRadius="5dp"
                     app:cardElevation="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingTop="15dp"
-                        android:paddingBottom="15dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
                         android:weightSum="3">
                         <RelativeLayout
                             android:layout_width="wrap_content"
@@ -93,18 +98,19 @@
                             android:layout_weight="1">
                             <ImageView
                                 android:id="@+id/img_schdual"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
                                 android:layout_centerHorizontal="true"
                                 android:src="@drawable/ic_calendar_today"/>
                             <TextView
                                 android:id="@+id/txt_schdual"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
+                                android:layout_marginTop="5dp"
                                 android:textSize="14sp"
                                 android:layout_below="@+id/img_schdual"
                                 android:text="@string/schedule"
+                                android:textStyle="bold"
                                 android:fontFamily="@font/omnes_regular"
                                 android:textColor="@color/AppTextGrayColor"
                                 android:gravity="center"/>
@@ -120,7 +126,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_below="@+id/card_1"
-                    app:cardCornerRadius="10dp"
+                    app:cardCornerRadius="5dp"
                     app:cardElevation="1dp">
 
                     <RelativeLayout
@@ -129,7 +135,7 @@
                         <LinearLayout
                             android:id="@+id/lay_timevideo"
                             android:layout_width="match_parent"
-                            android:layout_height="60dp"
+                            android:layout_height="50dp"
                             android:orientation="horizontal"
                             android:weightSum="2">
                             <RelativeLayout
@@ -139,8 +145,8 @@
                                 android:layout_weight="1">
                                 <ImageView
                                     android:id="@+id/img_minutes"
-                                    android:layout_width="10dp"
-                                    android:layout_height="10dp"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
                                     android:layout_centerVertical="true"
                                     app:tint="@color/AppBlackColor"
                                     android:src="@drawable/fd_active_time_green"/>
@@ -150,11 +156,13 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:textSize="14sp"
+                                    android:textAllCaps="true"
                                     android:text="20 mins"
                                     android:layout_marginStart="10dp"
                                     android:layout_toEndOf="@+id/img_minutes"
+                                    android:textStyle="bold"
                                     android:fontFamily="@font/omnes_regular"
-                                    android:textColor="@color/AppDarkGrayColor"
+                                    android:textColor="@color/AppTextGrayColor"
                                     android:gravity="start"/>
 
                             </RelativeLayout>
@@ -169,8 +177,8 @@
                                 android:layout_weight="1">
                                 <ImageView
                                     android:id="@+id/img_video"
-                                    android:layout_width="15dp"
-                                    android:layout_height="15dp"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
                                     android:layout_centerVertical="true"
                                     android:layout_toEndOf="@+id/txt_video"
                                     android:src="@drawable/ic_easy"/>
@@ -180,46 +188,14 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:textSize="14sp"
+                                    android:textAllCaps="true"
                                     android:text="Beginner"
                                     android:layout_marginEnd="10dp"
+                                    android:textStyle="bold"
                                     android:fontFamily="@font/omnes_regular"
                                     android:textColor="@color/AppMainColor"
                                     android:gravity="start"/>
                             </RelativeLayout>
-                        </LinearLayout>
-                        <View
-                            android:id="@+id/view_timevideo"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_below="@+id/lay_timevideo"
-                            android:background="@color/AppLightGrayColor"/>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="10dp"
-                            android:layout_below="@+id/view_timevideo"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/txt_video_title"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="18sp"
-                                android:textAlignment="center"
-                                android:text="WHEN WOULD YOU LIKE To SEHEDULE THIS SESSION?"
-                                android:fontFamily="@font/omnes_semibold_regular"
-                                android:textColor="@color/AppBlackColor" />
-                            <TextView
-                                android:id="@+id/txt_select_datatime"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="15dp"
-                                android:textSize="18sp"
-                                android:textAlignment="center"
-                                android:text="SELECT DATE TIME"
-                                android:fontFamily="@font/omnes_semibold_regular"
-                                android:textColor="@color/AppBlackColor" />
-
                         </LinearLayout>
 
                     </RelativeLayout>
@@ -227,29 +203,92 @@
                 </androidx.cardview.widget.CardView>
 
                 <View
+                    android:id="@+id/viewCard3"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@id/card_2"
+                    android:background="@null"/>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_below="@+id/viewCard3"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtTotalFriend"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_margin="10dp"
+                            android:textAlignment="center"
+                            android:textAllCaps="true"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppBlackColor" />
+
+                        <TextView
+                            android:id="@+id/txt_video_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:layout_margin="10dp"
+                            android:textAlignment="center"
+                            android:textAllCaps="true"
+                            android:text="WHEN DO YOU WANT TO SEHEDULE?"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppBlackColor" />
+                        <View
+                            android:id="@+id/view_timevideo"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/AppLightGrayColor"/>
+                        <TextView
+                            android:id="@+id/txt_select_datatime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:textSize="16sp"
+                            android:textAlignment="center"
+                            android:text="SELECT DATE TIME"
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppBlackColor" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
-                    android:background="@color/AppWhiteColor"
-                    android:layout_below="@+id/card_2"/>
+                    android:layout_below="@id/card_3"
+                    android:background="@null"/>
 
             </RelativeLayout>
         </ScrollView>
+
         <TextView
             android:id="@+id/btn_scheduleclass"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/schedule"
-            android:fontFamily="@font/omnes_semibold_regular"
-            android:textColor="@color/AppWhiteColor"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:backgroundTint="@color/AppLightGrayColor"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/full_round_green"/>
+            android:layout_margin="10dp"
+            android:background="@drawable/full_round_green"
+            android:backgroundTint="@color/AppMainColor"
+            android:fontFamily="@font/omnes_regular"
+            android:gravity="center"
+            android:text="@string/schedule"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
 </layout>

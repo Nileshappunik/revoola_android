@@ -1,32 +1,45 @@
 package com.example.myfirstapp.fragment.start.classes
 
+import android.Manifest
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
-import android.content.pm.ActivityInfo
+import android.content.ContentValues
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.provider.CalendarContract
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragClassesScheduleBinding
+import com.example.myfirstapp.fragment.start.RLFragStart
 import com.example.myfirstapp.model.RLFulllVideoModel
-import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
+
 class RLClassesSchedule : RLBaseFragment() {
     val TAG: String = RLClassesSchedule::class.java.simpleName
     lateinit var fragBinding: RlFragClassesScheduleBinding
     private var selectedCalendar = Calendar.getInstance()
+    private val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
+    var calenderEventDescription=""
     private val binding by lazy {
         RlFragClassesScheduleBinding.inflate(layoutInflater)
     }
@@ -50,17 +63,38 @@ class RLClassesSchedule : RLBaseFragment() {
         fragBinding.txtSelectDatatime.setOnClickListener {
             RLShowDatePickerDialog()
         }
-        fragBinding.btnScheduleclass.setOnClickListener {
-            RLCheckIfFuture()
-        }
+
         val data=  requireArguments().getString("VIDEODATA","")
-        val classtype=  requireArguments().getString(RLConstants.CLASSTYPE,"")
+        val selectedFriend =  requireArguments().getString("Message","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         fragBinding.txtTitle.setText(VideoCardData.rideTitle)
         fragBinding.txtNamewith.setText(VideoCardData.instructor)
         fragBinding.txtMinutes.setText(VideoCardData.duration)
-        if (classtype.equals(RLConstants.MIND)){
+        calenderEventDescription="${VideoCardData.instructor}'s ${VideoCardData.duration}"
+        Glide.with(requireContext()).load(VideoCardData.imageLinkSquareV2)
+            // .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
+            .into(fragBinding.imgMainBanner)
+
+        if (selectedFriend.isEmpty()){
+            fragBinding.txtTotalFriend.visibility=View.GONE
+        }else{
+            fragBinding.txtTotalFriend.visibility=View.VISIBLE
+            fragBinding.txtTotalFriend.setText("$selectedFriend FRIENDS WILL BE INVITED")
+            fragBinding.txtVideoTitle.setText("CONFIRM AND ADD TO CALENDER?")
+            fragBinding.txtSelectDatatime.setText("")
+            fragBinding.btnScheduleclass.setText("CONFIRM")
+        }
+
+        fragBinding.btnScheduleclass.setOnClickListener {
+           if (fragBinding.btnScheduleclass.text.equals("CONFIRM")){
+               RLshowSDialog("Would you like to add to your calendar?")
+           }else{
+               RLCheckIfFuture(data,"")
+           }
+        }
+
+       /* if (classtype.equals(RLConstants.MIND)){
             val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
             fragBinding.txtVideo.setText(audioVideoType)
             if (audioVideoType.equals("Video")){
@@ -68,6 +102,7 @@ class RLClassesSchedule : RLBaseFragment() {
             }else{
                 fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
             }
+
         }else{
             fragBinding.txtVideo.setText(VideoCardData.difficulty)
             if(VideoCardData.difficulty.equals("Beginner")){
@@ -80,7 +115,20 @@ class RLClassesSchedule : RLBaseFragment() {
                 fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
                 fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
             }
+        }*/
+
+        fragBinding.txtVideo.setText(VideoCardData.difficulty)
+        if(VideoCardData.difficulty.equals("Beginner")){
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
+        }else if (VideoCardData.difficulty.equals("Advanced")){
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
+        }else{
+            fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
+            fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
         }
+
     }
     private fun RLShowDatePickerDialog() {
         val calendar = Calendar.getInstance()
@@ -104,6 +152,7 @@ class RLClassesSchedule : RLBaseFragment() {
             selectedCalendar.set(Calendar.MINUTE, selectedMinute)
             val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val formattedTime = timeFormat.format(selectedCalendar.time)
+            RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
             //fragBinding.txtSelectDatatime.text = "$selectdate  $selectedHour:$selectedMinute"
             fragBinding.txtSelectDatatime.text = "$selectdate  $formattedTime"
             val color = ContextCompat.getColor(requireContext(), R.color.AppMainColor)
@@ -111,14 +160,189 @@ class RLClassesSchedule : RLBaseFragment() {
         }, hour, minute, true)
         timePickerDialog.show()
     }
-    private fun RLCheckIfFuture() {
+    private fun RLCheckIfFuture(data: String, audioVideoType: String) {
         val currentCalendar = Calendar.getInstance()
         val isFuture = selectedCalendar.timeInMillis > currentCalendar.timeInMillis
         if (isFuture){
+            val bundle = Bundle()
+            bundle.putString("VIDEODATA",data)
+            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            bundle.putString("SELECTEDDATE",fragBinding.txtSelectDatatime.text.toString())
             //Future Time
-            (context as RLMainActivityRL).RLloadFrag(RLClassesScheduleJoinSession(), TAG, true,null, false)
+            (context as RLMainActivityRL).RLloadFrag(RLClassesScheduleJoinSession().newInstance(bundle), TAG, false,null, false)
         }else{
             RLcommonToast("Please Select Future Time")
         }
     }
+
+    private fun RLshowSDialog(message:String) {
+        val sucDialog: Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_dialog_subscribe)
+        sucDialog.setCancelable(true)
+        val tvNo: TextView = sucDialog.findViewById(R.id.tvCancel)
+        val tvYes: TextView = sucDialog.findViewById(R.id.tvSubscribe)
+        val tvMainMessage: TextView = sucDialog.findViewById(R.id.tvMainMessage)
+        tvMainMessage.setText(message)
+        tvNo.setText("No")
+        tvYes.setText("Yes")
+        tvNo.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+            (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+        })
+        tvYes.setOnClickListener(View.OnClickListener {
+            RLCheckCalendarPermission()
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    private fun RLCheckCalendarPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR),
+                PERMISSIONS_REQUEST_WRITE_CALENDAR
+            )
+        } else {
+            RLAddEventToCalendar()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSIONS_REQUEST_WRITE_CALENDAR -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    RLAddEventToCalendar()
+                } else {
+                    // Permission denied
+                }
+            }
+        }
+    }
+    private fun RLAddEventToCalendar() {
+        try {
+            val dateString = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.selected_schedule_date,"" )
+
+            val calendar = RLParseDateString(dateString.toString())
+            val startMillis = calendar.timeInMillis
+            val endMillis = startMillis + 60 * 60 * 1000 // 1-hour event
+
+            // Use Google Calendar ID if available
+            val calendarID = RLGetWritableCalendarId() ?:RLGetPrimaryCalendarId() // Get the primary calendar ID
+            val values = ContentValues().apply {
+                put(CalendarContract.Events.CALENDAR_ID, calendarID)
+                put(CalendarContract.Events.TITLE, "Revoola Schedule Reminder")
+                put(CalendarContract.Events.DESCRIPTION, "Your schedule $calenderEventDescription is scheduled today")
+                put(CalendarContract.Events.DTSTART, startMillis)
+                put(CalendarContract.Events.DTEND, endMillis)
+                put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
+                put(CalendarContract.Events.EVENT_END_TIMEZONE, TimeZone.getDefault().id)
+                put(CalendarContract.Events.HAS_ALARM, 1)
+            }
+
+            val uri = requireActivity().contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+
+            uri?.let {
+                val eventId = it.lastPathSegment?.toLongOrNull()
+
+                // Add reminder
+                if (eventId != null) {
+                    RLAddReminderToEvent(eventId)
+                }
+            }
+
+        }catch (e:Exception){
+            Log.e(TAG,"EXCEPTION DATE:- ${e.message}")
+        }
+    }
+    private fun RLParseDateString(dateString: String): Calendar {
+        val dateFormat = SimpleDateFormat("dd/M/yyyy hh:mm a", Locale.getDefault())
+        val date = dateFormat.parse(dateString) ?: throw IllegalArgumentException("Invalid date format")
+        return Calendar.getInstance().apply { time = date }
+    }
+    private fun RLAddReminderToEvent(eventId: Long) {
+        val values = ContentValues().apply {
+            put(CalendarContract.Reminders.EVENT_ID, eventId)
+            put(CalendarContract.Reminders.MINUTES, 10) // Reminder 10 minutes before
+            put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+        }
+        //Log.e(TAG, "Event added successfully with ID: $eventId")
+        requireActivity().contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, values)
+        (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+    }
+
+    private fun RLGetPrimaryCalendarId(): Long {
+        val projection = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
+        )
+
+        val cursor = requireActivity().contentResolver.query(
+            CalendarContract.Calendars.CONTENT_URI,
+            projection,
+            null,
+            null,
+            null
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
+                val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+                do {
+                    val calendarId = it.getLong(idIndex)
+                    val displayName = it.getString(nameIndex)
+                   // Log.e(TAG, "Calendar ID: $calendarId, Name: $displayName")
+                    // You can choose the desired calendar based on the display name or just return the first one.
+                    return calendarId
+                } while (it.moveToNext())
+            }
+        }
+        throw IllegalStateException("No calendar found.")
+    }
+
+    private fun RLGetWritableCalendarId(): Long? {
+        val projection = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+            CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL
+        )
+
+        val cursor = requireActivity().contentResolver.query(
+            CalendarContract.Calendars.CONTENT_URI,
+            projection,
+            null,
+            null,
+            null
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
+                val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+                val accessLevelIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL)
+
+                do {
+                    val calendarId = it.getLong(idIndex)
+                    val calendarName = it.getString(nameIndex)
+                    val accessLevel = it.getInt(accessLevelIndex)
+
+                    // Check if the calendar is writable
+                    if (accessLevel >= CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR) {
+                       // Log.e(TAG, "Writable Calendar ID: $calendarId, Name: $calendarName")
+                        return calendarId
+                    }
+                } while (it.moveToNext())
+            }
+        }
+        // Return null if no writable calendar was found
+        return null
+    }
+
+
 }

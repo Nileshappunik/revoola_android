@@ -12,6 +12,9 @@ public class RLPrefManager {
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String APP_LANGUAGE = "appLanguage";
     public static String current_fragment = "Currentfragment";
+
+    public static String selected_schedule_date = "selectedscheduledate";
+
     public static String last_device_connect = "LastDeviceConnect";
     public static String last_device_connect_type = "LastDeviceConnectType";
 
