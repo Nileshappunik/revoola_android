@@ -77,20 +77,17 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.recyclerTitle.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.session))
         fragBinding.inlayTop.ivDescription.setText("")
         //do Title
-       val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
-        fragBinding.inlayTop.recyclerTitle.isNestedScrollingEnabled = false
-        fragBinding.inlayTop.recyclerTitle.setOnTouchListener { _, _ -> true }
-
+        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        fragBinding.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
-        fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
-
+        fragBinding.recyclerTitle.adapter = adaptertitle
+        // click to show center 
         val snapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(fragBinding.inlayTop.recyclerTitle)
-
+        snapHelper.attachToRecyclerView(fragBinding.recycleSession)
         // Initially move the first item to the center
         RLMoveToCenter(11)
 
@@ -207,7 +204,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         1-> datalist.add(RLSessionitemset("RELAXATION",carddate.totalrms.toString(),R.drawable.ic_mind_read))
                         2-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                         3-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
-                        4-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.distance.toString(),R.drawable.ic_distance))
+                        4-> datalist.add(RLSessionitemset("DISTANCE(miles)",RLTools.RLformatCommas(carddate.distance.toDouble()),R.drawable.ic_distance))
                         5-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
                         6-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                         7-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
@@ -403,44 +400,28 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
-    private fun RLMoveToCenter1(position: Int) {
-        // Calculate the position offset required to center the item
-        val layoutManager = fragBinding.inlayTop.recyclerTitle.layoutManager as LinearLayoutManager
-        val view = layoutManager.findViewByPosition(position) ?: return
-
-        val recyclerViewWidth = fragBinding.inlayTop.recyclerTitle.width
-        val viewWidth = view.width
-        val viewLeft = view.left
-
-        val scrollDistance = viewLeft - (recyclerViewWidth / 2 - viewWidth / 2)
-        fragBinding.inlayTop.recyclerTitle.smoothScrollBy(scrollDistance, 0)
-    }
-
     private fun RLMoveToCenter(position: Int) {
-        val layoutManager = fragBinding.inlayTop.recyclerTitle.layoutManager as LinearLayoutManager
+        val layoutManager = fragBinding.recyclerTitle.layoutManager as LinearLayoutManager
 
-        fragBinding.inlayTop.recyclerTitle.post {
+        fragBinding.recyclerTitle.post {
             // Scroll to the desired position first
-            layoutManager.scrollToPositionWithOffset(position, fragBinding.inlayTop.recyclerTitle.width / 2)
-            fragBinding.inlayTop.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
+            layoutManager.scrollToPositionWithOffset(position, fragBinding.recyclerTitle.width / 2)
+            fragBinding.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
                 object : ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
-                        fragBinding.inlayTop.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        fragBinding.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                         val view = layoutManager.findViewByPosition(position)
                         if (view != null) {
                             val viewLeft = view.left
                             val viewWidth = view.width
 
-                            val scrollDistance = viewLeft - (fragBinding.inlayTop.recyclerTitle.width / 2 - viewWidth / 2)
-                            fragBinding.inlayTop.recyclerTitle.smoothScrollBy(scrollDistance, 0)
+                            val scrollDistance = viewLeft - (fragBinding.recyclerTitle.width / 2 - viewWidth / 2)
+                            fragBinding.recyclerTitle.smoothScrollBy(scrollDistance, 0)
                         }
                     }
                 })
         }
     }
-
-
-
 
 }

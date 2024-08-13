@@ -1,17 +1,14 @@
 package com.example.myfirstapp.fragment.start.body
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
-import android.graphics.PorterDuff
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
@@ -30,6 +27,7 @@ import com.google.gson.Gson
 class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragBodyClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
+    var heightScreen=1177
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
     }
@@ -50,28 +48,30 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.toolbar.ivBack)
-      //  val tintColor = requireContext().getColor(R.color.AppDarkGrayColor)
-      //  fragBinding.toolbar.ivBack.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
         fragBinding.toolbar.ivTitle.setText(R.string.bodyclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectabodyclass)
-        val typeface: Typeface? = ResourcesCompat.getFont(requireContext(), R.font.omnes_regular)
-        fragBinding.toolbar.ivTitle.typeface = typeface
-        fragBinding.toolbar.ivDescription.typeface = typeface
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             //filter click open dialog
             RLfilterdialogopen()
         }
-
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
         fragBinding.toolbar.recyclerTitle.adapter = adaptertitle
-
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
-        RLGetBodyVideoList(RLConstants.FORALL,false)
+        fragBinding.rvItemmindclass.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                fragBinding.rvItemmindclass.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                heightScreen =  fragBinding.rvItemmindclass.height
+                println("RelativeLayout total height: $heightScreen pixels")
+                RLGetBodyVideoList(RLConstants.FORALL,false)
+            }
+        })
+
     }
     private fun RLGetBodyVideoList(videotype: String,ride:Boolean) {
         val databaseManager= RLDatabaseManagerRead()
@@ -82,11 +82,12 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-                val adapter = RLBodyClassListAdapter(videoList,activity,ride)
+                val adapter = RLBodyClassListAdapter(videoList,activity,ride,heightScreen)
                 fragBinding.rvItemmindclass.adapter = adapter
             }
         }
     }
+
     //rl_dailog_class_filter
     fun RLfilterdialogopen() {
         val  dialog: Dialog = Dialog(requireContext())

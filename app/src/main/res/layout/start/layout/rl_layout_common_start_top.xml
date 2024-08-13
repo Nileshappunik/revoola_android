@@ -16,18 +16,16 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="15dp"
-            app:tint="@color/AppDarkGrayColor"
+            app:tint="@color/AppMainColor"
             android:src="@drawable/ic_arrow_back_ios"/>
 
         <ImageView
             android:id="@+id/ivhelp"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginTop="15dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/ic_info"/>
-
-
 
         <LinearLayout
             android:id="@+id/linear_title"
@@ -52,24 +50,21 @@
                 android:textAlignment="center"
                 android:text="@string/yourway"
                 android:textColor="@color/AppBlackColor"
-                android:textSize="26sp"/>
+                android:textSize="24sp"/>
             <TextView
                 android:id="@+id/iv_Description"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
                 android:layout_marginEnd="10dp"
                 android:textAllCaps="true"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:text="@string/youractivityyourway"
                 android:textColor="@color/AppBlackColor"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textSize="16sp"/>
         </LinearLayout>
-
-
-
 
         <RelativeLayout
             android:layout_width="match_parent"

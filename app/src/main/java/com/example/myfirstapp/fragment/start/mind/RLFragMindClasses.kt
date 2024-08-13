@@ -50,14 +50,8 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.toolbar.ivBack)
-        //val tintColor = requireContext().getColor(R.color.AppDarkGrayColor)
-       // fragBinding.toolbar.ivBack.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
         fragBinding.toolbar.ivTitle.setText(R.string.mindclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectamindfulclass)
-
-        val typeface: Typeface? = ResourcesCompat.getFont(requireContext(), R.font.omnes_regular)
-        fragBinding.toolbar.ivTitle.typeface = typeface
-        fragBinding.toolbar.ivDescription.typeface = typeface
 
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             //filter click open dialog

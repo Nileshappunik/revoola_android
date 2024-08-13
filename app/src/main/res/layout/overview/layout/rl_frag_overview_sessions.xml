@@ -17,6 +17,12 @@
             <include
                 android:id="@+id/inlayTop"
                 layout="@layout/rl_layout_common_start_top"/>
+
+            <com.example.myfirstapp.ui.RLNonScrollableRecyclerView
+                android:id="@+id/recyclerTitle"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"/>
+
             <RelativeLayout
                 android:id="@+id/relay_OverviewName"
                 android:layout_width="match_parent"

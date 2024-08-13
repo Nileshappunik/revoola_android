@@ -70,7 +70,8 @@ class RLSplashActivityRL : RLBaseActivity() {
                 if (task.isSuccessful) {
                     val updated = task.result
                     Log.e(TAG, "Config params updated: $updated")
-                    val message = remoteConfig.getString("test")
+                    val message = remoteConfig.getString("start")
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.start_help_content,message.toString())
                     Log.e(TAG, "message: $message")
                 } else {
                     Log.e(TAG, "Fetch failed")

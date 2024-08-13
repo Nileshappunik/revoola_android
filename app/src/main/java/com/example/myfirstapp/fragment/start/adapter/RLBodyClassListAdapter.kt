@@ -20,8 +20,14 @@ import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesView
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.model.RLVideoModel
 import com.google.gson.Gson
+import kotlin.math.roundToInt
 
-class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val context: FragmentActivity?,val ride:Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLBodyClassListAdapter(
+    private val dataList: List<RLVideoModel>,
+    val context: FragmentActivity?,
+    val ride: Boolean,
+    val heightTotal: Int
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLBodyClassListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
@@ -57,6 +63,7 @@ class RLBodyClassListAdapter(private val dataList: List<RLVideoModel>, val conte
                     bundle.putBoolean("Ride",ride)
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
                 }
+
 
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")

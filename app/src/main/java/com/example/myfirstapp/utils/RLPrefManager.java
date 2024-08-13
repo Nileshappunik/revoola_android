@@ -22,6 +22,7 @@ public class RLPrefManager {
     public static String last_device_connect_name = "LastDeviceConnectName";
     public static String current_user = "current_user";
     public static String current_user_email = "current_user_email";
+    public static String start_help_content = "startHelpContent";
 
 
     private static boolean isFirst = true;

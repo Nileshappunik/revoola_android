@@ -94,7 +94,7 @@ class RLFragMindClassesView : RLBaseFragment() {
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {
                     videoLink=VideoData.videoLinkiPhonex.toString()
                     if (RLCheckPermissions()) {
-                        RLDownloadVideo(VideoData.videoLinkiPhonex)
+                        RLDownloadVideo(VideoData.videoLinkiPhonex,audioVideoType)
                     } else {
                         RLRequestPermissions()
                     }
@@ -141,15 +141,15 @@ class RLFragMindClassesView : RLBaseFragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                RLDownloadVideo(videoLink)
+                RLDownloadVideo(videoLink,"Video")
             }
         }
     }
-    private fun RLDownloadVideo(url: String) {
+    private fun RLDownloadVideo(url: String,audioVideoType:String) {
         val uniqueFileName = "video_${UUID.randomUUID()}.mp4"
         val request = DownloadManager.Request(Uri.parse(url))
-            .setTitle("Downloading video")
-            .setDescription("Downloading a video file")
+            .setTitle("Downloading $audioVideoType")
+            .setDescription("Downloading a $audioVideoType file")
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uniqueFileName)
             .setAllowedOverMetered(true)

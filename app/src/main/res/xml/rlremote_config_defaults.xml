@@ -2,7 +2,65 @@
 <defaultsMap>
     <!-- Add other default parameters as needed -->
     <entry>
-        <key>test</key>
-        <value>blue</value>
+        <key>start</key>
+        <value>{
+            "visible": true,
+            "data": [
+            {
+            "text": "",
+            "type": 1,
+            "title": "Welcome to Revoola!",
+            "image": ""
+            },
+            {
+            "text": "This is our Main Page where you can start different activities.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "",
+            "type": 1,
+            "title": "Choose what to do next:",
+            "image": ""
+            },
+            {
+            "text": "Click on MIND CLASSES or BODY CLASSES if you wish to see videos created by our instructors to teach you new skills in various different areas. Just find your space and start improving yourself!",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Click on YOUR WAY if you do not need an instructor or videos but prefer to record your own workouts, walks, runs or rides.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Click CHALLENGES if you want to challenge someone (or even yourself) to a small competition when it comes to Effort, Steps, Calories, Distance, Elevation or Duration.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "At the bottom of the page you can navigate to the Overview Page to follow your latest progress, to the Feed Page to see what's happening with your friends and colleagues to the Friends Page to manage your friends and groups and MORE is more, like Notifications, Heart Rate Monitor Settings, Account Information, Help and Frequently Asked Questions (FAQ).",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Do not forget to pair a heart rate monitor in order to get the most out of Revoola. <a href='https://www.revoola.com'>Click here.</a> to learn how.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "If you wish to see our instruction video again, <a href='https://www.revoola.com'>click here.</a>",
+            "type": 0,
+            "title": "",
+            "image": ""
+            }
+            ]
+            }</value>
     </entry>
 </defaultsMap>

@@ -12,7 +12,8 @@
             android:id="@+id/txt_title_session"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/omnes_regular"
+            android:textStyle="bold"
             android:text="@string/sessionsmall"
             android:textColor="@color/AppBlackColor"
             android:textSize="16sp" />

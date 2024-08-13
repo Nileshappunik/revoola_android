@@ -99,6 +99,14 @@ class RLFragStart : RLBaseFragment() {
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+       val responseString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
+
+       // val adapter = RLStartListAdapter(activity,dataList)
+       // dialogMainBinding.ivRecyclerview.adapter=adapter
+
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
