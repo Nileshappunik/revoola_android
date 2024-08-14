@@ -13,12 +13,16 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlDialogHelpChallengesForBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForNameBinding
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.gson.Gson
 
 class RLFragChallengesForName : RLBaseFragment() {
     val TAG: String = RLFragChallengesForName::class.java.simpleName
@@ -94,29 +98,26 @@ class RLFragChallengesForName : RLBaseFragment() {
     private fun RLshowHelpDialog() {
         val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpChallengesForBinding =
-            RlDialogHelpChallengesForBinding.inflate(getLayoutInflater())
+        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
         dialog.setContentView(dialogMainBinding.getRoot())
         dialog.setCancelable(true)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
+
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
 
-
-        dialogMainBinding.layYou.txtHeader.setText(R.string.nameyourchallenge)
-        val description="it's important to give you challenge name this is what everyone will see when they are invited to join the challenge and will be how they can identify your challenge in their feed."
-        dialogMainBinding.layYou.txtHeaderDescription.setText(description)
-        dialogMainBinding.layYou.imgHelpChallenges.setImageResource(R.drawable.ic_challenge_flag)
-
-        dialogMainBinding.layFriends.cardChallenge.visibility=View.GONE
-        dialogMainBinding.layGroups.cardChallenge.visibility=View.GONE
-        dialogMainBinding.layGroupsVGroups.cardChallenge.visibility=View.GONE
-
         dialog.show()
-
     }
 
 

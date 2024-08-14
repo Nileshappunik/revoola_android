@@ -21,6 +21,7 @@ import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -102,10 +103,11 @@ class RLFragStart : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-       val responseString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
-
-       // val adapter = RLStartListAdapter(activity,dataList)
-       // dialogMainBinding.ivRecyclerview.adapter=adapter
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
 
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()

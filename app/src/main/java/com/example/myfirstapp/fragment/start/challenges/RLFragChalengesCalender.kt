@@ -14,17 +14,21 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlDialogHelpSetyourgoalBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChalengesCalenderBinding
 import com.example.myfirstapp.enumclass.RLDateType
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLCalenderListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLMonthlyCalenderListAdapter
 import com.example.myfirstapp.fragment.start.challenges.model.RLDateInfoModel
 import com.example.myfirstapp.fragment.start.challenges.model.RLMonthInfoModel
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.gson.Gson
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -53,7 +57,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_calender, container) as RlFragChalengesCalenderBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
@@ -174,28 +178,28 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
     }
     private fun RLshowHelpDialog() {
-        val  dialog: Dialog = Dialog(requireContext())
+        val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpSetyourgoalBinding = RlDialogHelpSetyourgoalBinding.inflate(getLayoutInflater())
+        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
         dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
 
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
 
-        dialogMainBinding.laySartdate.txtHeader.setText(R.string.pleaseenterstartdate)
-        dialogMainBinding.laySartdate.txtHeaderDescription.setText(R.string.selecttosetthedatyouwantstart)
-        dialogMainBinding.laySartdate.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
-        dialogMainBinding.layEnddate.txtHeader.setText(R.string.pleaseenterenddate)
-        dialogMainBinding.layEnddate.txtHeaderDescription.setText(R.string.selecttosetthedayuoyend)
-        dialogMainBinding.layEnddate.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
         dialog.show()
-
     }
     private fun RLsetupCalendarTO() {
         // Generate dates for the current month

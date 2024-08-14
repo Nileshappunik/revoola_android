@@ -13,14 +13,17 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databinding.RlDialogHelpChallengesForBinding
-import com.example.myfirstapp.databinding.RlDialogHelpSetyourgoalBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForNameBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForTypeBinding
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.gson.Gson
 
 class RLFragChallengesForType : RLBaseFragment() {
     val TAG: String = RLFragChallengesForType::class.java.simpleName
@@ -81,28 +84,28 @@ class RLFragChallengesForType : RLBaseFragment() {
     }
 
     private fun RLshowHelpDialog() {
-        val  dialog: Dialog = Dialog(requireContext())
+        val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpSetyourgoalBinding = RlDialogHelpSetyourgoalBinding.inflate(getLayoutInflater())
+        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
         dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
 
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
 
-        dialogMainBinding.laySartdate.txtHeader.setText(R.string.pleaseenterstartdate)
-        dialogMainBinding.laySartdate.txtHeaderDescription.setText(R.string.selecttosetthedatyouwantstart)
-        dialogMainBinding.laySartdate.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
-        dialogMainBinding.layEnddate.txtHeader.setText(R.string.pleaseenterenddate)
-        dialogMainBinding.layEnddate.txtHeaderDescription.setText(R.string.selecttosetthedayuoyend)
-        dialogMainBinding.layEnddate.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
         dialog.show()
-
     }
 
 

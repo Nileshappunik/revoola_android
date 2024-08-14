@@ -49,15 +49,25 @@ class RLHelpListAdapter(val context: FragmentActivity?,
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             when (cardData.type){
-                1->{
-                    layoutBinding.tvTitle.visibility=View.VISIBLE
-                    layoutBinding.tvDescription.visibility=View.GONE
-                    layoutBinding.tvTitle.setText(cardData.title)
-                }
                 0->{
                     layoutBinding.tvTitle.visibility=View.GONE
                     layoutBinding.tvDescription.visibility=View.VISIBLE
+                    layoutBinding.cardChallenge.visibility=View.GONE
                     layoutBinding.tvDescription.setText(cardData.text)
+                }
+                1->{
+                    layoutBinding.tvTitle.visibility=View.VISIBLE
+                    layoutBinding.tvDescription.visibility=View.GONE
+                    layoutBinding.cardChallenge.visibility=View.GONE
+                    layoutBinding.tvTitle.setText(cardData.title)
+                }
+                2->{
+                    layoutBinding.tvTitle.visibility=View.GONE
+                    layoutBinding.tvDescription.visibility=View.GONE
+                    layoutBinding.cardChallenge.visibility=View.VISIBLE
+                    layoutBinding.txtHeader.setText(cardData.title)
+                    layoutBinding.tvDescriptionChallenge.setText(cardData.text)
+                    layoutBinding.iconHelpChallenges.loadSvg(cardData.image)
                 }
             }
     }

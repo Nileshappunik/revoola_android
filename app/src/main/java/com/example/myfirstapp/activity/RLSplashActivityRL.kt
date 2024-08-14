@@ -68,15 +68,19 @@ class RLSplashActivityRL : RLBaseActivity() {
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener(this,OnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val updated = task.result
-                    Log.e(TAG, "Config params updated: $updated")
-                    val message = remoteConfig.getString("start")
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.start_help_content,message.toString())
-                    Log.e(TAG, "message: $message")
+                    val start_top = remoteConfig.getString("start")
+                    val friends_top = remoteConfig.getString("friends_top")
+                    val challenge_selectFor = remoteConfig.getString("challenge_selectFor")
+                    val challenge_selectTarget = remoteConfig.getString("challenge_selectTarget")
+                    val challenge_selectName = remoteConfig.getString("challenge_selectName")
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
                 } else {
                     Log.e(TAG, "Fetch failed")
                 }
-
             })
     }
 

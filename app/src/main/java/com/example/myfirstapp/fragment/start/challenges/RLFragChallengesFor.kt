@@ -22,8 +22,10 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.RlDialogFriendChallengesBinding
-import com.example.myfirstapp.databinding.RlDialogHelpChallengesForBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForBinding
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengeForFriendListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengeForGroupListAdapter
 import com.example.myfirstapp.model.RLSetsearch_user
@@ -38,6 +40,7 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import com.google.gson.Gson
 
 class RLFragChallengesFor : RLBaseFragment() {
     val TAG: String = RLFragChallengesFor::class.java.simpleName
@@ -129,41 +132,26 @@ class RLFragChallengesFor : RLBaseFragment() {
     private fun RLshowHelpDialog() {
         val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpChallengesForBinding =
-            RlDialogHelpChallengesForBinding.inflate(getLayoutInflater())
+        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
         dialog.setContentView(dialogMainBinding.getRoot())
         dialog.setCancelable(true)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectFor,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
+
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
 
-
-
-        dialogMainBinding.layYou.txtHeader.setText(getString(R.string.you)+":")
-        dialogMainBinding.layYou.txtHeaderDescription.setText("SET YOURSELF A PERSONAL CHALLENGE.")
-        dialogMainBinding.layYou.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
-
-        dialogMainBinding.layFriends.txtHeader.setText(getString(R.string.friends)+":")
-        val friendDescription="SET A CHALLENGE FOR YOU AND YOUR FRIENDS. WHERE EACH OF YOU ARE CHALLENGED TO ACHIEVE THE SAME GOAL."
-        dialogMainBinding.layFriends.txtHeaderDescription.setText(friendDescription)
-        dialogMainBinding.layFriends.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
-        dialogMainBinding.layGroups.txtHeader.setText(getString(R.string.groups)+":")
-        val groupDescription="JUST LIKE A FRIENDS CHALLENGE YOU CAN CHALLENGE ALL THE MEMBERS OF ANY OF THE GROUPS THAT YOU ARE A MEMBER OF, TO ACHIEVE THE SAME GOAL."
-        dialogMainBinding.layGroups.txtHeaderDescription.setText(groupDescription)
-        dialogMainBinding.layGroups.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
-        dialogMainBinding.layGroupsVGroups.txtHeader.setText(getString(R.string.groupvgroup)+":")
-        val groupvDescription="GROUP V GROUP CHALLENGES ARE WHERE A GROUP IS COLLECTIVELY TRYING TO BEAT THE OTHER GROUP TO ACHIEVE THE GOAL. FOR INSTANCE, CAN GROUP AACHIEVE 100,000 STEPS BEFORE GROUP B?"
-        dialogMainBinding.layGroupsVGroups.txtHeaderDescription.setText(groupvDescription)
-        dialogMainBinding.layGroupsVGroups.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-
-
         dialog.show()
-
     }
 
     private fun RLshowGroup(isGroupVGroup:Boolean) {

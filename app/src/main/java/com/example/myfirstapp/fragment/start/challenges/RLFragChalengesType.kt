@@ -20,9 +20,12 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChalengesTypeBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.enumclass.RLStartType
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengesListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -89,6 +92,8 @@ class RLFragChalengesType : RLBaseFragment() {
             }
         }
     }
+
+
     private fun RLshowHelpDialog() {
         val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
