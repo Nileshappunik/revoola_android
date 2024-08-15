@@ -3,11 +3,13 @@ import androidx.lifecycle.ViewModel
 import com.example.myfirstapp.model.RLFeedChallengesMapModel
 import com.example.myfirstapp.model.RLFeedChallengesModel
 import com.example.myfirstapp.model.RLFeedModel
+import com.example.myfirstapp.model.RLGetGroupMemberModel
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
 import com.example.myfirstapp.model.RLOverviewGraphResponse
+import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
 import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
@@ -34,6 +36,10 @@ class RLMainViewModel(val mainRepository:RLMainRepository): ViewModel() {
 
     fun RLgetGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
         mainRepository.RLgetGroupData(request, callback)
+    }
+
+    fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
+        mainRepository.RLGroupMembers(request, callback)
     }
     fun RLgetOverviewGraph(q:String, user:String, timestampfrom:Long, timestampto:Long, classtype:String, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
         mainRepository.RLgetOverviewGraph(q,user,timestampfrom,timestampto,classtype, callback)

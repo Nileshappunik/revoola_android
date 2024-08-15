@@ -12,7 +12,7 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutYourFriendBinding
 import com.example.myfirstapp.model.RLuserData
 
-class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: List<RLuserData>) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: List<RLuserData>,val isFollowHide:Boolean) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLYourFriendListAdapter"
     var bundle: Bundle = Bundle()
     var datalist:List<RLuserData> = friendList
@@ -39,6 +39,12 @@ class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: Li
                 .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                 .into(layoutBinding.imgFriend)
             layoutBinding.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
+
+            if (isFollowHide){
+                layoutBinding.txtFriendUnfollow.visibility=View.GONE
+            }else{
+                layoutBinding.txtFriendUnfollow.visibility=View.VISIBLE
+            }
         }
     }
     fun RLfilter(query: String) {

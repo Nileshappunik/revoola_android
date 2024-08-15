@@ -10,7 +10,7 @@
     <string name="exit_app1">Do You Want To Exit?</string>
     <string name="areyousurewanttodeletedata">are you sure you want to delete your account and data?</string>
     <string name="confirm">CONFIRM</string>
-    <string name="cancel">CANCLE</string>
+    <string name="cancel">CANCEL</string>
     <string name="showallclasses">SHOW ALL CLASSES</string>
     <string name="availablefilter">Available Filters</string>
     <string name="youalreadyconnecthealth">You have already Connected to Health Connect</string>
@@ -37,7 +37,7 @@
     <!--DEMO string-->
     <string name="winditdown">Wind it Down</string>
     <string name="hidhruv">Hi Dhruv,</string>
-    <string name="goodtoseeyou">Good to see you back,Lets get Going!</string>
+    <string name="goodtoseeyou">Good to see you back. Lets get going!</string>
     <string name="keepgoodtoseeyou">Keep up the good work.You are smashing it</string>
     <string name="youractivity">YOUR ACTIVITY</string>
     <string name="effort">EFFORT</string>
@@ -163,6 +163,9 @@
     <string name="send">Send</string>
     <string name="unfollow">Unfollow</string>
     <string name="members">Members</string>
+    <string name="followall">Follow All</string>
+    <string name="invitetojoin">Invite To Join</string>
+    <string name="removeall">Remove All</string>
     <string name="delete">Delete</string>
     <string name="sync">Sync</string>
     <string name="enternameoremailtofindonrevoola">Enter Email Or Name To Search On Revoola</string>
@@ -230,7 +233,7 @@
     <string name="facebook_app_id">423254927013835</string>
     <string name="fb_login_protocol_scheme">fb423254927013835</string>
     <string name="facebook_client_token">23148b487e52d13bea40029f58943f10</string>
-    <string name="cancle">Cancle</string>
+    <string name="cancle">Cancel</string>
 
     <string name="foryourmindandbody">Mind &amp; Body</string>
     <string name="foryourbody">For Your Body</string>
@@ -443,6 +446,7 @@
     <string name="maxeffort">MAxEffort</string>
     <string name="selectfriendforschedule">SELECT FRIENDS FOR SCHEDULE</string>
     <string name="selectfriendsgroups">SELECT FRIENDS/GROUPS</string>
+    <string name="groupdetails">Group Details</string>
 
 
 </resources>

@@ -47,7 +47,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
    // val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED" )
-    val valueslist = arrayOf("DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED","OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED" )
+    val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
+       "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
+       "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
+       "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
+       "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED")
     var totaldisplayitem=9
     private lateinit var adapterdata: RLOverviewSessionListAdapter
     private  var cardDate: RLOverviewGraphResponseDataCard? = null
@@ -77,19 +81,18 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
-        fragBinding.inlayTop.recyclerTitle.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.session))
         fragBinding.inlayTop.ivDescription.setText("")
         //do Title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        fragBinding.recyclerTitle.layoutManager = linearLayoutManager
+        fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
-        fragBinding.recyclerTitle.adapter = adaptertitle
+        fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
         // click to show center 
         val snapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(fragBinding.recycleSession)
+        snapHelper.attachToRecyclerView(fragBinding.inlayTop.recyclerTitle)
         // Initially move the first item to the center
-        RLMoveToCenter(11)
+        RLMoveToCenter(16)
 
         //DATA SET below
         val glinearLayoutManager = GridLayoutManager(activity, 2)
@@ -204,9 +207,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         1-> datalist.add(RLSessionitemset("RELAXATION",carddate.totalrms.toString(),R.drawable.ic_mind_read))
                         2-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                         3-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
-                        4-> datalist.add(RLSessionitemset("DISTANCE(miles)",RLTools.RLformatCommas(carddate.distance.toDouble()),R.drawable.ic_distance))
+                        4-> datalist.add(RLSessionitemset("DISTANCE (miles)",RLTools.RLformatCommas(carddate.distance.toDouble()),R.drawable.ic_distance))
                         5-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                        6-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
+                        6-> datalist.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                         7-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
                     }
                 }
@@ -226,9 +229,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         3-> datalist.add(RLSessionitemset("RELAXATION",carddate.totalrms.toString(),R.drawable.ic_mind_read))
                         4-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                         5-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
-                        6-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.distance.toString(),R.drawable.ic_distance))
+                        6-> datalist.add(RLSessionitemset("DISTANCE (miles)",carddate.distance.toString(),R.drawable.ic_distance))
                         7-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                        8-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
+                        8-> datalist.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                         9-> datalist.add(RLSessionitemset("AWARDS",awards.toString(),R.drawable.ic_award))
                     }
                 }
@@ -287,9 +290,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         1-> datalist.add(RLSessionitemset("AVG EFFORT",avarageeffort.toString(),R.drawable.ic_heart))
                         2-> datalist.add(RLSessionitemset("TOTAL CALORIES",RLTools.RLformatCommas(carddate.burntcalories.toDouble()),R.drawable.fd_calories_green))
                         3-> datalist.add(RLSessionitemset("ACTIVE CALORIES","0",R.drawable.fd_calories_green))
-                        4-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.distance.toString(),R.drawable.ic_distance))
+                        4-> datalist.add(RLSessionitemset("DISTANCE (miles)",carddate.distance.toString(),R.drawable.ic_distance))
                         5-> datalist.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
-                        6-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
+                        6-> datalist.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_climb))
                         7-> datalist.add(RLSessionitemset("AWARDS",awards.toString(),R.drawable.ic_award))
                     }
                 }
@@ -313,10 +316,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> datalist.add(RLSessionitemset("MAX DISTANCE(miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
-                        1-> datalist.add(RLSessionitemset("AVG DISTANCE(miles)",carddate.avgdistance.toString(),R.drawable.ic_distance))
-                        2-> datalist.add(RLSessionitemset("CLIMBED(feet)",carddate.elevation.toString(),R.drawable.ic_climb))
-                        3-> datalist.add(RLSessionitemset("AVG EFFORT PER(miles)",RLTools.RLminutesget(carddate.totalrmm.toInt()).toString(),R.drawable.ic_heart))
+                        0-> datalist.add(RLSessionitemset("MAX DISTANCE (miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
+                        1-> datalist.add(RLSessionitemset("AVG DISTANCE (miles)",carddate.avgdistance.toString(),R.drawable.ic_distance))
+                        2-> datalist.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_climb))
+                        3-> datalist.add(RLSessionitemset("AVG EFFORT PER (miles)",RLTools.RLminutesget(carddate.totalrmm.toInt()).toString(),R.drawable.ic_heart))
                     }
                 }
             }
@@ -326,10 +329,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> datalist.add(RLSessionitemset("MAX CLIMBED(ft)",carddate.elevation.toString(),R.drawable.ic_climb))
-                        1-> datalist.add(RLSessionitemset("AVG CLIMBED(ft)",carddate.avgelevation.toString(),R.drawable.ic_climb))
-                        2-> datalist.add(RLSessionitemset("DISTANCE(miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
-                        3-> datalist.add(RLSessionitemset("AVG EFFORT PER(ft)",carddate.elevation.toString(),R.drawable.ic_heart))
+                        0-> datalist.add(RLSessionitemset("MAX CLIMBED (ft)",carddate.elevation.toString(),R.drawable.ic_climb))
+                        1-> datalist.add(RLSessionitemset("AVG CLIMBED (ft)",carddate.avgelevation.toString(),R.drawable.ic_climb))
+                        2-> datalist.add(RLSessionitemset("DISTANCE (miles)",carddate.maxdistance.toString(),R.drawable.ic_distance))
+                        3-> datalist.add(RLSessionitemset("AVG EFFORT PER (ft)",carddate.elevation.toString(),R.drawable.ic_heart))
                     }
                 }
             }
@@ -401,23 +404,23 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
     private fun RLMoveToCenter(position: Int) {
-        val layoutManager = fragBinding.recyclerTitle.layoutManager as LinearLayoutManager
+        val layoutManager = fragBinding.inlayTop.recyclerTitle.layoutManager as LinearLayoutManager
 
-        fragBinding.recyclerTitle.post {
+        fragBinding.inlayTop.recyclerTitle.post {
             // Scroll to the desired position first
-            layoutManager.scrollToPositionWithOffset(position, fragBinding.recyclerTitle.width / 2)
-            fragBinding.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
+            layoutManager.scrollToPositionWithOffset(position, fragBinding.inlayTop.recyclerTitle.width / 2)
+            fragBinding.inlayTop.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
                 object : ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
-                        fragBinding.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        fragBinding.inlayTop.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                         val view = layoutManager.findViewByPosition(position)
                         if (view != null) {
                             val viewLeft = view.left
                             val viewWidth = view.width
 
-                            val scrollDistance = viewLeft - (fragBinding.recyclerTitle.width / 2 - viewWidth / 2)
-                            fragBinding.recyclerTitle.smoothScrollBy(scrollDistance, 0)
+                            val scrollDistance = viewLeft - (fragBinding.inlayTop.recyclerTitle.width / 2 - viewWidth / 2)
+                            fragBinding.inlayTop.recyclerTitle.smoothScrollBy(scrollDistance, 0)
                         }
                     }
                 })

@@ -25,8 +25,7 @@ import kotlin.math.roundToInt
 class RLBodyClassListAdapter(
     private val dataList: List<RLVideoModel>,
     val context: FragmentActivity?,
-    val ride: Boolean,
-    val heightTotal: Int
+    val ride: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLBodyClassListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -67,32 +66,6 @@ class RLBodyClassListAdapter(
 
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")
-            }
-        }
-      private fun RLGetVideoListBody(videoID:String,itemVIew: View) {
-            val databaseManager= RLDatabaseManagerRead()
-            databaseManager.RLRevoolaVideosRead(videoID){ data, error ->
-                if (data != null) {
-                    val gson = Gson()
-                    val jsonObject = gson.toJson(data)
-                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
-                    layoutBinding.txtClasstime.setText(VideoData.duration)
-                    layoutBinding.txtUsername.setText(VideoData.instructor)
-                    layoutBinding.txtClassname.setText(VideoData.rideTitle)
-                    layoutBinding.txtVideoaudio.setText(VideoData.difficulty)
-                    Glide.with(context!!).load(VideoData.imageLinkInstructor)
-                        //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-                        .into(layoutBinding.imgUser)
-                    Glide.with(context).load(VideoData.imageLinkSquareV2)
-                       // .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-                        .into(layoutBinding.imgMind)
-                    itemVIew.setOnClickListener {
-                        val bundle = Bundle()
-                        bundle.putString("VIDEODATA",jsonObject)
-                        bundle.putBoolean("Ride",ride)
-                        (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, false)
-                    }
-                }
             }
         }
         private fun RLshowSubscribeDialog() {

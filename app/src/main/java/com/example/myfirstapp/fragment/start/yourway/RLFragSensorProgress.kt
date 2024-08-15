@@ -120,7 +120,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                 Log.e(TAG,"Exception:- "+e.message)
             }
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, RLFragSessionComplete::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
     }

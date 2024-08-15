@@ -77,7 +77,8 @@
                 android:visibility="gone"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_revoola_logo"/>
-            <androidx.recyclerview.widget.RecyclerView
+
+            <com.example.myfirstapp.ui.RLNonScrollableRecyclerView
                 android:id="@+id/recyclerTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"

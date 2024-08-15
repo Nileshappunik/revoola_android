@@ -19,7 +19,7 @@
 
     <!--Bottom Bar Size-->
     <dimen name="bottomiconsize">20dp</dimen>
-    <dimen name="bottomtextsize">12sp</dimen>
+    <dimen name="bottomtextsize">10sp</dimen>
 
     <dimen name="feedbottomlineheight">15dp</dimen>
 

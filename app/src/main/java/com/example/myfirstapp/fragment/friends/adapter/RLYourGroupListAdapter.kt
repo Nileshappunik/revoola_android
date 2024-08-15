@@ -9,7 +9,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutYourGroupBinding
+import com.example.myfirstapp.fragment.friends.RLFragYourGroup
+import com.example.myfirstapp.fragment.friends.RLFragYourGroupDetails
 import com.example.myfirstapp.model.RLyourGroupDataModel
 
 class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List<RLyourGroupDataModel>) :
@@ -45,7 +48,17 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
                 .placeholder(R.drawable.sample_user)
                 .error(R.drawable.sample_user)
                 .into(layoutBinding.imgGroup)
-        }
+
+            layoutBinding.relativeGroupCard.setOnClickListener {
+                (context as RLMainActivityRL).RLbottombarcolorwhite()
+                val bundle: Bundle = Bundle()
+                bundle.putString("GroupID", carddata.group_id)
+                bundle.putString("GroupName", carddata.group_name)
+                bundle.putString("GroupAvatar", carddata.group_avatar)
+                bundle.putString("GroupMember", carddata.number_of_members.toString())
+                (context as RLMainActivityRL).RLloadFrag(RLFragYourGroupDetails().newInstance(bundle), TAG, true, null, true)
+            }
+       }
     }
 
     fun RLfilter(query: String) {

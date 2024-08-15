@@ -136,7 +136,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             (context as RLMainActivityRL).RLhidebottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, RLFragSessionComplete::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
     }

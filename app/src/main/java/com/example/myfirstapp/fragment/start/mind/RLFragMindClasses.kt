@@ -8,12 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
@@ -39,7 +41,11 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         return fragment
     }
     //val valueslistMind = arrayOf("All", "Relax","Sleep","Happiness","Focus","Energise","Mindful Movement")
-    val valueslistMind = arrayOf("ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT")
+    val valueslistMind = arrayOf("ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
+        "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
+        "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
+        "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
+        "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -62,6 +68,12 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistMind,activity)
         fragBinding.toolbar.recyclerTitle.adapter = adaptertitle
+        // click to show center
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(fragBinding.toolbar.recyclerTitle)
+        // Initially move the first item to the center
+        RLMoveToCenter(16)
+
 
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
@@ -111,6 +123,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
 
     }
     override fun onItemClick(position: Int) {
+        RLMoveToCenter(position)
         val selectiontitle= valueslistMind[position]
         when(selectiontitle){
             "ALL"->{
@@ -137,6 +150,30 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
             "MOVEMENT"->{
                 RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT)
             }
+        }
+    }
+
+    private fun RLMoveToCenter(position: Int) {
+        val layoutManager = fragBinding.toolbar.recyclerTitle.layoutManager as LinearLayoutManager
+
+        fragBinding.toolbar.recyclerTitle.post {
+            // Scroll to the desired position first
+            layoutManager.scrollToPositionWithOffset(position, fragBinding.toolbar.recyclerTitle.width / 2)
+            fragBinding.toolbar.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        fragBinding.toolbar.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                        val view = layoutManager.findViewByPosition(position)
+                        if (view != null) {
+                            val viewLeft = view.left
+                            val viewWidth = view.width
+
+                            val scrollDistance = viewLeft - (fragBinding.toolbar.recyclerTitle.width / 2 - viewWidth / 2)
+                            fragBinding.toolbar.recyclerTitle.smoothScrollBy(scrollDistance, 0)
+                        }
+                    }
+                })
         }
     }
 }

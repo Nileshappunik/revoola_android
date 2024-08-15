@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
@@ -27,7 +28,7 @@ import com.google.gson.Gson
 class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragBodyClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
-    var heightScreen=1177
+    //var heightScreen=1177
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
     }
@@ -37,7 +38,11 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         return fragment
     }
     //val valueslistBody = arrayOf("All", "HIIT","Ride","Yoga","Pilates","Dance","Warm")
-    val valueslistBody = arrayOf("ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
+    val valueslistBody = arrayOf("ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
+        "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
+        "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
+        "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
+        "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -59,19 +64,16 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
         fragBinding.toolbar.recyclerTitle.adapter = adaptertitle
+        // click to show center
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(fragBinding.toolbar.recyclerTitle)
+        // Initially move the first item to the center
+        RLMoveToCenter(14)
+
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
-        fragBinding.rvItemmindclass.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
-                fragBinding.rvItemmindclass.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                heightScreen =  fragBinding.rvItemmindclass.height
-                println("RelativeLayout total height: $heightScreen pixels")
-                RLGetBodyVideoList(RLConstants.FORALL,false)
-            }
-        })
-
+        RLGetBodyVideoList(RLConstants.FORALL,false)
     }
     private fun RLGetBodyVideoList(videotype: String,ride:Boolean) {
         val databaseManager= RLDatabaseManagerRead()
@@ -82,7 +84,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-                val adapter = RLBodyClassListAdapter(videoList,activity,ride,heightScreen)
+                val adapter = RLBodyClassListAdapter(videoList,activity,ride)
                 fragBinding.rvItemmindclass.adapter = adapter
             }
         }
@@ -116,6 +118,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
 
     }
     override fun onItemClick(position: Int) {
+        RLMoveToCenter(position)
         val selectiontitle= valueslistBody[position]
         when(selectiontitle){
             "ALL"->{
@@ -139,6 +142,30 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
             "WARM"->{
                 RLGetBodyVideoList(RLConstants.FORWARMUP,false)
             }
+        }
+    }
+
+    private fun RLMoveToCenter(position: Int) {
+        val layoutManager = fragBinding.toolbar.recyclerTitle.layoutManager as LinearLayoutManager
+
+        fragBinding.toolbar.recyclerTitle.post {
+            // Scroll to the desired position first
+            layoutManager.scrollToPositionWithOffset(position, fragBinding.toolbar.recyclerTitle.width / 2)
+            fragBinding.toolbar.recyclerTitle.viewTreeObserver.addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        fragBinding.toolbar.recyclerTitle.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                        val view = layoutManager.findViewByPosition(position)
+                        if (view != null) {
+                            val viewLeft = view.left
+                            val viewWidth = view.width
+
+                            val scrollDistance = viewLeft - (fragBinding.toolbar.recyclerTitle.width / 2 - viewWidth / 2)
+                            fragBinding.toolbar.recyclerTitle.smoothScrollBy(scrollDistance, 0)
+                        }
+                    }
+                })
         }
     }
 }

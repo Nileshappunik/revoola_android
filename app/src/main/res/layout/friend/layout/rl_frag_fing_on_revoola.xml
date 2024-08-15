@@ -105,7 +105,7 @@
                 android:id="@+id/img_group"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:backgroundTint="@color/AppTextLightGrayColor"
+                android:backgroundTint="@color/AppLightGrayColor"
                 android:background="@drawable/full_round"
                 android:layout_marginStart="10dp"
                 android:padding="2dp"

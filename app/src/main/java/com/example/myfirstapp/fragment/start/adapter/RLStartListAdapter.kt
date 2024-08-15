@@ -28,14 +28,14 @@ import com.example.myfirstapp.utils.loadSvg
 class RLStartListAdapter(
     val context: FragmentActivity?,
     val dataList: List<RLStartAllMenuModel>,
-   val heightTotal: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val heightTotal: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartListAdapter"
     var bundle: Bundle = Bundle()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutStartMenuBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_start_menu , parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlLayoutStartMenuBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_start_menu , parent, false)
+        return MyViewHolder(layoutBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

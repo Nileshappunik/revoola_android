@@ -145,7 +145,7 @@ class RLFragYourFriends : RLBaseFragment() {
         }
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendListAdapter(activity,userdata)
+        val adapter = RLYourFriendListAdapter(activity,userdata,false)
         fragBinding.recycleYourfriend.adapter = adapter
 
 

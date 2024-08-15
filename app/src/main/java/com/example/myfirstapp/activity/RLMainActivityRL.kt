@@ -14,9 +14,11 @@ import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
@@ -28,7 +30,9 @@ import com.example.myfirstapp.fragment.more.RLFragMore
 import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
+import com.example.myfirstapp.fragment.start.yourway.RLFragSessionComplete
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
@@ -46,7 +50,8 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
-        RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+        //RLloadFrag(RLFragOverviewSession(), TAG, true, null, false)
+        RLloadFrag(RLFragSessionComplete(), TAG, true, null, false)
         RLbottombarcolorwhite()
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
@@ -91,9 +96,37 @@ class RLMainActivityRL  : RLBaseActivity() {
                 }
             }
         }
+        RLDisableLongPressToast(activityMainBinding.bottomNav)
     }
 
-
+    private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
+        // Iterate over the BottomNavigationView items
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.feed),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.overview),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.start),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.friends),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.more),null)
+        bottomNavigationView.findViewById<View>(R.id.feed).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.overview).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.start).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.friends).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.more).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+    }
 
     private fun RLresizeDrawable(drawableId: Int, size: Int): Drawable? {
         val drawable = ContextCompat.getDrawable(this, drawableId)
@@ -170,7 +203,6 @@ class RLMainActivityRL  : RLBaseActivity() {
         }
         return false
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()

@@ -18,7 +18,6 @@ import com.example.myfirstapp.fragment.friends.adapter.RLYourGroupListAdapter
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.*
 import com.example.myfirstapp.fragment.friends.adapter.RLSelectedFriendListAdapter
-import com.example.myfirstapp.fragment.friends.adapter.RLYourFriendListAdapter
 import com.example.myfirstapp.fragment.friends.adapter.RLYourFriendSelectListAdapter
 import com.example.myfirstapp.model.RLSetsearch_user
 import com.example.myfirstapp.model.RLSetsearch_userrequest
