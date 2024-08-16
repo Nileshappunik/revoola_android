@@ -96,7 +96,6 @@ class RLFragYourGroup : RLBaseFragment() {
 
         fragBinding.txtInviteyourfriend.setOnClickListener {
             if (isGroup){
-                (context as RLMainActivityRL).RLbottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
             }
         }

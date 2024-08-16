@@ -48,6 +48,7 @@ class RLFragOverview : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview, container) as RlFragOverviewBinding
         currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
@@ -66,13 +67,11 @@ class RLFragOverview : RLBaseFragment() {
     private fun RLuisetup() {
         val currentmonth=RLTools.RLgetCalculatedMonths()
         fragBinding.txtMonth.setText(currentmonth)
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
         fragBinding.inlaySession.cardOverview.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true,null, false)
         }
         fragBinding.ivNotification.setOnClickListener {
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
         }
 

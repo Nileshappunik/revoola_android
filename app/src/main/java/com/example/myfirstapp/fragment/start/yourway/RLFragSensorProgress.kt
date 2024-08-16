@@ -62,6 +62,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_sensor_progress, container) as RlFragSensorProgressBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
@@ -119,7 +120,6 @@ class RLFragSensorProgress : RLBaseFragment(){
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- "+e.message)
             }
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }

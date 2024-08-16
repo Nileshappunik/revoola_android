@@ -57,6 +57,7 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule_session, container) as RlFragClassesScheduleSessionBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesScheduleJoinSession" )
@@ -72,7 +73,6 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(R.string.selectfriendsgroups)
         fragBinding.inlayTop.ivDescription.setText("")

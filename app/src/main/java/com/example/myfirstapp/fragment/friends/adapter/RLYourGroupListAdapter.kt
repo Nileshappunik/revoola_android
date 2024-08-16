@@ -50,7 +50,6 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
                 .into(layoutBinding.imgGroup)
 
             layoutBinding.relativeGroupCard.setOnClickListener {
-                (context as RLMainActivityRL).RLbottombarcolorwhite()
                 val bundle: Bundle = Bundle()
                 bundle.putString("GroupID", carddata.group_id)
                 bundle.putString("GroupName", carddata.group_name)

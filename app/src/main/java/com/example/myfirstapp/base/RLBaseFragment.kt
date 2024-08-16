@@ -15,8 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.common.RLFragNoInternet
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools.RLnextFinishAllActivity
+import com.google.gson.Gson
 
 
 open class RLBaseFragment : Fragment() {
@@ -134,9 +138,40 @@ open class RLBaseFragment : Fragment() {
             }else{
                 activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             }
-
         }
 
+    }
+
+    open fun RLBottomHideShowSet(isShow:Boolean) {
+        if (isShow){
+            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+
+        }else{
+            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+        }
+    }
+
+    open fun RLHelpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
+        val helpString= RLPrefManager.RLgetSomeStringValue(activity, startHelpContent,"" )
+
+        if (helpString.isNotEmpty()){
+            try {
+                val gson = Gson()
+                val StartHelpModel: RLStartHelpModel = gson.fromJson(helpString, RLStartHelpModel::class.java)
+                if(StartHelpModel.visible){
+                    imageHelp.visibility=View.VISIBLE
+                }else{
+                    imageHelp.visibility=View.GONE
+                }
+            }catch (e:Exception){
+              e.printStackTrace()
+            }
+        }
+        /*if (isShow){
+            imageHelp.visibility=View.VISIBLE
+        }else{
+            imageHelp.visibility=View.GONE
+        }*/
     }
 
 }

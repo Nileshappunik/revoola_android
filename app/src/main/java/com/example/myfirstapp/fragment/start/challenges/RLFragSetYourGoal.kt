@@ -1,7 +1,6 @@
 package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -38,6 +37,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_set_your_goal, container) as RlFragSetYourGoalBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetYourGoal" )
@@ -46,9 +46,9 @@ class RLFragSetYourGoal : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
+            RLBottomHideShowSet(true)
             RLcloseFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(R.string.setyourtarget)
@@ -112,7 +112,6 @@ class RLFragSetYourGoal : RLBaseFragment() {
                 var bundle: Bundle = Bundle()
                 bundle.putString("ChallengeType",challengeType )
                 bundle.putString("CalenderType","Daily" )
-                (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
             }
         }
@@ -124,7 +123,6 @@ class RLFragSetYourGoal : RLBaseFragment() {
                 var bundle: Bundle = Bundle()
                 bundle.putString("ChallengeType",challengeType )
                 bundle.putString("CalenderType","Weekly" )
-                (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
             }
         }
@@ -136,7 +134,6 @@ class RLFragSetYourGoal : RLBaseFragment() {
                 var bundle: Bundle = Bundle()
                 bundle.putString("ChallengeType",challengeType )
                 bundle.putString("CalenderType","Monthly" )
-                (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
             }
         }
@@ -148,7 +145,6 @@ class RLFragSetYourGoal : RLBaseFragment() {
                 var bundle: Bundle = Bundle()
                 bundle.putString("ChallengeType",challengeType )
                 bundle.putString("CalenderType","Custom" )
-                (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
             }
         }

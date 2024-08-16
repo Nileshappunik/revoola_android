@@ -1,9 +1,6 @@
 package com.example.myfirstapp.fragment.start.mind
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
-import android.graphics.PorterDuff
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +9,6 @@ import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -48,6 +44,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClasses" )
@@ -55,6 +52,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp, RLPrefManager.start_help_content)
         RLonBackPresAct(fragBinding.toolbar.ivBack)
         fragBinding.toolbar.ivTitle.setText(R.string.mindclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectamindfulclass)

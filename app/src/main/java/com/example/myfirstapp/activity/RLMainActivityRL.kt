@@ -50,9 +50,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
-        //RLloadFrag(RLFragOverviewSession(), TAG, true, null, false)
-        RLloadFrag(RLFragSessionComplete(), TAG, true, null, false)
-        RLbottombarcolorwhite()
+        RLloadFrag(RLFragOverviewSession(), TAG, true, null, false)
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
         RLchepermissionphysicalActivity()
@@ -66,26 +64,22 @@ class RLMainActivityRL  : RLBaseActivity() {
                     true
                 }
                 R.id.feed -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragFeed(), TAG, false, null, false)
                     true
                 }
                 R.id.start -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
                    RLloadFrag(RLFragStart(), TAG, false, null, false)
 
                     true
                 }
                 R.id.friends -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragFriends(), TAG, false, null, false)
                     true
                 }
                 R.id.more -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragMore(), TAG, false, null, false)
                     true
@@ -167,9 +161,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         Toast.makeText(this, "Activity Recognition Permission Denied", Toast.LENGTH_SHORT).show()
         // Handle the denial appropriately, such as notifying the RLuser about limited functionality
     }
-    fun RLbottombarcolorwhite(){
-        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
-    }
+
     fun RLbottombarcolorDarkBlue(){
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.overview)
         item.setChecked(true)
@@ -179,12 +171,12 @@ class RLMainActivityRL  : RLBaseActivity() {
     fun RLhidebottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.GONE
     }
-
     fun RLshowbottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.VISIBLE
+        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
     }
 
-    fun RLloadFrag(fragment: Fragment?, tagname: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
+    fun RLloadFrag(fragment: Fragment?, tagName: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()

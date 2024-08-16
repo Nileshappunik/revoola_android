@@ -22,6 +22,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
@@ -33,7 +34,6 @@ class RLFragFindOnRevoola : RLBaseFragment() {
 
     private fun RLuisetup() {
         fragBinding.txtInviteyourfriend.setOnClickListener {
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
         }
     }

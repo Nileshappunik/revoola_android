@@ -1,12 +1,9 @@
 package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +15,6 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
-import com.example.myfirstapp.databinding.RlFragChallengesForNameBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForTypeBinding
 import com.example.myfirstapp.fragment.start.RLStartHelpModel
 import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
@@ -39,6 +35,7 @@ class RLFragChallengesForType : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_type, container) as RlFragChallengesForTypeBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForType" )
@@ -47,12 +44,12 @@ class RLFragChallengesForType : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectTarget)
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         val calenderType = requireArguments().getString("CalenderType").toString().trim()
         val isGroup = requireArguments().getBoolean("IsGroup")
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
+            RLBottomHideShowSet(true)
             RLcloseFragment()
         }
         if (isGroup){
@@ -69,7 +66,6 @@ class RLFragChallengesForType : RLBaseFragment() {
             val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
             bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
 
         }
@@ -78,7 +74,6 @@ class RLFragChallengesForType : RLBaseFragment() {
             val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
             bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
         }
     }

@@ -1,7 +1,6 @@
 package com.example.myfirstapp.fragment.start
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,9 +14,7 @@ import android.view.Window
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
-import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
@@ -37,6 +34,7 @@ class RLFragStart : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
@@ -44,9 +42,6 @@ class RLFragStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
-
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
@@ -73,6 +68,8 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
+        RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp,RLPrefManager.start_help_content)
+
     }
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()

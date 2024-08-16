@@ -73,6 +73,7 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragChooseYourSensor")
@@ -83,8 +84,7 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
         //RLonBackPresAct(fragBinding.ivBack)
 
         fragBinding.ivBack.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
+            RLBottomHideShowSet(true)
             RLcloseFragment()
         }
 
@@ -136,7 +136,6 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
     private fun RLclickToNextScreenOpen(yourWayType:String){
         var bundle: Bundle = Bundle()
         bundle.putString("YourWayType", yourWayType)
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         if (isHeartRateDevice){
             (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
         }else{

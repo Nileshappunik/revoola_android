@@ -73,7 +73,6 @@ class RLYourWayListAdapter(val context: FragmentActivity?,
         fun RLNextViewOpen(name:String){
             var bundle: Bundle = Bundle()
             bundle.putString("YourWayType",name)
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
         }

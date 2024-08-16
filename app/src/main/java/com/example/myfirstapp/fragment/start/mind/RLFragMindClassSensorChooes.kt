@@ -68,6 +68,7 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragChooseYourSensor")
@@ -105,7 +106,6 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
         bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         if (withoutsensor){
             (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{

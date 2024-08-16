@@ -88,7 +88,7 @@
                         android:layout_weight="1"
                         android:textSize="20sp"
                         android:textAllCaps="true"
-                        android:paddingStart="30dp"
+                        android:paddingStart="25dp"
                         android:text="AUG 2024"
                         android:textColor="@color/AppWhiteColor"
                         android:fontFamily="@font/omnes_semibold_regular" />

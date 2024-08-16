@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -60,13 +59,12 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         //activity?.window!!.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Dark icons
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview_sessions, container) as RlFragOverviewSessionsBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragOverviewSession" )
         currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
@@ -78,9 +76,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     }
 
     private  fun  RLuisetup(){
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
-        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        //fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.session))
         fragBinding.inlayTop.ivDescription.setText("")
         //do Title
@@ -169,12 +168,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val datalist= mutableListOf<RLSessionitemset>()
         var istextColorSetWhite=false
 
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.visibility=View.VISIBLE
         fragBinding.inlayTop.logo.visibility=View.GONE
-        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+       // fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
 
         fragBinding.relayOverviewName.visibility=View.GONE
         fragBinding.txtTotalsessionNumber.visibility=View.VISIBLE
@@ -185,7 +183,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         when (valuetype){
             "OVERVIEW"->{
                 (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                (context as RLMainActivityRL).RLshowbottombarcolorwhite()
                 fragBinding.inlayTop.ivBack.visibility=View.GONE
                 fragBinding.inlayTop.ivTitle.visibility=View.GONE
                 fragBinding.inlayTop.ivDescription.visibility=View.GONE

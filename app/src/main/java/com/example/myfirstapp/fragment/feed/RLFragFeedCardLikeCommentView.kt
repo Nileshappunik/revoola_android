@@ -44,6 +44,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed_card_like_comment_view, container) as RlFragFeedCardLikeCommentViewBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeedCardLikeCommentView" )
@@ -69,14 +70,11 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         val  clickType = requireArguments().getString(RLConstants.TYPE)
         if (clickType.equals("Comment")){
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             fragBinding.relativeComment.visibility=View.VISIBLE
             fragBinding.relativeThumb.visibility=View.GONE
             RLTools.RLheightsetimageview(fragBinding.inlayMain.imgNain)
             RLCommentThumbUiSet(cardData,fragBinding.inlayMain)
         }else if (clickType.equals("Thumb")){
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             fragBinding.relativeComment.visibility=View.GONE
             fragBinding.relativeThumb.visibility=View.VISIBLE
             RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgNain)

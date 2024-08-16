@@ -66,6 +66,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(true)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_heart_video_start, container) as RlFragMindClassesHeartVideoStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClassesHeartVideoStart" )
@@ -84,7 +85,6 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLstartCountdown()
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         val data=  requireArguments().getString("VIDEODATA","")
         val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         val gson = Gson()
@@ -136,7 +136,6 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

@@ -68,6 +68,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(true)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_speed_video_start, container) as RlFragBodyClassesSpeedVideoStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesSpeedVideoStart" )
@@ -88,7 +89,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLstartCountdown()
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+
         val data=  requireArguments().getString("VIDEODATA","")
          ride=  requireArguments().getBoolean("Ride")
         val gson = Gson()
@@ -132,7 +133,6 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

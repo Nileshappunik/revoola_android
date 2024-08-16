@@ -33,6 +33,7 @@ class RLFragYourWay : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_youe_way, container) as RlFragYoueWayBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourWay" )
@@ -51,8 +52,6 @@ class RLFragYourWay : RLBaseFragment() {
     }
 
     private fun RLYourwayList(height: Int) {
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))

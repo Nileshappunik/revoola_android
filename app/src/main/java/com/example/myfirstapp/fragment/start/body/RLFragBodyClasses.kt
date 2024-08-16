@@ -45,6 +45,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
@@ -53,6 +54,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.toolbar.ivBack)
+        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp, RLPrefManager.start_help_content)
         fragBinding.toolbar.ivTitle.setText(R.string.bodyclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectabodyclass)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {

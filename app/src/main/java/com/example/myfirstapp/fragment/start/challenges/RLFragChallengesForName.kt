@@ -1,7 +1,6 @@
 package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -16,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChallengesForNameBinding
 import com.example.myfirstapp.fragment.start.RLStartHelpModel
@@ -38,6 +36,7 @@ class RLFragChallengesForName : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
@@ -46,11 +45,10 @@ class RLFragChallengesForName : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectName)
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         val calenderType = requireArguments().getString("CalenderType").toString().trim()
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             RLcloseFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(challengeType+" Challenge")

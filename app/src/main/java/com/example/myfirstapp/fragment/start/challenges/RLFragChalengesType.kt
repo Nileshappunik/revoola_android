@@ -1,12 +1,10 @@
 package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,25 +12,17 @@ import android.view.ViewTreeObserver
 import android.view.Window
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
-import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragChalengesTypeBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
-import com.example.myfirstapp.enumclass.RLStartType
-import com.example.myfirstapp.fragment.start.RLStartHelpModel
-import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.challenges.adapter.RLChallengesListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.utils.loadSvg
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlin.math.roundToInt
 
 class RLFragChalengesType : RLBaseFragment() {
     val TAG: String = RLFragChalengesType::class.java.simpleName
@@ -43,10 +33,10 @@ class RLFragChalengesType : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesType" )
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         return fragBinding.root
     }
 
@@ -65,6 +55,7 @@ class RLFragChalengesType : RLBaseFragment() {
 
     private fun RLChallengesList(height: Int) {
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.challengessmall))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.typeofchallenge))
         fragBinding.inlayTop.ivhelp.setOnClickListener {

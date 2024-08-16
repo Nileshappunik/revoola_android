@@ -65,15 +65,15 @@ class RLFriendListAdapter(
 
             layoutBinding.relayStartNew.setOnClickListener {
                 if (cardData.title.toLowerCase().equals("find on revoola")){
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, true)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
@@ -83,7 +83,6 @@ class RLFriendListAdapter(
                         type = "text/plain"
                     }
                     context.startActivity(Intent.createChooser(shareIntent, "Share via"))
-                  //(context as RLMainActivityRL).RLbottombarcolorwhite()
                   //(context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, true)
                 }
 

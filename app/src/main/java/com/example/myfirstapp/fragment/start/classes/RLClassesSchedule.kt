@@ -51,6 +51,7 @@ class RLClassesSchedule : RLBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
@@ -59,7 +60,6 @@ class RLClassesSchedule : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         fragBinding.txtSelectDatatime.setOnClickListener {
             RLShowDatePickerDialog()
         }

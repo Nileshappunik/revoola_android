@@ -187,20 +187,20 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                     //MIND
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, true)
                 }else  if (cardData.bmo == 2){
                     //OTHER
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
 
                 }else  if (cardData.bmo == 0){
                     //BODY
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
 
                 }
@@ -208,7 +208,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
                 //new design
                 val bundle = Bundle()
                 bundle.putSerializable(RLConstants.CardData, cardData)
-                (context as RLMainActivityRL).RLbottombarcolorwhite()
+
                 (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, true)
             }else{
                 RLshowAlertDialog()

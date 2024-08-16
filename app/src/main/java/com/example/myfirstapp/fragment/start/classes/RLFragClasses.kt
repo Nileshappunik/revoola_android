@@ -25,6 +25,7 @@ class RLFragClasses : RLBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes, container) as RlFragClassesBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragClasses" )
@@ -50,14 +51,10 @@ class RLFragClasses : RLBaseFragment() {
         fragBinding.layYourbody.txtClassName.visibility=View.VISIBLE
 
         fragBinding.layYourmind.imgFull.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, false)
 
         }
         fragBinding.layYourbody.imgFull.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, false)
 
         }

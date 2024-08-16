@@ -66,6 +66,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
          lastfragmentopen=RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_fragment,"" )
@@ -87,8 +88,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.feedsmall))
         fragBinding.inlayTop.ivDescription.setText("")
 
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
         if (lastfragmentopen.equals("RLFragChallengeSummary")){
             //CHALLENGES view back event get
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -125,19 +124,16 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         })
 
       /*  fragBinding.imgPlus.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+
             (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
         }*/
         fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_friends)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             if ( currentState.equals("CHALLENGES")){
-                (context as RLMainActivityRL).RLshowbottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)
             }else if ( currentState.equals("FRIENDS")){
-                (context as RLMainActivityRL).RLhidebottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)
             }else if ( currentState.equals("GROUPS")){
-                (context as RLMainActivityRL).RLbottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
             }
         }

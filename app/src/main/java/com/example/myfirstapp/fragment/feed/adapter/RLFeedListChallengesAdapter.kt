@@ -120,7 +120,6 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.cardChalengis.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    (context as RLMainActivityRL).RLbottombarcolorwhite()
                     (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
                 }
 

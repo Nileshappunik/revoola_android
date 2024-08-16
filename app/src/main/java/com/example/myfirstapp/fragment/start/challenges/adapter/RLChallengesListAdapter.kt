@@ -80,7 +80,6 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
         private fun RLNextViewOpen(challengeType:String){
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
         }
     }

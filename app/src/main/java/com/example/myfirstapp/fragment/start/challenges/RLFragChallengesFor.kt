@@ -1,7 +1,6 @@
 package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -61,6 +60,7 @@ class RLFragChallengesFor : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for, container) as RlFragChallengesForBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesFor" )
@@ -74,9 +74,8 @@ class RLFragChallengesFor : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectFor)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             RLcloseFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(R.string.challengesfor)
@@ -114,7 +113,6 @@ class RLFragChallengesFor : RLBaseFragment() {
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
             bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
 
         }
@@ -326,7 +324,6 @@ class RLFragChallengesFor : RLBaseFragment() {
         bundle.putString("ChallengeType",challengeType )
         bundle.putString("CalenderType",calenderType )
         bundle.putBoolean("IsGroup",isGroup )
-        (context as RLMainActivityRL).RLhidebottombarcolorwhite()
         (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 
     }
