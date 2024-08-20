@@ -26,8 +26,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/ic_goal"/>
@@ -44,7 +44,7 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/individualtarget"
                     android:textStyle="bold"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppBlackColor"/>
             </LinearLayout>
 
@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/goal_shared"/>
@@ -83,7 +83,7 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/sharedtarget"
                     android:textStyle="bold"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:textColor="@color/AppBlackColor"/>
             </LinearLayout>
 

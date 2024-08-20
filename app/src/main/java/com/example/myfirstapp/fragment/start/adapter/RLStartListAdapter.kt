@@ -66,8 +66,8 @@ class RLStartListAdapter(
 
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
-            layoutParamsImage.height =  heightTotal/4
-            layoutParamsImage.width =  heightTotal/5
+            layoutParamsImage.height =  heightTotal/5
+            layoutParamsImage.width =  heightTotal/4
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {

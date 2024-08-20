@@ -29,8 +29,8 @@ class RLBodyClassListAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLBodyClassListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
+        return MyViewHolder(layoutBinding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MyViewHolder) {

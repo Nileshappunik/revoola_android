@@ -25,7 +25,6 @@ import com.example.myfirstapp.utils.loadSvg
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
 class RLFragFriends : RLBaseFragment() {
     val TAG: String = RLFragFriends::class.java.simpleName
     lateinit var fragBinding: RlFragFriendsBinding
@@ -33,7 +32,7 @@ class RLFragFriends : RLBaseFragment() {
         RlFragFriendsBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_friends, container) as RlFragFriendsBinding
@@ -41,7 +40,7 @@ class RLFragFriends : RLBaseFragment() {
         RLFriendsList()
         return fragBinding.root
     }
-    private fun  RLuisetupNew(dataList: List<RLStartAllMenuModel>) {
+    private fun RLuisetupNew(dataList: List<RLStartAllMenuModel>) {
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.friends))

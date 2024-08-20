@@ -2,6 +2,7 @@ package com.example.myfirstapp.fragment.start.mind
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import com.google.gson.Gson
 class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragMindClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
+
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
     }
@@ -77,6 +79,10 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
         RLGetMindVideoList(RLConstants.FORALL)
+
+
+
+
     }
     private fun RLGetMindVideoList(videotype: String) {
         val databaseManager= RLDatabaseManagerRead()
@@ -89,6 +95,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 val videoList = videoMap.values.toList()
                 val adapter = RLMindClassListAdapter(videoList,activity)
                 fragBinding.rvItemmindclass.adapter = adapter
+
             }
         }
     }

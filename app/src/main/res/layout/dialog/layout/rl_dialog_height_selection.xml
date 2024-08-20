@@ -19,24 +19,23 @@ android:padding="0dp">
 
 <RadioGroup
     android:id="@+id/radioGroup"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
     android:layout_marginStart="16dp"
     android:orientation="vertical">
 
     <RadioButton
         android:id="@+id/radioButtonfeetandinches"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:buttonTint="@color/AppMainColor"
-        android:paddingStart="15dp"
         android:text="@string/feetandinches" />
 
     <RadioButton
         android:id="@+id/radioButtonmetric"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="15dp"
         android:buttonTint="@color/AppMainColor"
         android:text="@string/metric" />
 
@@ -98,6 +97,7 @@ android:padding="0dp">
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/cancle"
+        android:textAllCaps="true"
         android:fontFamily="@font/omnes_regular"
         android:textSize="18sp"
         android:background="@color/AppWhiteColor"
@@ -111,6 +111,7 @@ android:padding="0dp">
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/ok"
+        android:textAllCaps="true"
         android:fontFamily="@font/omnes_regular"
         android:background="@color/AppWhiteColor"
         android:textSize="18sp"

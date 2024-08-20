@@ -223,6 +223,8 @@
     <string name="maxheartrateestimated">Max heartrate</string>
     <string name="restingheartrate">Base Heartrate</string>
     <string name="restinghr">Resting HR</string>
+    <string name="enterheartrate">ENTER HEART RATE</string>
+    <string name="rangeheartrate">Range(120-250)</string>
     <string name="location">Location</string>
     <string name="activities">Activites</string>
     <string name="camera">Camera</string>
@@ -387,7 +389,7 @@
     <string name="weekly">WEEKLY</string>
     <string name="monthly">MONTHLY</string>
     <string name="custom">CUSTOM</string>
-    <string name="pleasesetyourtarget">Please set your target steps before selectinh time period</string>
+    <string name="pleasesetyourtarget">Please set your target steps before select in time period</string>
 
     <string name="stepchallenge">STEPS CHALLENGE</string>
     <string name="effortchallenge">EFFORT CHALLENGE</string>
@@ -430,7 +432,7 @@
     <string name="share">share</string>
     <string name="subscribedescription">Your Account is currently a Free account to access this  content please subscribe to Premium</string>
     <string name="challengeforyouorwithothers">Challenge For You or with others?</string>
-    <string name="giveyourchallengename">Give Your Challenge Name</string>
+    <string name="giveyourchallengename">Give Your Challenge a Name</string>
     <string name="nameyourchallenge">Name Your Challenge</string>
     <string name="setchallenge">Set Challenge</string>
     <string name="selectfriends">Select friends</string>

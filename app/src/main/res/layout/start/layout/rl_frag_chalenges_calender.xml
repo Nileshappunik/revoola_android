@@ -35,7 +35,7 @@
                         android:gravity="center"
                         android:text="@string/from"
                         android:layout_marginStart="15dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="0dp"
                         android:textColor="@color/AppBlackColor"
                         android:textSize="24sp"
                         android:fontFamily="@font/omnes_semibold_regular" />
@@ -45,8 +45,8 @@
                         android:layout_height="50dp"
                         android:orientation="horizontal"
                         android:layout_marginEnd="20dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="0dp"
                         android:gravity="center">
 
                         <ImageView
@@ -110,7 +110,7 @@
                         android:gravity="center"
                         android:text="@string/to"
                         android:layout_marginStart="15dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="0dp"
                         android:textColor="@color/AppBlackColor"
                         android:textSize="24sp"
                         android:fontFamily="@font/omnes_semibold_regular" />
@@ -120,8 +120,8 @@
                         android:layout_height="50dp"
                         android:orientation="horizontal"
                         android:layout_marginEnd="20dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="15dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="0dp"
                         android:gravity="center">
 
                         <ImageView

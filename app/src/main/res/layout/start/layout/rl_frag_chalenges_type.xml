@@ -14,7 +14,12 @@
             android:id="@+id/inlayTop"
             layout="@layout/rl_layout_common_start_top"/>
 
-        <RelativeLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChallenges"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!--<RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible">
@@ -22,7 +27,6 @@
                 android:id="@+id/rvChallenges"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-
-        </RelativeLayout>
+        </RelativeLayout>-->
     </LinearLayout>
 </layout>

@@ -101,10 +101,12 @@ class RLFragChalengesCalender : RLBaseFragment() {
             fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)
         }
         fragBinding.btnNext.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType",challengeType )
-            bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
+           if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
+               val bundle: Bundle = Bundle()
+               bundle.putString("ChallengeType",challengeType )
+               bundle.putString("CalenderType",calenderType )
+               (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
+           }
         }
 
     }

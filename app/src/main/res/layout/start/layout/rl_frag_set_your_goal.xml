@@ -69,6 +69,7 @@
                         android:layout_marginBottom="15dp"
                         android:textAlignment="center"
                         android:fontFamily="@font/omnes_regular"
+                        android:imeOptions="actionDone"
                         android:inputType="numberDecimal"
                         android:hint="eg 100,000"
                         android:background="@drawable/square_border_offwhite"

@@ -26,6 +26,7 @@
             android:layout_height="24dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"
             android:src="@drawable/ic_info"/>
 
@@ -52,7 +53,6 @@
                 android:layout_marginEnd="10dp"
                 android:textAllCaps="true"
                 android:textAlignment="center"
-                android:text="@string/yourway"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="24sp"/>
             <TextView
@@ -65,7 +65,6 @@
                 android:textAllCaps="true"
                 android:gravity="center"
                 android:textAlignment="center"
-                android:text="@string/youractivityyourway"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="16sp"/>
         </LinearLayout>

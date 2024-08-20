@@ -79,14 +79,12 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
-        //fragBinding.inlayTop.ivhelp.visibility=View.GONE
-        fragBinding.inlayTop.ivTitle.setText(getString(R.string.session))
         fragBinding.inlayTop.ivDescription.setText("")
         //do Title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
-        val adaptertitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
-        fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
+        val adapterTitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
+        fragBinding.inlayTop.recyclerTitle.adapter = adapterTitle
         // click to show center 
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(fragBinding.inlayTop.recyclerTitle)
@@ -172,7 +170,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.inlayTop.ivTitle.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.visibility=View.VISIBLE
         fragBinding.inlayTop.logo.visibility=View.GONE
-       // fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+
 
         fragBinding.relayOverviewName.visibility=View.GONE
         fragBinding.txtTotalsessionNumber.visibility=View.VISIBLE

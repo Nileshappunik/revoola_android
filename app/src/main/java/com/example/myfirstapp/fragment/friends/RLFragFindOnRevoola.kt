@@ -1,6 +1,5 @@
 package com.example.myfirstapp.fragment.friends
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

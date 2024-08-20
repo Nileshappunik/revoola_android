@@ -33,7 +33,6 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
         if (holder is MyViewHolder) {
             holder.bindData(position, holder.itemView)
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -56,8 +55,8 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
 
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
-            layoutParamsImage.height =  heightTotal/6
-            layoutParamsImage.width =  (heightTotal/6 * 1.5).roundToInt()
+            layoutParamsImage.height =  heightTotal/9
+            layoutParamsImage.width =  (heightTotal/7 * 1.5).roundToInt()
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {
@@ -78,11 +77,10 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
 
         }
         private fun RLNextViewOpen(challengeType:String){
-            var bundle: Bundle = Bundle()
+            val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
             (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
         }
     }
-
 
 }

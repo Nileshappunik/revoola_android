@@ -105,50 +105,36 @@ class RLFragSetYourGoal : RLBaseFragment() {
 
 
         fragBinding.relayDaily.cardChalengesst.setOnClickListener {
-            val stepcount=fragBinding.edtStepCount.text.toString()
-            if (stepcount.isNullOrEmpty()){
-                RLshowAlertDialog()
-            }else{
-                var bundle: Bundle = Bundle()
-                bundle.putString("ChallengeType",challengeType )
-                bundle.putString("CalenderType","Daily" )
-                (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
-            }
+           RLnextFragmentOpen("Daily",challengeType)
+
         }
         fragBinding.relayWeekly.cardChalengesst.setOnClickListener {
-            val stepcount=fragBinding.edtStepCount.text.toString()
-            if (stepcount.isNullOrEmpty()){
-                RLshowAlertDialog()
-            }else{
-                var bundle: Bundle = Bundle()
-                bundle.putString("ChallengeType",challengeType )
-                bundle.putString("CalenderType","Weekly" )
-                (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
-            }
+            RLnextFragmentOpen("Weekly",challengeType)
+
         }
         fragBinding.relayMonthly.cardChalengesst.setOnClickListener {
-            val stepcount=fragBinding.edtStepCount.text.toString()
-            if (stepcount.isNullOrEmpty()){
-                RLshowAlertDialog()
-            }else{
-                var bundle: Bundle = Bundle()
-                bundle.putString("ChallengeType",challengeType )
-                bundle.putString("CalenderType","Monthly" )
-                (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
-            }
+            RLnextFragmentOpen("Monthly",challengeType)
+
         }
         fragBinding.relayCustom.cardChalengesst.setOnClickListener {
-            val stepcount=fragBinding.edtStepCount.text.toString()
-            if (stepcount.isNullOrEmpty()){
-                RLshowAlertDialog()
-            }else{
-                var bundle: Bundle = Bundle()
-                bundle.putString("ChallengeType",challengeType )
-                bundle.putString("CalenderType","Custom" )
-                (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
-            }
+            RLnextFragmentOpen("Custom",challengeType)
+
         }
 
+    }
+
+    private fun RLnextFragmentOpen(CalenderType:String,challengeType:String) {
+        val stepCount=fragBinding.edtStepCount.text.toString()
+        if (stepCount.isEmpty()){
+            RLshowAlertDialog()
+        }else if (stepCount.toDouble()>=1){
+            val bundle: Bundle = Bundle()
+            bundle.putString("ChallengeType",challengeType)
+            bundle.putString("CalenderType",CalenderType)
+            (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
+        } else{
+            RLshowAlertDialog()
+        }
     }
 
     private fun RLshowHelpDialog() {

@@ -59,22 +59,22 @@ class RLFriendListAdapter(
 
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
-            layoutParamsImage.height =  heightTotal/4
-            layoutParamsImage.width =  heightTotal/5
+            layoutParamsImage.height =  heightTotal/5
+            layoutParamsImage.width =  heightTotal/4
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {
                 if (cardData.title.toLowerCase().equals("find on revoola")){
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
                     val shareIntent = Intent().apply {

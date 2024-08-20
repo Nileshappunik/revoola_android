@@ -32,7 +32,7 @@ class RLFragChalengesType : RLBaseFragment() {
         RlFragChalengesTypeBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
@@ -74,7 +74,7 @@ class RLFragChalengesType : RLBaseFragment() {
                     fragBinding.rvChallenges.layoutManager = linearLayoutMain
                     val adapter = RLChallengesListAdapter(activity,dataList,height)
                     fragBinding.rvChallenges.adapter=adapter
-                   // RLuisetupNew(dataList)
+
                 }catch (e:Exception){
                     Log.e(TAG,"Catch:- ${e.message}")
                 }

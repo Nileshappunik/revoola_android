@@ -20,12 +20,17 @@ import com.example.myfirstapp.model.RLVideoModel
 
 class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val context: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLMindClassListAdapter"
+
+    private val limitedList = if (dataList.size > 7) dataList.subList(0, 7) else dataList
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
         return MyViewHolder(layoutbinding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         if (holder is MyViewHolder) {
+
             holder.bindData(position, holder.itemView)
         }
     }
@@ -54,6 +59,11 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
                     bundle.putString("VIDEODATA",cardData.key)
                     (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, null, true)
                 }
+
+                /*val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayNew.layoutParams
+                layoutParams.height =  1176/6
+                layoutBinding.relayNew.layoutParams =layoutParams*/
+
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")
             }

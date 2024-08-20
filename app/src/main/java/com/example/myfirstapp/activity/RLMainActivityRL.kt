@@ -198,7 +198,7 @@ class RLMainActivityRL  : RLBaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        RLshowbottombarcolorwhite()
+        //RLshowbottombarcolorwhite()
     }
 
 /*

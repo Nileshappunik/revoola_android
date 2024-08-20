@@ -2,6 +2,7 @@ package com.example.myfirstapp.fragment.start.body
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleLi
 import com.example.myfirstapp.databinding.RlDailogClassFilterBinding
 import com.example.myfirstapp.databinding.RlFragMindClassesBinding
 import com.example.myfirstapp.fragment.start.adapter.RLBodyClassListAdapter
+import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.google.gson.reflect.TypeToken
 import com.example.myfirstapp.model.RLVideoModel
@@ -76,15 +78,16 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
         RLGetBodyVideoList(RLConstants.FORALL,false)
+
     }
-    private fun RLGetBodyVideoList(videotype: String,ride:Boolean) {
+    private fun RLGetBodyVideoList(videoType: String,ride:Boolean) {
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLRevoolaVideoKeysRead(videotype){ data, error ->
+        databaseManager.RLRevoolaVideoKeysRead(videoType){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
-                val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
-                val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
+                val videoTypeObject = object : TypeToken<Map<String, RLVideoModel>>() {}.type
+                val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoTypeObject)
                 val videoList = videoMap.values.toList()
                 val adapter = RLBodyClassListAdapter(videoList,activity,ride)
                 fragBinding.rvItemmindclass.adapter = adapter
