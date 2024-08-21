@@ -1,8 +1,10 @@
 package com.example.myfirstapp.fragment.feed
 
 import android.content.pm.ActivityInfo
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
@@ -48,7 +51,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenge_summary, container) as RlFragChallengeSummaryBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengeSummary" )
@@ -67,6 +70,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.setImageResource(R.drawable.ic_share)
         fragBinding.inlayTop.ivTitle.setText(R.string.challengesummery)
         fragBinding.inlayTop.ivDescription.setText("")
+
 
         var classType=""
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
@@ -254,6 +258,10 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             htmltext , "text/html", "UTF-8", null)
 
     }
- 
+
+    override fun onPause() {
+        super.onPause()
+        RLBottomHideShowSet(true)
+    }
 
 }

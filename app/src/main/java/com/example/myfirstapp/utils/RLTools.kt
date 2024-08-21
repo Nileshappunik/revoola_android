@@ -753,10 +753,16 @@ object RLTools {
     }
 
      fun RLformatCommas(number: Double): String {
-        val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+         val decimalPlaces=2
+      /*  val numberFormat = NumberFormat.getNumberInstance(Locale.US)
          val integerPart = number.roundToInt()
          val formattedInteger = numberFormat.format(integerPart)
-        return formattedInteger
+        return formattedInteger*/
+
+         val formatter = NumberFormat.getInstance(Locale.getDefault())
+         formatter.maximumFractionDigits = 2
+         formatter.minimumFractionDigits = 0
+         return formatter.format(number)
     }
 
     fun RLnumberToUUID(number: Int): UUID {

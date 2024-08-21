@@ -85,7 +85,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLBodyUiSetup(VideoData)
                 RLClickToSechedule(jsonObject,RLConstants.BODY,"")
-                fragBinding.btnStartclass.setOnClickListener {
+                fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putString("VIDEODATA",jsonObject)
                     bundle.putBoolean("Ride",ride)
@@ -176,6 +176,10 @@ class RLFragBodyClassesView : RLBaseFragment() {
         downloadManager.enqueue(request)
     }
 
+    override fun onResume() {
+        super.onResume()
+        RLBottomHideShowSet(true)
+    }
     private fun RLshowSubscribeDialog() {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

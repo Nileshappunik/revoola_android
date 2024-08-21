@@ -20,6 +20,7 @@ import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleLi
 import com.example.myfirstapp.fragment.start.adapter.RLMindClassListAdapter
 import com.example.myfirstapp.databinding.RlDailogClassFilterBinding
 import com.example.myfirstapp.databinding.RlFragMindClassesBinding
+import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.google.gson.reflect.TypeToken
 import com.example.myfirstapp.model.RLVideoModel
@@ -77,7 +78,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
 
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
-        fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
+        fragBinding.rvItemMindClass.layoutManager = linearLayoutMain
         RLGetMindVideoList(RLConstants.FORALL)
 
 
@@ -93,8 +94,13 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-                val adapter = RLMindClassListAdapter(videoList,activity)
-                fragBinding.rvItemmindclass.adapter = adapter
+
+                val height =  fragBinding.rvItemMindClass.height
+                val adapter = RLMindClassListAdapter(videoList,activity,height)
+                fragBinding.rvItemMindClass.adapter = adapter
+
+                /*val adapter = RLMindClassListAdapter(videoList,activity)
+                fragBinding.rvItemmindclass.adapter = adapter*/
 
             }
         }
@@ -118,7 +124,6 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         dialogMainBinding.cardDuration.txtCardTitle.setText(R.string.duration)
         dialogMainBinding.cardTakenbyme.txtCardTitle.setText(R.string.takenbyme)
         dialogMainBinding.cardClasstype.txtCardTitle.setText(R.string.classtype)
-
 
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
@@ -157,7 +162,6 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
             }
         }
     }
-
     private fun RLMoveToCenter(position: Int) {
         val layoutManager = fragBinding.toolbar.recyclerTitle.layoutManager as LinearLayoutManager
 

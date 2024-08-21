@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:fontFamily="@font/aptos_bold"
                     android:textColor="@color/AppBlackColor"
                     android:textSize="30sp" />
                 <TextView
@@ -144,7 +144,7 @@
                     android:visibility="visible"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@+id/txt_totalsession_number"
-                    android:fontFamily="@font/omnes_semibold_regular"
+                    android:fontFamily="@font/aptos_bold"
                     android:textColor="@color/AppBlackColor"
                     android:textSize="30sp" />
 

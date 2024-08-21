@@ -48,7 +48,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
-    //val valueslist = arrayOf("Friends", "Groups","You","Challenges")
+    //val valuesList = arrayOf("Friends", "Groups","You","Challenges")
     private val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
     private var adapter : RLFeedListAdapter?=null
     private var clickyou:Boolean=false
@@ -299,7 +299,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         valueslist.set(1,selectioncName)
         adaptertitle.notifyItemChanged(1,valueslist)
     }
-
     fun RLfirsttimeApiCall(groupid:String){
           limit = 10
          index=0
@@ -407,4 +406,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.rvItemfeed.adapter = adapterch
         RLapicallChallenges(adapterch)
     }
+    override fun onResume() {
+        super.onResume()
+        RLBottomHideShowSet(true)
+    }
+
 }

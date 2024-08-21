@@ -39,8 +39,8 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ITEM_TYPE_DATA) {
-            val layoutbinding: RlLayoutFeedListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_feed_list , parent, false)
-            return MyViewHolder(layoutbinding)
+            val layoutBinding: RlLayoutFeedListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_feed_list , parent, false)
+            return MyViewHolder(layoutBinding)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.rl_item_loading_layout, parent, false)
             LoadingViewHolder(view)

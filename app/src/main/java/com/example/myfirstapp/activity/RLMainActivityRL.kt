@@ -173,7 +173,7 @@ class RLMainActivityRL  : RLBaseActivity() {
     }
     fun RLshowbottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.VISIBLE
-        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
+        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppLightGrayColor)
     }
 
     fun RLloadFrag(fragment: Fragment?, tagName: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {

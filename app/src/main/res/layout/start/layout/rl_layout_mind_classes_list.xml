@@ -6,6 +6,112 @@
         android:id="@+id/relayNew"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_mind"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CornerCut"/>
+
+        <ImageView
+            android:id="@+id/img_right"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_chevron_right"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_user"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img_mind"/>
+
+        <TextView
+            android:id="@+id/txt_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:singleLine="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/img_user"
+            android:layout_toStartOf="@+id/img_right"
+            android:textColor="@color/AppTextGrayColor"/>
+
+        <TextView
+            android:id="@+id/txt_classname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:textAllCaps="true"
+            android:singleLine="true"
+            android:layout_toEndOf="@+id/img_mind"
+            android:layout_toStartOf="@+id/img_right"
+            android:layout_below="@+id/txt_username"
+            android:textColor="@color/AppBlackColor"
+            android:fontFamily="@font/omnes_semibold_regular"/>
+
+        <TextView
+            android:id="@+id/txt_classtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img_mind"
+            android:layout_below="@+id/txt_classname"
+            android:textColor="@color/AppTextGrayColor" />
+
+        <View
+            android:id="@+id/viewdivider"
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:background="@color/AppBlack10Color"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/txt_classtime"
+            android:layout_below="@+id/txt_classname"/>
+
+        <TextView
+            android:id="@+id/txt_videoaudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/viewdivider"
+            android:layout_below="@+id/txt_classname"
+            android:textColor="@color/AppTextGrayColor"/>
+
+       <!-- <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/AppWhiteColor"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/txt_videoaudio"/>-->
+
+    </RelativeLayout>
+
+    <!--<RelativeLayout
+        android:id="@+id/relayNew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -16,13 +122,13 @@
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/CornerCut"/>
 
-     <!--   <com.google.android.material.imageview.ShapeableImageView
+     &lt;!&ndash;   <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_mind"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/CornerCut"/>-->
+            app:shapeAppearanceOverlay="@style/CornerCut"/>&ndash;&gt;
 
         <ImageView
             android:id="@+id/img_right"
@@ -113,5 +219,5 @@
             android:layout_marginTop="20dp"
             android:layout_below="@+id/txt_videoaudio"/>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 </layout>

@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.feed
 
 import android.content.pm.ActivityInfo
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -54,7 +56,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
-         RLBottomHideShowSet(false)
+         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_summary, container) as RlFragSessionSummaryBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodySessionSummary" )
@@ -79,6 +81,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(cardData.className.toString())
         fragBinding.inlayTop.ivDescription.setText(RLTools.RLconvertTimestampToDAte(cardData.timestamp.toLong()))
+
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{
@@ -734,7 +737,10 @@ class RLFragBodySessionSummary : RLBaseFragment() {
 
         }
     }
-
+    override fun onPause() {
+        super.onPause()
+        RLBottomHideShowSet(true)
+    }
 
 
     /*val imageList = listOf(

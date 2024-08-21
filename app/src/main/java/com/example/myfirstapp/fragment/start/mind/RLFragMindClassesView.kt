@@ -86,7 +86,7 @@ class RLFragMindClassesView : RLBaseFragment() {
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLMindUiSetup(VideoData)
                 RLClickToSechedule(jsonObject,RLConstants.MIND,audioVideoType)
-                fragBinding.btnStartclass.setOnClickListener {
+                fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putString("VIDEODATA",jsonObject)
                     bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
@@ -175,6 +175,11 @@ class RLFragMindClassesView : RLBaseFragment() {
         })
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        RLBottomHideShowSet(true)
     }
 
 }

@@ -11,7 +11,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/btn_startclass">
+            android:layout_above="@+id/inlay_Button">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -346,22 +346,34 @@
 
             </RelativeLayout>
         </ScrollView>
-        <TextView
-            android:id="@+id/btn_startclass"
+
+        <include
+            android:id="@+id/inlay_Button"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="@dimen/button_height_size"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
+            android:layout_alignParentBottom="true"
+            layout="@layout/rl_layout_common_button"/>
+       <!-- <TextView
+            android:id="@+id/btn_startclass"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height_size"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:textSize="@dimen/button_text_size"
             android:text="@string/startclass"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppWhiteColor"
-            android:textStyle="bold"
             android:gravity="center"
             android:backgroundTint="@color/AppZone3Color"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/full_round_green"/>
+            android:background="@drawable/all_button_round_green"/>-->
     </RelativeLayout>
 
 </layout>

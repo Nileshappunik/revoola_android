@@ -55,6 +55,9 @@
                 android:textAlignment="center"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="24sp"/>
+
+
+
             <TextView
                 android:id="@+id/iv_Description"
                 android:layout_width="match_parent"

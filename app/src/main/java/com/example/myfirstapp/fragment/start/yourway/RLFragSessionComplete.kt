@@ -85,7 +85,8 @@ class RLFragSessionComplete : RLBaseFragment(){
             (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
             (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
         }
-        fragBinding.tvSave.setOnClickListener {
+        fragBinding.inlayButton.commonButton.setText(R.string.save)
+        fragBinding.inlayButton.commonButton.setOnClickListener {
             RLBottomHideShowSet(true)
             (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
             (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)

@@ -76,7 +76,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
 
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
-        fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
+        fragBinding.rvItemMindClass.layoutManager = linearLayoutMain
         RLGetBodyVideoList(RLConstants.FORALL,false)
 
     }
@@ -89,8 +89,9 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 val videoTypeObject = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoTypeObject)
                 val videoList = videoMap.values.toList()
-                val adapter = RLBodyClassListAdapter(videoList,activity,ride)
-                fragBinding.rvItemmindclass.adapter = adapter
+                val height =  fragBinding.rvItemMindClass.height
+                val adapter = RLBodyClassListAdapter(videoList,activity,ride,height)
+                fragBinding.rvItemMindClass.adapter = adapter
             }
         }
     }

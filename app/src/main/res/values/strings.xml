@@ -389,7 +389,7 @@
     <string name="weekly">WEEKLY</string>
     <string name="monthly">MONTHLY</string>
     <string name="custom">CUSTOM</string>
-    <string name="pleasesetyourtarget">Please set your target steps before select in time period</string>
+    <string name="pleasesetyourtarget">Please set your target steps before selecting time period</string>
 
     <string name="stepchallenge">STEPS CHALLENGE</string>
     <string name="effortchallenge">EFFORT CHALLENGE</string>

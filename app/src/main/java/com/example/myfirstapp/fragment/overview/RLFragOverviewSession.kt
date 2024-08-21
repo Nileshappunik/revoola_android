@@ -122,6 +122,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     override fun onItemClick(position: Int) {
         fragBinding.txtTotalsession.setText(valueslist[position])
         fragBinding.inlayTop.ivTitle.setText(valueslist[position])
+        fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
         RLMoveToCenter(position)
        /* if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
@@ -165,7 +166,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private fun RLhendleApiResponse(carddate: RLOverviewGraphResponseDataCard, valuetype:String) {
         val datalist= mutableListOf<RLSessionitemset>()
         var istextColorSetWhite=false
-
+        RLBottomHideShowSet(true)
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.visibility=View.VISIBLE

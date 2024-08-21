@@ -95,14 +95,20 @@ class RLFragChallengesFor : RLBaseFragment() {
         RLTools.RLheightsetstartimage(fragBinding.relayGroup.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayGroupVGroup.cardChalengesst,requireActivity())
 
-        fragBinding.relayYou.imgType.setImageResource(R.drawable.you)
+        fragBinding.relayYou.imgTypeFull.setImageResource(R.drawable.you)
         fragBinding.relayYou.txtTypeTitle.setText(R.string.you)
+        fragBinding.relayYou.imgType.visibility=View.GONE
+        fragBinding.relayYou.imgTypeFull.visibility=View.VISIBLE
 
-        fragBinding.relayFriends.imgType.setImageResource(R.drawable.ic_friends)
+        fragBinding.relayFriends.imgTypeFull.setImageResource(R.drawable.ic_friends)
         fragBinding.relayFriends.txtTypeTitle.setText(R.string.friends)
+        fragBinding.relayFriends.imgType.visibility=View.GONE
+        fragBinding.relayFriends.imgTypeFull.visibility=View.VISIBLE
 
-        fragBinding.relayGroup.imgType.setImageResource(R.drawable.ic_groups)
+        fragBinding.relayGroup.imgTypeFull.setImageResource(R.drawable.ic_groups)
         fragBinding.relayGroup.txtTypeTitle.setText(R.string.group)
+        fragBinding.relayGroup.imgType.visibility=View.GONE
+        fragBinding.relayGroup.imgTypeFull.visibility=View.VISIBLE
 
         fragBinding.relayGroupVGroup.imgType.visibility=View.GONE
         fragBinding.relayGroupVGroup.imgTypeFull.visibility=View.VISIBLE
@@ -321,14 +327,14 @@ class RLFragChallengesFor : RLBaseFragment() {
     }
     private fun RLNextFragmentOpen(isGroup:Boolean){
         val bundle: Bundle = Bundle()
-        bundle.putString("ChallengeType",challengeType )
-        bundle.putString("CalenderType",calenderType )
-        bundle.putBoolean("IsGroup",isGroup )
+        bundle.putString("ChallengeType",challengeType)
+        bundle.putString("CalenderType",calenderType)
+        bundle.putBoolean("IsGroup",isGroup)
         (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 
     }
     private fun RLshowAlertDialog(message:String) {
-        val sucDialog: Dialog = Dialog(requireContext())
+        val sucDialog:Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
         sucDialog.setCancelable(false)

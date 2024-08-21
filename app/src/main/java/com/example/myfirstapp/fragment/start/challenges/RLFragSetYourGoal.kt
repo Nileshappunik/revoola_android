@@ -4,10 +4,13 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -22,6 +25,8 @@ import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools
 import com.google.gson.Gson
+import java.text.NumberFormat
+import java.util.Locale
 
 class RLFragSetYourGoal : RLBaseFragment() {
     val TAG: String = RLFragSetYourGoal::class.java.simpleName
@@ -57,6 +62,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
             RLshowHelpDialog()
         }
         RLUIBottom()
+
     }
     private fun RLUIBottom() {
 
@@ -120,11 +126,13 @@ class RLFragSetYourGoal : RLBaseFragment() {
             RLnextFragmentOpen("Custom",challengeType)
 
         }
+        RLAddCommaFormatting(fragBinding.edtStepCount)
 
     }
 
     private fun RLnextFragmentOpen(CalenderType:String,challengeType:String) {
-        val stepCount=fragBinding.edtStepCount.text.toString()
+        val textWithoutCommas =fragBinding.edtStepCount.text.toString()
+        val stepCount = textWithoutCommas.replace(",", "")
         if (stepCount.isEmpty()){
             RLshowAlertDialog()
         }else if (stepCount.toDouble()>=1){
@@ -180,4 +188,37 @@ class RLFragSetYourGoal : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+
+    private fun RLAddCommaFormatting(editText: EditText) {
+        editText.addTextChangedListener(object : TextWatcher {
+            private var currentText = ""
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString() != currentText) {
+                    editText.removeTextChangedListener(this)
+
+                    // Remove commas and reformat the number
+                    val cleanString = s.toString().replace(",", "")
+                    if (cleanString.isNotEmpty()) {
+                        try {
+                            val parsed = cleanString.toDouble()
+                            val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(parsed)
+
+                            currentText = formatted
+                            editText.setText(formatted)
+                            editText.setSelection(formatted.length)
+                        } catch (e: NumberFormatException) {
+                            e.printStackTrace() // Handle the number formatting exception
+                        }
+                    }
+
+                    editText.addTextChangedListener(this)
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
 }

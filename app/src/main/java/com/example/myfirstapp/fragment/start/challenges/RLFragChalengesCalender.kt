@@ -2,6 +2,7 @@ package com.example.myfirstapp.fragment.start.challenges
 
 import android.app.Dialog
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -100,6 +102,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             RLDailyCalenderShow()
             fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)
         }
+
         fragBinding.btnNext.setOnClickListener {
            if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
                val bundle: Bundle = Bundle()

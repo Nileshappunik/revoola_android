@@ -18,14 +18,17 @@ import com.example.myfirstapp.databinding.RlLayoutMindClassesListBinding
 import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesView
 import com.example.myfirstapp.model.RLVideoModel
 
-class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val context: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
+                             val context: FragmentActivity?,
+                             val totalScreenHeight: Int
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLMindClassListAdapter"
 
-    private val limitedList = if (dataList.size > 7) dataList.subList(0, 7) else dataList
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlLayoutMindClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_mind_classes_list , parent, false)
+        return MyViewHolder(layoutBinding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
@@ -63,6 +66,20 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,val contex
                 /*val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayNew.layoutParams
                 layoutParams.height =  1176/6
                 layoutBinding.relayNew.layoutParams =layoutParams*/
+
+                //RelativeLayout Height set
+                val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayNew.layoutParams
+                layoutParams.height =  totalScreenHeight/6
+                layoutBinding.relayNew.layoutParams =layoutParams
+
+
+                //Image Height Width set
+                val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgMind.layoutParams
+                layoutParamsImage.height =  totalScreenHeight/6
+                layoutParamsImage.width =  totalScreenHeight/4
+                layoutBinding.imgMind.layoutParams =layoutParamsImage
+
+
 
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")

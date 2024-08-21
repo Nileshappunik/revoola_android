@@ -25,7 +25,8 @@ import kotlin.math.roundToInt
 class RLBodyClassListAdapter(
     private val dataList: List<RLVideoModel>,
     val context: FragmentActivity?,
-    val ride: Boolean
+    val ride: Boolean,
+    val totalScreenHeight: Int
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLBodyClassListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -63,6 +64,17 @@ class RLBodyClassListAdapter(
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
                 }
 
+                //RelativeLayout Height set
+                val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayNew.layoutParams
+                layoutParams.height =  totalScreenHeight/6
+                layoutBinding.relayNew.layoutParams =layoutParams
+
+
+                //Image Height Width set
+                val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgMind.layoutParams
+                layoutParamsImage.height =  totalScreenHeight/6
+                layoutParamsImage.width =  totalScreenHeight/4
+                layoutBinding.imgMind.layoutParams =layoutParamsImage
 
             }catch (e:Exception){
                 Log.e(TAG,"Exception:- ${e.message}")

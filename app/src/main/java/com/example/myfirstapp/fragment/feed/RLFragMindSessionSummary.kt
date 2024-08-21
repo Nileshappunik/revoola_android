@@ -1,11 +1,13 @@
 package com.example.myfirstapp.fragment.feed
 
 import android.content.pm.ActivityInfo
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -43,7 +45,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_session_summary, container) as RlFragMindSessionSummaryBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindSessionSummary" )
@@ -61,6 +63,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.sessionsummerys))
         fragBinding.inlayTop.ivDescription.setText("")
+
 
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
@@ -121,6 +124,9 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         fragBinding.recycleSession.adapter = adapterdata
         RLTools.RLheightsetimageview( fragBinding.testImage)
     }
-
+    override fun onPause() {
+        super.onPause()
+        RLBottomHideShowSet(true)
+    }
 
 }
