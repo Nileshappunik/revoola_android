@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import kotlin.math.floor
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
@@ -79,42 +81,49 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             try {
                 val cardData:RLTextOverview= dataList[position]
                 RLcommonDataSet(cardData, layoutBinding,position+1)
-
-                layoutBinding.imgNain2.visibility=View.GONE
-                layoutBinding.imgNain.visibility=View.VISIBLE
-
-                if (cardData.from_third_party_source == 0) {
-                    if (cardData.bmo == 0) {
-                        //BODY
-                        RLbodyClassesBodySet(cardData, layoutBinding)
-                    } else if (cardData.bmo == 1) {
-                        //MIND
-                        RLmindClassBodySet(cardData, layoutBinding)
-                    } else if (cardData.bmo == 2) {
-                        //OTHER
-                        RLotherClassesBodySet(cardData, layoutBinding)
+                when(cardData.from_third_party_source){
+                    0->{
+                        when(cardData.bmo){
+                            0->{
+                                //BODY
+                                RLbodyClassesBodySet(cardData, layoutBinding)
+                            }
+                            1->{
+                                //MIND
+                                RLmindClassBodySet(cardData, layoutBinding)
+                            }
+                            2->{
+                                //OTHER
+                                RLotherClassesBodySet(cardData, layoutBinding)
+                            }
+                        }
+                    }
+                    1->{
+                        RLthirdPartyOneBodySet(cardData, layoutBinding)
+                    }
+                    2->{
+                        RLthirdPartyTwoBodySet(cardData, layoutBinding)
+                    }
+                     else -> {//>10
+                        RLthirdPartyTenBodySet(cardData, layoutBinding)
                     }
                 }
-                else if (cardData.from_third_party_source == 1) {
-                    RLthirdPartyOneBodySet(cardData, layoutBinding)
-                } else if (cardData.from_third_party_source == 2) {
-                    RLthirdPartyTwoBodySet(cardData, layoutBinding)
-                } else if (cardData.from_third_party_source > 10) {
-                    RLthirdPartyTenBodySet(cardData, layoutBinding)
-                }
+
             } catch (e: Exception) {
             Log.d(TAG, "exception= " + e.message)
-                layoutBinding.temptext.setText("exception:- ${e.message.toString()}")
+                val temptext="pos:- ${position.toString()} , ctype:- $classType , third:- ${dataList[position].from_third_party_source.toString()} , bmo:- ${dataList[position].bmo.toString()}, HR:- ${dataList[position].hrm.toString()}"
+                layoutBinding.temptext.setText("exception:- ${e.message.toString()} :- $temptext")
             }
         }
     }
     private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
+        RLTools.RLheightsetimageview(layoutBinding.imgMain)
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{
             classType = cardData.classType!!
         }
-        RLTools.RLheightsetimageview(layoutBinding.imgNain)
+
         layoutBinding.layTime.viewCommon.visibility = View.GONE
         layoutBinding.layCalories.viewCommon.visibility = View.GONE
         layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
@@ -133,9 +142,9 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
             layoutBinding.txtThum.setText("")
             layoutBinding.imgThum.setImageResource(R.drawable.ic_thumbs_g)
         }
-        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
-        if (totlaaward > 0) {
-            layoutBinding.txtAward.setText(totlaaward.toString())
+        val totalAward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+        if (totalAward > 0) {
+            layoutBinding.txtAward.setText(totalAward.toString())
             layoutBinding.imgAward.setImageResource(R.drawable.ic_award)
         } else {
             layoutBinding.txtAward.setText("0")
@@ -167,18 +176,17 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(classType))
         layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.timestamp.toLong()))
 
-
         Glide.with(context!!).load(cardData.avatar)
             .placeholder(R.drawable.sample_user)
             .error(R.drawable.sample_user)
             .into(layoutBinding.imgUser)
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(context).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(context).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(context).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(context).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(context).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgNain)
+            Glide.with(context).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgMain)
         }
         layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}, HR:- ${cardData.hrm.toString()}")
         layoutBinding.cardChalengis.setOnClickListener {
@@ -302,7 +310,7 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
 
         layoutBinding.laySteps.txtTime.setText(R.string.rank)
         layoutBinding.laySteps.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())
-       layoutBinding.layBottom.visibility=View.VISIBLE
+        layoutBinding.layBottom.visibility=View.VISIBLE
 
         layoutBinding.blanckView1.visibility=View.VISIBLE
         layoutBinding.layoutShare.visibility=View.VISIBLE
@@ -335,21 +343,18 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         layoutBinding.blanckView1.visibility=View.VISIBLE
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            layoutBinding.imgNain2.visibility=View.VISIBLE
-            layoutBinding.imgNain.visibility=View.GONE
-           // Glide.with(context!!).load(R.drawable.healthheart).into(layoutBinding.imgNain2)
-            Glide.with(context!!).load(RLConstants.img_app_applehealth).into(layoutBinding.imgNain2)
+            Glide.with(context!!).load(RLConstants.img_app_applehealth).into(layoutBinding.imgMain)
         }
 
     }
     private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()).toString())
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
@@ -368,17 +373,15 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()).toString())
 
         }
-
-
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(context!!).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(context!!).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgNain)
+            Glide.with(context!!).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgMain)
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
@@ -417,20 +420,21 @@ class RLFeedListAdapter(val context: FragmentActivity?, currentUser: String) :
     private fun RLbodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()).toString())
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
         layoutBinding.layCalories.txtTime.setText(R.string.effort)
         if (cardData.totalREV.roundToInt()>0){
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalREV.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalREV.roundToInt().toDouble()))
         }else{
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
 
+        val cal=cardData.burntCalories.toDouble().toInt()
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
         layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()).toString())
+        layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cal.toDouble()))
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE

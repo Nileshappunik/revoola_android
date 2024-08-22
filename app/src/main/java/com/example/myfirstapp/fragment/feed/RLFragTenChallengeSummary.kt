@@ -82,7 +82,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.txtDailystep.visibility=View.GONE
         fragBinding.webViewStepChart.visibility=View.GONE
         fragBinding.txtMyride.setText(cardData.className.toString())
-        fragBinding.imgMyride.setImageResource(R.drawable.ic_distance)
+
 
         fragBinding.layStepssofar.imgTime.setImageResource(R.drawable.ic_calender_daily)
         fragBinding.layStepssofar.txtTime.setText("CHALLENGE PERIOD")
@@ -92,6 +92,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
             fragBinding.layTargetsteps.txtTime.setText(R.string.targeteffort)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+
+            fragBinding.imgMyride.setImageResource(R.drawable.ic_heart)
 
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_heart)
             fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
@@ -103,6 +105,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.txtTime.setText(R.string.targetsteps)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
+            fragBinding.imgMyride.setImageResource(R.drawable.fd_steps_green)
+
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_steps_green)
             fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
             fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
@@ -111,6 +115,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
             fragBinding.layTargetsteps.txtTime.setText(R.string.targetcalories)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+
+            fragBinding.imgMyride.setImageResource(R.drawable.fd_calories_green)
 
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_calories_green)
             fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
@@ -121,6 +127,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.txtTime.setText(R.string.targetdistance)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
+            fragBinding.imgMyride.setImageResource(R.drawable.ic_distance)
+
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_distance)
             fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
             fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
@@ -130,6 +138,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.txtTime.setText(R.string.targetclimbed)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
 
+            fragBinding.imgMyride.setImageResource(R.drawable.ic_climb)
+
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_climb)
             fragBinding.layDaysremaining.txtTime.setText(R.string.distance)
             fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
@@ -138,6 +148,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
             fragBinding.layTargetsteps.txtTime.setText(R.string.targettotalduration)
             fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+
+            fragBinding.imgMyride.setImageResource(R.drawable.fd_active_time_green)
 
             fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_active_time_green)
             fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)

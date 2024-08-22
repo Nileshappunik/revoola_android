@@ -36,6 +36,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="5dp"
                     android:background="@null"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
                     android:drawableStart="@drawable/ic_search_g"
                     android:drawablePadding="10dp"
                     android:hint="@string/enternameoremailtofindonrevoola"
@@ -92,7 +94,6 @@
                 android:layout_height="1dp"
                 android:background="@color/AppBottomGrayColor"/>
         </LinearLayout>
-
 
         <RelativeLayout
             android:id="@+id/relay_synccontact"
@@ -168,14 +169,14 @@
 
         </RelativeLayout>
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycle_yourfriend"
+            android:id="@+id/listSyncContacts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/view_bottom"
             android:layout_below="@+id/relay_synccontact"/>
 
+        <!--
+        android:layout_above="@+id/view_bottom"
         <TextView
             android:id="@+id/txt_inviteyourfriend"
             android:layout_width="wrap_content"
@@ -216,7 +217,7 @@
             android:layout_height="1dp"
             android:visibility="gone"
             android:layout_above="@+id/demo_invite"
-            android:background="@color/AppBlackColor"/>
+            android:background="@color/AppBlackColor"/>-->
 
 
     </RelativeLayout>

@@ -72,12 +72,12 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         if (clickType.equals("Comment")){
             fragBinding.relativeComment.visibility=View.VISIBLE
             fragBinding.relativeThumb.visibility=View.GONE
-            RLTools.RLheightsetimageview(fragBinding.inlayMain.imgNain)
+            RLTools.RLheightsetimageview(fragBinding.inlayMain.imgMain)
             RLCommentThumbUiSet(cardData,fragBinding.inlayMain)
         }else if (clickType.equals("Thumb")){
             fragBinding.relativeComment.visibility=View.GONE
             fragBinding.relativeThumb.visibility=View.VISIBLE
-            RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgNain)
+            RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgMain)
             RLCommentThumbUiSet(cardData,fragBinding.inlayMainThumb)
         }
         fragBinding.btnSend.setOnClickListener {
@@ -117,7 +117,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         }else{
             classType = cardData.classType!!
         }
-        RLTools.RLheightsetimageview(layoutBinding.imgNain)
+        RLTools.RLheightsetimageview(layoutBinding.imgMain)
         layoutBinding.layTime.viewCommon.visibility = View.GONE
         layoutBinding.layCalories.viewCommon.visibility = View.GONE
         layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
@@ -142,11 +142,11 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
             .into(layoutBinding.imgUser)
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(layoutBinding.imgMain)
         }
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
@@ -240,11 +240,11 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         layoutBinding.imgThreedot.visibility=View.GONE
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(requireContext()).load(R.drawable.healthheart).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(R.drawable.healthheart).into(layoutBinding.imgMain)
         }
 
     }
@@ -276,11 +276,11 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
 
 
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
-            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(requireContext()).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgNain)
+            Glide.with(requireContext()).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgMain)
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE

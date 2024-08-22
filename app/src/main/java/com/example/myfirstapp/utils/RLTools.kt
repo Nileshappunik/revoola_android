@@ -19,6 +19,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -75,6 +76,8 @@ object RLTools {
         }
     }
     fun RLheightsetimageview(testImage:ImageView) {
+
+
         // Ensure the layout has been completed before getting the width
         testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -93,7 +96,11 @@ object RLTools {
                 testImage.layoutParams = layoutParams
             }
         })
-
+        val layoutParamsImage: ViewGroup.LayoutParams = testImage.layoutParams
+        val width = testImage.width
+        val height = (width * 0.76).toInt()
+        layoutParamsImage.height = height
+        testImage.layoutParams =layoutParamsImage
     }
 
 
@@ -109,17 +116,17 @@ object RLTools {
        }else if( typename.toLowerCase().equals("run")){
            return R.drawable.ic_run
        }else if (typename.toLowerCase().equals("challenge-effort")){
-           return R.drawable.ic_run
+           return R.drawable.ic_walk
        }else if (typename.toLowerCase().equals("challenge-steps")){
            return R.drawable.ic_walk
        }else if (typename.toLowerCase().equals("challenge-calories")){
-           return R.drawable.ic_run
+           return R.drawable.ic_walk
        }else if (typename.toLowerCase().equals("challenge-distance")){
-           return R.drawable.ic_run
+           return R.drawable.ic_walk
        }else if (typename.toLowerCase().equals("challenge-climbed")){
-           return R.drawable.ic_run
+           return R.drawable.ic_walk
        }else if (typename.toLowerCase().equals("challenge-duration")){
-           return R.drawable.ic_run
+           return R.drawable.ic_walk
        }else if( typename.toLowerCase().equals("yoga")){
            return R.drawable.ic_yoga
        }else if( typename.toLowerCase().equals("pilates")){
@@ -285,38 +292,7 @@ object RLTools {
 
     }
 
-    fun RLheightsetdisplayview(imageView: RelativeLayout, context: FragmentActivity?) {
-        // Ensure the layout has been completed before getting the width
-        // Get the screen width
-        val displayMetrics = DisplayMetrics()
-        context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
 
-        // Calculate the desired height (75% of screen width)
-        val desiredHeight = (screenWidth * 0.75).toInt()
-
-        // Set the ImageView height
-        val layoutParams = imageView.layoutParams
-        layoutParams.height = desiredHeight
-        imageView.layoutParams = layoutParams
-
-    }
-    fun RLheightsetdisplayimgview(imageView: ImageView, context: FragmentActivity?) {
-        // Ensure the layout has been completed before getting the width
-        // Get the screen width
-        val displayMetrics = DisplayMetrics()
-        context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
-
-        // Calculate the desired height (75% of screen width)
-        val desiredHeight = (screenWidth * 0.75).toInt()
-
-        // Set the ImageView height
-        val layoutParams = imageView.layoutParams
-        layoutParams.height = desiredHeight
-        imageView.layoutParams = layoutParams
-
-    }
 
     fun RLroundnumbert(number:Double):String{
         val roundedNumber = BigDecimal(number).setScale(2, BigDecimal.ROUND_HALF_EVEN).toDouble()

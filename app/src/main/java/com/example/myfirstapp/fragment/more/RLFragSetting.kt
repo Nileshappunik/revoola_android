@@ -167,7 +167,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         fragBinding.layMaxheartrate.txtusertitle.setText(R.string.maxheartrateestimated)
         fragBinding.layMaxheartrate.txtUsername.setText("190")
         fragBinding.layMaxheartrate.imgEdit.setOnClickListener {
-
+            RLshowRestingHrDialog()
         }
 
         fragBinding.layRestingheartrate.txtusertitle.setText(R.string.restingheartrate)
