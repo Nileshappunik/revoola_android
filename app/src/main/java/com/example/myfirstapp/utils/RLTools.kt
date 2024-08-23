@@ -33,6 +33,8 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
 import com.example.myfirstapp.R
+import com.example.myfirstapp.enumclass.RLYourWayName
+import com.example.myfirstapp.model.RLTextOverview
 
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONArray
@@ -103,7 +105,6 @@ object RLTools {
         testImage.layoutParams =layoutParamsImage
     }
 
-
     fun RLgeticon(typename:String): Int {
        if( typename.toLowerCase().equals("walk")){
            return R.drawable.ic_walk
@@ -116,17 +117,17 @@ object RLTools {
        }else if( typename.toLowerCase().equals("run")){
            return R.drawable.ic_run
        }else if (typename.toLowerCase().equals("challenge-effort")){
-           return R.drawable.ic_walk
+           return R.drawable.ic_heart
        }else if (typename.toLowerCase().equals("challenge-steps")){
-           return R.drawable.ic_walk
+           return R.drawable.fd_steps_green
        }else if (typename.toLowerCase().equals("challenge-calories")){
-           return R.drawable.ic_walk
+           return R.drawable.fd_calories_green
        }else if (typename.toLowerCase().equals("challenge-distance")){
-           return R.drawable.ic_walk
+           return R.drawable.ic_distance
        }else if (typename.toLowerCase().equals("challenge-climbed")){
-           return R.drawable.ic_walk
+           return R.drawable.ic_climb
        }else if (typename.toLowerCase().equals("challenge-duration")){
-           return R.drawable.ic_walk
+           return R.drawable.fd_active_time_green
        }else if( typename.toLowerCase().equals("yoga")){
            return R.drawable.ic_yoga
        }else if( typename.toLowerCase().equals("pilates")){
@@ -172,6 +173,64 @@ object RLTools {
         }else{
             return R.drawable.walk
         }
+    }
+
+    fun RLFeedSetImage(datas: RLTextOverview,currentUserId:String,selectTag:String): String {
+        var returnValue = ""
+        if (datas != null) {
+            when (datas.from_third_party_source) {
+                1 -> {
+                    val key = datas.className?.toLowerCase() ?: ""
+                    returnValue = when {
+                        key.contains("fitbit") -> "https://video.revoola.com/v2/images/v3_app_fitbit.png"
+                        key.contains("strava") -> "https://video.revoola.com/v2/images/v3_app_strava.png"
+                        key.contains("garmin") || key.contains("connect") -> "https://video.revoola.com/v2/images/v3_app_connect.png"
+                        key.contains("oura") -> "https://video.revoola.com/v2/images/v3_app_oura.png"
+                        key.contains("health") || key.contains("watch") -> "https://video.revoola.com/v2/images/v3_app_apple.png"
+                        key.contains("whoop") -> "https://video.revoola.com/v2/images/v3_app_whoop.png"
+                        key.contains("bend") -> "https://video.revoola.com/v2/images/v3_app_bend.png"
+                        key.contains("coros") -> "https://video.revoola.com/v2/images/v3_app_coros.png"
+                        else -> "https://video.revoola.com/v2/images/v3_app_gfit.png"
+                    }
+                }
+                2 -> {
+                    if (datas.source == "ios") {
+                        returnValue = "https://video.revoola.com/v2/images/v3_app_applehealth.png"
+                    } else {
+                        returnValue = "https://video.revoola.com/v2/images/_app_healthconnect.png"
+                    }
+                }
+                else -> if (datas.from_third_party_source > 10) {
+                    returnValue = "https://video.revoola.com/v2/start/challenges_start.jpg"
+                } else {
+                    val userImages = datas.user_images?.split(",") ?: emptyList()
+                    if (userImages.isNotEmpty()&& !userImages[0].isNullOrEmpty()) {
+                        returnValue =  userImages[0]
+                    }
+                    else if (!datas.imageLinkSmall.isNullOrEmpty()) {
+                        returnValue = datas.imageLinkSmall
+                    }
+                    else if (!datas.map_image.isNullOrEmpty() &&
+                        (selectTag.toLowerCase() == "you" ||
+                                datas.userid == currentUserId ||
+                                (selectTag.toLowerCase() == "friends" && datas.share_map == 1))) {
+                        returnValue =   datas.map_image
+                    }
+                    else {
+                        when (datas.classType?.toLowerCase()) {
+                            RLYourWayName.Workout.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+                            RLYourWayName.Pilates.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+                            RLYourWayName.Ride.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+                            RLYourWayName.Run.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_run.png"
+                            RLYourWayName.Walk.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+                            RLYourWayName.Yoga.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+                        }
+                    }
+                }
+            }
+        }
+
+        return returnValue
     }
 
     fun RLgetImage(typename:String): String {

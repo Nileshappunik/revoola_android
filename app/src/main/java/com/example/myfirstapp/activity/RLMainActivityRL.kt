@@ -173,10 +173,10 @@ class RLMainActivityRL  : RLBaseActivity() {
     }
     fun RLshowbottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.VISIBLE
-        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppLightGrayColor)
+        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
     }
 
-    fun RLloadFrag(fragment: Fragment?, tagName: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
+    fun RLloadFrag(fragment: Fragment?, tagName: String?, isBackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
@@ -187,7 +187,7 @@ class RLMainActivityRL  : RLBaseActivity() {
             } else {
                 fragmentTransaction.add(R.id.frame_container, fragment)
             }
-            if (isbackStack) {
+            if (isBackStack) {
                 fragmentTransaction.addToBackStack(fragmentName)
             }
             if (!isFinishing) fragmentTransaction.commitAllowingStateLoss() else fragmentTransaction.commit()

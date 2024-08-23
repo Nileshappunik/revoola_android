@@ -92,8 +92,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLMoveToCenter(16)
 
         //DATA SET below
-        val glinearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.recycleSession.layoutManager = glinearLayoutManager
+        val linearLayoutManagerMain = GridLayoutManager(activity, 2)
+        fragBinding.recycleSession.layoutManager = linearLayoutManagerMain
          adapterdata = RLOverviewSessionListAdapter(activity,false)
         fragBinding.recycleSession.adapter = adapterdata
 

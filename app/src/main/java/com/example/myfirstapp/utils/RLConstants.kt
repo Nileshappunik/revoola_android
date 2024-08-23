@@ -6,6 +6,7 @@ package com.example.myfirstapp.utils
         const val SCHEDULE = "1"
         const val EXIT = "5"
         const val CardData = "CARDDATA"
+        const val FeedSelectTag = "FeedSelectTag"
         const val MIND = "Mind"
         const val BODY = "Body"
         const val CLASSTYPE = "classtype"

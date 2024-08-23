@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.start.challenges.adapter
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,19 +61,14 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {
-                if (cardData.title.toLowerCase().equals("steps")){
-                    RLNextViewOpen( "Steps" )
-                }else if (cardData.title.toLowerCase().equals("effort")){
-                    RLNextViewOpen("Effort")
-                }else if (cardData.title.toLowerCase().equals("calories")){
-                    RLNextViewOpen("Calories")
-                }else if (cardData.title.toLowerCase().equals("distance")){
-                    RLNextViewOpen("Distance")
-                }else if (cardData.title.toLowerCase().equals("climbed")){
-                    RLNextViewOpen("Climbed")
-                }else if (cardData.title.toLowerCase().equals("duration")){
-                    RLNextViewOpen("Duration")
-                }
+              when(cardData.title.toLowerCase()){
+                 "steps"->{ RLNextViewOpen( "Steps" )}
+                 "effort"->{RLNextViewOpen("Effort")}
+                 "calories"->{ RLNextViewOpen("Calories")}
+                 "distance"->{RLNextViewOpen("Distance")}
+                 "climbed"->{ RLNextViewOpen("Climbed")}
+                 "duration"->{RLNextViewOpen("Duration")}
+              }
             }
 
         }

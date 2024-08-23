@@ -15,11 +15,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/img_main_banner"
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
-                    android:scaleType="fitXY"/>
+                    android:scaleType="fitXY" />
+
                 <ImageView
                     android:id="@+id/ivBack"
                     android:layout_width="40dp"

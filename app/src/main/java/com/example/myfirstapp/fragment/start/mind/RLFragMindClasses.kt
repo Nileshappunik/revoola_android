@@ -136,30 +136,14 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         RLMoveToCenter(position)
         val selectiontitle= valueslistMind[position]
         when(selectiontitle){
-            "ALL"->{
-                RLGetMindVideoList(RLConstants.FORALL)
-            }
-            "RELAX"->{
-                RLGetMindVideoList(RLConstants.FORRELAX)
-            }
-            "SLEEP"->{
-                RLGetMindVideoList(RLConstants.FORSLEEP)
-            }
-            "HAPPINESS"->{
-                RLGetMindVideoList(RLConstants.FORHAPPINESS)
-            }
-            "FOCUS"->{
-                RLGetMindVideoList(RLConstants.FORFOCUS)
-            }
-            "ENERGISE"->{
-                RLGetMindVideoList(RLConstants.FORENERGISE)
-            }
-            "MINDFUL"->{
-                RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT)
-            }
-            "MOVEMENT"->{
-                RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT)
-            }
+            "ALL"->{ RLGetMindVideoList(RLConstants.FORALL) }
+            "RELAX"->{ RLGetMindVideoList(RLConstants.FORRELAX) }
+            "SLEEP"->{ RLGetMindVideoList(RLConstants.FORSLEEP) }
+            "HAPPINESS"->{ RLGetMindVideoList(RLConstants.FORHAPPINESS) }
+            "FOCUS"->{ RLGetMindVideoList(RLConstants.FORFOCUS) }
+            "ENERGISE"->{ RLGetMindVideoList(RLConstants.FORENERGISE) }
+            "MINDFUL"->{ RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT) }
+            "MOVEMENT"->{ RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT) }
         }
     }
     private fun RLMoveToCenter(position: Int) {

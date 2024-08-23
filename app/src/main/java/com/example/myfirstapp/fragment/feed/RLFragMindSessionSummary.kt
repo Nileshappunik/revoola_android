@@ -34,6 +34,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
+    var  selectTag:String=""
 
     private val binding by lazy {
         RlFragMindSessionSummaryBinding.inflate(layoutInflater)
@@ -67,6 +68,8 @@ class RLFragMindSessionSummary : RLBaseFragment() {
 
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
+        selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
+
         RLsummaryDataSet()
     }
 
@@ -79,13 +82,15 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             classType = cardData.classType!!
         }
 
-        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+        Glide.with(requireContext()).load(RLTools.RLFeedSetImage(cardData,currentUser,selectTag)).into(fragBinding.testImage)
+       /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
             Glide.with(requireContext()).load(cardData.imageLinkSmall).into(fragBinding.testImage)
         }else if (!cardData.map_image.isNullOrEmpty()){
             Glide.with(requireContext()).load(cardData.map_image).into(fragBinding.testImage)
         }else{
             Glide.with(requireContext()).load(RLTools.RLgetImage(classType)).into(fragBinding.testImage)
-        }
+
+        }*/
 
         val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set

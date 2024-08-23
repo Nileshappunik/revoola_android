@@ -22,6 +22,10 @@ import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -87,6 +91,29 @@ class RLFragStart : RLBaseFragment() {
                 }
             }
         }
+    }
+    private fun RLStartListNew() {
+        val databaseReference = FirebaseDatabase.getInstance().getReference(RLConstants.MAIN)
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    try {
+                        val gson = Gson()
+                        val jsonArray = gson.toJson(snapshot.value)
+                        Log.d(TAG, "Response:- $jsonArray")
+                        val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
+                        val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
+                        RLUiSetUP(dataList)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Catch:- ${e.message}")
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Firebase Error: ${error.message}")
+            }
+        })
     }
     private fun RLshowHelpDialog() {
         val dialog: Dialog = Dialog(requireContext())

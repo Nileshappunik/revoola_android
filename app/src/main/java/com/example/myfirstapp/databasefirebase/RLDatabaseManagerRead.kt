@@ -1,8 +1,11 @@
 package com.example.myfirstapp.databasefirebase
 
 import com.example.myfirstapp.utils.RLConstants
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -30,6 +33,22 @@ class RLDatabaseManagerRead {
     }
 
     fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+
+       /* val reference = database.child(RLConstants.PROPOSEDSTRUCTURE)
+            .child(RLConstants.CODESECTION)
+            .child(RLConstants.AVAILABLEMENUS)
+            .child(classname)
+
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                callback(snapshot.value, null)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(null, error.toException())
+            }
+        })*/
+
         database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.CODESECTION)
             .child(RLConstants.AVAILABLEMENUS).child(classname)
             .get().addOnCompleteListener { task ->

@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,81 +12,68 @@
             android:id="@+id/inlayTop"
             layout="@layout/rl_layout_common_start_top"/>
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/layIndividualTarget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/square_border_green_ten"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp">
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/square_border_green_ten"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_goal"/>
 
-            <LinearLayout
-                android:id="@+id/layIndividualTarget"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_goal"/>
+                android:layout_height="60dp"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/individualtarget"
+                android:textStyle="bold"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppBlackColor"/>
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:textSize="16sp"
-                    android:textAlignment="center"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:textAllCaps="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/individualtarget"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:textColor="@color/AppBlackColor"/>
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/laySharedTarget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/square_border_green_ten"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/goal_shared"/>
 
-            <LinearLayout
-                android:id="@+id/laySharedTarget"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/goal_shared"/>
+                android:layout_height="60dp"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:singleLine="true"
+                android:textAllCaps="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/sharedtarget"
+                android:textStyle="bold"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppBlackColor"/>
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:textSize="16sp"
-                    android:textAlignment="center"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:textAllCaps="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/sharedtarget"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/omnes_semibold_regular"
-                    android:textColor="@color/AppBlackColor"/>
-            </LinearLayout>
-
-
-        </RelativeLayout>
     </LinearLayout>
 </layout>

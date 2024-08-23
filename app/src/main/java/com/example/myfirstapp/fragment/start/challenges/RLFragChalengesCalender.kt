@@ -73,35 +73,32 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         val calenderType = requireArguments().getString("CalenderType").toString().trim()
-        if (challengeType.equals("Steps")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.stepchallenge)
-        } else if (challengeType.equals("Effort")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.effortchallenge)
-        }else if (challengeType.equals("Calories")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.calorieschallenge)
-        }else if (challengeType.equals("Distance")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.distancechallenge)
-        }else if (challengeType.equals("Climbed")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.climbedchallenge)
-        }else if (challengeType.equals("Duration")){
-            fragBinding.inlayTop.ivTitle.setText(R.string.durationchallenge)
-        }
+
         calendarFrom = Calendar.getInstance()
         calendarTo = Calendar.getInstance()
-        if (calenderType.equals("Daily")){
-            RLDailyCalenderShow()
-            fragBinding.inlayTop.ivDescription.setText(R.string.dailychallenge)
-        } else if (calenderType.equals("Weekly")){
-            RLWeeklyCalenderShow()
-            fragBinding.inlayTop.ivDescription.setText(R.string.weeklychallenge)
-        }else if (calenderType.equals("Monthly")){
-            RLMonthlyCalenderShow()
-            fragBinding.inlayTop.ivDescription.setText(R.string.monthlychallenge)
-        }else if (calenderType.equals("Custom")){
-            RLDailyCalenderShow()
-            fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)
-        }
 
+        when(challengeType){
+            "Steps"->{fragBinding.inlayTop.ivTitle.setText(R.string.stepchallenge)}
+            "Effort"->{fragBinding.inlayTop.ivTitle.setText(R.string.effortchallenge)}
+            "Calories"->{fragBinding.inlayTop.ivTitle.setText(R.string.calorieschallenge)}
+            "Distance"->{fragBinding.inlayTop.ivTitle.setText(R.string.distancechallenge)}
+            "Climbed"->{fragBinding.inlayTop.ivTitle.setText(R.string.climbedchallenge)}
+            "Duration"->{fragBinding.inlayTop.ivTitle.setText(R.string.durationchallenge)}
+        }
+        when(calenderType){
+            "Daily"->{
+                RLDailyCalenderShow()
+                fragBinding.inlayTop.ivDescription.setText(R.string.dailychallenge)}
+            "Weekly"->{
+                RLWeeklyCalenderShow()
+                fragBinding.inlayTop.ivDescription.setText(R.string.weeklychallenge)}
+            "Monthly"->{
+                RLMonthlyCalenderShow()
+                fragBinding.inlayTop.ivDescription.setText(R.string.monthlychallenge)}
+            "Custom"->{
+                RLDailyCalenderShow()
+                fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)}
+        }
         fragBinding.btnNext.setOnClickListener {
            if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
                val bundle: Bundle = Bundle()
@@ -303,7 +300,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         // Generate dates for the current month
         val dates = RlGenerateYearlyCalendar(currentYearFrom)
 
-        val adapter = RLMonthlyCalenderListAdapter(requireContext(), dates) { date ->
+        val adapter = RLMonthlyCalenderListAdapter(requireContext(),dates) { date ->
             // Handle date selection
             println("Selected date: $date")
             fromDate=date.toString()
@@ -350,7 +347,40 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val dateIterator = Calendar.getInstance()
         dateIterator.time = firstDayOfMonth
         val date = dateIterator.time
-        if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+        when(dateIterator.get(Calendar.DAY_OF_WEEK)){
+            Calendar.MONDAY->{
+                Log.d(TAG,"MONDAY")}
+            Calendar.TUESDAY->{
+                Log.d(TAG,"TUESDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.WEDNESDAY->{ Log.d(TAG,"WEDNESDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.THURSDAY->{  Log.d(TAG,"THURSDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.FRIDAY->{  Log.d(TAG,"FRIDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SATURDAY->{ Log.d(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ Log.d(TAG,"SUNDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+
+        }
+       /* if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
             Log.d(TAG,"MONDAY")
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY){
             Log.d(TAG,"TUESDAY")
@@ -385,7 +415,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
-        }
+        }*/
         var currentDate = Calendar.getInstance().time
        // var currentDate = currentDateFrom
 
@@ -418,7 +448,40 @@ class RLFragChalengesCalender : RLBaseFragment() {
 
         dateIterator.time = firstDayOfMonth
         val date = dateIterator.time
-        if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+        when(dateIterator.get(Calendar.DAY_OF_WEEK)){
+            Calendar.MONDAY->{
+                Log.d(TAG,"MONDAY")}
+            Calendar.TUESDAY->{
+                Log.d(TAG,"TUESDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.WEDNESDAY->{ Log.d(TAG,"WEDNESDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.THURSDAY->{  Log.d(TAG,"THURSDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.FRIDAY->{  Log.d(TAG,"FRIDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SATURDAY->{ Log.d(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ Log.d(TAG,"SUNDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+
+        }
+      /*  if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
             Log.d(TAG,"MONDAY")
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY){
             Log.d(TAG,"TUESDAY")
@@ -453,7 +516,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
-        }
+        }*/
         // val currentDate = Calendar.getInstance().time
         val currentDate =currentDateFrom
         while (dateIterator.time.before(lastDayOfMonth) || dateIterator.time.equals(lastDayOfMonth)) {

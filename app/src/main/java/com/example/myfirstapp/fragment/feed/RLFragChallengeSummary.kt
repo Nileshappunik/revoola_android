@@ -235,9 +235,9 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewStepChart.isHorizontalScrollBarEnabled = false
         fragBinding.webViewStepChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewStepChart.webViewClient = WebViewClient()
-        val htmltext=RLTools.RLgetIndividualStepsChartHtml(jasonArray)
+        val htmlText=RLTools.RLgetIndividualStepsChartHtml(jasonArray)
         fragBinding.webViewStepChart.loadDataWithBaseURL(null,
-            htmltext, "text/html", "UTF-8", null)
+            htmlText, "text/html", "UTF-8", null)
 
     }
 

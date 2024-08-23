@@ -46,6 +46,7 @@ class RLFragSessionSummary : RLBaseFragment() {
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var classType=""
+    var selectTag=""
 
     private val binding by lazy {
         RlFragSessionSummaryBinding.inflate(layoutInflater)
@@ -79,6 +80,7 @@ class RLFragSessionSummary : RLBaseFragment() {
 
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
+        selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
         fragBinding.inlayTop.recyclerTitle.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(cardData.className.toString())
@@ -703,22 +705,23 @@ class RLFragSessionSummary : RLBaseFragment() {
         fragBinding.relaySummary.visibility=View.VISIBLE
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.GONE
-        var imagelink=RLTools.RLgetImage(classType)
-        if (!cardData.imageLinkSmall.isNullOrEmpty()){
+        //var imagelink=RLTools.RLgetImage(classType)
+        val imagelink=RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
+       /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
             imagelink=cardData.imageLinkSmall
         }else if (!cardData.map_image.isNullOrEmpty()){
             imagelink=cardData.map_image
         }else{
             imagelink=RLTools.RLgetImage(classType)
-        }
+        }*/
         Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
 
         fragBinding.testImage.visibility=View.GONE
         fragBinding.viewPagerImage.visibility=View.VISIBLE
         fragBinding.intoTabLayout.visibility=View.VISIBLE
         fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
-        val imageList = listOf(
-            imagelink, "CHART", RLTools.RLgetImage(classType))
+       // val imageList = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
+        val imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
 
         RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
         val viewPagerAdapter = RLImagePagerAdapter(activity,imageList)
