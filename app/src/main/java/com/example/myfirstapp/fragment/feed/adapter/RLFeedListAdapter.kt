@@ -231,6 +231,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         }
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calendar_today)
         layoutBinding.layTime.txtTime.setText(R.string.challengesfor)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.duration.toInt()))
@@ -297,7 +298,16 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                 layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
                 layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
-            }
+            }else-> {
+            layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
+            layoutBinding.layCalories.txtTime.setText(R.string.targetsteps)
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+
+            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_steps_green)
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+
+        }
         }
 
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
@@ -314,6 +324,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.layoutComment.visibility=View.GONE
         layoutBinding.blanckView.visibility=View.GONE
         layoutBinding.layoutAward.visibility=View.GONE
+
     }
     private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
@@ -386,7 +397,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         if (classType.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancemiles)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble().toInt().toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
@@ -450,7 +461,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
-    fun RLshowEditDeleteDialog(cardData: RLTextOverview) {
+    private fun RLshowEditDeleteDialog(cardData: RLTextOverview) {
         val  dialog: Dialog = Dialog(context!!)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_edit_delete_feedcard)

@@ -36,6 +36,7 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import com.google.gson.Gson
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -124,7 +125,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.inlayTop.ivTitle.setText(valueslist[position])
         fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
         RLMoveToCenter(position)
-       /* if (RLApiClientRetrofit.RLisConnected()) {
+        /*if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
             RLAPiCall(valueslist[position])
         } else {
@@ -134,7 +135,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             RLHandleApiResponse(cardDate!!,valueslist[position])
         }
     }
-    private fun RLAPiCall(valuetype:String) {
+    private fun RLAPiCall(valueType:String) {
         val date = Calendar.getInstance()
         val firstDay = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 1)
@@ -143,13 +144,18 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampFrom = (firstDay.timeInMillis / 1000) - offset
         val timestampTo = (date.timeInMillis / 1000) - offset
 
+        Log.d(TAG,"offset:-  $offset  ,timestampFrom :- $timestampFrom  , timestampTo:- $timestampTo")
+
         viewModel.RLgetOverviewGraph("overviewGraph",currentUser,timestampFrom,timestampTo,"all") { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
                         cardDate=response.text[0].overviewGraph[0]
-                        RLHandleApiResponse(response.text[0].overviewGraph[0],valuetype)
+                        val gson = Gson()
+                        val jsonArray = gson.toJson(response.text[0].overviewGraph[0])
+                        Log.e(TAG,"Overview_jsonDate:-  $jsonArray")
+                        RLHandleApiResponse(response.text[0].overviewGraph[0],valueType)
 
                     }else {
                         Log.d(TAG,"Fail= "+response.type)
@@ -205,7 +211,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         4-> dataList.add(RLSessionitemset("DISTANCE (miles)",RLTools.RLformatCommas(carddate.distance.toDouble()),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
                         6-> dataList.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_climb))
-                        7-> dataList.add(RLSessionitemset("STEPS",RLTools.RLformatCommas(carddate.steps.toDouble()),R.drawable.fd_steps_green))
+                        7-> dataList.add(RLSessionitemset("AWARDS",RLTools.RLformatCommas(carddate.awards.toDouble()),R.drawable.ic_award))
                     }
                 }
             }
@@ -309,7 +315,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         0-> dataList.add(RLSessionitemset("MAX DISTANCE (miles)",RLTools.RLformatCommas(carddate.maxdistance.toDouble()),R.drawable.ic_distance))
                         1-> dataList.add(RLSessionitemset("AVG DISTANCE (miles)",RLTools.RLformatCommas(carddate.avgdistance.toDouble()),R.drawable.ic_distance))
                         2-> dataList.add(RLSessionitemset("CLIMBED (feet)",RLTools.RLformatCommas(carddate.elevation.toDouble()),R.drawable.ic_climb))
-                        3-> dataList.add(RLSessionitemset("AVG EFFORT PER (miles)",RLTools.RLminutesget(carddate.totalrmm.toInt()).toString(),R.drawable.ic_heart))
+                        3-> dataList.add(RLSessionitemset("DISTANCE (miles)",RLTools.RLformatCommas(carddate.distance.toDouble().toInt().toDouble()),R.drawable.ic_distance))
                     }
                 }
             }
@@ -322,7 +328,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         0-> dataList.add(RLSessionitemset("MAX CLIMBED (ft)",carddate.elevation.toString(),R.drawable.ic_climb))
                         1-> dataList.add(RLSessionitemset("AVG CLIMBED (ft)",carddate.avgelevation.toString(),R.drawable.ic_climb))
                         2-> dataList.add(RLSessionitemset("DISTANCE (miles)",RLTools.RLformatCommas(carddate.maxdistance.toDouble()),R.drawable.ic_distance))
-                        3-> dataList.add(RLSessionitemset("AVG EFFORT PER (ft)",carddate.elevation.toString(),R.drawable.ic_heart))
+                        3-> dataList.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_heart))
                     }
                 }
             }

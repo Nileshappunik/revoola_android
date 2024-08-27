@@ -41,6 +41,7 @@ import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import com.google.gson.Gson
 
 class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragFeed::class.java.simpleName
@@ -160,6 +161,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 try {
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
+                        val gson = Gson()
+                        val jsonArray = gson.toJson(response.text)
+                        Log.e(TAG,"Feed_jsonDate:-  $jsonArray")
                         adapter!!.RLaddData(response.text)
                         isLoading = false
                         index=index+10

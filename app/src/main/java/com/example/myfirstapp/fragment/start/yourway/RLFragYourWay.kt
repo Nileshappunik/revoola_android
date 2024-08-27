@@ -23,7 +23,6 @@ import com.example.myfirstapp.utils.loadSvg
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
 class RLFragYourWay : RLBaseFragment() {
     val TAG: String = RLFragYourWay::class.java.simpleName
     lateinit var fragBinding: RlFragYoueWayBinding
@@ -55,6 +54,7 @@ class RLFragYourWay : RLBaseFragment() {
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))
+        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
 
          val databaseManager= RLDatabaseManagerRead()
          databaseManager.RLALLMENULISTRead(RLConstants.YOURWAY){ data, error ->

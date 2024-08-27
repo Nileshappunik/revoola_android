@@ -118,17 +118,67 @@ object RLTools {
            return R.drawable.ic_run
        }else if (typename.toLowerCase().equals("challenge-effort")){
            return R.drawable.ic_heart
+       }else if (typename.toLowerCase().equals("challenge-custom-effort")){
+           return R.drawable.ic_heart
+       }else if (typename.toLowerCase().equals("challenge-daily-effort")){
+           return R.drawable.ic_heart
+       }else if (typename.toLowerCase().equals("challenge-weekly-effort")){
+           return R.drawable.ic_heart
+       }else if (typename.toLowerCase().equals("challenge-monthly-effort")){
+           return R.drawable.ic_heart
        }else if (typename.toLowerCase().equals("challenge-steps")){
+           return R.drawable.fd_steps_green
+       }else if (typename.toLowerCase().equals("challenge-custom-steps")){
+           return R.drawable.fd_steps_green
+       }else if (typename.toLowerCase().equals("challenge-daily-steps")){
+           return R.drawable.fd_steps_green
+       }else if (typename.toLowerCase().equals("challenge-weekly-steps")){
+           return R.drawable.fd_steps_green
+       }else if (typename.toLowerCase().equals("challenge-monthly-steps")){
            return R.drawable.fd_steps_green
        }else if (typename.toLowerCase().equals("challenge-calories")){
            return R.drawable.fd_calories_green
+       }else if (typename.toLowerCase().equals("challenge-custom-calories")){
+           return R.drawable.fd_calories_green
+       }else if (typename.toLowerCase().equals("challenge-daily-calories")){
+           return R.drawable.fd_calories_green
+       }else if (typename.toLowerCase().equals("challenge-weekly-calories")){
+           return R.drawable.fd_calories_green
+       }else if (typename.toLowerCase().equals("challenge-monthly-calories")){
+           return R.drawable.fd_calories_green
        }else if (typename.toLowerCase().equals("challenge-distance")){
+           return R.drawable.ic_distance
+       }else if (typename.toLowerCase().equals("challenge-custom-distance")){
+           return R.drawable.ic_distance
+       }else if (typename.toLowerCase().equals("challenge-daily-distance")){
+           return R.drawable.ic_distance
+       }else if (typename.toLowerCase().equals("challenge-weekly-distance")){
+           return R.drawable.ic_distance
+       }else if (typename.toLowerCase().equals("challenge-monthly-distance")){
            return R.drawable.ic_distance
        }else if (typename.toLowerCase().equals("challenge-climbed")){
            return R.drawable.ic_climb
+       }else if (typename.toLowerCase().equals("challenge-custom-climbed")){
+           return R.drawable.ic_climb
+       }else if (typename.toLowerCase().equals("challenge-daily-climbed")){
+           return R.drawable.ic_climb
+       }else if (typename.toLowerCase().equals("challenge-weekly-climbed")){
+           return R.drawable.ic_climb
+       }else if (typename.toLowerCase().equals("challenge-monthly-climbed")){
+           return R.drawable.ic_climb
        }else if (typename.toLowerCase().equals("challenge-duration")){
            return R.drawable.fd_active_time_green
-       }else if( typename.toLowerCase().equals("yoga")){
+       }else if (typename.toLowerCase().equals("challenge-custom-duration")){
+           return R.drawable.fd_active_time_green
+       }else if (typename.toLowerCase().equals("challenge-daily-duration")){
+           return R.drawable.fd_active_time_green
+       }else if (typename.toLowerCase().equals("challenge-weekly-duration")){
+           return R.drawable.fd_active_time_green
+       }else if (typename.toLowerCase().equals("challenge-monthly-duration")){
+           return R.drawable.fd_active_time_green
+       }
+
+       else if( typename.toLowerCase().equals("yoga")){
            return R.drawable.ic_yoga
        }else if( typename.toLowerCase().equals("pilates")){
            return R.drawable.ic_pilates

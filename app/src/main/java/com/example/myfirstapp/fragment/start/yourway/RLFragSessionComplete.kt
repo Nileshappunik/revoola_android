@@ -129,7 +129,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                    }
                 }
                 fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
-
             }
     }
     private fun imageListVisible(isVisible: Boolean){

@@ -204,36 +204,32 @@
                 <TextView
                     android:id="@+id/tvskip"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height_size"
+                    android:textStyle="bold"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/login_btn"
-                    android:backgroundTint="@color/AppDarkGrayColor"
-                    android:clickable="true"
+                    android:background="@drawable/round_border_login"
+                    android:backgroundTint="@color/AppBlackColor"
                     android:gravity="center"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:text="@string/skip"
                     android:textColor="@color/AppWhiteColor"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/omnes_semibold_regular" />
+                    android:textSize="@dimen/button_text_size"
+                    android:fontFamily="@font/omnes_regular" />
 
                 <TextView
                     android:id="@+id/tvgo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height_size"
+                    android:textStyle="bold"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/login_btn"
+                    android:background="@drawable/round_border_login"
                     android:backgroundTint="@color/AppMainColor"
-                    android:clickable="true"
                     android:gravity="center"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:text="@string/go"
                     android:textColor="@color/AppWhiteColor"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/omnes_semibold_regular" />
+                    android:textSize="@dimen/button_text_size"
+                    android:fontFamily="@font/omnes_regular" />
 
 
             </LinearLayout>
