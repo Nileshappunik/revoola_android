@@ -86,8 +86,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.layStepssofar.imgTime.setImageResource(R.drawable.ic_calender_daily)
         fragBinding.layStepssofar.txtTime.setText("CHALLENGE PERIOD")
 
-        when(classType.toLowerCase()){
-            "challenge-effort"->{
+        when(RLTools.RLChallengesTypeGet(classType.toLowerCase())){
+            "effort"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targeteffort)
                 fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
@@ -99,7 +99,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                 fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
             }
-            "challenge-steps"->{
+            "steps"->{
 
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetsteps)
@@ -112,7 +112,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                 fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
 
             }
-            "challenge-calories"->{
+            "calories"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetcalories)
                 fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
@@ -124,7 +124,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                 fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
             }
-            "challenge-distance"->{
+            "distance"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetdistance)
                 fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
@@ -136,7 +136,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                 fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
             }
-            "challenge-climbed"->{
+            "climbed"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetclimbed)
                 fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
@@ -148,7 +148,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                 fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
             }
-            "challenge-duration"->{
+            "duration"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targettotalduration)
                 fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
@@ -161,6 +161,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
 
             }
         }
+
         fragBinding.layRank.txtTime.setText(R.string.rank)
         fragBinding.layRank.imgTime.setImageResource(R.drawable.ic_ranking)
         fragBinding.layRank.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())

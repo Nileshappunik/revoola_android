@@ -54,26 +54,29 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding.txtMainTitle.setText("ACTIVITY COMPLETE!")
 
         fragBinding.layPrivacy.setOnClickListener {
-            val titletxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
-
-            if (titletxt.equals("FRIENDS")){
-                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
-                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
-                fragBinding.tvShareTitle.setText(R.string.privatetx)
-                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
-                RLShareMapHide(false)
-            }else if (titletxt.equals("EVERYONE")){
-                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
-                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
-                fragBinding.tvShareTitle.setText(R.string.friendstx)
-                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-                RLShareMapHide(true)
-            }else if (titletxt.equals("PRIVATE")){
-                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
-                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
-                fragBinding.tvShareTitle.setText(R.string.everyone)
-                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-                RLShareMapHide(true)
+            val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
+            when(titleTxt){
+                "FRIENDS"->{
+                    fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                    fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
+                    fragBinding.tvShareTitle.setText(R.string.privatetx)
+                    fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+                    RLShareMapHide(false)
+                }
+                "EVERYONE"->{
+                    fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                    fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+                    fragBinding.tvShareTitle.setText(R.string.friendstx)
+                    fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+                    RLShareMapHide(true)
+                }
+                "PRIVATE"->{
+                    fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                    fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
+                    fragBinding.tvShareTitle.setText(R.string.everyone)
+                    fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+                    RLShareMapHide(true)
+                }
             }
 
         }

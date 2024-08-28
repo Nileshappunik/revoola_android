@@ -104,6 +104,107 @@ object RLTools {
         layoutParamsImage.height = height
         testImage.layoutParams =layoutParamsImage
     }
+    fun RLChallengesTypeGet(typename:String): String {
+        var ChallengeName=""
+        when(typename.toLowerCase()){
+            "challenge-effort"->{
+                ChallengeName="effort"
+            }
+            "challenge-custom-effort"->{
+                ChallengeName="effort"
+            }
+            "challenge-daily-effort"->{
+                ChallengeName="effort"
+            }
+            "challenge-weekly-effort"->{
+                ChallengeName="effort"
+            }
+            "challenge-monthly-effort"->{
+                ChallengeName="effort"
+            }
+
+            "challenge-steps"->{
+                ChallengeName="steps"
+            }
+            "challenge-custom-steps"->{
+                ChallengeName="steps"
+            }
+            "challenge-daily-steps"->{
+                ChallengeName="steps"
+            }
+            "challenge-weekly-steps"->{
+                ChallengeName="steps"
+            }
+            "challenge-monthly-steps"->{
+                ChallengeName="steps"
+            }
+
+            "challenge-calories"->{
+                ChallengeName="calories"
+            }
+            "challenge-custom-calories"->{
+                ChallengeName="calories"
+            }
+            "challenge-daily-calories"->{
+                ChallengeName="calories"
+            }
+            "challenge-weekly-calories"->{
+                ChallengeName="calories"
+            }
+            "challenge-monthly-calories"->{
+                ChallengeName="calories"
+            }
+
+            "challenge-distance"->{
+                ChallengeName="distance"
+            }
+            "challenge-custom-distance"->{
+                ChallengeName="distance"
+            }
+            "challenge-daily-distance"->{
+                ChallengeName="distance"
+            }
+            "challenge-weekly-distance"->{
+                ChallengeName="distance"
+            }
+            "challenge-monthly-distance"->{
+                ChallengeName="distance"
+            }
+
+            "challenge-climbed"->{
+                ChallengeName="climbed"
+            }
+            "challenge-custom-climbed"->{
+                ChallengeName="climbed"
+            }
+            "challenge-daily-climbed"->{
+                ChallengeName="climbed"
+            }
+            "challenge-weekly-climbed"->{
+                ChallengeName="climbed"
+            }
+            "challenge-monthly-climbed"->{
+                ChallengeName="climbed"
+            }
+
+            "challenge-duration"->{
+                ChallengeName="duration"
+            }
+            "challenge-custom-duration"->{
+                ChallengeName="duration"
+            }
+            "challenge-daily-duration"->{
+                ChallengeName="duration"
+            }
+            "challenge-weekly-duration"->{
+                ChallengeName="duration"
+            }
+            "challenge-monthly-duration"->{
+                ChallengeName="duration"
+            }
+        }
+        return ChallengeName
+    }
 
     fun RLgeticon(typename:String): Int {
        if( typename.toLowerCase().equals("walk")){
@@ -480,6 +581,12 @@ object RLTools {
         }
         return false
     }
+
+    fun RlconvertSecondsToDays(seconds: Long): Long {
+        val secondsInADay = 86400  // 24 * 60 * 60
+        return seconds / secondsInADay
+    }
+
     fun RLcapitalize(name: String): String {
         val charArray = name.toLowerCase().toCharArray()
         for (i in 0 until name.length) {

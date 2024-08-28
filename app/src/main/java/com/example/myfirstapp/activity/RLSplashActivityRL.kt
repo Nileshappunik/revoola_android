@@ -51,7 +51,7 @@ class RLSplashActivityRL : RLBaseActivity() {
         }else{
             startActivity(Intent(this, RLMainActivityRL::class.java))
             finish()
-           // startActivity(Intent(this, RLSignUpActivityRL::class.java))
+           // startActivity(Intent(this, RLLoginActivityRL::class.java))
         }
     }
 

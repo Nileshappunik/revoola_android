@@ -352,6 +352,7 @@
     <string name="targetsteps">TARGET STEPS</string>
     <string name="youachived">ACHIEVED</string>
     <string name="rank">RANK</string>
+    <string name="currenrrank">CURRENT RANK</string>
     <string name="targeteffort">TARGET EFFORT</string>
     <string name="targetcalories">TARGET CALORIES</string>
     <string name="targetdistance">TARGET DISTANCE</string>
@@ -449,6 +450,8 @@
     <string name="selectfriendforschedule">SELECT FRIENDS FOR SCHEDULE</string>
     <string name="selectfriendsgroups">SELECT FRIENDS/GROUPS</string>
     <string name="groupdetails">Group Details</string>
+    <string name="assumedrelaxation">ASSUMED RELAXATIONS</string>
+    <string name="stadinghour">STANDING HOURS</string>
 
 
 </resources>

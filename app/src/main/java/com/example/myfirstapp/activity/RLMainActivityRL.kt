@@ -50,7 +50,8 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
-        RLloadFrag(RLFragOverviewSession(), TAG, true, null, false)
+        RLshowbottombarcolorwhite()
+        RLloadFrag(RLFragStart(), TAG, true, null, false)
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
         RLchepermissionphysicalActivity()

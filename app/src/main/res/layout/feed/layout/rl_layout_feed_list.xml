@@ -33,7 +33,6 @@
                 android:layout_marginStart="15dp"
                 android:layout_toEndOf="@+id/img_user"
                 android:layout_toStartOf="@+id/img_threedot"
-                android:text="@string/hidhruv"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="14sp"/>
@@ -47,7 +46,6 @@
                 android:layout_toEndOf="@+id/img_user"
                 android:layout_toStartOf="@+id/img_threedot"
                 android:layout_below="@+id/txt_username"
-                android:text="23/04/2024 16:57"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="12sp"/>
@@ -60,6 +58,42 @@
                 android:layout_marginEnd="15dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/txt_username"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_organizer_user"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/sample_user"
+                app:tint="@color/AppBottomGrayColor"
+                android:layout_alignParentEnd="true"/>
+
+            <TextView
+                android:id="@+id/txt_organizer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/img_organizer_user"
+                android:text="Paul Goossens"
+                android:textStyle="bold"
+                android:fontFamily="@font/omnes_regular"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/txt_organizer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/img_organizer_user"
+                android:layout_below="@+id/txt_organizer_name"
+                android:text="ORGANISER"
+                android:fontFamily="@font/omnes_regular"
+                android:textStyle="bold"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/temptext"
@@ -94,7 +128,6 @@
                 android:layout_below="@+id/temptext"
                 android:layout_toEndOf="@+id/img_myride"
                 android:singleLine="true"
-                android:text="@string/myride"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"

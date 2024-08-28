@@ -56,8 +56,9 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
 
             //Image Height Width set
             val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgType.layoutParams
-            layoutParamsImage.height =  heightTotal/9
-            layoutParamsImage.width =  (heightTotal/7 * 1.5).roundToInt()
+            layoutParamsImage.height =  heightTotal/8
+            layoutParamsImage.width =  heightTotal/6
+           // layoutParamsImage.width =  (heightTotal/7 * 1.5).roundToInt()
             layoutBinding.imgType.layoutParams =layoutParamsImage
 
             layoutBinding.relayStartNew.setOnClickListener {

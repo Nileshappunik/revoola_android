@@ -47,7 +47,7 @@
                 android:background="@drawable/full_round_green"
                 android:textAlignment="center"
                 android:text="@string/mygroup"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textAllCaps="true"
                 android:textColor="@color/AppWhiteColor"/>
 
@@ -60,7 +60,7 @@
                 android:paddingBottom="8dp"
                 android:textAllCaps="true"
                 android:textAlignment="center"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:text="@string/creategroup"
                 android:textColor="@color/AppTextGrayColor"/>
 
@@ -116,25 +116,26 @@
         <TextView
             android:id="@+id/tvCreate"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/button_height_size"
             android:layout_marginLeft="15dp"
             android:layout_marginRight= "15dp"
             android:layout_marginBottom="10dp"
             android:visibility="gone"
             android:layout_alignParentBottom="true"
             android:background="@drawable/round_border_login_green"
-           android:backgroundTint="@color/AppDarkGrayColor"
+            android:backgroundTint="@color/AppBlackColor"
             android:gravity="center"
             android:textAllCaps="true"
             android:text="@string/create"
             android:textColor="@color/AppWhiteColor"
-            android:textSize="16sp"
-            android:fontFamily="@font/omnes_semibold_regular" />
+            android:textSize="@dimen/button_text_size"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular" />
 
         <TextView
             android:id="@+id/tvCreateClick"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/button_height_size"
             android:layout_marginLeft="15dp"
             android:layout_marginRight= "15dp"
             android:layout_marginBottom="10dp"
@@ -145,8 +146,9 @@
             android:textAllCaps="true"
             android:text="@string/create"
             android:textColor="@color/AppWhiteColor"
-            android:textSize="16sp"
-            android:fontFamily="@font/omnes_semibold_regular" />
+            android:textSize="@dimen/button_text_size"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular" />
 
         <TextView
             android:id="@+id/txt_inviteyourfriend"
