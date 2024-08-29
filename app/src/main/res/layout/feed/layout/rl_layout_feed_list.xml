@@ -10,7 +10,7 @@
         app:cardBackgroundColor="@color/AppWhiteColor"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
-        android:layout_margin="1dp">
+        android:layout_margin="0dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/img_user"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="12sp"/>
@@ -174,6 +174,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:orientation="vertical">
+
+
+                    <RelativeLayout
+                        android:id="@+id/relay_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <WebView
+                            android:id="@+id/webView_chart"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </RelativeLayout>
+
+
+
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/img_Main"
                         android:layout_width="match_parent"

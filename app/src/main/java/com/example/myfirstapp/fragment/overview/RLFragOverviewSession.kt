@@ -321,6 +321,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
             "CLIMBED" ->{
                 RLwebviewurlload("climbed")
+                val awards=carddate.medals_gold+carddate.medals_silver+carddate.medals_bronze
                 fragBinding.txtTotalsessionNumber.setText(carddate.maxelevation.toString())
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
@@ -328,7 +329,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         0-> dataList.add(RLSessionitemset("MAX CLIMBED (ft)",carddate.elevation.toString(),R.drawable.ic_climb))
                         1-> dataList.add(RLSessionitemset("AVG CLIMBED (ft)",carddate.avgelevation.toString(),R.drawable.ic_climb))
                         2-> dataList.add(RLSessionitemset("DISTANCE (miles)",RLTools.RLformatCommas(carddate.maxdistance.toDouble()),R.drawable.ic_distance))
-                        3-> dataList.add(RLSessionitemset("CLIMBED (feet)",carddate.elevation.toString(),R.drawable.ic_heart))
+                        3-> dataList.add(RLSessionitemset("AWARDS",awards.toString(),R.drawable.ic_award))
                     }
                 }
             }

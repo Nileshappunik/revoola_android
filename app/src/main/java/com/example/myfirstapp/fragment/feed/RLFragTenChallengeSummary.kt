@@ -264,8 +264,8 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         val stepsSoFar:Int = if (myChallengeData.totalmetric != null && myChallengeData.totalmetric > 0) myChallengeData.totalmetric else 0
         val targetSteps = if (myChallengeData.goalvalue != null && myChallengeData.goalvalue > 0) myChallengeData.goalvalue else 0
 
-        Log.d(TAG,"stepsSoFar:- $stepsSoFar ")
-        Log.d(TAG,"targetSteps:- $targetSteps ")
+        Log.e(TAG,"stepsSoFar:- $stepsSoFar ")
+        Log.e(TAG,"targetSteps:- $targetSteps ")
 
         val htmltext=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
         // Log.d(TAG,"htmltext:-   $htmltext ")

@@ -29,6 +29,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
@@ -45,11 +46,14 @@ import java.text.NumberFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 
@@ -104,6 +108,34 @@ object RLTools {
         layoutParamsImage.height = height
         testImage.layoutParams =layoutParamsImage
     }
+
+    fun RLheightsetRelative(testImage:RelativeLayout) {
+
+        // Ensure the layout has been completed before getting the width
+        testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to prevent multiple calls
+                testImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                // Get the width of the ImageView
+                val width = testImage.width
+
+                // Calculate height as 75% of width
+                val height = (width * 0.76).toInt()
+
+                // Set the calculated height to the ImageView
+                val layoutParams = testImage.layoutParams
+                layoutParams.height = height
+                testImage.layoutParams = layoutParams
+            }
+        })
+        val layoutParamsImage: ViewGroup.LayoutParams = testImage.layoutParams
+        val width = testImage.width
+        val height = (width * 0.76).toInt()
+        layoutParamsImage.height = height
+        testImage.layoutParams =layoutParamsImage
+    }
+
     fun RLChallengesTypeGet(typename:String): String {
         var ChallengeName=""
         when(typename.toLowerCase()){
@@ -784,16 +816,67 @@ object RLTools {
         }
     }
 
-    fun RLconvertTimestampToDate(timestamp: Long): String {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
-                return dateTime.format(formatter)
-            }else{
-                return "0"
-            }
-        } catch (ex: ActivityNotFoundException) {
+   /* fun getDifferenceBetweenDates(dateString1: String, dateString2: String): Long {
+        // Define the date format pattern (e.g., dd/MM/yyyy)
+
+        val currentDate = LocalDate.now()
+
+        // Define the date format pattern (dd/MM/yyyy)
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+        // Format the current date using the defined formatter
+        val currentDateConvert= currentDate.format(formatter)
+
+
+
+        // Convert the string dates to LocalDate
+        val date1 = LocalDate.parse(dateString1, formatter)
+        val date2 = LocalDate.parse(dateString2, formatter)
+
+        // Calculate the difference in days between the two dates
+        return ChronoUnit.DAYS.between(date1, date2)
+    }*/
+
+    fun RlgetDifferenceInDays(timestampInMillis: Long,totalDays:String): String {
+        // Convert timestamp to LocalDate
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val givenDate = Instant.ofEpochMilli(timestampInMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+            // Get the current date
+            val currentDate = LocalDate.now()
+
+            val different=ChronoUnit.DAYS.between(givenDate, currentDate)
+
+            val secondsInADay = 86400
+            val differentInADay = different/secondsInADay
+            Log.e("TAG","different:- $different  ,differentInADay:- $differentInADay")
+            val final=totalDays.toInt() - differentInADay.toDouble().toInt()
+            // Calculate the difference in days between the current date and the given date
+            return final.toString()
+        }else{
+            return "0"
+        }
+    }
+
+    fun RlgetDifferenceInDays1(timestampInMillis: Long,totalDays:String): String {
+        // Convert timestamp to LocalDate
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val givenDate = Instant.ofEpochMilli(timestampInMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+            // Get the current date
+            val currentDate = LocalDate.now()
+
+            val different=ChronoUnit.DAYS.between(givenDate, currentDate)
+
+            val secondsInADay = 86400
+            val differentInADay = different/secondsInADay
+            Log.e("TAG","different:- $different  ,differentInADay:- $differentInADay")
+            val final=totalDays.toInt() - differentInADay.toDouble().toInt()
+            // Calculate the difference in days between the current date and the given date
+            return final.toString()
+        }else{
             return "0"
         }
     }

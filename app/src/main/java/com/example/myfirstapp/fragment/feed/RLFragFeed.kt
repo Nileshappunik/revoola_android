@@ -83,7 +83,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         return fragBinding.root
     }
     private fun RLuisetup() {
-
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.feedsmall))
@@ -136,7 +135,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
            }
         }
     }
-    private fun RLapicall(groupid:String) {
+    private fun RLapicall(groupId:String) {
         isLoading = true
       adapter!!.RLaddLoadingFooter()
         val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
@@ -145,7 +144,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 overview_thumb = RLSetoverview_thumb(
                     timestampfrom = 0,
                     timestampto = currentTimestamp,
-                    groupid = groupid,
+                    groupid = groupId,
                     limit = limit,
                     index=index,
                     goal="all",
@@ -153,7 +152,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                     isall = 0,
                     d = "mindAndBody")))
 
-        Log.d(TAG,"setdata= "+request)
+        Log.e(TAG,"setdata= "+request)
 
         viewModel.RLgetUserFeedCardData(request) { result ->
             result.onSuccess { response ->
@@ -236,10 +235,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLgroupAPiCall() {
         val request = listOf(RLSetGroupRequest(
-                group_data = RLSetGroupData(
-                    userid = currentUser,
-                    limit = 100,
-                    index=0)))
+                group_data = RLSetGroupData(userid = currentUser, limit = 100, index=0)))
         Log.d(TAG,"setGroupdata= "+request)
 
         viewModel.RLgetGroupData(request) { result ->
@@ -311,7 +307,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.rvItemFeed.adapter = adapter
         if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
-            RLapicall( groupid)
+            RLapicall(groupid)
         } else {
             RLshowDialogFullscreen()
         }
@@ -331,7 +327,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 try {
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
-
+                        val gson = Gson()
+                        val jsonArray = gson.toJson(response.text)
+                        Log.e(TAG,"Success= $jsonArray")
                         adapterch.RLaddData(response.text.data)
                     }else {
                         Log.d(TAG,"Fail= "+response.type)

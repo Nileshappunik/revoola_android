@@ -350,7 +350,7 @@
     <string name="activecalories">ACTIVE CALORIES</string>
     <string name="challengesfor">CHALLENGE FOR</string>
     <string name="targetsteps">TARGET STEPS</string>
-    <string name="youachived">ACHIEVED</string>
+    <string name="youachived">ACHIEVED SO FAR</string>
     <string name="rank">RANK</string>
     <string name="currenrrank">CURRENT RANK</string>
     <string name="targeteffort">TARGET EFFORT</string>
@@ -440,6 +440,7 @@
     <string name="select">Select</string>
     <string name="enternamehere">Enter name here</string>
     <string name="individualtarget">Individual Target</string>
+    <string name="individualtargetcaps">INDIVIDUAL TARGET</string>
     <string name="sharedtarget">Shared Target</string>
     <string name="individualorsharedtarget">Individual or shared Target?</string>
     <string name="welcometorevoola">Welcome to Revoola!</string>
