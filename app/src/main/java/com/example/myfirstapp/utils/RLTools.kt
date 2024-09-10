@@ -36,8 +36,10 @@ import androidx.viewpager.widget.ViewPager
 import com.example.myfirstapp.R
 import com.example.myfirstapp.enumclass.RLYourWayName
 import com.example.myfirstapp.model.RLTextOverview
+import com.example.myfirstapp.model.RlMetric
 
 import com.google.android.material.snackbar.Snackbar
+import com.google.api.Metric
 import org.json.JSONArray
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -816,26 +818,62 @@ object RLTools {
         }
     }
 
-   /* fun getDifferenceBetweenDates(dateString1: String, dateString2: String): Long {
-        // Define the date format pattern (e.g., dd/MM/yyyy)
-
-        val currentDate = LocalDate.now()
-
-        // Define the date format pattern (dd/MM/yyyy)
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-
-        // Format the current date using the defined formatter
-        val currentDateConvert= currentDate.format(formatter)
 
 
 
-        // Convert the string dates to LocalDate
-        val date1 = LocalDate.parse(dateString1, formatter)
-        val date2 = LocalDate.parse(dateString2, formatter)
-
-        // Calculate the difference in days between the two dates
-        return ChronoUnit.DAYS.between(date1, date2)
-    }*/
+    fun RLgetMetric(thirdPartySource: Int,cardData: RLTextOverview): RlMetric {
+        return when (thirdPartySource) {
+            in listOf(20, 26, 32, 38) -> RlMetric(
+                R.drawable.ic_heart,
+                title = "effort",
+                value = cardData.totalREV.toInt(),
+                uom = "",
+                isTime = false
+            )
+            in listOf(21, 27, 33, 39) -> RlMetric(
+                R.drawable.fd_steps_green,
+                title = "steps",
+                value = cardData.steps,
+                uom = "Steps",
+                isTime = false
+            )
+            in listOf(22, 28, 34, 40) -> RlMetric(
+                R.drawable.fd_calories_green,
+                title = "calories",
+                value = cardData.burntCalories.toInt(),
+                uom = "",
+                isTime = false
+            )
+            in listOf(23, 29, 35, 41) -> RlMetric(
+                R.drawable.fd_active_time_green,
+                title = "duration",
+                value = cardData.totalTime.toInt(),
+                uom = "",
+                isTime = true
+            )
+            in listOf(24, 30, 36, 42) -> RlMetric(
+                R.drawable.ic_climb,
+                title = "climbed",
+                value = cardData.elevation,
+                uom = " (m)",
+                isTime = false
+            )
+            in listOf(25, 31, 37, 43) -> RlMetric(
+                R.drawable.ic_distance,
+                title = "distance",
+                value = cardData.distance.toInt(),
+                uom = " (km)",
+                isTime = false
+            )
+            else -> RlMetric(
+                R.drawable.fd_steps_green,
+                title = "steps",
+                value = cardData.steps,
+                uom = "Steps",
+                isTime = false
+            )
+        }
+    }
 
     fun RlgetDifferenceInDays(timestampInMillis: Long,totalDays:String): String {
         // Convert timestamp to LocalDate
@@ -1793,6 +1831,7 @@ object RLTools {
               </html>
         """.trimIndent()
     }
+
     fun RLgetRankingChartHtml(jsondata: JSONArray,userid:String): String{
         return """     
             <!DOCTYPE html>

@@ -97,7 +97,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.layRank.txtTime.setText("RANK")
 
 
-        var stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+        var stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
         var targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
 
         var remainingDays = cardData.days_remaining ?: 0
@@ -115,7 +115,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewChart.webViewClient = WebViewClient()
         fragBinding.webViewChart.loadDataWithBaseURL(null,
-            RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+            RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
 
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
         webRankingSettings.javaScriptEnabled = true

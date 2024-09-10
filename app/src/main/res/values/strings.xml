@@ -442,6 +442,7 @@
     <string name="individualtarget">Individual Target</string>
     <string name="individualtargetcaps">INDIVIDUAL TARGET</string>
     <string name="sharedtarget">Shared Target</string>
+    <string name="sharedtargetcaps">SHARED TARGET</string>
     <string name="individualorsharedtarget">Individual or shared Target?</string>
     <string name="welcometorevoola">Welcome to Revoola!</string>
     <string name="thisisourmainpage">This is our Main PAge where you can start different activities.</string>

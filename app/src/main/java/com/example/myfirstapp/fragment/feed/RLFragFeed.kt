@@ -56,7 +56,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private var currentState:String="FRIENDS"
 
     private var isLoading = false
-    private var  limit = 10
+    private var  limit = 100
     private var index=0
     private var currentUser:String=""
     private var GroupId:String="w2p8SQCvE3emjEEDo66f02eF6fG2_friends"
@@ -160,13 +160,13 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 try {
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
-                        val gson = Gson()
+                       /* val gson = Gson()
                         val jsonArray = gson.toJson(response.text)
-                        Log.e(TAG,"Feed_jsonDate:-  $jsonArray")
+                        Log.e(TAG,"Feed_jsonDate:-  $jsonArray")*/
                         adapter!!.RLaddData(response.text)
                         isLoading = false
-                        index=index+10
-                        limit=limit+10
+                        index=index+100
+                        limit=limit+100
                     }else {
                         Log.d(TAG,"Fail= "+response.type)
                         //commonToast(response.type)
@@ -214,8 +214,8 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                         //main list
                         adapter!!.RLaddData(response.text)
                         isLoading = false
-                        index=index+10
-                        limit=limit+10
+                        index=index+100
+                        limit=limit+100
                     }else {
                         Log.d(TAG,"Fail= "+response.type)
                         isLoading = true
@@ -297,7 +297,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         adaptertitle.notifyItemChanged(1,valueslist)
     }
     fun RLfirsttimeApiCall(groupid:String){
-          limit = 10
+          limit = 100
          index=0
         isLoading = false
         //main list
@@ -327,9 +327,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 try {
                     if (response.type.equals("success")){
                         Log.d(TAG,"Success= "+response.type)
-                        val gson = Gson()
+                        /*val gson = Gson()
                         val jsonArray = gson.toJson(response.text)
-                        Log.e(TAG,"Success= $jsonArray")
+                        Log.e(TAG,"Success= $jsonArray")*/
                         adapterch.RLaddData(response.text.data)
                     }else {
                         Log.d(TAG,"Fail= "+response.type)
@@ -378,7 +378,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RlGroupNameSetTitle("GROUPS",false)
                 if (RLApiClientRetrofit.RLisConnected()) {
                     //Detail Api
-                    limit = 10
+                    limit = 100
                     index=0
                     isLoading = false
                     val linearLayoutManager = LinearLayoutManager(activity)

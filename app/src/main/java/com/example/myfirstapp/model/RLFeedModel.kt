@@ -1,5 +1,6 @@
 package com.example.myfirstapp.model
 
+import android.graphics.drawable.Drawable
 import java.io.Serializable
 
 data class RLFeedModel(var type: String, var text: List<RLTextOverview>)
@@ -92,7 +93,7 @@ data class RLSetgoaled_challengesSingle(var id:String, var type:String)
 
 data class RLFeedChallengesModel(var type: String, var text:RLFeedChallengesModelListData )
 data class RLFeedChallengesModelListData(var data:List<RLFeedChallengesModelData>)
-data class RLFeedChallengesModelData(var actualtotal:Int, var metric:String, var challenge_name:String,
+data class RLFeedChallengesModelData(var actualtotal:Double, var metric:String, var challenge_name:String,
                                      var startdate:String, var enddate:String, var totaldays:Int, var totaltarget:Int, var userid:String,
                                      var username:String, var avatar:String, var first_name:String, var last_name:String, var full_name:String,
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
@@ -108,5 +109,5 @@ data class RLFeedChallengesMapModel(var type: String, var text:RLFeedChallengesM
 data class RLFeedChallengesModelMapListData(var data:List<RLFeedChallengesModelMapData>)
 data class RLFeedChallengesModelMapData(var datefield:String, var metric:Int)
 
-
+data class RlMetric(val icon:Int,val title: String, val value: Int, val uom: String, val isTime: Boolean)
 

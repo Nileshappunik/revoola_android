@@ -100,7 +100,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.layCalories.viewCommon.visibility = View.GONE
                 layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
                 layoutBinding.laySteps.viewCommon.visibility = View.GONE
-                layoutBinding.viewBottom.visibility = View.GONE
+                layoutBinding.viewBottom.visibility = View.VISIBLE
 
 
                 layoutBinding.txtUsername.setText(cardData.username.toString())
@@ -143,14 +143,12 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                     (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
                 }
 
-                val stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+                val stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
                 val targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
 
                 val remainingDays = cardData.days_remaining ?: 0
                 val timeGone = if (remainingDays >0) remainingDays else 0
                 val totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
-
-
 
                 val webSettings: WebSettings = layoutBinding.webViewChart.settings
                 webSettings.javaScriptEnabled = true
@@ -163,7 +161,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
                 layoutBinding.webViewChart.webViewClient = WebViewClient()
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
-                    RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+                    RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
             } catch (e: Exception) {
                 Log.d(TAG, "exceptionAdaptermsg= " + e.message)
             }
@@ -179,8 +177,6 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 val cardData = dataList[position]
 
                 //RLTools.heightsetrelativelayout(layoutBinding.relayChart)
-
-
 
                 layoutBinding.layStepssofar.viewCommon.visibility = View.GONE
                 layoutBinding.layTargetsteps.viewCommon.visibility = View.GONE
@@ -229,8 +225,6 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 var timeGone = if (remainingDays >0) remainingDays else 0
                 var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
 
-
-
                 val webSettings: WebSettings = layoutBinding.webViewChart.settings
                 webSettings.javaScriptEnabled = true
                 webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -246,8 +240,6 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
             } catch (e: Exception) {
             Log.d(TAG, "exceptionAdaptermsg= " + e.message)
             }
-
-
         }
     }*/
 }
