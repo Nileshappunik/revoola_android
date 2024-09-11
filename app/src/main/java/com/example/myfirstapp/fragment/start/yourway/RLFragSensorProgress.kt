@@ -47,6 +47,16 @@ class RLFragSensorProgress : RLBaseFragment(){
     private lateinit var handler: Handler
     private lateinit var bluetoothAdapter: BluetoothAdapter
     var  yourWayType:String=""
+
+    var heartRateList:MutableList<Int> = mutableListOf()
+    var stepsList:MutableList<String> = mutableListOf()
+    var distanceList:MutableList<String> = mutableListOf()
+    var climbedList:MutableList<String> = mutableListOf()
+    var paceList:MutableList<String> = mutableListOf()
+    var speedList:MutableList<String> = mutableListOf()
+    var activeCaloriesList:MutableList<String> = mutableListOf()
+    var totalTime:String =""
+
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
@@ -112,6 +122,14 @@ class RLFragSensorProgress : RLBaseFragment(){
         fragBinding.layStop.setOnClickListener {
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
+            bundle.putString("totalTime",totalTime)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putStringArrayList("stepsList",ArrayList(stepsList))
+            bundle.putStringArrayList("distanceList",ArrayList(distanceList))
+            bundle.putStringArrayList("climbedList",ArrayList(climbedList))
+            bundle.putStringArrayList("paceList",ArrayList(paceList))
+            bundle.putStringArrayList("speedList",ArrayList(speedList))
+            bundle.putStringArrayList("activeCaloriesList",ArrayList(activeCaloriesList))
             try {
             timerManager.RLstop()
             if (isServiceBound) {

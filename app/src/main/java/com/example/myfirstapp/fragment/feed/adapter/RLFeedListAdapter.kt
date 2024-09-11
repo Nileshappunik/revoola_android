@@ -282,14 +282,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         var timeGone = if (remainingDayss >0) remainingDayss else 0
         val totalTime = if (totalDays.toInt() ?: 0 > 0) totalDays.toInt() ?: 0 else 0
 
-        Log.e(TAG,"stepsSoFarList:- $stepsSoFar ")
-        Log.e(TAG,"targetStepsLIst:- $targetSteps")
-        Log.e(TAG,"timeGone:- $timeGone totalTime:- $totalTime remainingDayss:-$remainingDayss")
 
-
-        //val htmlText=RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime)
         val htmlText=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
-        //Log.e(TAG,"MAP:- $htmlText")
         layoutBinding.webViewChart.loadDataWithBaseURL(null,
             htmlText, "text/html", "UTF-8", null)
 
@@ -360,7 +354,6 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()))
 
         }
-
 
         layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)

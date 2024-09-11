@@ -30,7 +30,6 @@ import com.example.myfirstapp.fragment.more.RLFragMore
 import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
-import com.example.myfirstapp.fragment.start.yourway.RLFragSessionComplete
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig

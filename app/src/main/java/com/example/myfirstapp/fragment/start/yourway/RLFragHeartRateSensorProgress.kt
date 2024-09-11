@@ -48,6 +48,16 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private lateinit var handler: Handler
     private lateinit var bluetoothAdapter: BluetoothAdapter
     var  yourWayType:String=""
+
+    var heartRateList:MutableList<Int> = mutableListOf()
+    var stepsList:MutableList<String> = mutableListOf()
+    var distanceList:MutableList<String> = mutableListOf()
+    var climbedList:MutableList<String> = mutableListOf()
+    var paceList:MutableList<String> = mutableListOf()
+    var speedList:MutableList<String> = mutableListOf()
+    var activeCaloriesList:MutableList<String> = mutableListOf()
+    var totalTime:String =""
+
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
@@ -134,8 +144,19 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
            }catch (e:Exception){
                Log.e(TAG,"Exception:- "+e.message)
            }
+
+
+
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
+            bundle.putString("totalTime",totalTime)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putStringArrayList("stepsList",ArrayList(stepsList))
+            bundle.putStringArrayList("distanceList",ArrayList(distanceList))
+            bundle.putStringArrayList("climbedList",ArrayList(climbedList))
+            bundle.putStringArrayList("paceList",ArrayList(paceList))
+            bundle.putStringArrayList("speedList",ArrayList(speedList))
+            bundle.putStringArrayList("activeCaloriesList",ArrayList(activeCaloriesList))
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
@@ -296,6 +317,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                     val data = intent.getStringExtra("EXTRA_DATA")
                     fragBinding.txtEffortNumber.setText(data)
                     fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
+                    if (!data.isNullOrEmpty()){
+                        heartRateList.add(data.toInt())
+                    }
+
                 }
             }
         }
@@ -349,6 +374,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         timerManager.RLstart { elapsedTime ->
             activity?.runOnUiThread {
                 fragBinding.inlayTime.txtProgressTimeNumber.setText(RLformatElapsedTime(elapsedTime))
+                totalTime=elapsedTime.toString()
             }
         }
     }
@@ -364,6 +390,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             speed?.let {
                 Log.d(TAG,"Speed: ${it} m/s")
                 fragBinding.inlaySpeed.txtProgressTimeNumber.setText("%.2f".format(it))
+                speedList.add("%.2f".format(it).toString())
             }
         })
 
@@ -372,6 +399,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 Log.d(TAG,"Steps: $stepCount")
                 if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
                     fragBinding.inlayCadence.txtProgressTimeNumber.setText(stepCount.toString())
+                    stepsList.add(stepCount.toString())
                 }
             }
         })
@@ -380,6 +408,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 val totalDistance=it //round(it * 100) / 100
                 Log.d(TAG,"Distance: $totalDistance km")
                 fragBinding.inlayDistance.txtProgressTimeNumber.setText(totalDistance.toString())
+                distanceList.add(totalDistance.toString())
             }
         })
 
@@ -404,6 +433,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 val totalspace=round(it * 100) / 100
                 Log.d(TAG, "Pace: $totalspace min/km")
                 fragBinding.inlayPace.txtProgressTimeNumber.setText(totalspace.toString())
+                paceList.add(totalspace.toString())
             }
         })
 

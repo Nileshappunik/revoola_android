@@ -22,6 +22,8 @@ import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
 import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
+import com.example.myfirstapp.model.RLWorkoutDataModel
+import com.example.myfirstapp.model.RLWorkoutSessionDetailsModel
 
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.firebase.database.DatabaseReference
@@ -34,6 +36,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
     lateinit var fragBinding: RlFragSessionCompleteBinding
     var imgUriList = mutableListOf<Uri>()
+    var currentUser =""
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
         fragment.arguments = bundle
@@ -42,18 +46,31 @@ class RLFragSessionComplete : RLBaseFragment(){
     private val binding by lazy {
         RlFragSessionCompleteBinding.inflate(layoutInflater)
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionComplete" )
+        currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
         //"Pilates","Ride","Run","Walk","Workout","Yoga" ic_pace ic_speeed
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
+        val totalTime = requireArguments().getString("totalTime").toString().trim()
+        val heartRateList: ArrayList<Int>? = requireArguments().getIntegerArrayList("heartRateList")
+        val stepsList: ArrayList<String>? = requireArguments().getStringArrayList("stepsList")
+        val distanceList: ArrayList<String>? =requireArguments().getStringArrayList("distanceList")
+        val climbedList: ArrayList<String>? = requireArguments().getStringArrayList("climbedList")
+        val paceList: ArrayList<String>? =requireArguments().getStringArrayList("paceList")
+        val speedList: ArrayList<String>? = requireArguments().getStringArrayList("speedList")
+        val activeCaloriesList: ArrayList<String>? = requireArguments().getStringArrayList("activeCaloriesList")
+
+
+
         fragBinding.edtSessionName.setText("$yourWayType Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             // Handle checked change
@@ -92,13 +109,30 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
         fragBinding.inlayButton.commonButton.setText(R.string.save)
         fragBinding.inlayButton.commonButton.setOnClickListener {
-            if (imgUriList.size>0){
+           /* if (imgUriList.size>0){
                 RLuploadImagesToFirebase(imgUriList)
-            }
-          /*  RLBottomHideShowSet(true)
-            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-            */
+            }*/
+            val entry = RLWorkoutSessionDetailsModel()
+            entry.arrSpeed= speedList!!
+            entry.arrCadence= stepsList!!
+            entry.arrDistance= distanceList!!
+            entry.arrElevation= paceList!!
+            entry.arrHr= heartRateList!!
+            entry.arrCumDistance= distanceList!!
+            entry.arrBurntCalories= activeCaloriesList!!
+            entry.totalTime= totalTime!!
+            entry.zone1.arrHr= heartRateList!!
+            entry.zone1.arrCadence= stepsList!!
+            entry.zone1.arrSpeed= speedList!!
+            entry.displayName= "dhruv90"
+            entry.displayImage= "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
+            entry.classType= yourWayType
+            entry.className= fragBinding.edtSessionName.text.toString()
+            entry.classNote= fragBinding.edtAddNotes.text.toString()
+            entry.flagName= "United Kingdom"
+            entry.flagImage="flag-of-United-Kingdom.png"
+
+            RLsaveImageAndTextToDatabase(entry)
         }
         fragBinding.txtAddPhoto.setOnClickListener {
             RLchooseFromGallery()
@@ -197,28 +231,30 @@ class RLFragSessionComplete : RLBaseFragment(){
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
                     // Once we have the image URL, save it with the text to the database
-                    RLsaveImageAndTextToDatabase(imageUrl, text)
+
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("FirebaseStorage", "Image upload failed", e)
             }
     }
-    private fun RLsaveImageAndTextToDatabase(imageUrl: String, text: String) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("entries")
-        val entryId = databaseRef.push().key
 
-       /* val entry = Entry(imageUrl, text)
+    private fun RLsaveImageAndTextToDatabase(entry: RLWorkoutSessionDetailsModel) {
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
+        val entryId = databaseRef.push().key
         entryId?.let {
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
                         Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
                     }
                 }
-        }*/
+        }
     }
 
 
