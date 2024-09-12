@@ -395,7 +395,7 @@ class RLBLEService : Service() {
                     if (speedkm>0){
                         val formattedNumber = String.format("%.2f", speedkm)
                         // Use the speed value as needed
-                         SPEED=formattedNumber+" km/h"
+                         SPEED=formattedNumber
                         Log.d(TAG, "Speed: $formattedNumber km/h")
                         speedcadence.append("Speed: $formattedNumber km/h  ")
                     }
@@ -406,7 +406,7 @@ class RLBLEService : Service() {
                         val formatteddistancemeter = String.format("%.2f", distancemeter)
                         Log.d(TAG, "Distance: $formatteddistancemeter meter")
                         speedcadence.append("Distance: $formatteddistancemeter meter  ")
-                         DISTANCE=formatteddistancemeter +" meter"
+                         DISTANCE=formatteddistancemeter// +" meter"
                     }
                     // Calculate average speed
                     totalDistance += distance
@@ -416,7 +416,7 @@ class RLBLEService : Service() {
                         val formattedAvgSpeed = String.format("%.2f", averageSpeed)
                         Log.d(TAG, "AvgSpeed: $formattedAvgSpeed km/h")
                         speedcadence.append("AvgSpeed: $formattedAvgSpeed km/h  ")
-                         AvgSPEED=formattedAvgSpeed+" km/h"
+                         AvgSPEED=formattedAvgSpeed//+" km/h"
                     }
                 }
             }

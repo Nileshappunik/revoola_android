@@ -2,44 +2,38 @@ package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Dialog
-import android.app.UiModeManager
-import android.content.Context
-import android.content.pm.ActivityInfo
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
-import android.util.Log
+import android.net.ConnectivityManager
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.broadcast.RlNetworkChangeReceiver
 import com.example.myfirstapp.databinding.RlActivityMainBinding
 import com.example.myfirstapp.fragment.feed.RLFragFeed
 import com.example.myfirstapp.fragment.friends.RLFragFriends
 import com.example.myfirstapp.fragment.more.RLFragMore
-import com.example.myfirstapp.fragment.overview.RLFragOverview
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
 class RLMainActivityRL  : RLBaseActivity() {
     val TAG: String = RLMainActivityRL::class.java.simpleName
     var fragment: String? = null
     lateinit var activityMainBinding: RlActivityMainBinding
     var sucDialog: Dialog? = null
+    private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
 
     companion object {
         const val ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE = 1001
@@ -91,6 +85,11 @@ class RLMainActivityRL  : RLBaseActivity() {
             }
         }
         RLDisableLongPressToast(activityMainBinding.bottomNav)
+
+        // Internet Check And Reconnect
+        networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
     }
 
     private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
@@ -199,6 +198,10 @@ class RLMainActivityRL  : RLBaseActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         //RLshowbottombarcolorwhite()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+      //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
     }
 
 /*

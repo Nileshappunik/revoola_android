@@ -24,6 +24,7 @@ import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
 import com.example.myfirstapp.model.RLWorkoutDataModel
 import com.example.myfirstapp.model.RLWorkoutSessionDetailsModel
+import com.example.myfirstapp.model.RLWorkoutSessionSummaryModel
 
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.firebase.database.DatabaseReference
@@ -31,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.util.UUID
+import kotlin.math.roundToInt
 
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
@@ -62,14 +64,12 @@ class RLFragSessionComplete : RLBaseFragment(){
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
         val totalTime = requireArguments().getString("totalTime").toString().trim()
         val heartRateList: ArrayList<Int>? = requireArguments().getIntegerArrayList("heartRateList")
-        val stepsList: ArrayList<String>? = requireArguments().getStringArrayList("stepsList")
-        val distanceList: ArrayList<String>? =requireArguments().getStringArrayList("distanceList")
-        val climbedList: ArrayList<String>? = requireArguments().getStringArrayList("climbedList")
-        val paceList: ArrayList<String>? =requireArguments().getStringArrayList("paceList")
-        val speedList: ArrayList<String>? = requireArguments().getStringArrayList("speedList")
-        val activeCaloriesList: ArrayList<String>? = requireArguments().getStringArrayList("activeCaloriesList")
-
-
+        val stepsList: ArrayList<Int>? = requireArguments().getIntegerArrayList("stepsList")
+        val distanceList: ArrayList<Int>? =requireArguments().getIntegerArrayList("distanceList")
+        val climbedList: ArrayList<Int>? = requireArguments().getIntegerArrayList("climbedList")
+        val paceList: ArrayList<Int>? =requireArguments().getIntegerArrayList("paceList")
+        val speedList: ArrayList<Int>? = requireArguments().getIntegerArrayList("speedList")
+        val activeCaloriesList: ArrayList<Int>? = requireArguments().getIntegerArrayList("activeCaloriesList")
 
         fragBinding.edtSessionName.setText("$yourWayType Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
@@ -101,7 +101,9 @@ class RLFragSessionComplete : RLBaseFragment(){
                 }
             }
         }
-
+        fragBinding.txtAddPhoto.setOnClickListener {
+            RLchooseFromGallery()
+        }
         fragBinding.imgCancle.setOnClickListener {
             RLBottomHideShowSet(true)
             (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
@@ -112,30 +114,44 @@ class RLFragSessionComplete : RLBaseFragment(){
            /* if (imgUriList.size>0){
                 RLuploadImagesToFirebase(imgUriList)
             }*/
-            val entry = RLWorkoutSessionDetailsModel()
-            entry.arrSpeed= speedList!!
-            entry.arrCadence= stepsList!!
-            entry.arrDistance= distanceList!!
-            entry.arrElevation= paceList!!
-            entry.arrHr= heartRateList!!
-            entry.arrCumDistance= distanceList!!
-            entry.arrBurntCalories= activeCaloriesList!!
-            entry.totalTime= totalTime!!
-            entry.zone1.arrHr= heartRateList!!
-            entry.zone1.arrCadence= stepsList!!
-            entry.zone1.arrSpeed= speedList!!
-            entry.displayName= "dhruv90"
-            entry.displayImage= "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
-            entry.classType= yourWayType
-            entry.className= fragBinding.edtSessionName.text.toString()
-            entry.classNote= fragBinding.edtAddNotes.text.toString()
-            entry.flagName= "United Kingdom"
-            entry.flagImage="flag-of-United-Kingdom.png"
+            val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
-            RLsaveImageAndTextToDatabase(entry)
-        }
-        fragBinding.txtAddPhoto.setOnClickListener {
-            RLchooseFromGallery()
+            val entryWorkoutSessionDetails = RLWorkoutSessionDetailsModel()
+
+            entryWorkoutSessionDetails.arrSpeed= speedList!!
+            entryWorkoutSessionDetails.arrCadence= stepsList!!
+            entryWorkoutSessionDetails.arrDistance= distanceList!!
+            entryWorkoutSessionDetails.arrElevation= paceList!!
+            entryWorkoutSessionDetails.arrHr= heartRateList!!
+            entryWorkoutSessionDetails.arrCumDistance= distanceList!!
+            entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList!!
+            entryWorkoutSessionDetails.totalTime= totalTime.toInt()
+            entryWorkoutSessionDetails.zone1.arrHr= heartRateList!!
+            entryWorkoutSessionDetails.zone1.arrCadence= stepsList!!
+            entryWorkoutSessionDetails.zone1.arrSpeed= speedList!!
+           // entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble()
+            entryWorkoutSessionDetails.displayName= "dhruv90"
+            entryWorkoutSessionDetails.displayImage= "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
+            entryWorkoutSessionDetails.classType= yourWayType
+            entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
+            entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
+            entryWorkoutSessionDetails.flagName= "United Kingdom"
+            entryWorkoutSessionDetails.flagImage="flag-of-United-Kingdom.png"
+           // entryWorkoutSessionDetails.totalSteps=stepsList.map { it.toInt() }.toIntArray().maxOrNull()!!.toInt()
+
+            RLRevoolaUserSessionDetailData(entryWorkoutSessionDetails)
+
+            val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
+            entryWorkoutSessionSummary.totalTime=totalTime.toInt()
+            entryWorkoutSessionSummary.classType= yourWayType
+            entryWorkoutSessionSummary.className= fragBinding.edtSessionName.text.toString()
+            entryWorkoutSessionSummary.classNote= fragBinding.edtAddNotes.text.toString()
+            //entryWorkoutSessionSummary.zone1.avgHr= heartRateList.average().roundToInt()
+            //entryWorkoutSessionSummary.zone1.avgSpeed= stepsList.map { it.toInt() }.toIntArray().average().toDouble()
+            //entryWorkoutSessionSummary.zone1.distance= distanceList.maxOrNull()!!.toDouble()
+
+
+           // RLRevoolaUserSessionSummaryData(entryWorkoutSessionSummary)
         }
 
     }
@@ -239,10 +255,28 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
     }
 
-    private fun RLsaveImageAndTextToDatabase(entry: RLWorkoutSessionDetailsModel) {
+    private fun RLRevoolaUserSessionSummaryData(entry: RLWorkoutSessionSummaryModel) {
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
-        val entryId = databaseRef.push().key
-        entryId?.let {
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(entry)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                    }
+                }
+        }
+    }
+
+    private fun RLRevoolaUserSessionDetailData(entry: RLWorkoutSessionDetailsModel) {
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

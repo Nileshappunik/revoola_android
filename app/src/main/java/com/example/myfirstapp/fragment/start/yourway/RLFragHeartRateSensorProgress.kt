@@ -38,6 +38,8 @@ import com.example.myfirstapp.services.RLLocationViewModel
 import com.example.myfirstapp.utils.RLTimerManager
 import com.example.myfirstapp.utils.RLTools
 import java.lang.Math.round
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(){
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
@@ -50,12 +52,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     var  yourWayType:String=""
 
     var heartRateList:MutableList<Int> = mutableListOf()
-    var stepsList:MutableList<String> = mutableListOf()
-    var distanceList:MutableList<String> = mutableListOf()
-    var climbedList:MutableList<String> = mutableListOf()
-    var paceList:MutableList<String> = mutableListOf()
-    var speedList:MutableList<String> = mutableListOf()
-    var activeCaloriesList:MutableList<String> = mutableListOf()
+    var stepsList:MutableList<Int> = mutableListOf()
+    var distanceList:MutableList<Int> = mutableListOf()
+    var climbedList:MutableList<Int> = mutableListOf()
+    var paceList:MutableList<Int> = mutableListOf()
+    var speedList:MutableList<Int> = mutableListOf()
+    var activeCaloriesList:MutableList<Int> = mutableListOf()
     var totalTime:String =""
 
     companion object {
@@ -145,18 +147,16 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                Log.e(TAG,"Exception:- "+e.message)
            }
 
-
-
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             bundle.putString("totalTime",totalTime)
             bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
-            bundle.putStringArrayList("stepsList",ArrayList(stepsList))
-            bundle.putStringArrayList("distanceList",ArrayList(distanceList))
-            bundle.putStringArrayList("climbedList",ArrayList(climbedList))
-            bundle.putStringArrayList("paceList",ArrayList(paceList))
-            bundle.putStringArrayList("speedList",ArrayList(speedList))
-            bundle.putStringArrayList("activeCaloriesList",ArrayList(activeCaloriesList))
+            bundle.putIntegerArrayList("stepsList",ArrayList(stepsList))
+            bundle.putIntegerArrayList("distanceList",ArrayList(distanceList))
+            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
+            bundle.putIntegerArrayList("paceList",ArrayList(paceList))
+            bundle.putIntegerArrayList("speedList",ArrayList(speedList))
+            bundle.putIntegerArrayList("activeCaloriesList",ArrayList(activeCaloriesList))
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
@@ -390,7 +390,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             speed?.let {
                 Log.d(TAG,"Speed: ${it} m/s")
                 fragBinding.inlaySpeed.txtProgressTimeNumber.setText("%.2f".format(it))
-                speedList.add("%.2f".format(it).toString())
+                if (!"%.2f".format(it).isNullOrEmpty()){
+                    speedList.add("%.2f".format(it).toInt())
+                }else{
+                    speedList.add(0)
+                }
+
             }
         })
 
@@ -399,7 +404,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 Log.d(TAG,"Steps: $stepCount")
                 if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
                     fragBinding.inlayCadence.txtProgressTimeNumber.setText(stepCount.toString())
-                    stepsList.add(stepCount.toString())
+                    if (stepCount.toString().isNullOrEmpty()){
+                        stepsList.add(0)
+                    }else{
+                        stepsList.add(stepCount)
+                    }
+
                 }
             }
         })
@@ -408,7 +418,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 val totalDistance=it //round(it * 100) / 100
                 Log.d(TAG,"Distance: $totalDistance km")
                 fragBinding.inlayDistance.txtProgressTimeNumber.setText(totalDistance.toString())
-                distanceList.add(totalDistance.toString())
+                distanceList.add(totalDistance.roundToInt())
             }
         })
 
@@ -433,7 +443,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 val totalspace=round(it * 100) / 100
                 Log.d(TAG, "Pace: $totalspace min/km")
                 fragBinding.inlayPace.txtProgressTimeNumber.setText(totalspace.toString())
-                paceList.add(totalspace.toString())
+                if (totalspace.toString().isNullOrEmpty()){
+                    paceList.add(0)
+                }else{
+                    paceList.add(totalspace)
+                }
+
             }
         })
 

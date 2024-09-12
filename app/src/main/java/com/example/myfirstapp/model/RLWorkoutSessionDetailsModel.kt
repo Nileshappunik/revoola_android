@@ -7,14 +7,14 @@ package com.example.myfirstapp.model
     var arrRevPercentage: MutableList<Any> = mutableListOf(0)
 
     //FOCUS ON THIS ONLY
-    var arrSpeed: MutableList<String> = mutableListOf("0")
-    var arrCadence: MutableList<String> =  mutableListOf("0")
-    var arrDistance: MutableList<String> =  mutableListOf("0")
-    var arrElevation: MutableList<String> = mutableListOf("0")
+    var arrSpeed: MutableList<Int> = mutableListOf(0)
+    var arrCadence: MutableList<Int> =  mutableListOf(0)
+    var arrDistance: MutableList<Int> =  mutableListOf(0)
+    var arrElevation: MutableList<Int> = mutableListOf(0)
     var arrHr: MutableList<Int> =  mutableListOf(0)
 
 
-    var arrCumDistance: MutableList<String> = mutableListOf("0") //EACH SEC TOTAL DISTANCE
+    var arrCumDistance: MutableList<Int> = mutableListOf(0) //EACH SEC TOTAL DISTANCE
     var arrCumSpeed: MutableList<Any> = mutableListOf(0) // PENDING FROM DHRUV
     var arrCumElevation: MutableList<Any> = mutableListOf(0) //EACH SEC TOTAL ELEVATION
 
@@ -26,7 +26,7 @@ package com.example.myfirstapp.model
     var arrMaxPower: MutableList<Any> = mutableListOf(0)
 
 
-    var arrBurntCalories: MutableList<String> = mutableListOf("0") ////EACH SEC CALORIES
+    var arrBurntCalories: MutableList<Int> = mutableListOf(0) ////EACH SEC CALORIES
 
 
     var speedForOneKm: MutableList<Any> = mutableListOf()
@@ -66,7 +66,7 @@ package com.example.myfirstapp.model
     var className:String = ""
     var remark = "android"
     var totalRev = 0
-    var totalTime = "0" //TOTAL TIME
+    var totalTime = 0 //TOTAL TIME
     var totalSteps = 0 //TOTAL STEPS
     var videoKey = ""
     var imageLinkSmall = ""
@@ -99,11 +99,11 @@ package com.example.myfirstapp.model
     var maxHrUsedForCalculation_Last: Any = 0
 
     class Zone {
-       var arrCadence: MutableList<String> = mutableListOf("0")
+       var arrCadence: MutableList<Int> = mutableListOf(0)
        var arrHr: MutableList<Int> = mutableListOf(0)
        var arrPower: MutableList<Any> = mutableListOf(0)
        var arrPowerFromDevice: MutableList<Any> = mutableListOf(0)
-       var arrSpeed: MutableList<String> = mutableListOf("0")
+       var arrSpeed: MutableList<Int> = mutableListOf(0)
 
        var burntCalories = 0.0
        var distance = 0.0
