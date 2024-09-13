@@ -3,27 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:id="@+id/relayFriends"
         android:layout_width="match_parent"
         android:layout_height="90dp">
+
         <CheckBox
             android:id="@+id/checkbox_friend"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:button="@drawable/custom_checkbox"
             android:layout_centerVertical="true"
-            android:buttonTint="@color/AppMainColor"
+            android:layout_alignParentRight="true"
             android:visibility="gone"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_friend"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginStart="10dp"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/checkbox_friend"
             android:scaleType="fitXY"
             app:shapeAppearance="@style/CornerRound"
-            android:src="@drawable/wellcome"/>
+            android:src="@drawable/sample_user"/>
+
 
         <TextView
             android:id="@+id/txt_friend_name"
@@ -33,7 +36,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/img_friend"
             android:text="Dhruv Khatri"
-            android:fontFamily="@font/omnes_semibold_regular"
+            android:fontFamily="@font/omnes_regular"
             android:textColor="@color/AppBlackColor"
             android:textSize="@dimen/text_title_size"/>
 
@@ -45,6 +48,8 @@
             android:background="@drawable/round_border_green"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
+            android:textAllCaps="true"
+            android:fontFamily="@font/omnes_regular"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:paddingTop="5dp"
@@ -53,11 +58,20 @@
             android:textColor="@color/AppMainColor"/>
 
         <View
+            android:id="@+id/view_Friend"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/AppBottomGrayColor"
+            android:background="@color/AppLightGrayColor"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_alignParentBottom="true"/>
+
+        <View
+            android:id="@+id/view_selectFriend"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="@color/AppLightGrayColor"
             android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>

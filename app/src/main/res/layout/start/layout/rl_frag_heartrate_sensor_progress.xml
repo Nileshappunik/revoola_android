@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:id="@+id/relaytiveMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ride">
@@ -12,12 +13,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent50"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:background="@color/AppBlack80Color"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
             android:orientation="vertical">
 
-            <TextView
+            <include
+                android:id="@+id/inlayTop"
+                layout="@layout/rl_layout_common_start_top"/>
+
+
+
+            <!--<TextView
                 android:id="@+id/txt_maintitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="25dp"
-                android:background="@color/AppBottomGrayColor"/>
+                android:background="@color/AppBottomGrayColor"/>-->
 
             <LinearLayout
                 android:id="@+id/layout_progress_heartrate"
@@ -120,6 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/circularProgressBar"
                         android:textSize="22sp"
+                        android:visibility="gone"
                         android:text="MAX100%"
                         android:textAlignment="center"
                         android:textColor="@color/AppWhiteColor"
@@ -133,10 +141,97 @@
                 android:weightSum="2"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="10dp"
+                        android:textAllCaps="true"
+                        android:fontFamily="@font/omnes_regular"
+                        android:background="@null"
+                        android:text="@string/currentzone"
+                        android:textStyle="bold"
+                        android:textColor="@color/AppWhiteColor"
+                        android:textSize="16sp"/>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/aptos_bold"
+                        android:background="@null"
+                        android:layout_marginStart="30dp"
+                        android:text="--"
+                        android:textColor="@color/AppTextGrayColor"
+                        android:textSize="22sp"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/AppMainColor"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="10dp"
+                        android:textAllCaps="true"
+                        android:fontFamily="@font/omnes_regular"
+                        android:background="@null"
+                        android:text="@string/maxeffort"
+                        android:textStyle="bold"
+                        android:textColor="@color/AppWhiteColor"
+                        android:textSize="16sp"/>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/aptos_bold"
+                        android:background="@null"
+                        android:layout_marginStart="30dp"
+                        android:text="0%"
+                        android:textColor="@color/AppWhiteColor"
+                        android:textSize="22sp"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/AppMainColor"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_1"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:weightSum="2"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
                 <include
                     android:id="@+id/inlay_time"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     layout="@layout/rl_common_sensor_progress"/>
@@ -144,69 +239,81 @@
                 <include
                     android:id="@+id/inlay_cadence"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     layout="@layout/rl_common_sensor_progress" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:weightSum="2"
                 android:orientation="horizontal">
                 <include
-                    android:id="@+id/inlay_calories"
+                    android:id="@+id/inlay_distance"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     layout="@layout/rl_common_sensor_progress"/>
                 <include
-                    android:id="@+id/inlay_distance"
+                    android:id="@+id/inlay_climbed"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     layout="@layout/rl_common_sensor_progress"/>
             </LinearLayout>
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
-            <include
-                android:id="@+id/inlay_heartrate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                layout="@layout/rl_common_sensor_progress"/>
+                android:id="@+id/layout_3"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <include
+                    android:id="@+id/inlay_pace"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    layout="@layout/rl_common_sensor_progress"/>
 
-            <include
-                android:id="@+id/inlay_speed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                layout="@layout/rl_common_sensor_progress"/>
+                <include
+                    android:id="@+id/inlay_speed"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    layout="@layout/rl_common_sensor_progress"/>
 
         </LinearLayout>
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal">
+                android:id="@+id/layout_4"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:weightSum="2"
+                android:orientation="horizontal">
 
-            <include
-                android:id="@+id/inlay_pace"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                layout="@layout/rl_common_sensor_progress"/>
-        </LinearLayout>
+                <include
+                    android:id="@+id/inlay_heartrate"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    layout="@layout/rl_common_sensor_progress"/>
+                <include
+                    android:id="@+id/inlay_calories"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -236,7 +343,7 @@
                 android:gravity="center_vertical"
                 android:textColor="@color/AppWhiteColor"
                 android:textSize="14sp"
-                android:fontFamily="@font/omnes_regular" />
+                android:fontFamily="@font/omnes_semibold_regular" />
         </LinearLayout>
 
         <LinearLayout
@@ -268,7 +375,7 @@
                     android:id="@+id/tvresume"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:text="@string/resume"
                     android:layout_marginStart="3dp"
                     android:gravity="center_vertical"
@@ -296,23 +403,28 @@
                     android:layout_height="50dp"
                     android:text="@string/stop"
                     android:layout_marginStart="3dp"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:gravity="center_vertical"
                     android:textColor="@color/AppWhiteColor"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/countdown_text"
+        <RelativeLayout
+            android:id="@+id/relay_countDown"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/AppBlackColor"
-            android:gravity="center"
-            android:visibility="visible"
-            android:fontFamily="@font/omnes_semibold_regular"
-            android:textSize="50sp"
-            android:textColor="@color/AppWhiteColor"/>
+            android:background="@color/AppBlack80Color">
+            <TextView
+                android:id="@+id/countdown_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textSize="100sp"
+                android:textColor="@color/AppWhiteColor"/>
+        </RelativeLayout>
+
 
     </RelativeLayout>
 

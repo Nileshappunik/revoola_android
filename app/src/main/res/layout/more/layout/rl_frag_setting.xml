@@ -10,363 +10,226 @@
         android:background="@color/AppLightGrayColor"
         android:orientation="vertical">
 
-
         <ImageView
             android:id="@+id/ivBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:background="@drawable/full_round"
-            android:src="@drawable/ic_back_g"/>
+            android:layout_marginTop="10dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
+
 
         <TextView
             android:id="@+id/tvtitlesetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_marginStart="20dp"
+            android:textAllCaps="true"
             android:text="@string/settings"
             android:textColor="@color/AppBlackColor"
-            android:textSize="36dp"
+            android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop= "10dp"
             android:background="@color/AppWhiteColor">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/AppWhiteColor"
-                android:layout_marginTop= "10dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/tvtxtprofile"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="5dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center_vertical"
+                    android:textAllCaps="true"
                     android:text="@string/profile"
                     android:textColor="@color/AppBlackColor"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:fontFamily="@font/omnes_semibold_regular"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+                    android:background="@color/AppBlack10Color"
+                    android:layout_marginStart="20dp"/>
 
                 <include
                     android:id="@+id/lay_firstname"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
-
                 <include
                     android:id="@+id/lay_surname"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_nickname"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_avatar"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_email"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+
 
                 <include android:id="@+id/lay_gender"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+
 
                 <include
                     android:id="@+id/lay_dateofbirth"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_weight"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+
 
                 <include
                     android:id="@+id/lay_height"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_maxheartrate"
                     layout="@layout/rl_common_layout_setting"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_restingheartrate"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
                 <TextView
                     android:id="@+id/tvtxtunitofmeasure"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="5dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center_vertical"
+                    android:textAllCaps="true"
                     android:text="@string/unitofmeasure"
                     android:textColor="@color/AppBlackColor"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:fontFamily="@font/omnes_semibold_regular"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+                    android:background="@color/AppBlack10Color"
+                    android:layout_marginStart="20dp"/>
 
                 <RadioGroup
                     android:id="@+id/radioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginEnd="10dp"
                     android:orientation="vertical">
 
                     <RadioButton
                         android:id="@+id/radioButtonmetric"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="45dp"
                         android:text="@string/metric"
                         android:layoutDirection="rtl"
-                        android:layout_marginTop="10dp"
                         android:textAlignment="textStart"
                         android:textColor="@color/AppTextGrayColor"
-                        android:textSize="16dp"
-                        android:layout_gravity="start"
-                        android:buttonTint="@color/AppMainColor"/>
+                        android:textSize="14sp"
+                        android:textAllCaps="true"
+                        android:button="@drawable/custom_checkbox"
+                        android:fontFamily="@font/omnes_semibold_regular"
+                        android:layout_gravity="start"/>
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/AppBottomGrayColor"
-                        android:layout_marginTop="10dp"/>
+                        android:background="@color/AppBlack10Color" />
                     <RadioButton
                         android:id="@+id/radioButtonimperial"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="45dp"
                         android:text="@string/imperial"
                         android:layoutDirection="rtl"
-                        android:layout_marginTop="10dp"
                         android:textColor="@color/AppTextGrayColor"
-                        android:textSize="16dp"
+                        android:textSize="14sp"
+                        android:textAllCaps="true"
+                        android:fontFamily="@font/omnes_semibold_regular"
                         android:textAlignment="textStart"
                         android:layout_gravity="start"
-                        android:buttonTint="@color/AppMainColor"/>
+                        android:button="@drawable/custom_checkbox"/>
 
                 </RadioGroup>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+                    android:background="@color/AppBlack10Color"
+                    android:layout_marginStart="20dp"/>
 
                 <TextView
                     android:id="@+id/tvtxtprivacy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="5dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center_vertical"
+                    android:textAllCaps="true"
                     android:text="@string/privacy"
                     android:textColor="@color/AppBlackColor"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:fontFamily="@font/omnes_semibold_regular"/>
+
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+                    android:background="@color/AppBlack10Color"
+                    android:layout_marginStart="20dp"/>
 
                 <include
                     android:id="@+id/lay_location"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
-
-                <include
-                    android:id="@+id/lay_steps"
-                    layout="@layout/rl_common_layout_setting"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_activities"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_notification"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_camera"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_gallery"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
 
                 <include
                     android:id="@+id/lay_termandcondition"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"/>
+                <include
+                    android:id="@+id/lay_PrivacyPolicy"
+                    layout="@layout/rl_common_layout_setting"/>
+
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:visibility="gone"
                     android:background="@color/AppWhiteColor"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"

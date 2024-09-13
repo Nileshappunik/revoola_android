@@ -1,11 +1,11 @@
 package com.example.myfirstapp.model
 
-data class RLOverViewModel(val type: String, val RLText: List<RLText>)
+data class RLOverViewModel(val type: String, val text: List<RLText>)
 
-data class RLGetUserAggregatedDataRequest(val RLGetUserAggregatedData: RLGetUserAggregatedData)
+data class RLGetUserAggregatedDataRequest(val getUserAggregatedData: RLGetUserAggregatedData)
 data class RLGetUserAggregatedData(val userid: String, val classtype: String, val timestampfrom: Long, val timestampto: Long)
 
-data class RLText(val RLAggregated: List<RLAggregated>)
+data class RLText(val aggregated: List<RLAggregated>)
 
 data class RLAggregated(
     val session: Int,

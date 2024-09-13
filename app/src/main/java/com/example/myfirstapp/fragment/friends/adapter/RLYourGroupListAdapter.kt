@@ -9,7 +9,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutYourGroupBinding
+import com.example.myfirstapp.fragment.friends.RLFragYourGroup
+import com.example.myfirstapp.fragment.friends.RLFragYourGroupDetails
 import com.example.myfirstapp.model.RLyourGroupDataModel
 
 class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List<RLyourGroupDataModel>) :
@@ -42,10 +45,19 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
             layoutBinding.txtGroupName.setText(carddata.group_name)
             layoutBinding.txtGroupNoofmembers.setText("Number of Members: " +carddata.number_of_members.toString())
             Glide.with(context!!).load(carddata.group_avatar)
-                .placeholder(R.drawable.wellcome)
-                .error(R.drawable.wellcome)
+                .placeholder(R.drawable.sample_user)
+                .error(R.drawable.sample_user)
                 .into(layoutBinding.imgGroup)
-        }
+
+            layoutBinding.relativeGroupCard.setOnClickListener {
+                val bundle: Bundle = Bundle()
+                bundle.putString("GroupID", carddata.group_id)
+                bundle.putString("GroupName", carddata.group_name)
+                bundle.putString("GroupAvatar", carddata.group_avatar)
+                bundle.putString("GroupMember", carddata.number_of_members.toString())
+                (context as RLMainActivityRL).RLloadFrag(RLFragYourGroupDetails().newInstance(bundle), TAG, true, null, true)
+            }
+       }
     }
 
     fun RLfilter(query: String) {

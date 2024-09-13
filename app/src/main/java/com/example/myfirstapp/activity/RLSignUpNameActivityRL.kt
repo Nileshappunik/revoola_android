@@ -2,6 +2,8 @@ package com.example.myfirstapp.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import com.example.myfirstapp.R
@@ -21,22 +23,57 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     var emailID: String = ""
     var password: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_sign_up_name) as RlActivitySignUpNameBinding
         RLUisetup()
     }
     private fun RLUisetup() {
+        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+        activityBinding.toolbarLogin.tvTitle.setText(R.string.basicdetails)
+
         emailID= intent.getStringExtra("EmailId").toString()
         password= intent.getStringExtra("Password").toString()
-        activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
-        activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
-        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            if (RLvalidation()) {
-                RlupdateUserDetails()
+            RlupdateUserDetails()
+        })
+
+        activityBinding.etfirstname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length ==0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }else{
+                    RLvalidation()
+                }
             }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        activityBinding.etlastname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length ==0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }else{
+                    RLvalidation()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        activityBinding.etnickname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s?.length ==0) {
+                    activityBinding.tvLogin.visibility=View.GONE
+                    activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+                }else{
+                    RLvalidation()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
     }
@@ -101,18 +138,20 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         lastName = activityBinding.etlastname.text.toString().trim()
         nickName = activityBinding.etnickname.text.toString().trim()
         if (firstName.isEmpty()) {
-            activityBinding.etfirstname.setError("First name is required.")
-            activityBinding.etfirstname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (lastName.isEmpty()) {
-            activityBinding.etlastname.setError("Last name is required.")
-            activityBinding.etlastname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }else if (nickName.isEmpty()) {
-            activityBinding.etnickname.setError("Nick name is required.")
-            activityBinding.etnickname.requestFocus()
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
         }
+        activityBinding.tvLogin.visibility=View.VISIBLE
+        activityBinding.tvLoginNoClick.visibility=View.GONE
         return true
     }
 }

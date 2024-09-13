@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
+    android:paddingTop="100dp"
+    android:paddingBottom="100dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_cancle"
+        android:background="@drawable/square_border"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/txt_selectOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="@string/selectoption"
+            android:textColor="@color/AppTextGrayColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/AppLightGrayColor"/>
+
+        <TextView
+            android:id="@+id/txt_edit"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:text="@string/edit"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/AppLightGrayColor"/>
+        <TextView
+            android:id="@+id/txt_delete"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:text="@string/delete"
+            android:textAllCaps="true"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_cancle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/square_border"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/cancelsmall"
+        android:textAllCaps="true"
+        android:textColor="@color/AppBlackColor"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/omnes_regular"/>
+
+</RelativeLayout>

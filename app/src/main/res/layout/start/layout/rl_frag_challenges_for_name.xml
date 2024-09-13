@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/AppWhiteColor">
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/square_border_green_ten"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
+
+                <LinearLayout
+                    android:id="@+id/lay_help_challenges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/img_help_challenges"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/fd_steps_green"/>
+
+                    <TextView
+                        android:id="@+id/txt_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="90dp"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/stepsmall"
+                        android:fontFamily="@font/omnes_semibold_regular"
+                        android:textColor="@color/AppBlackColor"/>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/edt_step_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="70dp"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:textAlignment="center"
+                    android:hint="@string/name"
+                    android:fontFamily="@font/omnes_regular"
+                    android:background="@drawable/square_border_offwhite"
+                    android:layout_below="@+id/lay_help_challenges"
+                    android:textColor="@color/AppBlackColor"/>
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="100dp"
+                android:layout_alignParentBottom="true"
+                android:textColor="@color/AppWhiteColor"
+                android:backgroundTint="@color/AppMainColor"
+                android:text="@string/setchallenge"
+                android:background="@drawable/round_border_black"/>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</layout>

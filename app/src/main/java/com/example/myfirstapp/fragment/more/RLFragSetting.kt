@@ -8,6 +8,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -65,7 +66,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_setting, container) as RlFragSettingBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
@@ -165,7 +167,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         fragBinding.layMaxheartrate.txtusertitle.setText(R.string.maxheartrateestimated)
         fragBinding.layMaxheartrate.txtUsername.setText("190")
         fragBinding.layMaxheartrate.imgEdit.setOnClickListener {
-
+            RLshowRestingHrDialog()
         }
 
         fragBinding.layRestingheartrate.txtusertitle.setText(R.string.restingheartrate)
@@ -181,15 +183,35 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         fragBinding.layLocation.imgEdit.visibility=View.GONE
         fragBinding.layLocation.switchSetting.visibility=View.VISIBLE
 
-        fragBinding.laySteps.txtusertitle.setText(R.string.stepsmall)
-        fragBinding.laySteps.txtUsername.visibility=View.GONE
-        fragBinding.laySteps.imgEdit.visibility=View.GONE
-        fragBinding.laySteps.switchSetting.visibility=View.VISIBLE
-
         fragBinding.layActivities.txtusertitle.setText(R.string.activities)
         fragBinding.layActivities.txtUsername.visibility=View.GONE
         fragBinding.layActivities.imgEdit.visibility=View.GONE
-        fragBinding.layActivities.tvanyone.visibility=View.VISIBLE
+        fragBinding.layActivities.layPrivacy.visibility=View.VISIBLE
+
+        fragBinding.layActivities.layPrivacy.setOnClickListener {
+            val titletxt:String=fragBinding.layActivities.tvsharetitle.text.toString()
+
+            if (titletxt.uppercase().equals("PRIVATE")){
+                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
+                fragBinding.layActivities.tvsharetitle.setText(R.string.everyone)
+                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+
+            }else if (titletxt.uppercase().equals("FRIENDS")){
+                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
+                fragBinding.layActivities.tvsharetitle.setText(R.string.privatetx)
+                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+
+            }else if (titletxt.uppercase().equals("EVERYONE")){
+                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
+                fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
+                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+            }
+
+        }
+
 
         fragBinding.layNotification.txtusertitle.setText(R.string.notifications)
         fragBinding.layNotification.txtUsername.visibility=View.GONE
@@ -206,13 +228,20 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         fragBinding.layGallery.imgEdit.visibility=View.GONE
         fragBinding.layGallery.switchSetting.visibility=View.VISIBLE
 
-        fragBinding.layTermandcondition.txtusertitle.visibility=View.GONE
-        fragBinding.layTermandcondition.txttermtitle.visibility=View.VISIBLE
+        fragBinding.layTermandcondition.txtusertitle.setText(R.string.termandcondition)
         fragBinding.layTermandcondition.txtUsername.visibility=View.GONE
         fragBinding.layTermandcondition.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layTermandcondition.relayUser.setOnClickListener {
             //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true, RLFragTermAndCondition::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true,null, false)
+        }
+
+        fragBinding.layPrivacyPolicy.txtusertitle.setText(R.string.privacypolicy)
+        fragBinding.layPrivacyPolicy.txtUsername.visibility=View.GONE
+        fragBinding.layPrivacyPolicy.imgEdit.setImageResource(R.drawable.ic_chevron_right)
+        fragBinding.layPrivacyPolicy.relayUser.setOnClickListener {
+            //openwebview
+            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true, null, false)
         }
 
     }

@@ -6,17 +6,19 @@ package com.example.myfirstapp.utils
         const val SCHEDULE = "1"
         const val EXIT = "5"
         const val CardData = "CARDDATA"
+        const val FeedSelectTag = "FeedSelectTag"
         const val MIND = "Mind"
         const val BODY = "Body"
         const val CLASSTYPE = "classtype"
+        const val TYPE = "type"
         const val EFFORT = "effort"
         const val ELEVATION = "elevation"
         const val SPEED = "speed"
         const val PACE = "pace"
         const val DEVICENAME = "devicename"
         const val DEVICEADDRESS = "deviceAddress"
-        const val HEARTSENSOR = "heartsensor"
-        const val SPEEDSENSOR = "speedsensor"
+        const val HEARTSENSOR = "HEARTRATESENSOR"
+        const val SPEEDSENSOR = "SPEEDSENSOR"
 
 
         //TODO : Realtime Database Table Name
@@ -28,6 +30,16 @@ package com.example.myfirstapp.utils
         const val REVOOLAUSERSETTINGS= "revoolaUserSettings"
         const val BASICDATA= "basicData"
         const val REVOOLAVIDEOKEYSMIND= "revoolaVideoKeysMind"
+        const val REVOOLAVIDEOKEYS= "revoolaVideoKeys"
+        const val REVOOLAVIDEOS= "revoolaVideos"
+        const val REVOOLAVIDEOSMIND= "revoolaVideosMind"
+        const val CODESECTION= "codeSection"
+        const val AVAILABLEMENUS= "availableMenus"
+        const val CHALLENGES= "challenges"
+        const val FRIENDS= "friends"
+        const val MAIN= "main"
+        const val YOURWAY= "yourWay"
+
         const val FORALL= "forAll"
         const val FORENERGISE= "forEnergise"
         const val FORFOCUS= "forFocus"
@@ -36,6 +48,12 @@ package com.example.myfirstapp.utils
         const val FORRELAX= "forRelax"
         const val FORSLEEP= "forSleep"
         const val LISTOFVIDEOS= "listOfVideos"
+        const val FORDANCE= "forDance"
+        const val FORHIIT= "forHiit"
+        const val FORPILATES= "forPilates"
+        const val FORRIDE= "forRide"
+        const val FORWARMUP= "forWarmup"
+        const val FORYOGA= "forYoga"
 
 
 //      TODO: API
@@ -43,6 +61,57 @@ package com.example.myfirstapp.utils
         const val BASE_URL: String = "https://video.revoola.com/_stuff/"
         const val URLALL: String = "getResponse_v3.php"
         const val URLALLV2: String = "getResponse_v2.php"
+        const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
+
+        const val PILATESIMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+        const val RIDEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+        const val RUNIMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"
+        const val WALKIMAGE="https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+        const val WORKOUTIMAGE="https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+        const val YOGAIMAGE="https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+        const val APPLEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple.png"
+        const val APPLE32IMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple_3x2.png"
+
+        const val img_feed_strava = "https://video.revoola.com/v2/images/v3_app_strava.png"
+        const val img_feed_garmin = "https://video.revoola.com/v2/images/v3_app_connect.png"
+        const val img_feed_oura = "https://video.revoola.com/v2/images/v3_app_oura.png"
+        const val img_feed_apple_fitness = "https://video.revoola.com/v2/images/v3_app_apple.png"
+        const val img_feed_whoop = "https://video.revoola.com/v2/images/v3_app_whoop.png"
+        const val img_feed_bend = "https://video.revoola.com/v2/images/v3_app_bend.png"
+        const val img_feed_coros = "https://video.revoola.com/v2/images/v3_app_coros.png"
+        const val img_feed_fitbit = "https://video.revoola.com/v2/images/v3_app_fitbit.png"
+        const val img_feed_google_fit = "https://video.revoola.com/v2/images/v3_app_gfit.png"
+        const val img_feed_apple_health_app = "http://video.revoola.com/v2/images/v3_app_applehealth.png"
+        const val img_feed_google_health_connect = "https://video.revoola.com/v2/images/v3_app_healthconnect.png"
+        const val img_yourway_start = "https://video.revoola.com/v2/start/yourway_start.jpg"
+        const val img_challenge_start = "https://video.revoola.com/v2/start/challenges_start.jpg"
+        const val img_app_applehealth ="https://video.revoola.com/v2/images/_app_applehealth.png"
+
+        //Challenges List
+        const val effort_custom_challenges ="effort-custom-challenges"
+        const val steps_custom_challenges ="steps-custom-challenges"
+        const val calories_custom_challenges ="calories-custom-challenges"
+        const val duration_custom_challenges ="duration-custom-challenges"
+        const val climbed_custom_challenges ="climbed-custom-challenges"
+        const val distance_custom_challenges ="distance-custom-challenges"
+        const val effort_daily_challenges ="effort-daily-challenges"
+        const val steps_daily_challenges ="steps-daily-challenges"
+        const val calories_daily_challenges ="calories-daily-challenges"
+        const val duration_daily_challenges ="duration-daily-challenges"
+        const val climbed_daily_challenges ="climbed-daily-challenges"
+        const val distance_daily_challenges ="distance-daily-challenges"
+        const val effort_weekly_challenges ="effort-weekly-challenges"
+        const val steps_weekly_challenges ="steps-weekly-challenges"
+        const val calories_weekly_challenges ="calories-weekly-challenges"
+        const val duration_weekly_challenges ="duration-weekly-challenges"
+        const val climbed_weekly_challenges ="climbed-weekly-challenges"
+        const val distance_weekly_challenges ="distance-weekly-challenges"
+        const val effort_monthly_challenges ="effort-monthly-challenges"
+        const val steps_monthly_challenges ="steps-monthly-challenges"
+        const val calories_monthly_challenges ="calories-monthly-challenges"
+        const val duration_monthly_challenges ="duration-monthly-challenges"
+        const val climbed_monthly_challenges ="climbed-monthly-challenges"
+        const val distance_monthly_challenges ="distance-monthly-challenges"
 
         //Weight Array
         val valuesUsPounds = arrayOf(
@@ -129,6 +198,74 @@ package com.example.myfirstapp.utils
             "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
             "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")
 
-
+        /*//Height Array
+        val valuesFeet = arrayOf("1 Feet", "2 Feet", "3 Feet", "4 Feet", "5 Feet",
+            "6 Feet", "7 Feet", "8 Feet", "9 Feet")
+        val valuesInches = arrayOf("0 inches", "1 inches", "2 inches", "3 inches", "4 inches",
+            "5 inches", "6 inches", "7 inches", "8 inches", "9 inches","10 inches", "11 inches")
+        val valuesMatricHeight = arrayOf(
+            "151 cm", "152 cm", "153 cm", "154 cm", "155 cm","156 cm", "157 cm", "158 cm", "159 cm", "160 cm",
+            "161 cm", "162 cm", "163 cm", "164 cm", "165 cm","166 cm", "167 cm", "168 cm", "169 cm", "170 cm",
+            "171 cm", "172 cm", "173 cm", "174 cm", "175 cm","176 cm", "177 cm", "178 cm", "179 cm", "180 cm",
+            "181 cm", "182 cm", "183 cm", "184 cm", "185 cm","186 cm", "187 cm", "188 cm", "189 cm", "190 cm",
+            "191 cm", "192 cm", "193 cm", "194 cm", "195 cm","196 cm", "197 cm", "198 cm", "199 cm", "200 cm",
+            "201 cm", "202 cm", "203 cm", "204 cm", "205 cm","206 cm", "207 cm", "208 cm", "209 cm", "210 cm",
+            "211 cm", "212 cm", "213 cm", "214 cm", "215 cm","216 cm", "217 cm", "218 cm", "219 cm", "220 cm",
+            "221 cm", "222 cm","223 cm", "224 cm", "225 cm", "226 cm", "227 cm","228 cm","229 cm","230 cm",
+            "231 cm", "232 cm", "233 cm", "234 cm", "235 cm","236 cm", "237 cm", "238 cm", "239 cm", "240 cm",
+            "241 cm", "242 cm", "243 cm", "244 cm", "245 cm","246 cm", "247 cm", "248 cm", "249 cm", "250 cm",
+            "251 cm", "252 cm", "253 cm", "254 cm", "255 cm","256 cm", "257 cm", "258 cm", "259 cm", "260 cm",
+            "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
+            "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")*/
     }
+
+    /* else if (classType.equals(RLConstants.effort_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_custom_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_daily_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_weekly_challenges)){
+
+     }else if (classType.equals(RLConstants.effort_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.steps_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.calories_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.duration_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.climbed_monthly_challenges)){
+
+     }else if (classType.equals(RLConstants.distance_monthly_challenges)){
+
+     }*/
 }

@@ -13,16 +13,17 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
+import com.example.myfirstapp.utils.RLConstants
 import java.lang.StringBuilder
 import java.util.*
+import kotlin.collections.ArrayList
 
 class RLBLEService : Service() {
     val TAG: String = RLBLEService::class.java.simpleName
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val foundDevicesArray = mutableListOf<BluetoothDevice>()
-
-   // private val deviceGattMap = mutableMapOf<BluetoothDevice, BluetoothGatt>()
 
     private var notificationCharacteristic: BluetoothGattCharacteristic? = null
     private var bluetoothGatt: BluetoothGatt? = null
@@ -117,7 +118,6 @@ class RLBLEService : Service() {
             // Request necessary permission
         }
         bluetoothGatt = device.connectGatt(this, false,RLgattCallbacklist)
-
     }
     private val RLgattCallbacklist = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -145,14 +145,13 @@ class RLBLEService : Service() {
                 val hasSpeedService = gatt.services.any { it.uuid == UUID_SPEED_SERVICE }
                 if (hasHeartRateService) {
                     Log.d(TAG,"Device Found HeartRate:- "+gatt.device.name)
-                    RLbroadcastDeviceFound(gatt.device.name,gatt.device.address,"HEARTRATESENSOR")
+                    RLbroadcastDeviceFoundHeart(gatt.device.name,gatt.device.address,"HEARTRATESENSOR")
                 }else if (hasSpeedService){
                     Log.d(TAG,"Device Found Speed:- "+gatt.device.name)
-                    RLbroadcastDeviceFound(gatt.device.name,gatt.device.address,"SPEEDSENSOR")
-                    RLbroadcastDeviceFound(gatt.device.name,gatt.device.address,"CADENCESENSOR")
+                    RLbroadcastDeviceFoundSpeed(gatt.device.name,gatt.device.address,"SPEEDSENSOR")
+                  //  RLbroadcastDeviceFoundSpeed(gatt.device.name,gatt.device.address,"CADENCESENSOR")
+
                 }
-
-
             } else {
                 Log.d(TAG, "GATT_SUCCESS FAIL")
             }
@@ -194,8 +193,10 @@ class RLBLEService : Service() {
                 val hasHeartRateService = gatt.services.any { it.uuid == UUID_HEART_RATE_SERVICE }
                 val hasSpeedService = gatt.services.any { it.uuid == UUID_SPEED_SERVICE }
                 if (hasHeartRateService) {
+                    RLbroadcastConnectionDeviceType(RLConstants.HEARTSENSOR, true)
                     RLheartRateServicesDiscovered(gatt)
                 }else if (hasSpeedService){
+                    RLbroadcastConnectionDeviceType(RLConstants.SPEEDSENSOR, true)
                     RLspeedAndCadenceServicesDiscovered(gatt)
                 }
             } else {
@@ -305,7 +306,20 @@ class RLBLEService : Service() {
             Log.d(TAG, "Characteristic value is null or empty")
         }
     }
-    private fun RLbroadcastDeviceFound(deviceName: String, deviceAddress:String, sensorType:String) {
+    private fun RLbroadcastDeviceFoundSpeed(deviceName: String, deviceAddress:String, sensorType:String) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
+        }
+        val intent = Intent("ACTION_DEVICE_FOUND_SPEED")
+        intent.putExtra("DEVICE_NAME", deviceName)
+        intent.putExtra("DEVICE_ADDRESS", deviceAddress)
+        intent.putExtra("DEVICE_TYPE", sensorType)
+        sendBroadcast(intent)
+    }
+    private fun RLbroadcastDeviceFoundHeart(deviceName: String, deviceAddress:String, sensorType:String) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
             ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED||
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED||
@@ -338,6 +352,12 @@ class RLBLEService : Service() {
     private fun RLbroadcastConnectionState(deviceName: String, isConnected: Boolean) {
         val intent = Intent("ACTION_CONNECTION_STATE_CHANGED")
         intent.putExtra("device_name", deviceName)
+        intent.putExtra("is_connected", isConnected)
+        sendBroadcast(intent)
+    }
+    private fun RLbroadcastConnectionDeviceType(deviceType: String, isConnected: Boolean) {
+        val intent = Intent("ACTION_CONNECTION_DEVICE_TYPE")
+        intent.putExtra("device_type", deviceType)
         intent.putExtra("is_connected", isConnected)
         sendBroadcast(intent)
     }
@@ -375,7 +395,7 @@ class RLBLEService : Service() {
                     if (speedkm>0){
                         val formattedNumber = String.format("%.2f", speedkm)
                         // Use the speed value as needed
-                         SPEED=formattedNumber+" km/h"
+                         SPEED=formattedNumber
                         Log.d(TAG, "Speed: $formattedNumber km/h")
                         speedcadence.append("Speed: $formattedNumber km/h  ")
                     }
@@ -386,7 +406,7 @@ class RLBLEService : Service() {
                         val formatteddistancemeter = String.format("%.2f", distancemeter)
                         Log.d(TAG, "Distance: $formatteddistancemeter meter")
                         speedcadence.append("Distance: $formatteddistancemeter meter  ")
-                         DISTANCE=formatteddistancemeter +" meter"
+                         DISTANCE=formatteddistancemeter// +" meter"
                     }
                     // Calculate average speed
                     totalDistance += distance
@@ -396,7 +416,7 @@ class RLBLEService : Service() {
                         val formattedAvgSpeed = String.format("%.2f", averageSpeed)
                         Log.d(TAG, "AvgSpeed: $formattedAvgSpeed km/h")
                         speedcadence.append("AvgSpeed: $formattedAvgSpeed km/h  ")
-                         AvgSPEED=formattedAvgSpeed+" km/h"
+                         AvgSPEED=formattedAvgSpeed//+" km/h"
                     }
                 }
             }
@@ -424,7 +444,7 @@ class RLBLEService : Service() {
                     // Use the cadence value as needed
                     Log.d(TAG, "Cadence: $formattedNumber RPM")
                     speedcadence.append(" Cadence: $formattedNumber RPM")
-                    CADENCE=formattedNumber+" RPM"
+                    CADENCE=formattedNumber
                 }
             }
 
@@ -488,5 +508,4 @@ class RLBLEService : Service() {
             bluetoothGatt = null
         }
     }
-
 }

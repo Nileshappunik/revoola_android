@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_dialog_background"
+    android:orientation="vertical"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tvMainMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/subscribedescription"
+        android:layout_margin="16dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/omnes_regular"
+        android:textSize="18sp"
+        android:textColor="@color/AppBlackColor"
+        android:gravity="center"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/AppBlack10Color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:weightSum="2"
+        android:background="@color/AppBlack10Color"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSubscribe"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/subscribe"
+            android:fontFamily="@font/omnes_regular"
+            android:background="@color/AppWhiteColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="1dp"
+            android:textColor="@color/AppZone4Color"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/cancelsmall"
+            android:fontFamily="@font/omnes_regular"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@color/AppWhiteColor"
+            android:textColor="@color/AppZone4Color"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+</LinearLayout>

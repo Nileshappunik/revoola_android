@@ -40,7 +40,8 @@ class RLFragYourFriends : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_friends, container) as RlFragYourFriendsBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourFriends" )
@@ -51,21 +52,17 @@ class RLFragYourFriends : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
 
         fragBinding.txtFriendYoufollow.setOnClickListener {
-            fragBinding.txtFriendYoufollow.setBackgroundResource(R.drawable.full_round_green)
-            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppTextGrayColor))
-            fragBinding.txtFriendFollowingyou.background=null
+            fragBinding.viewlableleft.setBackgroundResource(R.color.AppMainColor)
+            fragBinding.viewlablelright.setBackgroundResource(R.color.AppWhiteColor)
+            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppBlackColor))
             if (RLApiClientRetrofit.RLisConnected()) {
                 RLyouFollowApiCall()
             } else {
@@ -74,10 +71,10 @@ class RLFragYourFriends : RLBaseFragment() {
         }
 
         fragBinding.txtFriendFollowingyou.setOnClickListener {
-            fragBinding.txtFriendFollowingyou.setBackgroundResource(R.drawable.full_round_green)
-            fragBinding.txtFriendYoufollow.background=null
-            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppTextGrayColor))
+            fragBinding.viewlablelright.setBackgroundResource(R.color.AppMainColor)
+            fragBinding.viewlableleft.setBackgroundResource(R.color.AppWhiteColor)
+            fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppMainColor))
+            fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppBlackColor))
             if (RLApiClientRetrofit.RLisConnected()) {
                 RLfollowingYouApiCall()
             } else {
@@ -86,7 +83,6 @@ class RLFragYourFriends : RLBaseFragment() {
         }
 
         fragBinding.txtInviteyourfriend.setOnClickListener {
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
             (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
         }
 
@@ -97,9 +93,7 @@ class RLFragYourFriends : RLBaseFragment() {
         }
     }
     private fun RLyouFollowApiCall() {
-        val request = listOf(
-            RLSetsearch_userrequest(
-                search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
+        val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         Log.d(TAG,"setyouFollowdata= "+request)
 
         viewModel.RLfriendsYouFollow(request) { result ->
@@ -145,13 +139,13 @@ class RLFragYourFriends : RLBaseFragment() {
     }
     private fun RLresponsehandle(userdata: List<RLuserData>, youFollow:Boolean) {
         if (youFollow){
-            fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsyoufollow))
+           // fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsyoufollow))
         }else{
-            fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsfollowingyou))
+           // fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsfollowingyou))
         }
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendListAdapter(activity,userdata)
+        val adapter = RLYourFriendListAdapter(activity,userdata,false)
         fragBinding.recycleYourfriend.adapter = adapter
 
 

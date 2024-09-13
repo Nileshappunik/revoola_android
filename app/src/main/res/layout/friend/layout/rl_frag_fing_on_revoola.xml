@@ -6,42 +6,45 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/AppWhiteColor">
+
         <include
             android:id="@+id/toolbar"
             layout="@layout/rl_toolbar_common" />
-
-        <View
-            android:id="@+id/view_1"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_below="@+id/toolbar"
-            android:background="@color/AppLightGrayColor"/>
 
         <RelativeLayout
             android:id="@+id/rl_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/view_1"
-            android:background="@color/AppBottomGrayColor">
+            android:layout_below="@+id/toolbar"
+            android:background="@color/AppLightGrayColor">
 
-            <EditText
-                android:id="@+id/edt_friend_search"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/round_green"
-                android:backgroundTint="@color/AppMainBGColor"
-                android:drawableStart="@drawable/fr_search_green"
-                android:drawablePadding="10dp"
-                android:drawableTint="@color/AppBlackColor"
-                android:hint="@string/enternameoremailtofindonrevoola"
-                android:minHeight="40dp"
-                android:paddingStart="10dp"
-                android:textColor="@color/AppBlackColor" />
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/AppBlack05Color"
+                android:background="@drawable/round_green">
+
+                <EditText
+                    android:id="@+id/edt_friend_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@null"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:drawableStart="@drawable/ic_search_g"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/enternameoremailtofindonrevoola"
+                    android:minHeight="40dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/AppBlackColor" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout
@@ -54,8 +57,8 @@
 
             <ImageView
                 android:id="@+id/img_seasrch"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_person" />
 
@@ -63,46 +66,58 @@
                 android:id="@+id/txt_contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginTop="5dp"
+                android:textSize="14sp"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:textAllCaps="true"
+                android:fontFamily="@font/aptos_regular"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/contacts"
                 android:textColor="@color/AppBlackColor"/>
 
-            <View
-                android:layout_width="90dp"
-                android:layout_height="2dp"
-                android:background="@color/AppMainColor"/>
         </LinearLayout>
 
-        <View
+        <LinearLayout
             android:id="@+id/view_2"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/lay_contact"
-            android:background="@color/AppBottomGrayColor"/>
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="140dp"
+                android:layout_height="1dp"
+                android:background="@color/AppMainColor"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/AppBottomGrayColor"/>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/relay_synccontact"
             android:layout_width="match_parent"
             android:layout_below="@+id/view_2"
-            android:background="@color/AppLightGrayColor"
+            android:background="@color/AppWhiteColor"
             android:layout_height="60dp">
 
             <ImageView
                 android:id="@+id/img_group"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:backgroundTint="@color/AppLightGrayColor"
+                android:background="@drawable/full_round"
+                android:layout_marginStart="10dp"
+                android:padding="2dp"
                 android:layout_centerVertical="true"
-                android:scaleType="fitXY"
                 android:src="@drawable/ic_person"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="5dp"
                 android:layout_toEndOf="@+id/img_group"
                 android:layout_toStartOf="@+id/txt_sync_contact"
@@ -114,8 +129,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/synccontacts"
                     android:fontFamily="@font/omnes_regular"
-                    android:textColor="@color/AppTextGrayColor"
-                    android:textSize="12sp"/>
+                    android:textColor="@color/AppBlackColor"
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/txt_group_noofmembers"
@@ -123,25 +138,25 @@
                     android:layout_height="wrap_content"
                     android:text="@string/alreadyusingrevoola"
                     android:layout_marginTop="5dp"
-                    android:singleLine="true"
                     android:fontFamily="@font/omnes_regular"
                     android:textColor="@color/AppTextGrayColor"
-                    android:textSize="12sp"/>
+                    android:textSize="14sp"/>
 
             </LinearLayout>
 
             <TextView
                 android:id="@+id/txt_sync_contact"
-                android:layout_width="70dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/round_border_green"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:fontFamily="@font/omnes_regular"
                 android:text="@string/sync"
                 android:textColor="@color/AppMainColor"/>
 
@@ -149,19 +164,19 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/AppBottomGrayColor"
+                android:background="@color/AppLightGrayColor"
                 android:layout_alignParentBottom="true"/>
 
         </RelativeLayout>
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycle_yourfriend"
+            android:id="@+id/listSyncContacts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/demo_invite"
             android:layout_below="@+id/relay_synccontact"/>
 
+        <!--
+        android:layout_above="@+id/view_bottom"
         <TextView
             android:id="@+id/txt_inviteyourfriend"
             android:layout_width="wrap_content"
@@ -170,15 +185,18 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="30dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="70dp"
+            android:paddingEnd="70dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone"
+            android:textAllCaps="true"
             android:background="@drawable/login_btn"
             android:backgroundTint="@color/AppMainColor"
-            android:padding="5dp"
-            android:text="@string/invitefriends"
+            android:text="@string/invite"
             android:textColor="@color/AppWhiteColor"
             android:textSize="@dimen/text_title_size"
-            android:fontFamily="@font/omnes_regular" />
+            android:fontFamily="@font/aptos_regular" />
 
         <TextView
             android:id="@+id/demo_invite"
@@ -187,10 +205,19 @@
             android:layout_above="@+id/txt_inviteyourfriend"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
+            android:visibility="gone"
             android:text="@string/invitefriendsnotonyet"
-            android:textColor="@color/AppTextGrayColor"
-            android:textSize="@dimen/text_size"
-            android:fontFamily="@font/omnes_regular" />
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"
+            android:fontFamily="@font/aptos_regular" />
+
+        <View
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:layout_above="@+id/demo_invite"
+            android:background="@color/AppBlackColor"/>-->
 
 
     </RelativeLayout>

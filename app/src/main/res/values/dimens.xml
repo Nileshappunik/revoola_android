@@ -3,23 +3,46 @@
     <dimen name="text_size">14sp</dimen>
     <dimen name="text_title_size">16sp</dimen>
     <dimen name="spinner_dropdown_Arrow">10dp</dimen>
-    <dimen name="buttonsize">15sp</dimen>
+
     <dimen name="text_main_title_size">15sp</dimen>
     <dimen name="text_login_size">15sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
     <dimen name="_100sdp">100dp</dimen>
 
+    <!--all Button Green-->
+    <dimen name="button_text_size">14sp</dimen>
+    <dimen name="button_height_size">45dp</dimen>
+
     <!--overview Screen Size-->
-    <dimen name="overviewcadtop">25dp</dimen>
-    <dimen name="overviewcadheight">100dp</dimen>
-    <dimen name="overviewcadtitlesize">18sp</dimen>
-    <dimen name="overviewcadnumbersize">24sp</dimen>
-    <dimen name="overviewcadtextnumbertop">0dp</dimen>
+    <dimen name="overviewcadtop">30dp</dimen>
+    <dimen name="overviewcadheight">80dp</dimen>
+    <dimen name="overviewcadtitlesize">16sp</dimen>
+    <dimen name="overviewcadnumbersize">26sp</dimen>
+    <dimen name="overviewcadtextnumbertop">8dp</dimen>
     <dimen name="overviewsessiontitletextsize">24sp</dimen>
 
     <!--Bottom Bar Size-->
     <dimen name="bottomiconsize">20dp</dimen>
-    <dimen name="bottomtextsize">12sp</dimen>
+    <dimen name="bottomtextsize">10sp</dimen>
 
-    <dimen name="feedbottomlineheight">5dp</dimen>
+    <dimen name="feedbottomlineheight">15dp</dimen>
+
+    <dimen name="progress_bar_min_height">50dp</dimen>
+    <dimen name="_6sdp">3dp</dimen>
+    <dimen name="_1sdp">1dp</dimen>
+
+    <!--Feed Card Screen Size-->
+    <dimen name="feedcardbottomiconwidth">16dp</dimen>
+    <dimen name="feedcardbottomiconheight">16dp</dimen>
+    <dimen name="feedlist_bottom_height">50dp</dimen>
+
+    <!--all Menu-->
+    <dimen name="all_menu_top_margin">30dp</dimen>
+    <dimen name="all_menu_start_margin">20dp</dimen>
+    <dimen name="all_menu_end_margin">20dp</dimen>
+    <dimen name="all_menu_bottom_margin">30dp</dimen>
+
+    <dimen name="filter_margin_end">20dp</dimen>
+    <dimen name="filter_margin_bottom">30dp</dimen>
+
 </resources>

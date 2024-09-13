@@ -24,83 +24,84 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1">
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/img_user"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
                             android:scaleType="fitXY"
+                            android:layout_centerVertical="true"
                             app:shapeAppearance="@style/CornerRound"
-                            android:src="@drawable/wellcome"/>
+                            android:src="@drawable/sample_user"/>
 
                         <TextView
                             android:id="@+id/txt_organiser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
+                            android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_user"
                             android:text="Orgainser"
+                            android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="10sp"/>
 
                         <TextView
                             android:id="@+id/txt_usernam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="1dp"
                             android:layout_toEndOf="@+id/img_user"
                             android:layout_below="@+id/txt_organiser"
-                            android:text="Dhruv90"
-                            android:fontFamily="@font/omnes_semibold_regular"
+                            android:text="dhruv90"
+                            android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="14sp"/>
 
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1">
                         <ImageView
                             android:id="@+id/img_calender"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="10dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
                             android:src="@drawable/ic_calendar_today"/>
 
                         <TextView
                             android:id="@+id/txt_missed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
                             android:layout_toEndOf="@+id/img_calender"
+                            android:textAllCaps="true"
                             android:text="Missed"
-                            android:textColor="@color/AppMainColor"
-                            android:textSize="16sp"/>
+                            android:fontFamily="@font/omnes_regular"
+                            android:textColor="@color/AppZone7Color"
+                            android:textSize="10sp"/>
 
                         <TextView
                             android:id="@+id/txt_misseddate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="1dp"
                             android:layout_toEndOf="@+id/img_calender"
                             android:layout_below="@+id/txt_missed"
+                            android:fontFamily="@font/omnes_regular"
                             android:text="29 Apr 06:57 Pm"
                             android:textColor="@color/AppBlackColor"
-                            android:textSize="16sp"/>
+                            android:textSize="14sp"/>
 
                     </RelativeLayout>
                 </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="260dp"
                     android:layout_marginTop="10dp">
                     <ImageView
                         android:id="@+id/img_big_full"
@@ -114,10 +115,11 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/AppWhiteColor"
                         android:text="with"
-                        android:paddingStart="15dp"
-                        android:paddingBottom="30dp"
+                        android:textAllCaps="true"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_alignParentBottom="true"
-                        android:textSize="18sp"/>
+                        android:textSize="14sp"/>
 
                     <TextView
                         android:id="@+id/txt_with_name"
@@ -125,9 +127,10 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/AppWhiteColor"
                         android:text="Alena"
+                        android:textAllCaps="true"
                         android:layout_toEndOf="@+id/txt_with"
-                        android:paddingStart="1dp"
-                        android:paddingBottom="30dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginBottom="10dp"
                         android:fontFamily="@font/omnes_semibold_regular"
                         android:layout_alignParentBottom="true"
                         android:textSize="16sp"/>
@@ -138,11 +141,12 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/AppWhiteColor"
                         android:text="Balance Your Body"
+                        android:textAllCaps="true"
                         android:layout_above="@+id/txt_with"
-                        android:paddingStart="15dp"
-                        android:paddingBottom="5dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="10dp"
                         android:fontFamily="@font/omnes_semibold_regular"
-                        android:textSize="22sp"/>
+                        android:textSize="26sp"/>
 
                 </RelativeLayout>
 
@@ -159,8 +163,8 @@
                         android:layout_weight="1">
                         <ImageView
                             android:id="@+id/img_watch"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
                             android:src="@drawable/ic_duration"/>
 
                         <TextView
@@ -169,9 +173,10 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_toEndOf="@+id/img_watch"
-                            android:text="10 mins"
+                            android:textAllCaps="true"
+                            android:text="10 mins class"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
                     </RelativeLayout>
                     <View
                         android:layout_width="1dp"
@@ -187,6 +192,7 @@
                             android:id="@+id/img_easy"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
+                            android:layout_centerVertical="true"
                             android:layout_toEndOf="@+id/txt_easy"
                             android:layout_marginStart="10dp"
                             android:src="@drawable/ic_easy"/>
@@ -194,10 +200,12 @@
                         <TextView
                             android:id="@+id/txt_easy"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="24dp"
+                            android:gravity="center_vertical"
                             android:text="Beginner"
+                            android:textAllCaps="true"
                             android:textColor="@color/AppMainColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                     </RelativeLayout>
                 </LinearLayout>
@@ -215,11 +223,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1">
                         <ImageView
                             android:id="@+id/img_warmup"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_warmuptime"/>
 
@@ -227,35 +237,35 @@
                             android:id="@+id/txt_warmup_min"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
+                            android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_warmup"
                             android:text="min"
                             android:textColor="@color/AppBlackColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                         <TextView
                             android:id="@+id/txt_warmup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="3dp"
                             android:layout_toEndOf="@+id/img_warmup"
                             android:layout_below="@+id/txt_warmup_min"
                             android:text="warmup"
+                            android:textAllCaps="true"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1">
                         <ImageView
                             android:id="@+id/img_workout"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_work_time"/>
 
@@ -263,35 +273,35 @@
                             android:id="@+id/txt_workout_min"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
+                            android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_workout"
                             android:text="min"
                             android:textColor="@color/AppBlackColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                         <TextView
                             android:id="@+id/txt_workout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="3dp"
+                            android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_workout"
                             android:layout_below="@+id/txt_workout_min"
                             android:text="workout"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1">
                         <ImageView
                             android:id="@+id/img_cooldown"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="10dp"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_cooldown_time"/>
 
@@ -299,24 +309,22 @@
                             android:id="@+id/txt_cooldown_min"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="10dp"
                             android:layout_toEndOf="@+id/img_cooldown"
                             android:text="min"
+                            android:textAllCaps="true"
                             android:textColor="@color/AppBlackColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                         <TextView
                             android:id="@+id/txt_cooldown"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="3dp"
+                            android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_cooldown"
                             android:layout_below="@+id/txt_cooldown_min"
                             android:text="cooldown"
                             android:textColor="@color/AppTextGrayColor"
-                            android:textSize="16sp"/>
+                            android:textSize="12sp"/>
 
                     </RelativeLayout>
                 </LinearLayout>
@@ -324,10 +332,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="9dp"
                     android:background="@color/AppWhiteColor"/>
 
             </LinearLayout>

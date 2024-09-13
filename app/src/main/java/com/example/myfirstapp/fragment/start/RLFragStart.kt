@@ -1,20 +1,33 @@
 package com.example.myfirstapp.fragment.start
 
-import android.content.pm.ActivityInfo
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import android.view.ViewTreeObserver
+import android.view.Window
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
-import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
+import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragStartBinding
+import com.example.myfirstapp.enumclass.RLStartAllMenuModel
+import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
+import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
-
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -23,30 +36,108 @@ class RLFragStart : RLBaseFragment() {
     private val binding by lazy {
         RlFragStartBinding.inflate(layoutInflater)
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
-        RLuisetup()
+        RLStartList()
         return fragBinding.root
     }
-    private fun RLuisetup() {
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
-        (context as RLMainActivityRL).RLbottombarcolorwhite()
-        val linearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.rvStart.layoutManager = linearLayoutManager
-        val valueslist = arrayOf("Classes", "Your Way", "Challenges")
-        // Create an array of drawables
-        val drawableArray = arrayOf(
-            ContextCompat.getDrawable(requireContext(), R.drawable.classes),
-            ContextCompat.getDrawable(requireContext(), R.drawable.yourway),
-            ContextCompat.getDrawable(requireContext(), R.drawable.challenges_start))
-        val adapter = RLStartListAdapter(activity,valueslist,drawableArray)
+    private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
+        fragBinding.inlayTop.ivBack.visibility=View.GONE
+        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
+        fragBinding.inlayTop.smallLogo.visibility=View.VISIBLE
+        fragBinding.inlayTop.ivTitle.visibility=View.GONE
+        fragBinding.inlayTop.ivDescription.setText(getString(R.string.thebestyoueveryday))
 
-       // val data: List<String> =ArrayList<String>()
-       // adapter.setList(valueslist)
-        fragBinding.rvStart.adapter = adapter
+        fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // Remove the listener to avoid multiple calls
+                fragBinding.rvStart.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                val height =  fragBinding.rvStart.height
+                println("RelativeLayout total height: $height pixels")
+
+                val linearLayoutMain = LinearLayoutManager(activity)
+                fragBinding.rvStart.layoutManager = linearLayoutMain
+                val adapter = RLStartListAdapter(activity,dataList,height)
+                fragBinding.rvStart.adapter=adapter
+
+            }
+        })
+
+        fragBinding.inlayTop.ivhelp.setOnClickListener {
+            RLshowHelpDialog()
+        }
+        RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp,RLPrefManager.start_help_content)
+
     }
+    private fun RLStartList() {
+        val databaseManager= RLDatabaseManagerRead()
+        databaseManager.RLALLMENULISTRead(RLConstants.MAIN){ data, error ->
+            if (data != null) {
+                try {
+                    val gson = Gson()
+                    val jsonArray = gson.toJson(data)
+                    Log.d(TAG,"Response:- $jsonArray")
+                    val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
+                    val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
+                    RLUiSetUP(dataList)
+                }catch (e:Exception){
+                    Log.e(TAG,"Catch:- ${e.message}")
+                }
+            }
+        }
+    }
+    private fun RLStartListNew() {
+        val databaseReference = FirebaseDatabase.getInstance().getReference(RLConstants.MAIN)
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    try {
+                        val gson = Gson()
+                        val jsonArray = gson.toJson(snapshot.value)
+                        Log.d(TAG, "Response:- $jsonArray")
+                        val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
+                        val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
+                        RLUiSetUP(dataList)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Catch:- ${e.message}")
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Firebase Error: ${error.message}")
+            }
+        })
+    }
+    private fun RLshowHelpDialog() {
+        val dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val dialogMainBinding: RlDialogHelpStartBinding= RlDialogHelpStartBinding.inflate(getLayoutInflater())
+        dialog.setContentView(dialogMainBinding.getRoot())
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+
+        val linearLayoutMain = LinearLayoutManager(activity)
+        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
+
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
+        val gson = Gson()
+        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
+        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
+        dialogMainBinding.ivRecyclerview.adapter=adapter
+
+        dialogMainBinding.tvClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
 }

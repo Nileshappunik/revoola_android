@@ -9,141 +9,14 @@
         android:layout_height="match_parent"
         android:background="@color/AppWhiteColor"
         android:orientation="vertical">
-        <RelativeLayout
+        <include
+            android:id="@+id/inlayTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:id="@+id/txt_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/feedsmall"
-                android:textColor="@color/AppBlackColor"
-                android:textSize="36sp"
-                android:layout_toStartOf="@+id/img_plus"
-                android:fontFamily="@font/omnes_semibold_regular" />
-
-            <ImageView
-                android:id="@+id/img_plus"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="10dp"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_plus"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycle_session_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop= "15dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_below="@+id/txt_name"/>
-        </RelativeLayout>
-
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="4"
-            android:visibility="gone"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
-        <RelativeLayout
-            android:id="@+id/lay_friends"
-            android:layout_width="0dp"
-            android:layout_marginStart="10dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/txt_friends"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/friendssmall"
-                android:textColor="@color/AppMainColor"
-                android:textSize="15sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-            <View
-                android:id="@+id/view_friends"
-                android:layout_width="50dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/txt_friends"
-                android:background="@color/AppMainColor"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/lay_groups"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/txt_groups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/groupsmall"
-                android:textColor="@color/AppTextGrayColor"
-                android:textSize="15sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-            <View
-                android:id="@+id/view_groups"
-                android:layout_width="50dp"
-                android:layout_height="3dp"
-                android:visibility="gone"
-                android:layout_marginTop="15dp"
-                android:layout_below="@+id/txt_groups"
-                android:background="@color/AppMainColor"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/lay_you"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/txt_you"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/yousmall"
-                android:textColor="@color/AppTextGrayColor"
-                android:textSize="15sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-            <View
-                android:id="@+id/view_you"
-                android:layout_width="30dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="15dp"
-                android:visibility="gone"
-                android:layout_below="@+id/txt_you"
-                android:background="@color/AppMainColor"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/lay_challenges"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:layout_marginEnd="10dp"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/txt_challenges"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/challengessmall"
-                android:textColor="@color/AppTextGrayColor"
-                android:textSize="15sp"
-                android:fontFamily="@font/omnes_semibold_regular" />
-            <View
-                android:id="@+id/view_challenges"
-                android:layout_width="80dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="15dp"
-                android:visibility="gone"
-                android:layout_below="@+id/txt_challenges"
-                android:background="@color/AppMainColor"/>
-        </RelativeLayout>
-
-
-
-    </LinearLayout>
+            android:layout_marginTop="10dp"
+            layout="@layout/rl_layout_common_start_top"/>
 
         <RelativeLayout
             android:id="@+id/relay_groupname"
@@ -159,9 +32,7 @@
                 android:layout_marginStart="20dp"
                 android:padding="10dp"
                 android:background="@drawable/full_round"
-                android:backgroundTint="@color/AppMainColor"
-                android:src="@drawable/ic_walk"
-                app:tint="@color/AppWhiteColor"/>
+                android:backgroundTint="@color/AppMainColor" />
 
             <TextView
                 android:id="@+id/txt_username"
@@ -179,15 +50,80 @@
         <RelativeLayout
             android:id="@+id/relay_listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_itemfeed"
+                android:id="@+id/rv_itemFeed"
+                android:background="@color/AppLightGrayColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <include
+                android:id="@+id/inlay_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/filter_margin_end"
+                android:layout_marginBottom="@dimen/filter_margin_bottom"
+                layout="@layout/rl_layout_filter_bottom_mrnu"/>
+
+            <TextView
+                android:id="@+id/btnAddFriend1"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                android:text="@string/addfriends"
+                android:fontFamily="@font/aptos_regular"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:textColor="@color/AppWhiteColor"
+                android:background="@drawable/full_round_green" />
         </RelativeLayout>
 
     </LinearLayout>
 </layout>
+
+<!--
+<RelativeLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:visibility="gone"
+android:layout_marginTop="0dp">
+<TextView
+    android:id="@+id/txt_name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:text="@string/feedsmall"
+    android:textAllCaps="true"
+    android:textColor="@color/AppBlackColor"
+    android:textSize="30sp"
+    android:layout_toStartOf="@+id/img_plus"
+    android:fontFamily="@font/omnes_semibold_regular" />
+
+<ImageView
+    android:id="@+id/img_plus"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:layout_marginRight="10dp"
+    android:layout_alignParentRight="true"
+    android:visibility="gone"
+    android:src="@drawable/ic_plus"/>
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/recycle_session_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop= "0dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_below="@+id/txt_name"/>
+</RelativeLayout>-->

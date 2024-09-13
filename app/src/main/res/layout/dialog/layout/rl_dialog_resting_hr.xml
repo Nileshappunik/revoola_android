@@ -10,9 +10,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/restinghr"
+        android:text="@string/enterheartrate"
         android:layout_marginTop="16dp"
-        android:textSize="26sp"
+        android:textSize="20sp"
         android:textColor="@android:color/black"
         android:gravity="center"/>
 
@@ -25,9 +25,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="50dp"
-        android:hint="@string/restinghr"
+        android:hint="@string/rangeheartrate"
+        android:maxLength="3"
+        android:inputType="numberDecimal"
         android:textColorHint="@color/AppBottomGrayColor"
         android:textSize="16sp"
+        android:background="@null"
         android:textColor="@color/AppBlackColor"/>
 
     <View
@@ -48,11 +51,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/cancel"
-            android:fontFamily="@font/omnes_regular"
+            android:textAllCaps="true"
+            android:fontFamily="@font/omnes_semibold_regular"
             android:textSize="18sp"
             android:background="@color/AppWhiteColor"
             android:layout_marginEnd="1dp"
-            android:textColor="@color/AppZone6Color"
+            android:textColor="@color/AppBlackColor"
             android:gravity="center"/>
 
         <TextView
@@ -61,10 +65,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/okcaps"
-            android:fontFamily="@font/omnes_regular"
+            android:textAllCaps="true"
+            android:fontFamily="@font/omnes_semibold_regular"
             android:background="@color/AppWhiteColor"
             android:textSize="18sp"
-            android:textColor="@color/AppZone6Color"
+            android:textColor="@color/AppBlackColor"
             android:gravity="center"/>
 
     </LinearLayout>

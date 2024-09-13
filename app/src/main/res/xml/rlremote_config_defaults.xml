@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <!-- Add other default parameters as needed -->
+    <entry>
+        <key>start</key>
+        <value>{
+            "visible": true,
+            "data": [
+            {
+            "text": "",
+            "type": 1,
+            "title": "Welcome to Revoola!",
+            "image": ""
+            },
+            {
+            "text": "This is our Main Page where you can start different activities.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "",
+            "type": 1,
+            "title": "Choose what to do next:",
+            "image": ""
+            },
+            {
+            "text": "Click on MIND CLASSES or BODY CLASSES if you wish to see videos created by our instructors to teach you new skills in various different areas. Just find your space and start improving yourself!",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Click on YOUR WAY if you do not need an instructor or videos but prefer to record your own workouts, walks, runs or rides.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Click CHALLENGES if you want to challenge someone (or even yourself) to a small competition when it comes to Effort, Steps, Calories, Distance, Elevation or Duration.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "At the bottom of the page you can navigate to the Overview Page to follow your latest progress, to the Feed Page to see what's happening with your friends and colleagues to the Friends Page to manage your friends and groups and MORE is more, like Notifications, Heart Rate Monitor Settings, Account Information, Help and Frequently Asked Questions (FAQ).",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "Do not forget to pair a heart rate monitor in order to get the most out of Revoola. <a href='https://www.revoola.com'>Click here.</a> to learn how.",
+            "type": 0,
+            "title": "",
+            "image": ""
+            },
+            {
+            "text": "If you wish to see our instruction video again, <a href='https://www.revoola.com'>click here.</a>",
+            "type": 0,
+            "title": "",
+            "image": ""
+            }
+            ]
+            }</value>
+
+        <key>challenge_selectFor</key>
+        <value>{
+            "visible":true,
+            "data":[
+            {
+            "text":"",
+            "type":1,
+            "title":"Who is your Challenge for?",
+            "image":""
+            },
+            {
+            "text":"Set yourself a personal challenge.",
+            "title":"You:",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/05metrics/steps.svg"
+            },
+            {
+            "text":"Set a challenge for you and your Friends. where each of you are challenged to achieve the same goal.",
+            "title":"Friends:",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/05metrics/time.svg"
+            },
+            {
+            "text":"Just like a friends challenge you can challenge all the members of any of the Groups that you are a member of, to achieve the same goal.",
+            "title":"Groups:",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/05metrics/time.svg"
+            },
+            {
+            "text":"Group v Group challenges are where a group is collectively trying to beat the other group to achieve the goal. For instance, can Group A achieve 100,000 steps before Group B?",
+            "title":"Group v Group:",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/05metrics/time.svg"
+            }
+            ]
+            }</value>
+        <key>challenge_selectTarget</key>
+        <value>{
+            "visible":true,
+            "data":[
+            {
+            "text":"",
+            "title":"Set Your Goal",
+            "type":1,
+            "image":""
+            },
+            {
+            "text":"Set you challenge goal E.g. How many steps, how much effort, calories burnt etc. \nHow long do you want your challenge to run for ?",
+            "title":"",
+            "type":0,
+            "image":""
+            },
+            {
+            "text":"Select to set the day you want your challenge to start.",
+            "title":"Please Enter the start date",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/active_time.svg"
+            },
+            {
+            "text":"Select to set the day you want your challenge to end.",
+            "title":"Please Enter the start date",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/active_time.svg"
+            },
+            {
+            "text":"Challenges can be for as long as you want them to run. A few days, a week, month, several months or even a year !",
+            "title":"",
+            "type":0,
+            "image":""
+            }
+            ]
+            }</value>
+        <key>challenge_selectName</key>
+        <value>{
+            "visible":true,
+            "data":[
+            {
+            "text":"",
+            "title":"Give your challenge a name?",
+            "type":1,
+            "image":""
+            },
+            {
+            "text":"It's important to give you Challenge a name. This is what everyone will see when they are invited to join the Challenge and will be how they can identify your challenge in their feed.",
+            "title":"Name Your Challenge",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/09more/challenge.svg"
+            }
+            ]
+            }
+            {
+            "visible":true,
+            "data":[
+            {
+            "text":"",
+            "title":"Give your challenge a name?",
+            "type":1,
+            "image":""
+            },
+            {
+            "text":"It's important to give you Challenge a name. This is what everyone will see when they are invited to join the Challenge and will be how they can identify your challenge in their feed.",
+            "title":"Name Your Challenge",
+            "type":2,
+            "image":"https://video.revoola.com/v2/icons/09more/challenge.svg"
+            }
+            ]
+            }</value>
+    </entry>
+</defaultsMap>

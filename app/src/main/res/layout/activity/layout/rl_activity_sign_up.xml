@@ -9,366 +9,376 @@
         android:orientation="vertical">
         <include
             android:id="@+id/toolbar_login"
-            layout="@layout/rl_toolbar_common" />
+            layout="@layout/rl_login_toolbar" />
 
-        <View
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/AppLightGrayColor" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_useriamge"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="5dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/sample_user" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txt_tap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/img_useriamge"
+                android:textAllCaps="true"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/AppDarkGrayColor"
+                android:text="@string/taptoADDYOURPROFILEPICTURE"
+                android:textSize="12sp"
+                android:fontFamily="@font/omnes_regular" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="5dp"
+                android:layout_below="@+id/img_useriamge"
+                android:layout_toEndOf="@+id/txt_tap"
+                android:src="@drawable/ic_edit_g" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_signin"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_tap"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="10dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/img_useriamge"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:src="@drawable/wellcome" />
-
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp">
-
-                    <TextView
-                        android:id="@+id/txt_tap"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:singleLine="true"
-                        android:text="@string/taptoADDYOURPROFILEPICTURE"
-                        android:textSize="@dimen/text_size"
-                        android:fontFamily="@font/omnes_regular" />
-
-                    <ImageView
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_toEndOf="@+id/txt_tap"
-                        android:src="@drawable/ic_edit" />
-                </RelativeLayout>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    app:cardCornerRadius="10dp">
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/firstname"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
 
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/firstname"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <EditText
-                                android:id="@+id/ed_firstname"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <EditText
+                            android:id="@+id/ed_firstname"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/lastname"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <EditText
-                                android:id="@+id/ed_lastname"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/nickname"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <EditText
-                                android:id="@+id/ed_nickname"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/dateofbirth"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <TextView
-                                android:id="@+id/ed_dateofbirth"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:singleLine="true"
-                                android:text="@string/datedemotexm"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/gender"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <TextView
-                                android:id="@+id/ed_gender"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:singleLine="true"
-                                android:text="@string/genderdemotexm"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/height"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <TextView
-                                android:id="@+id/ed_height"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:singleLine="true"
-                                android:text="@string/genderdemotexm"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="4">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                android:text="@string/weight"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_regular" />
-
-                            <TextView
-                                android:id="@+id/ed_weight"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="3"
-                                android:singleLine="true"
-                                android:text="@string/genderdemotexm"
-                                android:textColor="@color/AppBlackColor"
-                                android:textSize="@dimen/text_main_title_size"
-                                android:fontFamily="@font/omnes_semibold_regular" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@color/AppDarkGrayColor" />
-
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="2dp"
-                            android:layout_marginTop="20dp"
-                            android:background="@color/AppWhiteColor" />
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
 
-                <TextView
-                    android:id="@+id/tvLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/round_border_green"
-                    android:gravity="center"
-                    android:text="@string/continuel"
-                    android:textColor="@color/AppMainColor"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/omnes_semibold_regular" />
-            </LinearLayout>
 
-        </ScrollView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/lastname"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+
+                        <EditText
+                            android:id="@+id/ed_lastname"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular"  />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/nickname"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+                        <EditText
+                            android:id="@+id/ed_nickname"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/dateofbirth"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+
+
+                        <TextView
+                            android:id="@+id/ed_dateofbirth"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:singleLine="true"
+                            android:text="@string/datedemotexm"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/gender"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+
+                        <TextView
+                            android:id="@+id/ed_gender"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:textAllCaps="true"
+                            android:singleLine="true"
+                            android:text="@string/genderdemotexm"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/height"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+
+                        <TextView
+                            android:id="@+id/ed_height"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:textAllCaps="true"
+                            android:singleLine="true"
+                            android:text="@string/genderdemotexm"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/AppLightGrayColor" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/weight"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/omnes_regular" />
+
+
+                        <TextView
+                            android:id="@+id/ed_weight"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="2dp"
+                            android:singleLine="true"
+                            android:textAllCaps="true"
+                            android:text="@string/genderdemotexm"
+                            android:textColor="@color/AppBlackColor"
+                            android:textSize="@dimen/text_main_title_size"
+                            android:fontFamily="@font/omnes_semibold_regular" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/img_help"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@+id/card_signin"
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/image_info" />
+
+            <TextView
+                android:id="@+id/tvLoginNoClick"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/round_border_login"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:text="@string/next"
+                android:textColor="@color/AppDarkGrayColor"
+                android:textSize="18sp"
+                android:fontFamily="@font/omnes_semibold_regular" />
+
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/round_border_login"
+                android:backgroundTint="@color/AppMainColor"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:text="@string/next"
+                android:textColor="@color/AppWhiteColor"
+                android:textSize="18sp"
+                android:fontFamily="@font/omnes_semibold_regular" />
+
+
+        </RelativeLayout>
     </LinearLayout>
 
 </layout>

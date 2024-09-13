@@ -22,7 +22,8 @@ class RLFragHelp : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_help, container) as RlFragHelpBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragHelp")
@@ -35,14 +36,17 @@ class RLFragHelp : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
 
         fragBinding.relayGettingStarted.txtAccount.setText(R.string.getttingstarted)
-        fragBinding.relayGettingStarted.imgAccount.setImageResource(R.drawable.ic_email)
+        fragBinding.relayGettingStarted.imgAccount.setImageResource(R.drawable.ic_account_g)
+        fragBinding.relayGettingStarted.viewimgtxt.visibility=View.GONE
 
         fragBinding.relayFaqus.txtAccount.setText(R.string.faqs)
-        fragBinding.relayFaqus.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayFaqus.imgAccount.setImageResource(R.drawable.ic_settings_g)
+        fragBinding.relayFaqus.viewimgtxt.visibility=View.GONE
 
         fragBinding.relayLogs.imgAccount.setImageResource(R.drawable.ic_help)
         fragBinding.relayLogs.txtAccount.setText(R.string.logs)
         fragBinding.relayLogs.viewimgtxt.visibility=View.GONE
+        fragBinding.relayLogs.layMoreClick.visibility=View.GONE
 
         fragBinding.relayGettingStarted.layMoreClick.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)

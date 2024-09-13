@@ -5,13 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlLayoutChallengesListBinding
+import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
+import com.example.myfirstapp.fragment.feed.RLFragChallengeSummary
 import com.example.myfirstapp.model.RLFeedChallengesModelData
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTools
 
 class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
@@ -27,7 +34,8 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ITEM_TYPE_DATA) {
-            val layoutbinding: RlLayoutChallengesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_challenges_list , parent, false)
+           // val layoutbinding: RlLayoutChallengesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_challenges_list , parent, false)
+            val layoutbinding: RlLayoutFeedListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_feed_list , parent, false)
             return MyViewHolder(layoutbinding)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.rl_item_loading_layout, parent, false)
@@ -69,7 +77,100 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
         notifyItemRangeInserted(startPosition, newData.size)
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutChallengesListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+    inner class MyViewHolder(layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
+        fun bindData(position: Int, itemVIew: View) {
+            try {
+                val cardData = dataList[position]
+                RLTools.RLheightsetRelative(layoutBinding.relayChart)
+
+                layoutBinding.txtOrganizer.visibility=View.VISIBLE
+                layoutBinding.txtOrganizerName.visibility=View.VISIBLE
+                layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
+                layoutBinding.relayChart.visibility=View.VISIBLE
+                layoutBinding.imgMain.visibility=View.GONE
+                layoutBinding.imgThreedot.visibility=View.GONE
+                layoutBinding.blanckView1.visibility=View.VISIBLE
+                layoutBinding.layoutShare.visibility=View.VISIBLE
+                layoutBinding.layoutThumb.visibility=View.GONE
+                layoutBinding.layoutComment.visibility=View.GONE
+                layoutBinding.blanckView.visibility=View.GONE
+                layoutBinding.layoutAward.visibility=View.GONE
+                layoutBinding.layTime.viewCommon.visibility = View.GONE
+                layoutBinding.layCalories.viewCommon.visibility = View.GONE
+                layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
+                layoutBinding.laySteps.viewCommon.visibility = View.GONE
+                layoutBinding.viewBottom.visibility = View.VISIBLE
+
+
+                layoutBinding.txtUsername.setText(cardData.username.toString())
+                layoutBinding.txtMyride.setText(cardData.challenge_name.toString())
+                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.startdate.toLong()))
+                layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
+                Glide.with(context!!).load(cardData.avatar)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
+                    .into(layoutBinding.imgUser)
+
+                Glide.with(context).load(cardData.adminavatar)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
+                    .into(layoutBinding.imgOrganizerUser)
+
+                layoutBinding.txtOrganizerName.setText(cardData.adminfullname.toString())
+
+                layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calender_daily)
+                layoutBinding.layTime.txtTime.setText("CHALLENGE PERIOD")
+                if (cardData.days_remaining>0){
+                    val daysremain=cardData.totaldays-cardData.days_remaining
+                    layoutBinding.layTime.txtTimeNumber.setText(daysremain.toString()+" of "+cardData.totaldays.toString()+" Days")
+                }else{
+                    layoutBinding.layTime.txtTimeNumber.setText(cardData.totaldays.toString()+" of "+cardData.totaldays.toString()+" Days")
+                }
+                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_steps_green)
+                layoutBinding.layCalories.txtTime.setText("ACHIEVED SO FAR")
+                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
+
+                layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
+                layoutBinding.layAssumedeffort.txtTime.setText(cardData.targettype.uppercase()+" TARGET")
+                layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totaltarget.toDouble()))
+
+                layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
+                layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
+                layoutBinding.laySteps.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.length_of_challenge}")
+
+                layoutBinding.cardChalengis.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
+                }
+
+                val stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+                val targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
+
+                val remainingDays = cardData.days_remaining ?: 0
+                val timeGone = if (remainingDays >0) remainingDays else 0
+                val totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
+
+                val webSettings: WebSettings = layoutBinding.webViewChart.settings
+                webSettings.javaScriptEnabled = true
+                webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+                webSettings.domStorageEnabled = true
+                webSettings.useWideViewPort = true
+                webSettings.loadWithOverviewMode = true
+                layoutBinding.webViewChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
+                layoutBinding.webViewChart.isHorizontalScrollBarEnabled = false
+                layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
+                layoutBinding.webViewChart.webViewClient = WebViewClient()
+                layoutBinding.webViewChart.loadDataWithBaseURL(null,
+                    RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+            } catch (e: Exception) {
+                Log.d(TAG, "exceptionAdaptermsg= " + e.message)
+            }
+
+
+        }
+    }
+
+   /* inner class MyViewHolder(layoutBinding: RlLayoutChallengesListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlLayoutChallengesListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             try {
@@ -83,35 +184,62 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 layoutBinding.txtUsername.setText(cardData.username.toString())
                 layoutBinding.txtMyride.setText(cardData.challenge_name.toString())
-                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDate(cardData.startdate.toLong()))
+                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.startdate.toLong()))
                 layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
-
                 Glide.with(context!!).load(cardData.avatar)
-                    .placeholder(R.drawable.wellcome)
-                    .error(R.drawable.wellcome)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgUser)
 
+                Glide.with(context).load(cardData.adminavatar)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
+                    .into(layoutBinding.imgOrganizerUser)
 
-                Glide.with(context).load(cardData.avatar)
-                    .placeholder(R.drawable.wellcome)
-                    .error(R.drawable.wellcome)
-                    .into(layoutBinding.imgUser)
+                layoutBinding.txtOrganizerName.setText(cardData.adminfullname.toString())
 
+                layoutBinding.layStepssofar.imgTime.setImageResource(R.drawable.ic_calender_daily)
+                layoutBinding.layStepssofar.txtTime.setText("CHALLENGE PERIOD")
+                if (cardData.days_remaining>0){
+                    val daysremain=cardData.totaldays-cardData.days_remaining
+                    layoutBinding.layStepssofar.txtTimeNumber.setText(daysremain.toString()+" of "+cardData.totaldays.toString()+" Days")
+                }else{
+                    layoutBinding.layStepssofar.txtTimeNumber.setText(cardData.totaldays.toString()+" of "+cardData.totaldays.toString()+" Days")
+                }
+                layoutBinding.layTargetsteps.imgTime.setImageResource(R.drawable.fd_steps_green)
+                layoutBinding.layTargetsteps.txtTime.setText("ACHIEVED SO FAR")
+                layoutBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
 
-                layoutBinding.layStepssofar.txtTime.setText(cardData.metric.uppercase()+" SO FAR")
-                layoutBinding.layStepssofar.txtTimeNumber.setText(cardData.actualtotal.toString())//STEPS
+                layoutBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_goal)
+                layoutBinding.layDaysremaining.txtTime.setText(cardData.targettype.uppercase()+" TARGET")
+                layoutBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totaltarget.toDouble()))
 
-                layoutBinding.layTargetsteps.txtTime.setText("TARGET "+cardData.metric.uppercase())
-                layoutBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatNumberWithCommas(cardData.totaltarget.toDouble()))
+                layoutBinding.cardChalengis.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
+                }
 
-                layoutBinding.layDaysremaining.txtTime.setText("DAYS REMAINING")
-                layoutBinding.layDaysremaining.txtTimeNumber.setText(cardData.totaldays.toString()+" DAYS")
+                var stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+                var targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
 
+                var remainingDays = cardData.days_remaining ?: 0
+                var timeGone = if (remainingDays >0) remainingDays else 0
+                var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
+
+                val webSettings: WebSettings = layoutBinding.webViewChart.settings
+                webSettings.javaScriptEnabled = true
+                webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+                webSettings.domStorageEnabled = true
+                webSettings.useWideViewPort = true
+                webSettings.loadWithOverviewMode = true
+                layoutBinding.webViewChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
+                layoutBinding.webViewChart.isHorizontalScrollBarEnabled = false
+                layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
+                layoutBinding.webViewChart.webViewClient = WebViewClient()
+                layoutBinding.webViewChart.loadDataWithBaseURL(null,
+                    RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
             } catch (e: Exception) {
             Log.d(TAG, "exceptionAdaptermsg= " + e.message)
             }
-
-
         }
-    }
+    }*/
 }

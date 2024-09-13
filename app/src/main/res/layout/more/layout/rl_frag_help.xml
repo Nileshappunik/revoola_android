@@ -7,39 +7,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor"
+        android:background="@color/AppWhiteColor"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/ivBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:background="@drawable/full_round"
-            android:src="@drawable/ic_back_g"/>
+            android:layout_marginTop="10dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:textAllCaps="true"
             android:text="@string/help"
             android:textColor="@color/AppBlackColor"
-            android:textSize="36dp"
+            android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="15dp"
             android:layout_marginTop="20dp"
-            android:background="@color/AppMainBGColor"/>
+            android:background="@color/AppWhiteColor"/>
 
         <include
             android:id="@+id/relay_getting_started"
@@ -52,9 +48,6 @@
         <include
             android:id="@+id/relay_logs"
             layout="@layout/rl_common_image_text_image_rl" />
-
-
-
 
     </LinearLayout>
 </layout>

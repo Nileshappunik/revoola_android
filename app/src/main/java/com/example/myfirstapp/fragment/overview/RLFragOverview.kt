@@ -2,7 +2,6 @@ package com.example.myfirstapp.fragment.overview
 
 import android.Manifest
 import android.app.Activity
-import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -12,9 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -34,12 +30,15 @@ import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import java.util.Calendar
+import java.util.TimeZone
 
 class RLFragOverview : RLBaseFragment() {
     val TAG: String = RLFragOverview::class.java.simpleName
     lateinit var fragBinding: RlFragOverviewBinding
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
+    var currentUser:String=""
     companion object {
         const val PERMISSIONS_REQUEST_CODE = 101
         const val REQUEST_ENABLE_BLUETOOTH = 102
@@ -48,9 +47,11 @@ class RLFragOverview : RLBaseFragment() {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
+        RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview, container) as RlFragOverviewBinding
+        currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragOverview" )
         RLcheckBluetoothenabled()
         RLcheckBluetoothPermissions()
@@ -58,12 +59,7 @@ class RLFragOverview : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
-
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
@@ -71,15 +67,15 @@ class RLFragOverview : RLBaseFragment() {
     private fun RLuisetup() {
         val currentmonth=RLTools.RLgetCalculatedMonths()
         fragBinding.txtMonth.setText(currentmonth)
-        (context as RLMainActivityRL).RLshowbottombarcolorwhite()
         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
         fragBinding.inlaySession.cardOverview.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true, RLFragOverviewSession::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true,null, false)
         }
         fragBinding.ivNotification.setOnClickListener {
-            (context as RLMainActivityRL).RLbottombarcolorwhite()
-            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, RLFragNotification::class.java.simpleName, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
         }
+
+
         fragBinding.inlaySession.cardOverview.setCardBackgroundColor(resources.getColor(R.color.AppOverviewCardColor))
         fragBinding.inlaySession.txtTitleLeft.setText(R.string.session)
         fragBinding.inlaySession.txtTitleRight.setText(R.string.activetime)
@@ -108,34 +104,43 @@ class RLFragOverview : RLBaseFragment() {
 
 
     private fun RLapicall() {
+        val date = Calendar.getInstance()
+        val firstDay = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val offset = TimeZone.getDefault().rawOffset / 1000
+        val timestampFrom = (firstDay.timeInMillis / 1000) - offset
+        val timestampTo = (date.timeInMillis / 1000) - offset
+
         val request = listOf(RLGetUserAggregatedDataRequest(
-                RLGetUserAggregatedData = RLGetUserAggregatedData(
-                    userid = "w2p8SQCvE3emjEEDo66f02eF6fG2",
+            getUserAggregatedData = RLGetUserAggregatedData(
+                    userid = currentUser,
                     classtype = "all",
-                    timestampfrom = 1714521600,
-                    timestampto = 1716469710)))
+                    timestampfrom = timestampFrom,
+                    timestampto = timestampTo)))
+        Log.d(TAG,"request:- $request")
         viewModel.RLgetUserAggregatedData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
 
-                        val effort=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].power.toDouble())
-                        val relaxation=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].rmm.toDouble())
+                        val effort=RLTools.RLformatCommas(response.text[0].aggregated[0].rev.toDouble())
+                        val relaxation=RLTools.RLformatTime(response.text[0].aggregated[0].rmm, false)
 
-                        val session=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].session.toDouble())
-                        val activetime=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].hr.toDouble())
+                        val session=response.text[0].aggregated[0].session.toString()
+                        val activetime=RLTools.RLformatTime(response.text[0].aggregated[0].totalTime,false)
 
-                        val totalcalories=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].calorie.toDouble())
-                        val activecalories=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].totalTime.toDouble())
+                        val totalcalories=RLTools.RLformatCommas(response.text[0].aggregated[0].calorie.toDouble())
+                        val activecalories=RLTools.RLformatCommas(response.text[0].aggregated[0].power.toDouble())
 
-                        val distance=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].distance.toDouble())
-                        val steps=RLTools.RLformatNumberWithCommas(response.RLText[0].RLAggregated[0].steps.toDouble())
+                        val distance=RLTools.RLformatCommas(response.text[0].aggregated[0].distance.toDouble())
+                        val steps=RLTools.RLformatCommas(response.text[0].aggregated[0].steps.toDouble())
 
-                        fragBinding.inlayEffort.txtNumberLeft.setText(response.RLText[0].RLAggregated[0].power.toString())
-                        fragBinding.inlayEffort.txtNumberRight.setText(response.RLText[0].RLAggregated[0].rmm.toString())
+                        fragBinding.inlayEffort.txtNumberLeft.setText(effort)
+                        fragBinding.inlayEffort.txtNumberRight.setText(relaxation)
 
-                        fragBinding.inlaySession.txtNumberLeft.setText(response.RLText[0].RLAggregated[0].session.toString())
-                        fragBinding.inlaySession.txtNumberRight.setText(response.RLText[0].RLAggregated[0].hr.toString())
+                        fragBinding.inlaySession.txtNumberLeft.setText(session)
+                        fragBinding.inlaySession.txtNumberRight.setText(activetime)
 
                         fragBinding.inlayTotalcalories.txtNumberLeft.setText(totalcalories.toString())
                         fragBinding.inlayTotalcalories.txtNumberRight.setText(activecalories.toString())
@@ -231,39 +236,5 @@ class RLFragOverview : RLBaseFragment() {
         }
     }
 
-    fun RLthismonthdialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_thismonth)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
 
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-
-    fun RLallactivitydialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_allactivity)
-        dialog.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
 }
