@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/linear_heart"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null">
+
+        <RelativeLayout
+            android:id="@+id/rl_heartrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/inlay_effort">
+
+            <com.example.myfirstapp.ui.RLCircularProgressBar
+                android:id="@+id/circularProgressBar"
+                android:layout_marginStart="20dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="77%"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="50dp"
+                android:textAlignment="center"
+                android:textColor="@color/AppWhiteColor"
+                android:textStyle="bold"
+                android:fontFamily="@font/omnes_regular"/>
+
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/inlay_effort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/inlay_calories"
+            layout="@layout/rl_common_start_class_with_sensor"/>
+        <include
+            android:id="@+id/inlay_calories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/inlay_heartrate"
+            layout="@layout/rl_common_start_class_with_sensor"/>
+        <include
+            android:id="@+id/inlay_heartrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/inlay_cadence"
+            layout="@layout/rl_common_start_class_with_sensor"/>
+        <include
+            android:id="@+id/inlay_cadence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/inlay_time"
+            layout="@layout/rl_common_start_class_with_sensor"/>
+
+        <include
+            android:id="@+id/inlay_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            layout="@layout/rl_common_start_class_with_sensor"/>
+    </RelativeLayout>
+</layout>

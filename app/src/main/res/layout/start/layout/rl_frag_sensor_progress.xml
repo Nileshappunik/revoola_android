@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:id="@+id/relaytiveMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ride">
@@ -12,62 +13,81 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent50"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:background="@color/AppBlack80Color"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txt_maintitle"
+            <include
+                android:id="@+id/inlayTop"
+                layout="@layout/rl_layout_common_start_top"/>
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/omnes_semibold_regular"
-                android:background="@null"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/ride"
-                android:textAlignment="center"
-                android:textColor="@color/AppWhiteColor"
-                android:textSize="22sp"/>
-            <TextView
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <include
+                    android:id="@+id/inlay_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress" />
+
+                <include
+                    android:id="@+id/inlay_step"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@null"
-                android:fontFamily="@font/omnes_regular"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/inprogress"
-                android:textAlignment="center"
-                android:textColor="@color/AppLightGrayColor"
-                android:textSize="20sp"/>
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <include
+                    android:id="@+id/inlay_distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress" />
 
-            <View
+                <include
+                    android:id="@+id/inlay_climbed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="25dp"
-                android:background="@color/AppBottomGrayColor"/>
+                android:layout_height="90dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <include
+                    android:id="@+id/inlay_pace"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress" />
 
-            <include
-                android:id="@+id/inlay_time"
-                layout="@layout/rl_common_sensor_progress" />
-
-            <include
-                android:id="@+id/inlay_cadence"
-                layout="@layout/rl_common_sensor_progress"/>
-
-            <include
-                android:id="@+id/inlay_distance"
-                layout="@layout/rl_common_sensor_progress"/>
-
-            <include
-                android:id="@+id/inlay_speed"
-                layout="@layout/rl_common_sensor_progress"/>
-
-            <include
-                android:id="@+id/inlay_pace"
-                layout="@layout/rl_common_sensor_progress"/>
+                <include
+                    android:id="@+id/inlay_speed"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    layout="@layout/rl_common_sensor_progress"/>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -97,7 +117,7 @@
                 android:gravity="center_vertical"
                 android:textColor="@color/AppWhiteColor"
                 android:textSize="14sp"
-                android:fontFamily="@font/omnes_regular" />
+                android:fontFamily="@font/omnes_semibold_regular" />
         </LinearLayout>
 
         <LinearLayout
@@ -109,12 +129,12 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight= "10dp"
-            android:weightSum="2">
+            android:weightSum="3">
             <LinearLayout
                 android:id="@+id/lay_resume"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:layout_margin="5dp"
                 android:background="@drawable/round_border_white"
@@ -129,7 +149,7 @@
                     android:id="@+id/tvresume"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:text="@string/resume"
                     android:layout_marginStart="3dp"
                     android:gravity="center_vertical"
@@ -157,22 +177,29 @@
                     android:layout_height="50dp"
                     android:text="@string/stop"
                     android:layout_marginStart="3dp"
-                    android:fontFamily="@font/omnes_regular"
+                    android:fontFamily="@font/omnes_semibold_regular"
                     android:gravity="center_vertical"
                     android:textColor="@color/AppWhiteColor"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/countdown_text"
+        <RelativeLayout
+            android:id="@+id/relay_countDown"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/AppBlackColor"
-            android:gravity="center"
-            android:fontFamily="@font/omnes_semibold_regular"
-            android:textSize="50sp"
-            android:textColor="@color/AppWhiteColor"/>
+            android:background="@color/AppBlack80Color">
+            <TextView
+                android:id="@+id/countdown_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textSize="100sp"
+                android:textColor="@color/AppWhiteColor"/>
+        </RelativeLayout>
+
+
 
     </RelativeLayout>
 

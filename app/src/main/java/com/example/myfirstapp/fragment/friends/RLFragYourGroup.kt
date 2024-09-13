@@ -17,6 +17,7 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.friends.adapter.RLYourGroupListAdapter
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.databinding.*
+import com.example.myfirstapp.fragment.friends.adapter.RLSelectedFriendListAdapter
 import com.example.myfirstapp.fragment.friends.adapter.RLYourFriendSelectListAdapter
 import com.example.myfirstapp.model.RLSetsearch_user
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -44,7 +45,7 @@ class RLFragYourGroup : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourGroup" )
@@ -55,11 +56,7 @@ class RLFragYourGroup : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
@@ -73,8 +70,10 @@ class RLFragYourGroup : RLBaseFragment() {
             fragBinding.txtCreateGroup.setTextColor(resources.getColor(R.color.AppTextGrayColor))
             fragBinding.txtCreateGroup.background=null
             fragBinding.txtInviteyourfriend.setText(R.string.invite)
-            fragBinding.txtInviteyourfriend.visibility=View.VISIBLE
-            fragBinding.demoInvite.visibility=View.VISIBLE
+            fragBinding.txtInviteyourfriend.visibility=View.GONE
+            fragBinding.demoInvite.visibility=View.GONE
+            fragBinding.tvCreate.visibility=View.GONE
+            fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
             isGroup=true
             RLgroupApiCall()
         }
@@ -87,15 +86,22 @@ class RLFragYourGroup : RLBaseFragment() {
             fragBinding.txtInviteyourfriend.setText(R.string.creategroup)
             fragBinding.txtInviteyourfriend.visibility=View.GONE
             fragBinding.demoInvite.visibility=View.GONE
+            fragBinding.tvCreate.visibility=View.VISIBLE
+            fragBinding.toolbar.tvTitle.setText(R.string.addmembers)
             isGroup=false
             RLfriendsApiCall()
         }
 
+        fragBinding.rvSelectedFriend.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
         fragBinding.txtInviteyourfriend.setOnClickListener {
             if (isGroup){
-                (context as RLMainActivityRL).RLbottombarcolorwhite()
                 (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
             }
+        }
+        fragBinding.tvCreateClick.setOnClickListener {
+           //Friend CREATE IMPLEMENT
+
         }
     }
     private fun RLfriendsApiCall() {
@@ -123,9 +129,20 @@ class RLFragYourGroup : RLBaseFragment() {
         }
     }
     private fun RLresponsehandlefriendsApi(userdata: List<RLuserData>) {
+        var selectUserdata: List<RLuserData> = mutableListOf()
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourgroup.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendSelectListAdapter(activity,userdata,fragBinding.txtInviteyourfriend)
+
+        val adapter = RLYourFriendSelectListAdapter(activity,userdata,fragBinding.tvCreate,fragBinding.tvCreateClick,fragBinding.layInviteCommon) { cardData ->
+            // Handle selection
+            if (cardData.isSelected){
+                selectUserdata += listOf(cardData)
+            }else{
+                selectUserdata -= listOf(cardData)
+            }
+            val adapter = RLSelectedFriendListAdapter(activity,selectUserdata)
+            fragBinding.rvSelectedFriend.adapter = adapter
+        }
         fragBinding.recycleYourgroup.adapter = adapter
 
         fragBinding.edtGroupSearch.addTextChangedListener(object : TextWatcher {

@@ -1,5 +1,6 @@
 package com.example.myfirstapp.fragment.feed.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,13 +8,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlCommonSessionSummaryCardBinding
 import com.example.myfirstapp.enumclass.RLMetricData
 import com.example.myfirstapp.enumclass.RLTypeOfMetrics
+import com.example.myfirstapp.fragment.feed.RLFragFeedCardLikeCommentView
+import com.example.myfirstapp.model.RLTextOverview
+import com.example.myfirstapp.utils.RLConstants
 
 
-class RLFeedSessionSummryListAdapter(val context: FragmentActivity?, val  dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "OverviewSessionSummryListAdapter"
+class RLFeedSessionSummryListAdapter(
+    val context: FragmentActivity?,
+    val dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>,
+    val cardData: RLTextOverview
+) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val TAG = "RLFeedSessionSummryListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlCommonSessionSummaryCardBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_common_session_summary_card , parent, false)
@@ -46,6 +55,21 @@ class RLFeedSessionSummryListAdapter(val context: FragmentActivity?, val  dataLi
                 layoutBinding.imgright.visibility=View.VISIBLE
             }else{
                 layoutBinding.imgright.visibility=View.GONE
+            }
+            layoutBinding.imgright.setOnClickListener {
+                var passstring=""
+                if (typeOfMetric.title.equals("COMMENTS")){
+                    passstring="Comment"
+                } else if (typeOfMetric.title.equals("BOOSTS")){
+                    passstring="Thumb"
+                }
+                if (passstring.isNotEmpty()){
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    bundle.putString(RLConstants.TYPE, passstring)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+
+                }
             }
             if (position % 2 == 0) {
                 // Even positionget

@@ -15,109 +15,181 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:background="@drawable/full_round"
-            android:src="@drawable/ic_back_g"/>
+            android:layout_marginStart="10dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
 
         <TextView
             android:id="@+id/tvtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:layout_marginStart="20dp"
             android:text="@string/chooseyoursensor"
             android:textColor="@color/AppBlackColor"
-            android:textSize="36dp"
+            android:textAllCaps="true"
+            android:textSize="26dp"
             android:fontFamily="@font/omnes_semibold_regular" />
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-           <androidx.cardview.widget.CardView
-               android:id="@+id/card_gps"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginTop="25dp">
-
-               <RelativeLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginStart="15dp"
-                   android:layout_marginEnd="15dp">
-
-                   <TextView
-                       android:id="@+id/txtspeeddistance"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_marginTop="15dp"
-                       android:text="@string/speeddistance"
-                       android:textColor="@color/AppTextGrayColor"
-                       android:textSize="16sp"
-                       android:fontFamily="@font/omnes_regular" />
-
-                   <ImageView
-                       android:id="@+id/img1"
-                       android:layout_width="25dp"
-                       android:layout_height="25dp"
-                       android:layout_below="@+id/txtspeeddistance"
-                       android:layout_marginTop="30dp"
-                       android:src="@drawable/ic_power"/>
-
-                   <ImageView
-                       android:id="@+id/img3"
-                       android:layout_width="30dp"
-                       android:layout_height="30dp"
-                       android:layout_below="@+id/txtgps"
-                       android:layout_alignParentRight="true"
-                       android:src="@drawable/ic_checkboxchecked"/>
-
-                   <ImageView
-                       android:id="@+id/img2"
-                       android:layout_width="50dp"
-                       android:layout_height="30dp"
-                       android:layout_below="@+id/txtgps"
-                       android:layout_toEndOf="@+id/img1"
-                       android:layout_marginStart="15dp"
-                       android:layout_marginTop="5dp"
-                       android:src="@drawable/satelite"/>
-
-                   <TextView
-                       android:id="@+id/txtgps"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_marginStart="15dp"
-                       android:layout_marginTop="25dp"
-                       android:layout_toEndOf="@+id/img1"
-                       android:layout_below="@+id/txtspeeddistance"
-                       android:text="@string/gpssatellitesfound"
-                       android:textColor="@color/AppBlackColor"
-                       android:textSize="16sp"
-                       android:fontFamily="@font/omnes_regular" />
-
-                   <View
-                       android:layout_width="match_parent"
-                       android:layout_height="1dp"
-                       android:layout_marginTop="15dp"
-                       android:layout_marginBottom="10dp"
-                       android:layout_below="@+id/img2"
-                       android:background="@color/AppBottomGrayColor"/>
-
-
-               </RelativeLayout>
-           </androidx.cardview.widget.CardView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_sensorList"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/card_gps"
-                android:layout_marginTop="5dp"
-                android:layout_above="@+id/lay_Skip_go"/>
+                android:layout_height="match_parent">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_gps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:cardCornerRadius="10dp"
+                        android:layout_margin="10dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="15dp">
+
+                            <TextView
+                                android:id="@+id/txtspeeddistance"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginStart="15dp"
+                                android:text="@string/speeddistance"
+                                android:textAllCaps="true"
+                                android:textColor="@color/AppTextGrayColor"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/omnes_regular" />
+
+                            <ImageView
+                                android:id="@+id/img1"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_marginStart="15dp"
+                                android:layout_below="@+id/txtspeeddistance"
+                                android:backgroundTint="@color/AppLightGrayColor"
+                                android:background="@drawable/full_round"
+                                android:padding="10dp"
+                                android:layout_marginTop="30dp"
+                                android:src="@drawable/ic_speeed"/>
+
+                            <ImageView
+                                android:id="@+id/img3"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="15dp"
+                                android:layout_below="@+id/txtgps"
+                                android:layout_alignParentEnd="true"
+                                android:src="@drawable/ic_checkboxchecked"/>
+
+                            <ImageView
+                                android:id="@+id/img2"
+                                android:layout_width="50dp"
+                                android:layout_height="30dp"
+                                android:layout_below="@+id/txtgps"
+                                android:layout_toEndOf="@+id/img1"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/satelite"/>
+
+                            <TextView
+                                android:id="@+id/txtgps"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="25dp"
+                                android:layout_toEndOf="@+id/img1"
+                                android:textAllCaps="true"
+                                android:layout_below="@+id/txtspeeddistance"
+                                android:text="@string/gpssatellitesfound"
+                                android:textColor="@color/AppBlackColor"
+                                android:textStyle="bold"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/omnes_regular" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_Speed_sensorList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"
+                                android:layout_below="@+id/img2" />
+
+                        </RelativeLayout>
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_HeartRate_Sensor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/card_gps"
+                        app:cardCornerRadius="10dp"
+                        android:visibility="gone"
+                        android:layout_margin="10dp">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/txt_sensor_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/AppTextGrayColor"
+                                android:textSize="16sp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginStart="15dp"
+                                android:text="@string/heartratemonitor"
+                                android:fontFamily="@font/omnes_regular" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_heartrate_sensorList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"
+                                android:layout_below="@+id/txt_sensor_type"
+                                android:layout_marginTop="15dp" />
+                        </RelativeLayout>
+
+                    </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_Cadence_Sensor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_below="@+id/card_HeartRate_Sensor"
+                        app:cardCornerRadius="10dp"
+                        android:layout_margin="10dp">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/txt_Speed_sensor_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/AppTextGrayColor"
+                                android:textSize="16sp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginStart="15dp"
+                                android:text="@string/cadence"
+                                android:fontFamily="@font/omnes_regular" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_Cadence_sensorList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"
+                                android:layout_below="@+id/txt_Speed_sensor_type"
+                                android:layout_marginTop="15dp" />
+                        </RelativeLayout>
+
+                    </androidx.cardview.widget.CardView>
+                </RelativeLayout>
+            </ScrollView>
 
 
             <LinearLayout
@@ -132,36 +204,32 @@
                 <TextView
                     android:id="@+id/tvskip"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height_size"
+                    android:textStyle="bold"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/login_btn"
-                    android:backgroundTint="@color/AppDarkGrayColor"
-                    android:clickable="true"
+                    android:background="@drawable/round_border_login"
+                    android:backgroundTint="@color/AppBlackColor"
                     android:gravity="center"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:text="@string/skip"
                     android:textColor="@color/AppWhiteColor"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/omnes_semibold_regular" />
+                    android:textSize="@dimen/button_text_size"
+                    android:fontFamily="@font/omnes_regular" />
 
                 <TextView
                     android:id="@+id/tvgo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height_size"
+                    android:textStyle="bold"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/login_btn"
+                    android:background="@drawable/round_border_login"
                     android:backgroundTint="@color/AppMainColor"
-                    android:clickable="true"
                     android:gravity="center"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
                     android:text="@string/go"
                     android:textColor="@color/AppWhiteColor"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/omnes_semibold_regular" />
+                    android:textSize="@dimen/button_text_size"
+                    android:fontFamily="@font/omnes_regular" />
 
 
             </LinearLayout>

@@ -15,7 +15,7 @@
         android:title="@string/start" />
     <item
         android:id="@+id/friends"
-        android:icon="@drawable/ic_group"
+        android:icon="@drawable/ic_friends"
         android:title="@string/friends" />
     <item
         android:id="@+id/more"

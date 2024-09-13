@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.overview.adapter
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,21 +44,39 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
 
         fun bindData(position: Int, itemVIew: View) {
             val itemres = titleList[position]
-            layoutBinding.txtTitleSession.setText(itemres)
+            layoutBinding.txtTitleSession.setText(itemres.toUpperCase().toString())
             //layoutBinding.viewSession.width=layoutBinding.txtTitleSession.width
-            if (texttypeset.equals(itemres)){
-                layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
-                layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+
+            if (texttypeset.equals("OVERVIEW")){
+                if (texttypeset.equals(itemres)){
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+                }else{
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppWhiteColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppNEWBGColor)
+                }
             }else{
-                layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
-                layoutBinding.viewSession.setBackgroundResource(R.color.AppWhiteColor)
+                if (texttypeset.equals(itemres)){
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppMainColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppMainColor)
+                }else{
+                    layoutBinding.txtTitleSession.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
+                    layoutBinding.viewSession.setBackgroundResource(R.color.AppWhiteColor)
+                }
             }
-            layoutBinding.txtTitleSession.setOnClickListener {
+
+            itemVIew.setOnClickListener {
+                texttypeset=itemres
+                RLItemClickListener.onItemClick(position)
+                notifyDataSetChanged()
+            }
+
+            /*layoutBinding.txtTitleSession.setOnClickListener {
                 texttypeset=itemres
                 RLItemClickListener.onItemClick(position)
                notifyDataSetChanged()
 
-            }
+            }*/
         }
 
     }

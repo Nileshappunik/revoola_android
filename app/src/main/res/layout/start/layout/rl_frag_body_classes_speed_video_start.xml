@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/relay_videoplay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppBlackColor">
+
+        <VideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"/>
+
+    <RelativeLayout
+        android:id="@+id/leftsideview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="100dp"
+        android:background="@null">
+        <RelativeLayout
+            android:id="@+id/linear_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null">
+
+          <include
+                android:id="@+id/inlay_cadence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/inlay_time"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+
+            <include
+                android:id="@+id/inlay_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                layout="@layout/rl_common_start_class_with_sensor"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+        <include
+            android:id="@+id/inlay_playStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            layout="@layout/rl_layout_play_stop_video_button"/>
+
+
+        <include
+            android:id="@+id/inlay_countdown"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/rl_layout_countdown_body"/>
+    </RelativeLayout>
+
+</layout>

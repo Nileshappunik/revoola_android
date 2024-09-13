@@ -7,34 +7,60 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor"
+        android:background="@color/AppWhiteColor"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:background="@drawable/full_round"
-            android:src="@drawable/ic_back_g"/>
-
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop= "10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/account"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="36dp"
-            android:fontFamily="@font/omnes_semibold_regular" />
-        <ScrollView
+            android:layout_marginBottom="20dp">
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/ic_chevron_left"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/account"
+                android:textAllCaps="true"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="26sp"
+                android:fontFamily="@font/omnes_semibold_regular" />
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/inlayPremiumUser"
+            layout="@layout/rl_common_account_layout" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:backgroundTint="@color/AppMainColor"
+                android:background="@drawable/full_round"
+                android:gravity="center"
+                android:text="@string/continuel"
+                android:layout_centerVertical="true"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:textColor="@color/AppWhiteColor"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -42,6 +68,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="visible"
                     app:cardCornerRadius="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="10dp"

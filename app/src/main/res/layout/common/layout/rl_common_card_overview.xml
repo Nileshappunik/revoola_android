@@ -6,15 +6,16 @@
         android:id="@+id/card_overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/overviewcadheight"
         app:cardBackgroundColor="@color/AppZone6Color"
         app:cardCornerRadius="10dp">
+
+      <!--  android:minHeight="@dimen/overviewcadheight"-->
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:layout_gravity="center_vertical">
 
             <TextView
@@ -23,8 +24,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/effort"
                 android:textSize="@dimen/overviewcadtitlesize"
-                android:textColor="@color/AppWhiteColor"
-                android:fontFamily="@font/omnes_semibold_regular" />
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppWhiteColor" />
 
             <TextView
                 android:id="@+id/txt_title_right"
@@ -33,8 +34,8 @@
                 android:layout_alignParentRight="true"
                 android:textSize="@dimen/overviewcadtitlesize"
                 android:text="@string/relaxation"
-                android:textColor="@color/AppWhiteColor"
-                android:fontFamily="@font/omnes_semibold_regular" />
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:textColor="@color/AppWhiteColor"/>
 
             <TextView
                 android:id="@+id/txt_number_left"
@@ -44,7 +45,7 @@
                 android:text="0"
                 android:layout_marginTop="@dimen/overviewcadtextnumbertop"
                 android:textSize="@dimen/overviewcadnumbersize"
-                android:fontFamily="@font/omnes_regular"
+                android:fontFamily="@font/aptos_regular"
                 android:textColor="@color/AppWhiteColor"/>
 
             <TextView
@@ -55,7 +56,7 @@
                 android:layout_alignParentRight="true"
                 android:text="0"
                 android:layout_marginTop="@dimen/overviewcadtextnumbertop"
-                android:fontFamily="@font/omnes_regular"
+                android:fontFamily="@font/aptos_regular"
                 android:textSize="@dimen/overviewcadnumbersize"
                 android:textColor="@color/AppWhiteColor"/>
         </RelativeLayout>

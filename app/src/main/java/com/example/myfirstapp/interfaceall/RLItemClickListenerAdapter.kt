@@ -1,5 +1,5 @@
 package com.example.myfirstapp.interfaceall
 
 interface RLItemClickListenerAdapter {
-    fun onItemClick(deviceAddress: String,isconnection:Boolean)
+    fun onItemClick(deviceType: String,deviceAddress: String,isconnection:Boolean)
 }

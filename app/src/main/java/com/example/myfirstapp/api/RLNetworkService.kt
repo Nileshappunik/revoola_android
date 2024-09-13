@@ -1,15 +1,20 @@
 package com.example.myfirstapp.api
 
+import com.example.myfirstapp.model.RLFeedChallengesMapModel
 import com.example.myfirstapp.model.RLFeedChallengesModel
 import com.example.myfirstapp.model.RLFeedModel
+import com.example.myfirstapp.model.RLGetGroupMemberModel
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
 import com.example.myfirstapp.model.RLOverviewGraphResponse
+import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
+import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
+import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -36,10 +41,18 @@ interface RLNetworkService {
     @POST(RLConstants.URLALL)
     fun RLgoaled_challenges(@Body request: List<RLSetgoaled_challenges_request>): Call<RLFeedChallengesModel>
 
+    @POST(RLConstants.URLALL)
+    fun RLGroupMembers(@Body request: List<RLSetGroupMemberRequest>): Call<RLGetGroupMemberModel>
+
+    @POST(RLConstants.URLALL)
+    fun RLgoaled_challenges_Single(@Body request: List<RLSetgoaled_challenges_request_single>): Call<RLFeedChallengesModel>
+ @POST(RLConstants.URLALL)
+    fun RLMetricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
+
     @GET(RLConstants.URLALLV2)
     fun RLgetOverviewGraph(
         @Query("q") query: String,
-        @Query("RLuser") user: String,
+        @Query("user") user: String,
         @Query("timestampfrom") timestampFrom: Long,
         @Query("timestampto") timestampTo: Long,
         @Query("classtype") classType: String
@@ -57,7 +70,7 @@ interface RLNetworkService {
     @GET(RLConstants.URLALLV2)
     fun RLgetNotificationData(
         @Query("q") q: String,
-        @Query("RLuser") user: String,
+        @Query("user") user: String,
         @Query("limit") limit: Int,
         @Query("index") index: Int): Call<RLNotificationModel>
 

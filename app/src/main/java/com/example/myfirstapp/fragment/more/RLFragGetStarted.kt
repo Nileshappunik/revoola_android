@@ -21,7 +21,8 @@ class RLFragGetStarted : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+         RLScreenSet(false)
+        RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_get_started, container) as RlFragGetStartedBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragGetStarted")
@@ -34,23 +35,23 @@ class RLFragGetStarted : RLBaseFragment() {
         RLonBackPresAct(fragBinding.ivBack)
 
         fragBinding.relayApplewatch.txtAccount.setText(R.string.connectionapplewatch)
-        fragBinding.relayApplewatch.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayApplewatch.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayRatesensor.txtAccount.setText(R.string.heartratesensor)
-        fragBinding.relayRatesensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayRatesensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relaySpeedsensor.txtAccount.setText(R.string.connectingaspeedsensor)
-        fragBinding.relaySpeedsensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relaySpeedsensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayYourensor.txtAccount.setText(R.string.nameyoursensor)
-        fragBinding.relayYourensor.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayYourensor.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayTourofrevoola.txtAccount.setText(R.string.aquicktourofrevoola)
-        fragBinding.relayTourofrevoola.imgAccount.setImageResource(R.drawable.ic_help)
+        fragBinding.relayTourofrevoola.imgAccount.setImageResource(R.drawable.ic_help_g)
 
         fragBinding.relayCantfindmysensor.txtAccount.setText(R.string.icantfindmysensor)
-        fragBinding.relayCantfindmysensor.imgAccount.setImageResource(R.drawable.ic_help)
-        fragBinding.relayCantfindmysensor.viewimgtxt.visibility=View.GONE
+        fragBinding.relayCantfindmysensor.imgAccount.setImageResource(R.drawable.ic_help_g)
+        //fragBinding.relayCantfindmysensor.viewimgtxt.visibility=View.GONE
 
     }
 

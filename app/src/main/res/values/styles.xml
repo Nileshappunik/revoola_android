@@ -10,6 +10,15 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <style name="AppThemeNoBar" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
 
 
    <!-- <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -37,6 +46,11 @@
         <item name="cornerFamily">rounded</item>
     </style>
 
+    <style name="CornerCutfive">
+        <item name="cornerSize">5dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+
     <style name="CornerRound" parent="">
         <item name="cornerSize">50%</item>
     </style>
@@ -49,5 +63,8 @@
     <style name="CustomBottomNavTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textSize">@dimen/bottomtextsize</item>
     </style>
+
+
+
 
 </resources>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_dialog_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/iv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="@string/applehealth"
+        android:textAlignment="center"
+        android:layout_marginTop="15dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/omnes_regular"
+        android:textColor="@color/AppBlackColor" />
+
+    <View
+        android:id="@+id/view_v"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="@color/AppWhiteColor"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/iv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:text="@string/appledescription"
+        android:textAlignment="center"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/omnes_regular"
+        android:textColor="@color/AppBlackColor" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/AppLightGrayColor"/>
+
+    <TextView
+        android:id="@+id/iv_ok"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="18sp"
+        android:text="@string/okcaps"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/AppZone4Color" />
+
+</LinearLayout>

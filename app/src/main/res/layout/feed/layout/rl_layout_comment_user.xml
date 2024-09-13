@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/AppWhiteColor"
+        android:layout_marginTop="10dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_user"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/sample_user"/>
+
+        <TextView
+            android:id="@+id/txt_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toEndOf="@+id/img_user"
+            android:layout_toStartOf="@+id/txt_date"
+            android:text="dhruv90"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/txt_commet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/img_user"
+            android:layout_below="@+id/img_user"
+            android:text="test"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/txt_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:layout_toStartOf="@+id/img_threedot"
+            android:text="01 AUG 2024"
+            android:fontFamily="@font/omnes_regular"
+            android:textColor="@color/AppTextGrayColor"
+            android:textSize="12sp"/>
+
+        <ImageView
+            android:id="@+id/img_threedot"
+            android:layout_width="20dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_options_g"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_alignParentEnd="true"/>
+        <View
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/AppLightGrayColor"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/txt_commet"/>
+
+    </RelativeLayout>
+
+</layout>

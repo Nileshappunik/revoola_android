@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppWhiteColor">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:text="@string/selectfriends"
+            android:fontFamily="@font/omnes_regular"
+            android:textStyle="bold"
+            android:textColor="@color/AppBlackColor"/>
+
+        <ImageView
+            android:id="@+id/tv_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
+        <RelativeLayout
+            android:id="@+id/rl_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd= "15dp"
+            android:layout_marginTop="30dp"
+            android:layout_below="@+id/tv_title"
+            android:background="@drawable/square_border_dark">
+
+            <EditText
+                android:id="@+id/edt_friend_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@null"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:hint="@string/enternamehere"
+                android:minHeight="40dp"
+                android:textSize="16sp"
+                android:textColor="@color/AppBlackColor" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_friend"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_above="@+id/tvSelect"
+            android:layout_below="@+id/rl_search"/>
+
+        <TextView
+            android:id="@+id/tvSelect"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight= "15dp"
+            android:layout_marginBottom="0dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/round_border_login_green"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:text="@string/select"
+            android:textColor="@color/AppWhiteColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/omnes_regular" />
+
+
+
+    </RelativeLayout>
+
+
+</layout>

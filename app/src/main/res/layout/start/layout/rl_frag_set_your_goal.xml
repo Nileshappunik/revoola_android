@@ -4,185 +4,140 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor">
+        android:orientation="vertical"
+        android:background="@color/AppWhiteColor">
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/rl_toolbar_common" />
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
 
-        <View
-            android:id="@+id/view1"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/toolbar"
-            android:background="@color/AppLightGrayColor" />
-
-
-        <TextView
-            android:id="@+id/txtsetyourgoal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop= "10dp"
-           android:textAlignment="center"
-            android:layout_below="@+id/view1"
-            android:background="@color/AppLightGrayColor"
-            android:text="@string/setyourgoal"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="22sp"
-            android:fontFamily="@font/omnes_regular" />
-
-       <androidx.cardview.widget.CardView
-           android:id="@+id/card1"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_below="@+id/txtsetyourgoal"
-           android:layout_margin="10dp"
-           app:cardCornerRadius="10dp">
-
-           <RelativeLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_margin="10dp">
-
-               <LinearLayout
-                   android:id="@+id/lay_help_challenges"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_centerHorizontal="true"
-                   android:orientation="horizontal">
-                   <ImageView
-                       android:id="@+id/img_help_challenges"
-                       android:layout_width="25dp"
-                       android:layout_height="25dp"
-                       android:layout_marginTop="10dp"
-                       android:src="@drawable/fd_steps_green"/>
-
-                   <TextView
-                       android:id="@+id/txt_header"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:textSize="18sp"
-                       android:layout_marginStart="5dp"
-                       android:layout_marginEnd="10dp"
-                       android:layout_marginTop="10dp"
-                       android:text="@string/stepsmall"
-                       android:textColor="@color/AppBlackColor"/>
-               </LinearLayout>
-
-               <EditText
-                   android:id="@+id/txt_header_description"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:minHeight="60dp"
-                   android:textSize="14sp"
-                   android:paddingStart="10dp"
-                   android:paddingEnd="10dp"
-                   android:layout_marginEnd="10dp"
-                   android:layout_marginTop="15dp"
-                   android:background="@drawable/square_border_offwhite"
-                   android:layout_below="@+id/lay_help_challenges"
-                   android:textColor="@color/AppBlackColor"/>
-
-           </RelativeLayout>
-       </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card1"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="10dp">
-
+            android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txt_selectstart"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    android:text="@string/selectstart"
-                    android:textColor="@color/AppBlackColor"/>
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_border_black"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp">
 
-                <View
+                    <LinearLayout
+                        android:id="@+id/lay_help_challenges"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/img_help_challenges"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="30dp"
+                            android:src="@drawable/fd_steps_green"/>
+
+                        <TextView
+                            android:id="@+id/txt_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:textSize="16sp"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="20dp"
+                            android:textAllCaps="true"
+                            android:text="@string/stepsmall"
+                            android:fontFamily="@font/omnes_semibold_regular"
+                            android:textColor="@color/AppBlackColor"/>
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/edt_step_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="70dp"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:textAlignment="center"
+                        android:fontFamily="@font/omnes_regular"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:hint="eg 100,000"
+                        android:background="@drawable/square_border_offwhite"
+                        android:layout_below="@+id/lay_help_challenges"
+                        android:textColor="@color/AppBlackColor"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"/>
-
-                <TextView
-                    android:id="@+id/txt_enter_start"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+                    <include
+                        android:id="@+id/relay_daily"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible"
+                        layout="@layout/rl_common_challenges_type_card"/>
+                    <include
+                        android:id="@+id/relay_weekly"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible"
+                        layout="@layout/rl_common_challenges_type_card"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    android:text="@string/pleaseentertthestartdate"
-                    android:textColor="@color/AppMainColor"/>
-
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+                    <include
+                        android:id="@+id/relay_monthly"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible"
+                        layout="@layout/rl_common_challenges_type_card"/>
+                    <include
+                        android:id="@+id/relay_custom"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="visible"
+                        layout="@layout/rl_common_challenges_type_card"/>
+                </LinearLayout>
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </ScrollView>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card2"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txt_selectend"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    android:text="@string/selectend"
-                    android:textColor="@color/AppBlackColor"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBottomGrayColor"/>
-
-                <TextView
-                    android:id="@+id/txt_enter_end"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    android:text="@string/pleaseenterttheenddate"
-                    android:textColor="@color/AppMainColor"/>
-
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/tvnext"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight= "10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/round_border"
-            app:backgroundTint="@color/AppBottomGrayColor"
-            android:gravity="center"
-            android:text="@string/nextcaps"
-            android:textColor="@color/AppWhiteColor"
-            android:textSize="18sp"
-            android:fontFamily="@font/omnes_regular" />
-
-    </RelativeLayout>
+    </LinearLayout>
 </layout>

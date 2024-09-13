@@ -4,91 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/AppWhiteColor"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/txt_name"
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:text="@string/friend"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="22sp"
-            android:fontFamily="@font/omnes_semibold_regular" />
+            android:layout_height="match_parent"
+            android:visibility="visible">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_friend"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/lay_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_name"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp">
-            <include
-                android:id="@+id/lay_findonrevolla"
-                layout="@layout/rl_common_image_text_image" />
-            <include
-                android:id="@+id/lay_your_friend"
-                layout="@layout/rl_common_image_text_image" />
-            <include
-                android:id="@+id/lay_your_group"
-                layout="@layout/rl_common_image_text_image" />
+    </LinearLayout>
 
-        </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_invitefriend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="30dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:background="@drawable/login_btn"
-            android:backgroundTint="@color/AppMainColor"
-            android:padding="5dp"
-            android:text="@string/invitefriends"
-            android:textColor="@color/AppWhiteColor"
-            android:textSize="@dimen/text_title_size"
-            android:fontFamily="@font/omnes_regular" />
-
-        <TextView
-            android:id="@+id/txt_invitefriend_revolla"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/txt_invitefriend"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/invitefriendsnotonyet"
-            android:textColor="@color/AppTextGrayColor"
-            android:textSize="@dimen/text_size"
-            android:fontFamily="@font/omnes_regular" />
-
-        <TextView
-            android:id="@+id/txt_invitefriends"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/txt_invitefriend_revolla"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:text="@string/invitefriends"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="@dimen/text_title_size"
-            android:fontFamily="@font/omnes_regular" />
-
-        <ImageView
-            android:id="@+id/img_invitefriends"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/fr_groups_green"
-            android:layout_above="@+id/txt_invitefriends"
-            android:layout_centerHorizontal="true"/>
-
-    </RelativeLayout>
 </layout>

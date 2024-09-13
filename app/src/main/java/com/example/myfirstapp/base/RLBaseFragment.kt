@@ -1,7 +1,12 @@
 package com.example.myfirstapp
 
+import android.app.UiModeManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -10,8 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.common.RLFragNoInternet
+import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools.RLnextFinishAllActivity
+import com.google.gson.Gson
 
 
 open class RLBaseFragment : Fragment() {
@@ -97,13 +106,72 @@ open class RLBaseFragment : Fragment() {
     }*/
 
     open fun RLcommonToast(message:String){
-        Toast.makeText(activity,message, Toast.LENGTH_SHORT).show()
+        try{
+            if (isAdded) {
+                context?.let {
+                    Toast.makeText(it, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }catch (e:Exception){
+            Log.e(TAG1,"TOAST EXCEPTION:- ${e.message}")
+        }
+
     }
 
 
     open fun RLcloseFragment() {
         // Close the fragment by popping it from the back stack
         parentFragmentManager.popBackStack()
+    }
+
+    open fun RLScreenSet(isLandScape:Boolean) {
+        val uiModeManager =  activity?.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        val currentModeType = uiModeManager.currentModeType
+
+        if (currentModeType == Configuration.UI_MODE_TYPE_TELEVISION) {
+            // The device is running in TV mode (Android TV)
+            activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+        } else {
+            // The device is not running in TV mode
+            if (isLandScape){
+                activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+            }else{
+                activity?.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            }
+        }
+
+    }
+
+    open fun RLBottomHideShowSet(isShow:Boolean) {
+        if (isShow){
+            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+
+        }else{
+            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+        }
+    }
+
+    open fun RLHelpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
+        val helpString= RLPrefManager.RLgetSomeStringValue(activity, startHelpContent,"" )
+
+        if (helpString.isNotEmpty()){
+            try {
+                val gson = Gson()
+                val StartHelpModel: RLStartHelpModel = gson.fromJson(helpString, RLStartHelpModel::class.java)
+                if(StartHelpModel.visible){
+                    imageHelp.visibility=View.VISIBLE
+                }else{
+                    imageHelp.visibility=View.GONE
+                }
+            }catch (e:Exception){
+              e.printStackTrace()
+            }
+        }
+        /*if (isShow){
+            imageHelp.visibility=View.VISIBLE
+        }else{
+            imageHelp.visibility=View.GONE
+        }*/
     }
 
 }

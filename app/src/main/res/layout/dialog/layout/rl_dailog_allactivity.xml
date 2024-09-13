@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="100dp"
-    android:paddingBottom="20dp">
+    android:paddingBottom="100dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp">
 
     <LinearLayout
         android:id="@+id/listItems"
@@ -14,57 +16,30 @@
         android:orientation="vertical"
         android:layout_above="@+id/txtx_cancle">
 
+
         <TextView
+            android:id="@+id/tvTitle_dialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="10dp"
-            android:text="@string/selectbodyactivity"
+            android:paddingTop="5dp"
+            android:textAllCaps="true"
+            android:fontFamily="@font/aptos_regular"
+            android:text="@string/filters"
             android:textColor="@color/AppTextGrayColor"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
 
-        <TextView
-            android:id="@+id/txt_mindbody"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="25dp"
-            android:text="@string/mindbody"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"/>
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/AppLightGrayColor"/>
 
-        <TextView
-            android:id="@+id/txt_allmind"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="25dp"
-            android:text="@string/allmind"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/txt_allbody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="25dp"
-            android:text="@string/allbody"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/txt_selectbodyactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
-            android:text="@string/selectbodyactivity"
-            android:textColor="@color/AppBlackColor"
-            android:textSize="18sp"/>
-
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycle_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
@@ -74,10 +49,12 @@
         android:layout_height="60dp"
         android:background="@drawable/square_border"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
+        android:textAllCaps="true"
+        android:fontFamily="@font/aptos_regular"
         android:text="@string/cancelsmall"
         android:textColor="@color/AppBlackColor"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
 </RelativeLayout>

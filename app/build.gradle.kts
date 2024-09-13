@@ -94,6 +94,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth-ktx:21.1.0")
     implementation ("com.google.firebase:firebase-storage:20.1.0")
     implementation(platform("com.google.firebase:firebase-bom:29.3.0"))
+    implementation ("com.google.firebase:firebase-config-ktx:21.1.1")
 
     implementation ("com.squareup.retrofit2:retrofit:2.5.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.5.0")
@@ -104,22 +105,28 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")
     implementation ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0")
 
-    implementation ("com.github.bumptech.glide:glide:4.11.0")
+  //  implementation ("com.github.bumptech.glide:glide:4.11.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
     //implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("io.github.ParkSangGwon:tedimagepicker:1.2.7")
 
     //google login
     implementation("com.google.android.gms:play-services-auth:19.0.0")
     implementation ("com.google.android.gms:play-services-maps:18.0.2")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
-    //pinview
-    implementation ("com.github.GoodieBag:Pinview:v1.4")
+
+    //VIDEO PLAY
+    implementation ("androidx.media3:media3-exoplayer:1.0.0")
+    implementation ("androidx.media3:media3-ui:1.0.0")
+    implementation ("androidx.media3:media3-exoplayer-dash:1.0.0")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
 
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("com.caverock:androidsvg:1.4")
 }
 

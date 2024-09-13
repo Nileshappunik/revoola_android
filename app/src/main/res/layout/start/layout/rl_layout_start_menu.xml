@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/relay_start_new"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_type"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="20dp"
+            app:shapeAppearanceOverlay="@style/CornerCutfive"/>
+
+   <!-- <RelativeLayout
+        android:id="@+id/relay_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/img_right"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="5dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_chevron_right"/>
+
+    </RelativeLayout>-->
+
+        <ImageView
+            android:id="@+id/img_typeicon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img_type"/>
+
+        <TextView
+            android:id="@+id/txt_typename"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:gravity="center_vertical"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/img_typeicon"
+            android:textColor="@color/AppBlackColor"/>
+
+        <RelativeLayout
+            android:id="@+id/relay_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/txt_typename"
+            android:layout_toEndOf="@+id/img_type">
+
+            <TextView
+                android:id="@+id/txt_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_toStartOf="@+id/img_right"
+                android:textColor="@color/AppBlackColor"
+                android:fontFamily="@font/omnes_regular"/>
+
+            <ImageView
+                android:id="@+id/img_right"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_chevron_right"/>
+
+        </RelativeLayout>
+
+       <!-- <TextView
+            android:id="@+id/txt_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/img_type"
+            android:layout_toStartOf="@+id/relay_right"
+            android:layout_below="@+id/txt_typename"
+            android:textColor="@color/AppBlackColor"
+            android:fontFamily="@font/omnes_regular"/>-->
+
+    </RelativeLayout>
+
+</layout>

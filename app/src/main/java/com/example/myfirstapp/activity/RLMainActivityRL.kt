@@ -2,7 +2,7 @@ package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Dialog
-import android.content.pm.ActivityInfo
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -10,6 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -17,30 +19,32 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.broadcast.RlNetworkChangeReceiver
 import com.example.myfirstapp.databinding.RlActivityMainBinding
 import com.example.myfirstapp.fragment.feed.RLFragFeed
 import com.example.myfirstapp.fragment.friends.RLFragFriends
 import com.example.myfirstapp.fragment.more.RLFragMore
-import com.example.myfirstapp.fragment.overview.RLFragOverview
+import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class RLMainActivityRL  : RLBaseActivity() {
     val TAG: String = RLMainActivityRL::class.java.simpleName
     var fragment: String? = null
     lateinit var activityMainBinding: RlActivityMainBinding
     var sucDialog: Dialog? = null
+    private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
 
     companion object {
         const val ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding = RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
-        RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
-        RLbottombarcolorwhite()
+        RLshowbottombarcolorwhite()
+        RLloadFrag(RLFragStart(), TAG, true, null, false)
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
         RLchepermissionphysicalActivity()
@@ -50,31 +54,28 @@ class RLMainActivityRL  : RLBaseActivity() {
                 R.id.overview -> {
                     activityMainBinding.bottomNav.setBackgroundResource(R.color.AppNEWBGColor)
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragOverview(), TAG, true, RLFragOverview::class.java.simpleName, false)
+                    RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     true
                 }
                 R.id.feed -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragFeed(), TAG, true, RLFragFeed::class.java.simpleName, false)
+                    RLloadFrag(RLFragFeed(), TAG, false, null, false)
                     true
                 }
                 R.id.start -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+                   RLloadFrag(RLFragStart(), TAG, false, null, false)
+
                     true
                 }
                 R.id.friends -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragFriends(), TAG, true, RLFragFriends::class.java.simpleName, false)
+                    RLloadFrag(RLFragFriends(), TAG, false, null, false)
                     true
                 }
                 R.id.more -> {
-                    RLbottombarcolorwhite()
                     RLshowbottombarcolorwhite()
-                    RLloadFrag(RLFragMore(), TAG, true, RLFragMore::class.java.simpleName, false)
+                    RLloadFrag(RLFragMore(), TAG, false, null, false)
                     true
                 }
                 else -> {
@@ -82,6 +83,41 @@ class RLMainActivityRL  : RLBaseActivity() {
                     false
                 }
             }
+        }
+        RLDisableLongPressToast(activityMainBinding.bottomNav)
+
+        // Internet Check And Reconnect
+        networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
+    }
+
+    private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
+        // Iterate over the BottomNavigationView items
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.feed),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.overview),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.start),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.friends),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.more),null)
+        bottomNavigationView.findViewById<View>(R.id.feed).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.overview).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.start).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.friends).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
+        }
+        bottomNavigationView.findViewById<View>(R.id.more).setOnLongClickListener {
+            // add any code which you want to execute on long click
+            true
         }
     }
 
@@ -124,9 +160,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         Toast.makeText(this, "Activity Recognition Permission Denied", Toast.LENGTH_SHORT).show()
         // Handle the denial appropriately, such as notifying the RLuser about limited functionality
     }
-    fun RLbottombarcolorwhite(){
-        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
-    }
+
     fun RLbottombarcolorDarkBlue(){
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.overview)
         item.setChecked(true)
@@ -136,12 +170,12 @@ class RLMainActivityRL  : RLBaseActivity() {
     fun RLhidebottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.GONE
     }
-
     fun RLshowbottombarcolorwhite(){
         activityMainBinding.bottomNav.visibility=View.VISIBLE
+        activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
     }
 
-    fun RLloadFrag(fragment: Fragment?, tagname: String?, isbackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
+    fun RLloadFrag(fragment: Fragment?, tagName: String?, isBackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
@@ -152,7 +186,7 @@ class RLMainActivityRL  : RLBaseActivity() {
             } else {
                 fragmentTransaction.add(R.id.frame_container, fragment)
             }
-            if (isbackStack) {
+            if (isBackStack) {
                 fragmentTransaction.addToBackStack(fragmentName)
             }
             if (!isFinishing) fragmentTransaction.commitAllowingStateLoss() else fragmentTransaction.commit()
@@ -161,7 +195,14 @@ class RLMainActivityRL  : RLBaseActivity() {
         return false
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //RLshowbottombarcolorwhite()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+      //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
+    }
 
 /*
     override fun onBackPressed() {
@@ -176,44 +217,5 @@ class RLMainActivityRL  : RLBaseActivity() {
                 super.onBackPressed()
             }
         }
-    }
-
-    private fun showDialog(type: String, schedule: String) {
-        sucDialog = Dialog(activity)
-        sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        if (schedule == RLConstants.SCHEDULE) {
-            sucDialog!!.setContentView(R.layout.rl_layout_dailog)
-        }
-        sucDialog!!.setCancelable(true)
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(sucDialog!!.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        val tvNo: TextView = sucDialog!!.findViewById(R.id.tvNo)
-        val tvYes: TextView = sucDialog!!.findViewById(R.id.tvYes)
-
-        if(type.equals(RLConstants.EXIT)) {
-            val tvSubTitle: TextView = sucDialog!!.findViewById(R.id.tvSubTitle)
-            val tvTitle: TextView = sucDialog!!.findViewById(R.id.tvTitle)
-
-            tvTitle.RLText = resources.getString(R.string.exit)
-            tvSubTitle.RLText = resources.getString(R.string.exit_app1)
-        }
-
-        tvNo.setOnClickListener(View.OnClickListener {
-            sucDialog!!.dismiss()
-        })
-
-        tvYes.setOnClickListener(View.OnClickListener {
-            if (type.equals(RLConstants.LOGOUT_D)) {
-                sucDialog!!.dismiss()
-                // logoutapicall()
-            }else if (type.equals(RLConstants.EXIT)){
-                sucDialog!!.dismiss()
-                finishAffinity()
-            }
-        })
-        sucDialog!!.show()
-        sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }*/
 }

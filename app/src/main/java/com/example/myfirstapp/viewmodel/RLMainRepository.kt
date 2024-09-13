@@ -1,15 +1,20 @@
 package com.example.myfirstapp.viewmodel
 import com.example.myfirstapp.api.RLNetworkService
+import com.example.myfirstapp.model.RLFeedChallengesMapModel
 import com.example.myfirstapp.model.RLFeedChallengesModel
 import com.example.myfirstapp.model.RLFeedModel
+import com.example.myfirstapp.model.RLGetGroupMemberModel
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
 import com.example.myfirstapp.model.RLOverviewGraphResponse
+import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
+import com.example.myfirstapp.model.RLSetMetricChartByDay
 import com.example.myfirstapp.model.RLSetget_followersrequest
 import com.example.myfirstapp.model.RLSetgoaled_challenges_request
+import com.example.myfirstapp.model.RLSetgoaled_challenges_request_single
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest
 import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetsearch_userrequest
@@ -71,6 +76,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
+        apiService.RLGroupMembers(request).enqueue(object : Callback<RLGetGroupMemberModel> {
+            override fun onResponse(call: Call<RLGetGroupMemberModel>, response: Response<RLGetGroupMemberModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLGetGroupMemberModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     fun RLgetGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
         apiService.RLgetGroupData(request).enqueue(object : Callback<RLGroupModel> {
             override fun onResponse(call: Call<RLGroupModel>, response: Response<RLGroupModel>) {
@@ -112,6 +133,37 @@ class RLMainRepository(private val apiService: RLNetworkService) {
                 }
             }
             override fun onFailure(call: Call<RLFeedChallengesModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.RLgoaled_challenges_Single(request).enqueue(object : Callback<RLFeedChallengesModel> {
+            override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedChallengesModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
+        apiService.RLMetricChartByDay(request).enqueue(object : Callback<RLFeedChallengesMapModel> {
+            override fun onResponse(call: Call<RLFeedChallengesMapModel>, response: Response<RLFeedChallengesMapModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedChallengesMapModel>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

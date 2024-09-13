@@ -96,8 +96,7 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
                 layoutBinding.txtUserName.setText(userName)
                 layoutBinding.txtNotification.setText(content)
                 Glide.with(context!!).load(userImage)
-                    .placeholder(R.drawable.wellcome)
-                    .error(R.drawable.wellcome)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgNotification)
 
             }catch (e:Exception){

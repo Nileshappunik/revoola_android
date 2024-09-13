@@ -27,6 +27,7 @@
     <color name="AppWhite30Color">#4DFFFFFF</color>
     <color name="AppBlackColor">#FF000000</color>
     <color name="AppBlack10Color">#1A000000</color>
+    <color name="AppBlack80Color">#CB000000</color>
     <color name="AppBlack05Color">#0D000000</color>
     <color name="AppTextLightGrayColor">#1A2F2B2C</color>
     <color name="AppTextGrayColor">#FF95949A</color>
@@ -65,5 +66,7 @@
     <color name="AppScheduleDeclinedColor">#FFEB5757</color>
     <color name="AppScheduleWinColor">#FFEB5757</color>
     <color name="AppScheduleLoseColor">#FFEB5757</color>
+
+
 
 </resources>

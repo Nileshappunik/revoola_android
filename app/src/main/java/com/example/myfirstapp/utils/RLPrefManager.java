@@ -12,6 +12,9 @@ public class RLPrefManager {
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
     private static final String APP_LANGUAGE = "appLanguage";
     public static String current_fragment = "Currentfragment";
+
+    public static String selected_schedule_date = "selectedscheduledate";
+
     public static String last_device_connect = "LastDeviceConnect";
     public static String last_device_connect_type = "LastDeviceConnectType";
 
@@ -19,6 +22,12 @@ public class RLPrefManager {
     public static String last_device_connect_name = "LastDeviceConnectName";
     public static String current_user = "current_user";
     public static String current_user_email = "current_user_email";
+    public static String start_help_content = "startHelpContent";
+    public static String friends_help_content = "friendsHelpContent";
+    public static String challenge_selectFor = "challengeSelectFor";
+
+    public static String challenge_selectTarget = "challengeSelectTarget";
+    public static String challenge_selectName = "challengeSelectName";
 
 
     private static boolean isFirst = true;

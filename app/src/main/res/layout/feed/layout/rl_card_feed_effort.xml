@@ -16,8 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="12sp"
-            android:textAlignment="center"
-            android:fontFamily="@font/omnes_regular"
+            android:textAlignment="textStart"
             android:textColor="@color/AppBlackColor"/>
 
         <TextView
@@ -27,8 +26,7 @@
             android:layout_weight="1"
             android:textSize="12sp"
             android:text="0"
-            android:textAlignment="center"
-            android:fontFamily="@font/omnes_regular"
+            android:textAlignment="textEnd"
             android:textColor="@color/AppBlackColor"/>
 
         <TextView
@@ -38,8 +36,7 @@
             android:layout_weight="1"
             android:textSize="12sp"
             android:text="00:00:00"
-            android:textAlignment="center"
-            android:fontFamily="@font/omnes_regular"
+            android:textAlignment="textEnd"
             android:textColor="@color/AppBlackColor"/>
 
         <TextView
@@ -48,9 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="12sp"
-            android:text="0"
-            android:textAlignment="center"
-            android:fontFamily="@font/omnes_regular"
+            android:text="0%"
+            android:textAlignment="textEnd"
             android:textColor="@color/AppBlackColor"/>
     </LinearLayout>
     <View
@@ -58,8 +54,8 @@
         android:layout_height="1dp"
         android:background="@color/AppMainColor"
         android:layout_below="@+id/linear_part"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="25dp"/>
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="13dp"/>
 </RelativeLayout>
 
 
