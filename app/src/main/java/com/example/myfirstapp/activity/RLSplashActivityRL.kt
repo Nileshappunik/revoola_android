@@ -26,20 +26,23 @@ class RLSplashActivityRL : RLBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         super.onCreate(savedInstanceState)
-
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
-        activityBinding.txtFullrevoolaexperience.setOnClickListener {
-            startActivity(Intent(this, RLLoginActivityRL::class.java))
-        }
-        activityBinding.txtJusthereforaquickpeak.setOnClickListener {
-            startActivity(Intent(this, RLMainActivityRL::class.java))
-        }
         RLlocatiobpermissioncheck()
         // Initialize Firebase
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         FirebaseApp.initializeApp(this)
-
+       val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
+        if (userId.isNullOrEmpty()){
+            activityBinding.txtFullrevoolaexperience.setOnClickListener {
+                startActivity(Intent(this, RLLoginActivityRL::class.java))
+            }
+            activityBinding.txtJusthereforaquickpeak.setOnClickListener {
+                startActivity(Intent(this, RLMainActivityRL::class.java))
+            }
+        }else{
+            startActivity(Intent(this, RLMainActivityRL::class.java))
+        }
     }
 
     fun RLlocatiobpermissioncheck(){

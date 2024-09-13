@@ -3,36 +3,29 @@ package com.example.myfirstapp.activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databinding.RlActivityForgotPasswordBinding
 import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 class RLForgotPasswordActivityRL : RLBaseActivity() {
     val TAG: String = RLForgotPasswordActivityRL::class.java.simpleName
     lateinit var activityBinding: RlActivityForgotPasswordBinding
     var emailID: String = ""
-    private lateinit var viewModel: RLMainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_forgot_password) as RlActivityForgotPasswordBinding
-        // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
-        val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(this,
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
         RLUisetup()
 
     }
@@ -43,15 +36,22 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
         RLonBackPresAct(activityBinding.toolbar.ivBack)
         activityBinding.tvnext.setOnClickListener(View.OnClickListener {
             if (RLvalidation()) {
-                if (RLApiClientRetrofit.RLisConnected()) {
-                    //login Api
-                    // loginapicall()
-                } else {
-                    //showDialogFullscreen()
-                }
+                RLSendPasswordResetEmail()
             }
         })
 
+    }
+    private fun RLSendPasswordResetEmail() {
+        // Initialize Firebase Auth
+        val  authManager = RLAuthManager()
+        authManager.RLForgotPasswordUser(emailID) { data, error ->
+            if (!data.isNullOrEmpty()) {
+                RLopentoast(data)
+                finish()
+            } else {
+                RLopentoast("Registration failed: ${error?.message}")
+            }
+        }
     }
 
     private fun RLvalidation(): Boolean {
@@ -66,5 +66,9 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
             return false
         }
         return true
+    }
+
+    private fun RLopentoast(messageprint: String) {
+        Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
 }

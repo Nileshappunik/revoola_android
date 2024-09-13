@@ -3,6 +3,7 @@ package com.example.myfirstapp.fragment.start
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +14,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLMindClassListAdapter
 import com.example.myfirstapp.databinding.RlDailogClassFilterBinding
 import com.example.myfirstapp.databinding.RlFragMindClassesBinding
 import com.example.myfirstapp.interfaceall.RLItemClickListener
+import com.google.gson.reflect.TypeToken
+import com.example.myfirstapp.model.RLVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.gson.Gson
 
 class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragMindClasses::class.java.simpleName
@@ -56,7 +61,6 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
            //filter click open dialog
             RLfilterdialogopen()
         }
-
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.recycleSessionTitle.layoutManager = linearLayoutManager
@@ -69,13 +73,26 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
             val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistBody,activity)
             fragBinding.recycleSessionTitle.adapter = adaptertitle
         }
-
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemmindclass.layoutManager = linearLayoutMain
-        val adapter = RLMindClassListAdapter(activity,classtype)
-        fragBinding.rvItemmindclass.adapter = adapter
-
+        RLGetVideoList(RLConstants.FORALL)
     }
+
+    private fun RLGetVideoList(videotype: String) {
+        val databaseManager= RLDatabaseManagerRead()
+        databaseManager.RLREVOOLAVIDEOKEYSMINDRead(videotype){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
+                val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
+                val videoList = videoMap.values.toList()
+                val adapter = RLMindClassListAdapter(videoList,activity,classtype)
+                fragBinding.rvItemmindclass.adapter = adapter
+            }
+        }
+    }
+
     //rl_dailog_class_filter
     fun RLfilterdialogopen() {
         val  dialog: Dialog = Dialog(requireContext())
@@ -135,6 +152,33 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     override fun onItemClick(position: Int) {
         if (classtype.equals(RLConstants.MIND)){
            val selectiontitle= valueslistMind[position]
+            when(selectiontitle){
+                "ALL"->{
+                    RLGetVideoList(RLConstants.FORALL)
+                }
+                "RELAX"->{
+                    RLGetVideoList(RLConstants.FORRELAX)
+                }
+                "SLEEP"->{
+                    RLGetVideoList(RLConstants.FORSLEEP)
+                }
+                "HAPPINESS"->{
+                    RLGetVideoList(RLConstants.FORHAPPINESS)
+                }
+                "FOCUS"->{
+                    RLGetVideoList(RLConstants.FORFOCUS)
+                }
+                "ENERGISE"->{
+                    RLGetVideoList(RLConstants.FORENERGISE)
+                }
+                "MINDFUL"->{
+                    RLGetVideoList(RLConstants.FORMINDFULKMOVEMENT)
+                }
+                "MOVEMENT"->{
+                    RLGetVideoList(RLConstants.FORMINDFULKMOVEMENT)
+                }
+            }
+
         }else{
             val selectiontitle= valueslistBody[position]
         }

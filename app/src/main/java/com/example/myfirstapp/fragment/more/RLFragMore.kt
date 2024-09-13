@@ -13,6 +13,8 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMoreBinding
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -129,6 +131,7 @@ class RLFragMore : RLBaseFragment() {
 
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
+           // Firebase.auth.signOut()
             activity?.finish()
         })
         sucDialog.show()
