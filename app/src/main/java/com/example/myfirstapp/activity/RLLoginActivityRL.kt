@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databinding.RlActivityLoginBinding
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.facebook.*
 import com.facebook.appevents.AppEventsLogger
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 
 class RLLoginActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginActivityRL::class.java.simpleName
@@ -77,8 +79,6 @@ class RLLoginActivityRL : RLBaseActivity() {
         } catch (e: NoSuchAlgorithmException) {
             Log.e("KeyHash:", "error2= "+e.message)
         }*/
-
-
 
         activityBinding.txtEmailaccount.setOnClickListener {
             startActivity(Intent(this,RLLoginEmailActivityRL::class.java))

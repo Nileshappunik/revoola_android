@@ -40,12 +40,16 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
         activityBinding.toolbarLogin.ivlogoapp.visibility=View.VISIBLE
         activityBinding.toolbarLogin.ivBack.visibility= View.VISIBLE
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+        val emailId= intent.getStringExtra("EmailId")
+        val password= intent.getStringExtra("Password")
+        println("GETEMAIL:- $emailId")
         var pin = Pinview(this)
         pin = activityBinding.pinview
+        pin.requestPinEntryFocus()
         pin.setPinViewEventListener(object : Pinview.PinViewEventListener {
             override fun onDataEntered(pinview: Pinview?, fromUser: Boolean) {
                 if (pinview!!.value.equals("1234")){
-                    startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java))
+                    startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java).putExtra("EmailId",emailId).putExtra("Password",password))
                     finish()
                 }else{
                     Toast.makeText(this@RLVerificationCodeActivityRL, "Wrong Code", Toast.LENGTH_SHORT).show()

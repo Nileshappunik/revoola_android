@@ -3,6 +3,7 @@ package com.example.myfirstapp.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.*
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -17,11 +18,14 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.NumberPicker
+import android.widget.RadioGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorRes
@@ -433,10 +437,39 @@ object RLTools {
         }
     }
 
+    fun RLconvertDateTimeToTimestamp(dateString:String): Long? {
+
+        // Define the date format
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // Parse the date string to a Date object
+        val date = dateFormat.parse(dateString)
+
+        // Get the time in milliseconds
+        val timeInMillis = date?.time
+
+        return timeInMillis
+    }
+
     fun RLconvertTimestampToDateTime(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
+                return dateTime.format(formatter)
+            }else{
+                return "0"
+            }
+        } catch (ex: ActivityNotFoundException) {
+            return "0"
+        }
+    }
+
+    fun RLconvertTimestampToMinutes(timestamp: Long): String {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+               // val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                val formatter = DateTimeFormatter.ofPattern("mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
                 return dateTime.format(formatter)
             }else{
