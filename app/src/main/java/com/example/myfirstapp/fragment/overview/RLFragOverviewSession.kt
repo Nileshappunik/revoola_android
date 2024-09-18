@@ -4,7 +4,9 @@ import android.app.Dialog
 
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -54,7 +56,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED")
     var totaldisplayitem=9
     private lateinit var adapterdata: RLOverviewSessionListAdapter
+    private lateinit var adapterTitle: RLOverviewSessionTitleListAdapter
     private  var cardDate: RLOverviewGraphResponseDataCard? = null
+    private lateinit var gestureDetector: GestureDetector
+    private var swipePosition:Int=16
+
     private val binding by lazy {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
@@ -71,7 +77,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-
+        // Initialize GestureDetector
+        gestureDetector = GestureDetector(requireContext(), RlSwipeGestureListener())
         RLuisetup()
         return fragBinding.root
     }
@@ -84,7 +91,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         //do Title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
-        val adapterTitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
+         adapterTitle = RLOverviewSessionTitleListAdapter("OVERVIEW",this,valueslist,activity)
         fragBinding.inlayTop.recyclerTitle.adapter = adapterTitle
         // click to show center 
         val snapHelper = LinearSnapHelper()
@@ -119,8 +126,16 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             RLallactivitydialogopen()
         }
+
+        // Set the touch listener to the root view (or any full-screen view)
+        fragBinding.swipeView.setOnTouchListener { v, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+
     }
     override fun onItemClick(position: Int) {
+        swipePosition=position
         fragBinding.txtTotalsession.setText(valueslist[position])
         fragBinding.inlayTop.ivTitle.setText(valueslist[position])
         fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
@@ -423,4 +438,80 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
 
+    // Custom gesture listener to detect swipe gestures
+    private inner class RlSwipeGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        private val SWIPE_THRESHOLD = 100 // Minimum distance to detect swipe
+        private val SWIPE_VELOCITY_THRESHOLD = 100 // Minimum velocity to detect swipe
+
+        override fun onFling(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            val diffX = e2.x.minus(e1.x) ?: 0.0f
+            val diffY = e2.y.minus(e1.y) ?: 0.0f
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // Detect horizontal swipe
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        // Swipe right
+                        onSwipeRight()
+                    } else {
+                        // Swipe left
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+            return false
+        }
+
+    }
+
+    // Handle swipe right gesture
+    private fun onSwipeRight() {
+        // Transition to the next screen or perform an action
+        // Example: You could load another fragment or activity
+
+        println("Swiped right!")
+        try {
+            val position=swipePosition-1
+            swipePosition=position
+            adapterTitle.RLsetList(valueslist[position])
+            fragBinding.txtTotalsession.setText(valueslist[position])
+            fragBinding.inlayTop.ivTitle.setText(valueslist[position])
+            fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
+            RLMoveToCenter(position)
+            if (cardDate!=null){
+                RLHandleApiResponse(cardDate!!,valueslist[position])
+            }
+        }catch (e:Exception){
+            println("Exception:- ${e.message}")
+        }
+
+    }
+
+    // Handle swipe left gesture
+    private fun onSwipeLeft() {
+        // Transition to the previous screen or perform an action
+        println("Swiped left!")
+        try {
+            val position=swipePosition+1
+            swipePosition=position
+            adapterTitle.RLsetList(valueslist[position])
+            fragBinding.txtTotalsession.setText(valueslist[position])
+            fragBinding.inlayTop.ivTitle.setText(valueslist[position])
+            fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
+            RLMoveToCenter(position)
+            if (cardDate!=null){
+                RLHandleApiResponse(cardDate!!,valueslist[position])
+            }
+        }catch (e:Exception){
+            println("Exception:- ${e.message}")
+        }
+
+    }
 }

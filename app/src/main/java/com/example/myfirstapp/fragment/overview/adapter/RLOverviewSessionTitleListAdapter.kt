@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlLayoutOveriviewSessionTitleListBinding
 import com.example.myfirstapp.interfaceall.RLItemClickListener
+import com.example.myfirstapp.model.RLSessionitemset
 
 
 class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemClickListener: RLItemClickListener, valueslist: Array<String>, val context: FragmentActivity?) :
@@ -33,6 +34,11 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
             holder.bindData(position, holder.itemView)
         }
 
+    }
+
+    fun RLsetList(itemres: String) {
+        texttypeset=itemres
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

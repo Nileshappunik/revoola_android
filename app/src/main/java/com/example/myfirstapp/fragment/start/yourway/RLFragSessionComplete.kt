@@ -90,7 +90,6 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         Log.e(TAG,"ALL ARRAY SIZE:- $sizeallarray")
 
-
         fragBinding.edtSessionName.setText("$yourWayType Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             // Handle checked change
@@ -156,7 +155,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             entryWorkoutSessionDetails.zone1.arrHr= heartRateList
             entryWorkoutSessionDetails.zone1.arrCadence= stepsList
             entryWorkoutSessionDetails.zone1.arrSpeed= speedList
-
 
             RLRevoolaUserSessionDetailData(entryWorkoutSessionDetails)
 

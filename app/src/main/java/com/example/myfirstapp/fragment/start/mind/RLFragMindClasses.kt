@@ -68,21 +68,19 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager
         val adaptertitle = RLOverviewSessionTitleListAdapter("ALL",this,valueslistMind,activity)
+
         fragBinding.toolbar.recyclerTitle.adapter = adaptertitle
         // click to show center
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(fragBinding.toolbar.recyclerTitle)
         // Initially move the first item to the center
-        RLMoveToCenter(16)
 
+        RLMoveToCenter(14)
 
         //Main Recyclerview
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.rvItemMindClass.layoutManager = linearLayoutMain
         RLGetMindVideoList(RLConstants.FORALL)
-
-
-
 
     }
     private fun RLGetMindVideoList(videotype: String) {
@@ -98,7 +96,6 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 val height =  fragBinding.rvItemMindClass.height
                 val adapter = RLMindClassListAdapter(videoList,activity,height)
                 fragBinding.rvItemMindClass.adapter = adapter
-
                 /*val adapter = RLMindClassListAdapter(videoList,activity)
                 fragBinding.rvItemmindclass.adapter = adapter*/
 
@@ -146,6 +143,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
             "MOVEMENT"->{ RLGetMindVideoList(RLConstants.FORMINDFULKMOVEMENT) }
         }
     }
+
     private fun RLMoveToCenter(position: Int) {
         val layoutManager = fragBinding.toolbar.recyclerTitle.layoutManager as LinearLayoutManager
 
