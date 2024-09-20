@@ -52,29 +52,33 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private lateinit var rlLocationViewModel: RLLocationViewModel
     var  yourWayType:String=""
 
-    var heartRateList:MutableList<Int> = mutableListOf()
-    var stepsList:MutableList<Int> = mutableListOf()
-    var distanceList:MutableList<Int> = mutableListOf()
-    var climbedList:MutableList<Int> = mutableListOf()
-    var paceList:MutableList<Int> = mutableListOf()
-    var speedList:MutableList<Int> = mutableListOf()
-    var activeCaloriesList:MutableList<Int> = mutableListOf()
-    var avgSpeedList:MutableList<Int> = mutableListOf()
-    var maxsSpeedList:MutableList<Int> = mutableListOf()
-    var avgSpaceList:MutableList<Int> = mutableListOf()
-    var maxxPaceList:MutableList<Int> = mutableListOf()
+    private var heartRateList:MutableList<Int> = mutableListOf()
+    private var stepsList:MutableList<Int> = mutableListOf()
+    private var distanceList:MutableList<Double> = mutableListOf()
+    private var climbedList:MutableList<Int> = mutableListOf()
+    private var activeCaloriesList:MutableList<Double> = mutableListOf()
 
-    var heartRateNumber:Int=0
-    var stepsNumber:Int=0
-    var distanceNumber:Int=0
-    var climbedNumber:Int=0
-    var paceNumber:Int=0
-    var speedNumber:Int=0
-    var activeCaloriesNumber:Int=0
-    var avgSpeedNumber:Int=0
-    var maxsSpeedNumber:Int=0
-    var avgSpaceNumber:Int=0
-    var maxxPaceNumber:Int=0
+    private var paceList:MutableList<Int> = mutableListOf()
+    private var avgSpaceList:MutableList<Int> = mutableListOf()
+    private var maxxPaceList:MutableList<Int> = mutableListOf()
+
+    private var speedList:MutableList<Double> = mutableListOf()
+    private var avgSpeedList:MutableList<Double> = mutableListOf()
+    private var maxsSpeedList:MutableList<Double> = mutableListOf()
+
+    private var heartRateNumber:Int=0
+    private var stepsNumber:Int=0
+    private var distanceNumber:Double=0.0
+    private var climbedNumber:Int=0
+
+    private var activeCaloriesNumber:Double=0.0
+    private var speedNumber:Double=0.0
+    private var avgSpeedNumber:Double=0.0
+    private var maxsSpeedNumber:Double=0.0
+
+    private var paceNumber:Int=0
+    private var avgSpaceNumber:Int=0
+    private var maxxPaceNumber:Int=0
     var totalTime:String =""
 
     companion object {
@@ -182,13 +186,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putString("totalTime",totalTime)
             bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
             bundle.putIntegerArrayList("stepsList",ArrayList(stepsList))
-            bundle.putIntegerArrayList("distanceList",ArrayList(distanceList))
+            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
             bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
             bundle.putIntegerArrayList("paceList",ArrayList(paceList))
-            bundle.putIntegerArrayList("speedList",ArrayList(speedList))
-            bundle.putIntegerArrayList("activeCaloriesList",ArrayList(activeCaloriesList))
-            bundle.putIntegerArrayList("avgSpeedList",ArrayList(avgSpeedList))
-            bundle.putIntegerArrayList("maxsSpeedList",ArrayList(maxsSpeedList))
+            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
+            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
+            bundle.putDoubleArray("avgSpeedList",avgSpeedList.toDoubleArray())
+            bundle.putDoubleArray("maxsSpeedList",maxsSpeedList.toDoubleArray())
             bundle.putIntegerArrayList("avgSpaceList",ArrayList(avgSpaceList))
             bundle.putIntegerArrayList("maxxPaceList",ArrayList(maxxPaceList))
 
@@ -437,7 +441,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
             speed?.let {
                 Log.d(TAG,"Speed: ${it} m/s")
-                val speedSetValue=RlGetValueInt(it.toString())
+                val speedSetValue=RlGetValueDouble(it.toString())
                 speedNumber=speedSetValue
                // speedList.add(speedSetValue)
                 if (speedSetValue>0){
@@ -464,7 +468,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             distance?.let {
                 val totalDistance=it //round(it * 100) / 100
                 Log.d(TAG,"Distance: $totalDistance km")
-                val totalDistanceValue=RlGetValueInt(totalDistance.toString())
+                val totalDistanceValue=RlGetValueDouble(totalDistance.toString())
                 distanceNumber=totalDistanceValue
                 //distanceList.add(totalDistanceValue)
                 if (totalDistanceValue>0){
@@ -473,11 +477,26 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
         })
 
+        rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
+            calories?.let {
+                val totalCaloriesBurned=it //     round(it * 100) / 100
+                Log.d(TAG,"CaloriesBurned: $totalCaloriesBurned")
+
+                val totalCaloriesBurnedValue=RlGetValueDouble(totalCaloriesBurned.toString())
+                activeCaloriesNumber=totalCaloriesBurnedValue
+                // distanceList.add(totalDistanceValue)
+                if (totalCaloriesBurnedValue>0){
+                    //fragBinding.inlayStep.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
+                }
+
+            }
+        })
+
         rlLocationViewModel.averageSpeedData.observe(viewLifecycleOwner, Observer { averageSpeed ->
             averageSpeed?.let {
                 val AvgSpeed=round(it * 100) / 100
                 Log.d(TAG,"Avg Speed: $AvgSpeed m/s")
-                val avgSpeedValue=RlGetValueInt(AvgSpeed.toString())
+                val avgSpeedValue=RlGetValueDouble(AvgSpeed.toString())
                 //avgSpeedList.add(avgSpeedValue)
                 avgSpeedNumber=avgSpeedValue
                 if (avgSpeedValue>0){
@@ -491,7 +510,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             maxSpeed?.let {
                 val maxsSpeed=round(it * 100) / 100
                 Log.d(TAG,"Max Speed: $maxsSpeed m/s")
-                val maxsSpeedValue=RlGetValueInt(maxsSpeed.toString())
+                val maxsSpeedValue=RlGetValueDouble(maxsSpeed.toString())
                 //maxsSpeedList.add(maxsSpeedValue)
                 maxsSpeedNumber=maxsSpeedValue
                 if (maxsSpeedValue>0){
@@ -552,6 +571,15 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             return 0
         }else{
             return value.toDouble().toInt()
+        }
+    }
+    private fun RlGetValueDouble(value:String):Double{
+        if (value.isNullOrEmpty()){
+            return 0.0
+        }else if(value.toDouble() < 0) {
+            return 0.0
+        }else{
+            return value.toDouble()
         }
     }
 

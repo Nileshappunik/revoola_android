@@ -7,14 +7,14 @@ package com.example.myfirstapp.model
     var arrRevPercentage: MutableList<Any> = mutableListOf(0)
 
     //FOCUS ON THIS ONLY
-    var arrSpeed: MutableList<Int> = mutableListOf(0)
+    var arrSpeed: MutableList<Double> = mutableListOf(0.0)
     var arrCadence: MutableList<Int> =  mutableListOf(0)
-    var arrDistance: MutableList<Int> =  mutableListOf(0)
+    var arrDistance: MutableList<Double> =  mutableListOf(0.0)
     var arrElevation: MutableList<Int> = mutableListOf(0)
     var arrHr: MutableList<Int> =  mutableListOf(0)
 
 
-    var arrCumDistance: MutableList<Int> = mutableListOf(0) //EACH SEC TOTAL DISTANCE
+    var arrCumDistance: MutableList<Double> = mutableListOf(0.0) //EACH SEC TOTAL DISTANCE
     var arrCumSpeed: MutableList<Any> = mutableListOf(0) // PENDING FROM DHRUV
     var arrCumElevation: MutableList<Any> = mutableListOf(0) //EACH SEC TOTAL ELEVATION
 
@@ -100,7 +100,7 @@ package com.example.myfirstapp.model
        var arrHr: MutableList<Int> = mutableListOf(0)
        var arrPower: MutableList<Any> = mutableListOf(0)
        var arrPowerFromDevice: MutableList<Any> = mutableListOf(0)
-       var arrSpeed: MutableList<Int> = mutableListOf(0)
+       var arrSpeed: MutableList<Double> = mutableListOf(0.0)
 
        var burntCalories = 0.0
        var distance = 0.0

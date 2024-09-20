@@ -17,6 +17,7 @@ class RLLocationViewModel(application: Application) : AndroidViewModel(applicati
     val paceData: LiveData<Float> = RLLocationRepository.paceData
     val averagePaceData: LiveData<Float> = RLLocationRepository.averagePaceData
     val maxPaceData: LiveData<Float> = RLLocationRepository.maxPaceData
+    val caloriesBurnedData: LiveData<Float> = RLLocationRepository.caloriesBurnedData
 
     fun RLstartLocationUpdates() {
         RLLocationRepository.RLstartLocationUpdates()

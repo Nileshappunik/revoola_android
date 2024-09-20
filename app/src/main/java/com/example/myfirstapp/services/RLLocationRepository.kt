@@ -9,6 +9,7 @@ import android.hardware.SensorManager
 import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.myfirstapp.utils.RLConstants
 import com.google.android.gms.location.*
 
 class RLLocationRepository(application: Application) : SensorEventListener {
@@ -46,11 +47,17 @@ class RLLocationRepository(application: Application) : SensorEventListener {
     private var initialStepCount: Int = -1
     private var startTime: Long = 0L
 
+    private val _caloriesBurnedData = MutableLiveData<Float>()
+    val caloriesBurnedData: LiveData<Float> = _caloriesBurnedData
+
     private var maximumSpeed = 0.0
     private var totalSpeed = 0.0
     private var speedReadings = 0
     private var lastUpdateTime: Long = 0
     private var totalDistance = 0.0
+    private var totalCaloriesBurned = 0.0
+    private val weightInKg = RLConstants.weightInKg//  //you can change it dynamically
+
 
     private var lastLocation: Location? = null
 
@@ -82,6 +89,12 @@ class RLLocationRepository(application: Application) : SensorEventListener {
                     }
                     totalSpeed += speed
                     speedReadings++
+
+                    // Call the calories calculation function
+                    val durationInMinutes = (currentTime - startTime) / 60000.0 // Convert ms to minutes
+                    val caloriesBurned = ScxCalculateCalories(speed, weightInKg, durationInMinutes)
+                    totalCaloriesBurned += caloriesBurned
+                    _caloriesBurnedData.postValue(totalCaloriesBurned.toFloat())
 
                     // Calculate distance in meters
                     val timeInterval = (currentTime - lastUpdateTime) / 1000.0
@@ -130,6 +143,15 @@ class RLLocationRepository(application: Application) : SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    private fun ScxCalculateCalories(speed: Double, weightInKg: Double, durationInMinutes: Double): Double {
+        val metValue = when {
+            speed > 8 -> 7.5 // Running (high speed)
+            speed > 4 -> 5.0 // Jogging (moderate speed)
+            else -> 3.8 // Walking
+        }
+        return metValue * weightInKg * (durationInMinutes / 60)
+    }
 
     private fun RLgetAverageSpeed(): Double {
         return if (speedReadings > 0) totalSpeed / speedReadings else 0.0

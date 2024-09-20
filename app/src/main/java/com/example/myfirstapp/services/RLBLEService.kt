@@ -13,11 +13,9 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
 import com.example.myfirstapp.utils.RLConstants
 import java.lang.StringBuilder
 import java.util.*
-import kotlin.collections.ArrayList
 
 class RLBLEService : Service() {
     val TAG: String = RLBLEService::class.java.simpleName
@@ -338,7 +336,7 @@ class RLBLEService : Service() {
         intent.putExtra("EXTRA_DATA", data)
         sendBroadcast(intent)
     }
-    private fun RLbroadcastSpeedDataRetrieved(data: String, speed:String, avgspeed:String, distance:String, cadence:String) {
+    private fun RLbroadcastSpeedDataRetrieved(data: String, speed:String, avgspeed:String, distance:String, cadence:String,calories:String) {
         Log.d(TAG,data)
         val intent = Intent("ACTION_DATA_RETRIEVED")
         intent.putExtra("EXTRA_DATA", data)
@@ -346,6 +344,7 @@ class RLBLEService : Service() {
         intent.putExtra("AvgSPEED",avgspeed)
         intent.putExtra("DISTANCE",distance)
         intent.putExtra("CADENCE",cadence)
+        intent.putExtra("CALORIES",calories)
         sendBroadcast(intent)
 
     }
@@ -372,6 +371,7 @@ class RLBLEService : Service() {
         var AvgSPEED=""
         var DISTANCE=""
         var CADENCE=""
+        var CALORIES=""
 
         if (wheelRevolutionPresent) {
             val cumulativeWheelRevolutions = (data[offset].toInt() and 0xFF) or
@@ -418,6 +418,14 @@ class RLBLEService : Service() {
                         speedcadence.append("AvgSpeed: $formattedAvgSpeed km/h  ")
                          AvgSPEED=formattedAvgSpeed//+" km/h"
                     }
+                    val  startTime=distance / speedkm
+                   val calories=  RlcalculateCaloriesBasedOnSpeed(speedkm.toFloat(),startTime)
+                    if (calories>0){
+                        val formattedcalories = String.format("%.2f", calories)
+                        Log.d(TAG, "CaloriesBurned: $formattedcalories")
+                        CALORIES=formattedcalories
+                    }
+
                 }
             }
             // Update Speed last values
@@ -448,7 +456,7 @@ class RLBLEService : Service() {
                 }
             }
 
-            RLbroadcastSpeedDataRetrieved("Data:- "+speedcadence,SPEED,AvgSPEED,DISTANCE,CADENCE)
+            RLbroadcastSpeedDataRetrieved("Data:- "+speedcadence,SPEED,AvgSPEED,DISTANCE,CADENCE,CALORIES)
             // Update cadence last values
             lastCrankRevolutions = cumulativeCrankRevolutions
             this.lastCrankEventTime = lastCrankEventTime
@@ -507,5 +515,22 @@ class RLBLEService : Service() {
             bluetoothGatt?.close()
             bluetoothGatt = null
         }
+    }
+
+    private fun RlcalculateCaloriesBasedOnSpeed(speed: Float, startTime: Double):Double {
+        // Assuming a static weight for now; this can be dynamic based on user input
+        val weightInKg = RLConstants.weightInKg// User's weight in kilograms
+
+        val caloriesBurned = calculateCalories(speed.toDouble(), weightInKg, startTime)
+
+        return caloriesBurned
+    }
+    private fun calculateCalories(speed: Double, weightInKg: Double, durationInMinutes: Double): Double {
+        val metValue = when {
+            speed > 8 -> 7.5 // Running
+            speed > 4 -> 5.0 // Jogging
+            else -> 3.8 // Walking
+        }
+        return metValue * weightInKg * (durationInMinutes / 60)
     }
 }
