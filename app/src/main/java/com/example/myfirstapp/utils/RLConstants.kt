@@ -19,6 +19,7 @@ package com.example.myfirstapp.utils
         const val DEVICEADDRESS = "deviceAddress"
         const val HEARTSENSOR = "HEARTRATESENSOR"
         const val SPEEDSENSOR = "SPEEDSENSOR"
+        const val NOSENSOR = "NOSENSOR"
         const val weightInKg = 70.0
 
 

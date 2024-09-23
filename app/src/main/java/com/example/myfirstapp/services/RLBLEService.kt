@@ -5,12 +5,15 @@ import android.app.Service
 import android.bluetooth.*
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.IBinder
+import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.myfirstapp.utils.RLConstants
@@ -22,6 +25,8 @@ class RLBLEService : Service() {
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val foundDevicesArray = mutableListOf<BluetoothDevice>()
+    val heartRateDevices = mutableListOf<BluetoothDevice>()
+    val speedDevices = mutableListOf<BluetoothDevice>()
 
     private var notificationCharacteristic: BluetoothGattCharacteristic? = null
     private var bluetoothGatt: BluetoothGatt? = null
@@ -61,21 +66,64 @@ class RLBLEService : Service() {
         bluetoothAdapter = bluetoothManager.adapter
         bluetoothLeScanner = bluetoothAdapter?.bluetoothLeScanner
     }
-    fun RLstartScan() {
+    fun RLstartScan(isRideWay:Boolean) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // Request necessary permission
             Log.d(TAG,"Request Necessary Permission")
         }
-        Log.d(TAG,"START SCAN")
-        bluetoothLeScanner?.startScan(RLscanCallback)
+        val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+        val filtersSpeedHeart = listOf(ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID_HEART_RATE_SERVICE)).build(), ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID_SPEED_SERVICE)).build())
+        val filtersHeart = listOf(ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID_HEART_RATE_SERVICE)).build())
+        if (isRideWay){
+            bluetoothLeScanner?.startScan(filtersSpeedHeart, settings,RLscanCallback)
+        }else{
+            bluetoothLeScanner?.startScan(filtersHeart, settings,RLscanCallback)
+        }
     }
     fun RLstopScan() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // Request necessary permission
         }
+       // bluetoothLeScanner?.stopScan(RLscanCallback)
         bluetoothLeScanner?.stopScan(RLscanCallback)
     }
     private val RLscanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            super.onScanResult(callbackType, result)
+            val device = result.device
+            val scanRecord = result.scanRecord
+            if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // Request necessary permission
+            }
+            scanRecord?.serviceUuids?.forEach { serviceUuid ->
+                when (serviceUuid.uuid) {
+                    UUID_HEART_RATE_SERVICE -> {
+                        if (!heartRateDevices.contains(device)) {
+                            heartRateDevices.add(device)
+                            Log.d(TAG, "Heart Rate Device: ${device.name}, ${device.address}")
+                            RLbroadcastDeviceFoundHeart(device.name,device.address,"HEARTRATESENSOR")
+                        }
+                    }
+                    UUID_SPEED_SERVICE -> {
+                        if (!speedDevices.contains(device)) {
+                            speedDevices.add(device)
+                            Log.d(TAG, "Speed Device: ${device.name}, ${device.address}")
+                            RLbroadcastDeviceFoundSpeed(device.name,device.address,"SPEEDSENSOR")
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Log.e(TAG, "Scan failed with error: $errorCode")
+        }
+    }
+
+
+
+   /* private val RLscanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.device?.let { device ->
                 if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -156,7 +204,10 @@ class RLBLEService : Service() {
             gatt.close()
         }
 
-    }
+    }*/
+
+
+    //Device Connect Request
     fun RLconnectToDevice(device: BluetoothDevice) {
         if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // Request necessary permission
@@ -304,6 +355,8 @@ class RLBLEService : Service() {
             Log.d(TAG, "Characteristic value is null or empty")
         }
     }
+
+    //Broadcast Device List
     private fun RLbroadcastDeviceFoundSpeed(deviceName: String, deviceAddress:String, sensorType:String) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
             ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED||
@@ -330,6 +383,8 @@ class RLBLEService : Service() {
         intent.putExtra("DEVICE_TYPE", sensorType)
         sendBroadcast(intent)
     }
+
+    //Broadcast Data From Ble Device
     private fun RLbroadcastDataRetrieved(data: String) {
         Log.d(TAG, "Received heart rate: $data")
         val intent = Intent("ACTION_DATA_RETRIEVED_HEART")
@@ -348,6 +403,8 @@ class RLBLEService : Service() {
         sendBroadcast(intent)
 
     }
+
+    // Broadcast Last Connect  Ble Device
     private fun RLbroadcastConnectionState(deviceName: String, isConnected: Boolean) {
         val intent = Intent("ACTION_CONNECTION_STATE_CHANGED")
         intent.putExtra("device_name", deviceName)
@@ -360,6 +417,8 @@ class RLBLEService : Service() {
         intent.putExtra("is_connected", isConnected)
         sendBroadcast(intent)
     }
+
+    //Convert Speed Cadence Data
     private fun RLparseSpeedCadenceData(data: ByteArray) {
 
         val flags = data[0].toInt()
@@ -462,7 +521,9 @@ class RLBLEService : Service() {
             this.lastCrankEventTime = lastCrankEventTime
         }
     }
-    fun RLdisconnectFromDevice() {
+
+    //When Service Destroy Then Close BluetoothGatt
+    fun RLdisconnectFromDevice(){
         if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // Request necessary permissions
         }
@@ -474,9 +535,11 @@ class RLBLEService : Service() {
         Log.d(TAG, "Service destroyed and BLE connection closed")
     }
     override fun onDestroy() {
-        RLdisconnectFromDevice()
         super.onDestroy()
+        RLdisconnectFromDevice()
     }
+
+    //When User Click Pause Stop And Resume Button Event Get Notification
     fun RLpauseNotifications() {
         bluetoothGatt?.let { gatt ->
             notificationCharacteristic?.let { characteristic ->
@@ -517,6 +580,7 @@ class RLBLEService : Service() {
         }
     }
 
+    //Calories Calculated
     private fun RlcalculateCaloriesBasedOnSpeed(speed: Float, startTime: Double):Double {
         // Assuming a static weight for now; this can be dynamic based on user input
         val weightInKg = RLConstants.weightInKg// User's weight in kilograms
@@ -533,4 +597,5 @@ class RLBLEService : Service() {
         }
         return metValue * weightInKg * (durationInMinutes / 60)
     }
+
 }

@@ -78,8 +78,10 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
         fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragChooseYourSensor")
         RLuisetup()
+
         return fragBinding.root
     }
+
     private fun RLuisetup() {
         //RLonBackPresAct(fragBinding.ivBack)
 
@@ -131,9 +133,11 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
         }
     }
 
-
-
     private fun RLclickToNextScreenOpen(yourWayType:String){
+        if (rlbleService!=null){
+            rlbleService!!.RLstopScan()
+        }
+
         var bundle: Bundle = Bundle()
         bundle.putString("YourWayType", yourWayType)
         if (isHeartRateDevice){
@@ -189,12 +193,11 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
     private fun RLstartBLEService() {
         val intent = Intent(requireContext(),RLBLEService::class.java)
         requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
-
         val filter = IntentFilter().apply {
             addAction("ACTION_DEVICE_FOUND")
             addAction("ACTION_DATA_RETRIEVED")
             addAction("ACTION_CONNECTION_STATE_CHANGED")
-            if (yourWayType.equals("Ride") || yourWayType.equals("Run") || yourWayType.equals("Walk")) {
+            if (yourWayType.equals("Ride")) {
                 addAction("ACTION_DEVICE_FOUND_SPEED")
             }
         }
@@ -211,7 +214,12 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
             isServiceBound = true
-            rlbleService?.RLstartScan()
+            if (yourWayType.equals("Ride")) {
+                rlbleService?.RLstartScan(true)
+            }else{
+                rlbleService?.RLstartScan(false)
+            }
+
             // Check if devices are already connected
             val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)
@@ -302,12 +310,13 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             }
         }
     }
-     fun RLhandleDeviceFound(deviceAddress: String) {
+
+    fun RLhandleDeviceFound(deviceAddress: String) {
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
         if (device != null) {
             // Handle the found device
             RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, deviceAddress)
-            rlbleService!!.RLconnectToDevice(device)
+          //  rlbleService!!.RLconnectToDevice(device)
         }
     }
 
@@ -334,7 +343,7 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
                         // Heart rate service is available
                         isHeartRateDevice=true
                         connecetedDeviceType="HEARTRATESENSOR"
-                    } else {
+                    }else {
                         // Heart rate service is not available
                         connecetedDeviceType="SPEEDSENSOR"
                         isHeartRateDevice=false
@@ -355,6 +364,7 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             connecetedDeviceType=deviceType
             Log.d(TAG, "BLE connection isconnection:-  $connecetedDeviceType")
             RLhandleDeviceFound(deviceAddress)
+            RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.last_device_connect, deviceAddress)
         }else{
             if (deviceType.equals(connecetedDeviceType)){
                 connecetedDeviceType=""

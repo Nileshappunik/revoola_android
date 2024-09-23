@@ -57,9 +57,9 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     var adapter : RLSensorHeartListAdapter?=null
     var adapterspeed : RLSensorSpeedListAdapter?=null
     var adaptercadence : RLSensorCadenceListAdapter?=null
+    private var ridetype:Boolean=false
 
     private var connecetedDeviceType = ""
-    var ride=false
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1
@@ -84,7 +84,7 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-         ride=  requireArguments().getBoolean("Ride")
+         ridetype=  requireArguments().getBoolean("Ride")
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvHeartrateSensorList.layoutManager = linearLayoutManager
         adapter = RLSensorHeartListAdapter(activity,this)
@@ -130,7 +130,7 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
         val data=  requireArguments().getString("VIDEODATA","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
-        bundle.putBoolean("Ride",ride)
+        bundle.putBoolean("Ride",ridetype)
         if (withoutsensor){
             (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
         }else{
@@ -188,7 +188,7 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
 
     }
     private fun RLstartBLEService() {
-        val ridetype=  requireArguments().getBoolean("Ride")
+
         val intent = Intent(requireContext(),RLBLEService::class.java)
         requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
 
@@ -213,7 +213,12 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
             isServiceBound = true
-            rlbleService?.RLstartScan()
+            if (ridetype){
+                rlbleService?.RLstartScan(true)
+            }else{
+                rlbleService?.RLstartScan(false)
+            }
+
             // Check if devices are already connected
             val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)

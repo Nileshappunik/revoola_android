@@ -35,6 +35,7 @@ import androidx.lifecycle.Observer
 import com.example.myfirstapp.databinding.RlFragHeartrateSensorProgressBinding
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTimerManager
 import com.example.myfirstapp.utils.RLTools
 import java.lang.Math.round
@@ -195,12 +196,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray("maxsSpeedList",maxsSpeedList.toDoubleArray())
             bundle.putIntegerArrayList("avgSpaceList",ArrayList(avgSpaceList))
             bundle.putIntegerArrayList("maxxPaceList",ArrayList(maxxPaceList))
+            bundle.putString("SENSOR",RLConstants.HEARTSENSOR)
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
     }
-    fun  RLwayTypeDesignSet(yourWayType:String){
+    private fun  RLwayTypeDesignSet(yourWayType:String){
         if (yourWayType.equals("Pilates")||yourWayType.equals("Workout")||yourWayType.equals("Yoga")){
             fragBinding.layout2.visibility=View.GONE
             fragBinding.layout3.visibility=View.GONE
@@ -262,6 +264,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         }
     }
+
     //BLE DEVICE CODE START
     private fun RLcheckAndRequestPermissions() {
         val permissions = mutableListOf<String>()
@@ -333,8 +336,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
             isServiceBound = true
-            val lastConnectDeviceAddress =
-                RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+            val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
             RLhandleDeviceFound(lastConnectDeviceAddress)
 
         }
@@ -343,7 +345,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             Log.d(TAG,"onServiceDisconnected")
         }
     }
-    fun RLhandleDeviceFound(deviceAddress: String) {
+   private fun RLhandleDeviceFound(deviceAddress: String) {
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
         if (device != null) {
             rlbleService!!.RLconnectToDevice(device)
@@ -366,19 +368,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
     }
     //BLE DEVICE CODE CLOSE
-    private fun RLstartCountdown1() {
-        var count = 5
-        var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
-            override fun onTick(millisUntilFinished: Long) {
-                fragBinding.countdownText.text = "$count" // Display current count
-                count--
-            }
-            override fun onFinish() {
-                fragBinding.countdownText.visibility=View.GONE
-                RLtimerMain()
-            }
-        }.start()
-    }
     private fun RLstartCountdown() {
         val countdownTimeInMillis = 6000L // 5 seconds
         val intervalInMillis = 1000L // 1 second interval
@@ -587,14 +576,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         super.onStart()
        // timerManager.resume()
         RLcheckAndRequestPermissions()
-    }
-    override fun onResume() {
-        super.onResume()
-        //timerManager.resume()
-    }
-    override fun onPause() {
-        super.onPause()
-        //timerManager.pause()
     }
     override fun onDestroy() {
         super.onDestroy()

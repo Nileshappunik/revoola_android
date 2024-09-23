@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
+import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTimerManager
 import com.example.myfirstapp.utils.RLTools
 import java.lang.Math.round
@@ -50,6 +51,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private var  yourWayType:String=""
     private var issGpsConnect:Boolean =false
+    private var isSpeedSensorConnect:Boolean =false
 
     private var heartRateList:MutableList<Int> = mutableListOf()
     private var stepsList:MutableList<Int> = mutableListOf()
@@ -80,6 +82,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var avgSpaceNumber:Int=0
     private var maxxPaceNumber:Int=0
     private var totalTime:String =""
+
 
 
     private val MET_WALKING = 3.8
@@ -173,7 +176,11 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray("maxsSpeedList",maxsSpeedList.toDoubleArray())
             bundle.putIntegerArrayList("avgSpaceList",ArrayList(avgSpaceList))
             bundle.putIntegerArrayList("maxxPaceList",ArrayList(maxxPaceList))
-
+            if (yourWayType.equals("Ride") && isSpeedSensorConnect){
+                bundle.putString("SENSOR", RLConstants.SPEEDSENSOR)
+            }else{
+                bundle.putString("SENSOR", RLConstants.NOSENSOR)
+            }
 
             try {
                 timerManager.RLstop()
@@ -313,14 +320,22 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             Log.e(TAG,"No DEVICE CONNECT SO Step Get To GPS")
         }else{
-            val intent = Intent(requireContext(),RLBLEService::class.java)
-            requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
+            if (yourWayType.equals("Ride")){
+                val intent = Intent(requireContext(),RLBLEService::class.java)
+                requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
 
-            val filter = IntentFilter().apply {
-                addAction("ACTION_DATA_RETRIEVED")
-                addAction("ACTION_CONNECTION_STATE_CHANGED")
+                val filter = IntentFilter().apply {
+                    addAction("ACTION_DATA_RETRIEVED")
+                    addAction("ACTION_CONNECTION_STATE_CHANGED")
+                }
+                requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
+            }else{
+                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
+                    RLstepGetToGPS()
+                }
+                Log.e(TAG,"No DEVICE CONNECT SO Step Get To GPS")
             }
-            requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
+
         }
     }
     private val RLserviceConnection = object : ServiceConnection {
@@ -348,6 +363,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     fun RLhandleDeviceFound(deviceAddress: String) {
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
         if (device != null) {
+            isSpeedSensorConnect=true
             rlbleService!!.RLconnectToDevice(device)
         }
     }

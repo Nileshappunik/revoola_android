@@ -182,7 +182,7 @@ class RLFragMindClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
             isServiceBound = true
-            rlbleService?.RLstartScan()
+            rlbleService?.RLstartScan(false)
             // Check if devices are already connected
             val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT)

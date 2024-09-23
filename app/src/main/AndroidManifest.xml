@@ -110,6 +110,7 @@
         </activity>
 
         <service android:name=".services.RLBLEService" />
+        <service android:name=".services.RLNewBLEService" />
         <service
             android:name=".databasefirebase.RLMyFirebaseMessagingService"
             android:exported="true">

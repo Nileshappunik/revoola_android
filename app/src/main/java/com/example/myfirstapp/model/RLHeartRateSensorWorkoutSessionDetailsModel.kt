@@ -1,6 +1,6 @@
 package com.example.myfirstapp.model
 
- class RLWorkoutSessionDetailsModelNew {
+ class RLHeartRateSensorWorkoutSessionDetailsModel {
 
     var MaxHrUsedForCalculation: Int = 0
     var MaxHrUsedForCalculation_Last: Int = 0
@@ -10,15 +10,17 @@ package com.example.myfirstapp.model
     var arrBurntCalories: MutableList<Double> =  mutableListOf(0.0)//Done
     var arrCadence: MutableList<Int> =  mutableListOf(0)
     var arrCumDistance: MutableList<Double> =  mutableListOf(0.0)
+    var arrCumElevation: MutableList<Int> =  mutableListOf(0)
     var arrCumSpeed: MutableList<Double> =  mutableListOf(0.0)
     var arrDistance: MutableList<Double> =  mutableListOf(0.0)//Done
     var arrElevation: MutableList<Int> =  mutableListOf(0)
+    var arrHRRecordedSecond: MutableList<Int> =  mutableListOf(0)
+    var arrHr: MutableList<Int> =  mutableListOf(0)
     var arrPower: MutableList<Int> =  mutableListOf(0)
     var arrPowerFromDevice: MutableList<Int> =  mutableListOf(0)
+    var arrRevPercentage: MutableList<Int> =  mutableListOf(0)
+    var arrRevSecond: MutableList<Int> =  mutableListOf(0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)//Done
-
-    //this array some ride entry come And Some ride or other entry not come
-    var arrCumElevation: MutableList<Int> =  mutableListOf(0)
 
 
     var avgRevPercentage:Int=0
