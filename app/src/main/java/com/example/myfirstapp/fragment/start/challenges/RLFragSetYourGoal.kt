@@ -139,7 +139,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
             val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType)
             bundle.putString("CalenderType",CalenderType)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
+           (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
         } else{
             RLshowAlertDialog()
         }

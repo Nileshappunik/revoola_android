@@ -15,6 +15,7 @@ import com.example.myfirstapp.databinding.RlCommonChallengesTypeCardBinding
 import com.example.myfirstapp.databinding.RlLayoutStartMenuBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.enumclass.RLTypeOfChallenges
+import com.example.myfirstapp.fragment.start.challenges.RLFragChallengesFor
 import com.example.myfirstapp.fragment.start.challenges.RLFragSetYourGoal
 import com.example.myfirstapp.utils.loadSvg
 import kotlin.math.roundToInt
@@ -75,8 +76,11 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
         }
         private fun RLNextViewOpen(challengeType:String){
             val bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType",challengeType )
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
+            bundle.putString("ChallengeType",challengeType)
+            //Old Code
+            //(context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
+            //New Code
+            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
         }
     }
 

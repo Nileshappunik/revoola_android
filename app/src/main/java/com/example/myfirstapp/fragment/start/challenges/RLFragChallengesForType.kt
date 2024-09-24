@@ -46,7 +46,7 @@ class RLFragChallengesForType : RLBaseFragment() {
     private fun RLuisetup() {
         RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectTarget)
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
-        val calenderType = requireArguments().getString("CalenderType").toString().trim()
+      //  val calenderType = requireArguments().getString("CalenderType").toString().trim()
         val isGroup = requireArguments().getBoolean("IsGroup")
         fragBinding.inlayTop.ivBack.setOnClickListener {
             RLBottomHideShowSet(true)
@@ -65,16 +65,22 @@ class RLFragChallengesForType : RLBaseFragment() {
         fragBinding.layIndividualTarget.setOnClickListener {
             val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
-            bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+           // bundle.putString("CalenderType",calenderType )
+            //OLD CODE
+            //(context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+           //NEW CODE
+            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
 
         }
 
         fragBinding.laySharedTarget.setOnClickListener {
             val bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
-            bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+           // bundle.putString("CalenderType",calenderType )
+            //OLD CODE
+            //(context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+            //NEW CODE
+            (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
         }
     }
 

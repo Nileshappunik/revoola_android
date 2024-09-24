@@ -48,7 +48,7 @@ class RLFragChallengesFor : RLBaseFragment() {
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var challengeType=""
-    var calenderType=""
+    //var calenderType=""
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragChallengesFor()
@@ -88,7 +88,7 @@ class RLFragChallengesFor : RLBaseFragment() {
     private fun RLUIBottom() {
 
          challengeType = requireArguments().getString("ChallengeType").toString().trim()
-         calenderType = requireArguments().getString("CalenderType").toString().trim()
+       //  calenderType = requireArguments().getString("CalenderType").toString().trim()
 
         RLTools.RLheightsetstartimage(fragBinding.relayYou.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayFriends.cardChalengesst,requireActivity())
@@ -118,8 +118,11 @@ class RLFragChallengesFor : RLBaseFragment() {
         fragBinding.relayYou.cardChalengesst.setOnClickListener {
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
-            bundle.putString("CalenderType",calenderType )
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+           // bundle.putString("CalenderType",calenderType )
+            //OLD CODE
+            //(context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+            //NEW CODE
+             (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
 
         }
         fragBinding.relayFriends.cardChalengesst.setOnClickListener {
@@ -328,7 +331,7 @@ class RLFragChallengesFor : RLBaseFragment() {
     private fun RLNextFragmentOpen(isGroup:Boolean){
         val bundle: Bundle = Bundle()
         bundle.putString("ChallengeType",challengeType)
-        bundle.putString("CalenderType",calenderType)
+        //bundle.putString("CalenderType",calenderType)
         bundle.putBoolean("IsGroup",isGroup)
         (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 

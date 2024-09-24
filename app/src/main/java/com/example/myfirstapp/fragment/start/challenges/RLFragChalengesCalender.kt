@@ -104,7 +104,10 @@ class RLFragChalengesCalender : RLBaseFragment() {
                val bundle: Bundle = Bundle()
                bundle.putString("ChallengeType",challengeType)
                bundle.putString("CalenderType",calenderType)
-               (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
+               //OLD CODE
+              // (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
+               //NEW CODE
+               (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
            }else{
                RLshowAlertDialog("Please select Valid details")
            }
