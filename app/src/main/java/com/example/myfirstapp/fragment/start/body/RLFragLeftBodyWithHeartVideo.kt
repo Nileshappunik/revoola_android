@@ -20,22 +20,28 @@ import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.RlFragLeftBodyHeartVideoBinding
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 
 
 class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     val TAG: String = RLFragLeftBodyWithHeartVideo::class.java.simpleName
     lateinit var fragBinding: RlFragLeftBodyHeartVideoBinding
+    var heartRateList:MutableList<Int> = mutableListOf()
+    private var heartRateNumber:Int=0
+    private val timerManager = RLTimerManager()
 
     private val binding by lazy {
         RlFragLeftBodyHeartVideoBinding.inflate(layoutInflater)
     }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragLeftBodyWithHeartVideo()
         fragment.arguments = bundle
         return fragment
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(true)
+        RLScreenSet(true)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_left_body_heart_video, container) as RlFragLeftBodyHeartVideoBinding
@@ -69,8 +75,9 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         fragBinding.inlayTime.imgIcon.setImageResource(R.drawable.fd_active_time_green)
         fragBinding.inlayTime.txtName.setText(R.string.time)
         fragBinding.inlayTime.progressView2.visibility=View.GONE
+        RLtimerMain()
     }
-     fun RLUpdateVideoTime(rLformatTime: String) {
+    fun RLUpdateVideoTime(rLformatTime: String) {
          fragBinding.inlayTime.txtNumber.setText(rLformatTime)
     }
     private fun RLHeartRategetdata(){
@@ -87,12 +94,27 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
                     val data = intent.getStringExtra("EXTRA_DATA")
                     fragBinding.inlayHeartrate.txtNumber.setText(data)
                     fragBinding.inlayEffort.txtNumber.setText(data)
-
+                    heartRateNumber=RlGetValueInt(data.toString())
                 }
             }
         }
     }
-
+    private fun RlGetValueInt(value:String):Int{
+        if (value.isNullOrEmpty()){
+            return 0
+        }else if(value.toDouble() < 0) {
+            return 0
+        }else{
+            return value.toDouble().toInt()
+        }
+    }
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                heartRateList.add(heartRateNumber)
+            }
+        }
+    }
     override fun onStart() {
         super.onStart()
         RLHeartRategetdata()
@@ -112,6 +134,7 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
             Log.e(TAG,"Exception:- "+e.message)
         }
     }
+
 
 
 }

@@ -41,6 +41,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private lateinit var gestureDetectorright: GestureDetectorCompat
     private val handlerprogress = Handler(Looper.getMainLooper())
 
+    var heartRateList:MutableList<Int> = mutableListOf()
+
 
         private val binding by lazy {
             RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
@@ -53,7 +55,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(true)
+        RLScreenSet(true)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_heart_video_start, container) as RlFragBodyClassesHeartVideoStartBinding
@@ -101,6 +103,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private fun RLVideotimeset(time:String){
         val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
         firstFragment?.RLUpdateVideoTime(time)
+        heartRateList.addAll(firstFragment?.heartRateList!!)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
@@ -111,6 +114,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             // RLAdjustAspectRatio( fragBinding.videoView, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
             mediaPlayer.start()
             fragBinding.inlayPlayStop.layPlayStop.visibility=View.GONE
+
             RLVideotimeset(RLformatTime(fragBinding.videoView.duration))
             handlerprogress.post(RLupdateSeekBarRunnable)
         }
@@ -124,6 +128,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
+           // bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

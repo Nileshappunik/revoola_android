@@ -125,6 +125,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/tv_SessionTop">
             <RelativeLayout
+                android:id="@+id/swipeView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
@@ -165,6 +166,7 @@
                     android:nestedScrollingEnabled="false"
                     android:layout_below="@+id/webView"/>
 
+
             </RelativeLayout>
 
         </ScrollView>
@@ -180,11 +182,6 @@
             android:layout_marginBottom="@dimen/filter_margin_bottom"
             layout="@layout/rl_layout_filter_bottom_mrnu"/>
 
-        <View
-            android:id="@+id/swipeView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tv_SessionTop"
-            android:background="@null"/>
+
     </RelativeLayout>
 </layout>

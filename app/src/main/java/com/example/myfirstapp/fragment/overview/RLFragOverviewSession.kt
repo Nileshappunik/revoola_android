@@ -128,7 +128,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
         // Set the touch listener to the root view (or any full-screen view)
-        fragBinding.swipeView.setOnTouchListener { v, event ->
+        fragBinding.webView.setOnTouchListener { v, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+        fragBinding.recycleSession.setOnTouchListener { v, event ->
             gestureDetector.onTouchEvent(event)
             true
         }
@@ -444,12 +448,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         private val SWIPE_THRESHOLD = 100 // Minimum distance to detect swipe
         private val SWIPE_VELOCITY_THRESHOLD = 100 // Minimum velocity to detect swipe
 
-        override fun onFling(
-            e1: MotionEvent,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ): Boolean {
+        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             val diffX = e2.x.minus(e1.x) ?: 0.0f
             val diffY = e2.y.minus(e1.y) ?: 0.0f
 
@@ -470,7 +469,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
     }
-
     // Handle swipe right gesture
     private fun onSwipeRight() {
         // Transition to the next screen or perform an action
@@ -493,7 +491,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
     }
-
     // Handle swipe left gesture
     private fun onSwipeLeft() {
         // Transition to the previous screen or perform an action
