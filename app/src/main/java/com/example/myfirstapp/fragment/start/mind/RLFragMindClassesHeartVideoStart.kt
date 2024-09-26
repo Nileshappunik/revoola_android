@@ -44,6 +44,7 @@ import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
@@ -54,8 +55,12 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     var pauseStopVideoView:Boolean=true
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var gestureDetector: GestureDetectorCompat
+    private var totalTime:String =""
+    private val timerManager = RLTimerManager()
+    var heartRateList:MutableList<Int> = mutableListOf()
+    var heartRateNumber:Int=0
 
-    
+
     private val binding by lazy {
         RlFragMindClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
@@ -136,6 +141,9 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
+            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.HEARTSENSOR)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putString("totalTime",totalTime)
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -190,15 +198,55 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
                 count--
             }
             override fun onFinish() {
+                RLHeartRategetdata()
+                RLtimerMain()
                 fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
+    }
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                totalTime=(elapsedTime/1000).toString()
+                RlDataFillAllArray()
+            }
+        }
+    }
+    private fun RLHeartRategetdata(){
+        val filter = IntentFilter().apply {
+            addAction("ACTION_DATA_RETRIEVED_HEART")
+        }
+        requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
+
+    }
+    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                "ACTION_DATA_RETRIEVED_HEART" -> {
+                    val data = intent.getStringExtra("EXTRA_DATA")
+                    heartRateNumber=RlGetValueInt(data.toString())
+                }
+            }
+        }
+    }
+    private fun RlGetValueInt(value:String):Int{
+        if (value.isNullOrEmpty()){
+            return 0
+        }else if(value.toDouble() < 0) {
+            return 0
+        }else{
+            return value.toDouble().toInt()
+        }
+    }
+    private fun  RlDataFillAllArray(){
+        heartRateList.add(heartRateNumber)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         fragBinding.videoView.stopPlayback()
         try {
+            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -209,6 +257,8 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             Log.e(TAG,"Exception:- "+e.message)
         }
     }
+
+    //SWIPE LEFT RIGHT WITH ANIMATION SET
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams
         val viewWidth = videoView.width.toFloat()
@@ -227,7 +277,6 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
 
         videoView.layoutParams = layoutParams
     }
-
     private inner class SwipeGestureListener : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100
@@ -254,21 +303,18 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
 
     }
-
     private fun onSwipeRight() {
         /*fragBinding.inlayTime.relaySensorProgress.visibility=View.VISIBLE
         fragBinding.inlayRelaxed.relaySensorProgress.visibility=View.VISIBLE
         fragBinding.inlayRelaxation.relaySensorProgress.visibility=View.VISIBLE*/
         toggleVisibility(true)
     }
-
     private fun onSwipeLeft() {
         /*fragBinding.inlayTime.relaySensorProgress.visibility=View.GONE
         fragBinding.inlayRelaxed.relaySensorProgress.visibility=View.GONE
         fragBinding.inlayRelaxation.relaySensorProgress.visibility=View.GONE*/
         toggleVisibility(false)
     }
-
     private fun toggleVisibility(visible: Boolean) {
         val anim: Animation = if (visible) {
             AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)

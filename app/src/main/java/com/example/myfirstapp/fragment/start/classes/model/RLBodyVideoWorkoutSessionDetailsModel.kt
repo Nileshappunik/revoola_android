@@ -52,9 +52,6 @@ package com.example.myfirstapp.fragment.start.classes.model
     var visibilityflagforthatsession:Int=0//Done
 
 
-
-
-
     var zone1: ZoneNew = ZoneNew() //REV 0-30
     var zone2: ZoneNew = ZoneNew()
     var zone3: ZoneNew = ZoneNew()

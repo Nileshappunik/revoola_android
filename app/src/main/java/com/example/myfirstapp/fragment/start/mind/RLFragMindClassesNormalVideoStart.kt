@@ -27,6 +27,7 @@ import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
@@ -37,6 +38,10 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     var pauseStopVideoView:Boolean=true
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var gestureDetector: GestureDetectorCompat
+
+    private var totalTime:String =""
+    private val timerManager = RLTimerManager()
+    var heartRateList:MutableList<Int> = mutableListOf()
 
     private val binding by lazy {
         RlFragMindClassesNormalVideoStartBinding.inflate(layoutInflater)
@@ -103,6 +108,9 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
+            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.NOSENSOR)
+            bundle.putString("totalTime",totalTime)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -154,9 +162,23 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 count--
             }
             override fun onFinish() {
+                RLtimerMain()
                 fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
+    }
+
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                totalTime=(elapsedTime/1000).toString()
+                RlDataFillAllArray()
+            }
+        }
+    }
+
+    private fun  RlDataFillAllArray(){
+        heartRateList.add(0)
     }
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams

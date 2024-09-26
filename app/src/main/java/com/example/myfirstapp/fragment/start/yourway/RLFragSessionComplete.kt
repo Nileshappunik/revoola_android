@@ -178,9 +178,15 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.arrDistance= distanceList
         entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
         entryWorkoutSessionDetails.arrHr= heartRateList!!
+        entryWorkoutSessionDetails.arrCadence= climbedList!!
+//        entryWorkoutSessionDetails.arrCadence=
+//        entryWorkoutSessionDetails.arrCumElevation=
+//        entryWorkoutSessionDetails.arrElevation=
+//        entryWorkoutSessionDetails.arrPower=
+//        entryWorkoutSessionDetails.arrPowerFromDevice=
 
         //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.classType= yourWayType
         entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
@@ -189,10 +195,36 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
 
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
+//
+
+//        entryWorkoutSessionDetails.avgRevPercentage=
+//        entryWorkoutSessionDetails.classDate=
+//        entryWorkoutSessionDetails.classDescription=
+//        entryWorkoutSessionDetails.classImage=
+//        entryWorkoutSessionDetails.demsElevation=
+//        entryWorkoutSessionDetails.goal=
+//        entryWorkoutSessionDetails.isClass=false
+//        entryWorkoutSessionDetails.isPowerDeviceConnected=
+//        entryWorkoutSessionDetails.mapGeneratedUrl=
+//        entryWorkoutSessionDetails.maxRevPercentage=
+//        entryWorkoutSessionDetails.minRevPercentage=
+//        entryWorkoutSessionDetails.revPercentage=
+//        entryWorkoutSessionDetails.timestamp=
+//        entryWorkoutSessionDetails.totalElevation=
+//        entryWorkoutSessionDetails.totalPower=
+//        entryWorkoutSessionDetails.totalRev=
+//        entryWorkoutSessionDetails.typeOfGoal=
+
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
         entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
+//        entryWorkoutSessionDetails.zone1.seconds=
+//        entryWorkoutSessionDetails.zone1.totalRev=
 
         RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails)
     }
@@ -218,9 +250,15 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.arrSpeed= speedList
         entryWorkoutSessionDetails.arrDistance= distanceList
         entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
+        entryWorkoutSessionDetails.arrCadence= climbedList!!
+//        entryWorkoutSessionDetails.arrCadence=
+//        entryWorkoutSessionDetails.arrCumElevation=
+//        entryWorkoutSessionDetails.arrElevation=
+//        entryWorkoutSessionDetails.arrPower=
+//        entryWorkoutSessionDetails.arrPowerFromDevice=
 
         //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.classType= yourWayType
         entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
@@ -229,10 +267,36 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
 
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
+//
+
+//        entryWorkoutSessionDetails.avgRevPercentage=
+//        entryWorkoutSessionDetails.classDate=
+//        entryWorkoutSessionDetails.classDescription=
+//        entryWorkoutSessionDetails.classImage=
+//        entryWorkoutSessionDetails.demsElevation=
+//        entryWorkoutSessionDetails.goal=
+//        entryWorkoutSessionDetails.isClass=false
+//        entryWorkoutSessionDetails.isPowerDeviceConnected=
+//        entryWorkoutSessionDetails.mapGeneratedUrl=
+//        entryWorkoutSessionDetails.maxRevPercentage=
+//        entryWorkoutSessionDetails.minRevPercentage=
+//        entryWorkoutSessionDetails.revPercentage=
+//        entryWorkoutSessionDetails.timestamp=
+//        entryWorkoutSessionDetails.totalElevation=
+//        entryWorkoutSessionDetails.totalPower=
+//        entryWorkoutSessionDetails.totalRev=
+//        entryWorkoutSessionDetails.typeOfGoal=
+
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
         entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
+//        entryWorkoutSessionDetails.zone1.seconds=
+//        entryWorkoutSessionDetails.zone1.totalRev=
 
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails)
 
@@ -296,9 +360,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.arrSpeed= speedList
         entryWorkoutSessionDetails.arrDistance= distanceList
         entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
+//        entryWorkoutSessionDetails.arrCadence=
+//        entryWorkoutSessionDetails.arrCumElevation=
+//        entryWorkoutSessionDetails.arrElevation=
+//        entryWorkoutSessionDetails.arrPower=
+//        entryWorkoutSessionDetails.arrPowerFromDevice=
 
         //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.classType= yourWayType
         entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
@@ -307,10 +376,37 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
 
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
+//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
+//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
+//
+
+//        entryWorkoutSessionDetails.avgRevPercentage=
+//        entryWorkoutSessionDetails.classDate=
+//        entryWorkoutSessionDetails.classDescription=
+//        entryWorkoutSessionDetails.classImage=
+//        entryWorkoutSessionDetails.demsElevation=
+//        entryWorkoutSessionDetails.goal=
+//        entryWorkoutSessionDetails.isClass=false
+//        entryWorkoutSessionDetails.isPowerDeviceConnected=
+//        entryWorkoutSessionDetails.mapGeneratedUrl=
+//        entryWorkoutSessionDetails.maxRevPercentage=
+//        entryWorkoutSessionDetails.minRevPercentage=
+//        entryWorkoutSessionDetails.revPercentage=
+//        entryWorkoutSessionDetails.timestamp=
+//        entryWorkoutSessionDetails.totalElevation=
+//        entryWorkoutSessionDetails.totalPower=
+//        entryWorkoutSessionDetails.totalRev=
+//        entryWorkoutSessionDetails.typeOfGoal=
+
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
         entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
+//        entryWorkoutSessionDetails.zone1.seconds=
+//        entryWorkoutSessionDetails.zone1.totalRev=
+
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails)
     }
 

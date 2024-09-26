@@ -28,6 +28,7 @@ import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
@@ -38,6 +39,14 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     var pauseStopVideoView:Boolean=true
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var gestureDetector: GestureDetectorCompat
+
+    private var totalTime:String =""
+    private val timerManager = RLTimerManager()
+    var heartRateList:MutableList<Int> = mutableListOf()
+    private var distanceList:MutableList<Double> = mutableListOf()
+    private var climbedList:MutableList<Int> = mutableListOf()
+    private var speedList:MutableList<Double> = mutableListOf()
+    private var activeCaloriesList:MutableList<Double> = mutableListOf()
 
     private val binding by lazy {
         RlFragBodyClassesNormalVideoStartBinding.inflate(layoutInflater)
@@ -103,6 +112,13 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
+            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.NOSENSOR)
+            bundle.putString("totalTime",totalTime)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
+            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
+            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
+            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -165,9 +181,25 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
                 count--
             }
             override fun onFinish() {
+                RLtimerMain()
                 fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
+    }
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                totalTime=(elapsedTime/1000).toString()
+                RlDataFillAllArray()
+            }
+        }
+    }
+    private fun  RlDataFillAllArray(){
+        heartRateList.add(0)
+        distanceList.add(0.0)
+        climbedList.add(0)
+        speedList.add(0.0)
+        activeCaloriesList.add(0.0)
     }
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams

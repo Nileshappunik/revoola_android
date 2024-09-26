@@ -25,6 +25,7 @@ import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
@@ -32,19 +33,27 @@ import java.util.concurrent.TimeUnit
 class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     val TAG: String = RLFragBodyClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlFragBodyClassesHeartVideoStartBinding
+    var leftFragment: RLFragLeftBodyWithHeartVideo? =null
 
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
+
+    private var totalTime:String =""
+    private val timerManager = RLTimerManager()
 
     private lateinit var gestureDetectorleft: GestureDetectorCompat
     private lateinit var gestureDetectorright: GestureDetectorCompat
     private val handlerprogress = Handler(Looper.getMainLooper())
 
     var heartRateList:MutableList<Int> = mutableListOf()
+    private var distanceList:MutableList<Double> = mutableListOf()
+    private var climbedList:MutableList<Int> = mutableListOf()
+    private var speedList:MutableList<Double> = mutableListOf()
+    private var activeCaloriesList:MutableList<Double> = mutableListOf()
 
 
-        private val binding by lazy {
+    private val binding by lazy {
             RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
 
@@ -101,9 +110,10 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         RLVideoUISet(VideoCardData,data)
     }
     private fun RLVideotimeset(time:String){
-        val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
-        firstFragment?.RLUpdateVideoTime(time)
-        heartRateList.addAll(firstFragment?.heartRateList!!)
+       // val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
+        // firstFragment?.RLUpdateVideoTime(time)
+        leftFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
+        leftFragment?.RLUpdateVideoTime(time)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
@@ -128,7 +138,13 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
-           // bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.HEARTSENSOR)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
+            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
+            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
+            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
+            bundle.putString("totalTime",totalTime)
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -177,6 +193,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             fragBinding.inlayCountdown.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
         }
     }
+
+    //When First Open Then CountDown Set
     private fun RLstartCountdown() {
         var count = 5
         var countDownTimer: CountDownTimer = object : CountDownTimer(5000, 1000) { // Countdown from 5 seconds
@@ -185,10 +203,32 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
                 count--
             }
             override fun onFinish() {
+                RLtimerMain()
                 fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
     }
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                totalTime=(elapsedTime/1000).toString()
+                RlDataFillAllArray()
+            }
+        }
+    }
+    private fun  RlDataFillAllArray(){
+        if (leftFragment!=null){
+            heartRateList.addAll(leftFragment?.heartRateList!!)
+        }else{
+            heartRateList.add(0)
+            distanceList.add(0.0)
+            climbedList.add(0)
+            speedList.add(0.0)
+            activeCaloriesList.add(0.0)
+        }
+    }
+
+
     private val RLupdateSeekBarRunnable = object : Runnable {
         override fun run() {
             handlerprogress.postDelayed(this, 1000)
@@ -210,6 +250,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             Log.e(TAG,"Exception:- "+e.message)
         }
     }
+
+    //Animation set left Right Swipe
     private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100

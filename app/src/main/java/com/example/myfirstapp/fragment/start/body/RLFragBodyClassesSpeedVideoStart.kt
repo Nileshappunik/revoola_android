@@ -45,6 +45,7 @@ import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
@@ -54,6 +55,19 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
+
+    private var totalTime:String =""
+    private val timerManager = RLTimerManager()
+    private var heartRateList:MutableList<Int> = mutableListOf()
+    private var distanceList:MutableList<Double> = mutableListOf()
+    private var climbedList:MutableList<Int> = mutableListOf()
+    private var speedList:MutableList<Double> = mutableListOf()
+    private var activeCaloriesList:MutableList<Double> = mutableListOf()
+
+    private var distanceNumber:Double=0.0
+    private var climbedNumber:Int=0
+    private var activeCaloriesNumber:Double=0.0
+    private var speedNumber:Double=0.0
 
     private val handlerprogress = Handler(Looper.getMainLooper())
     private lateinit var gestureDetectorleft: GestureDetectorCompat
@@ -133,6 +147,14 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
+            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.SPEEDSENSOR)
+            bundle.putString("totalTime",totalTime)
+            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
+            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
+            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
+            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
+
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -191,10 +213,27 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
                 count--
             }
             override fun onFinish() {
+                RLtimerMain()
                 fragBinding.inlayCountdown.relayCountdown.visibility=View.GONE
             }
         }.start()
     }
+    fun RLtimerMain() {
+        timerManager.RLstart { elapsedTime ->
+            activity?.runOnUiThread {
+                totalTime=(elapsedTime/1000).toString()
+                RlDataFillAllArray()
+            }
+        }
+    }
+    private fun  RlDataFillAllArray(){
+        heartRateList.add(0)
+        distanceList.add(distanceNumber)
+        climbedList.add(climbedNumber)
+        speedList.add(speedNumber)
+        activeCaloriesList.add(activeCaloriesNumber)
+    }
+
 
     private fun RLGetSpeedDataBLEService() {
         val filter = IntentFilter().apply {
@@ -207,13 +246,43 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "ACTION_DATA_RETRIEVED" -> {
-                    val data = intent.getStringExtra("CADENCE")
-                    fragBinding.inlayCadence.txtNumber.setText(data)
+                    val SPEED = intent.getStringExtra("SPEED")
+                    val AvgSPEED = intent.getStringExtra("AvgSPEED")
+                    val DISTANCE = intent.getStringExtra("DISTANCE")
+                    val CADENCE = intent.getStringExtra("CADENCE")
+                    val CALORIES = intent.getStringExtra("CALORIES")
+
+                    distanceNumber=RlGetValueDouble(DISTANCE!!.toString())
+                    climbedNumber=RlGetValueInt(CADENCE!!.toString())
+                    speedNumber=RlGetValueDouble(SPEED!!.toString())
+                    activeCaloriesNumber=RlGetValueDouble(CALORIES!!.toString())
+
+                    var cadenceSetValue=RlGetValueInt(CADENCE!!.toString())
+                    if (cadenceSetValue>0){
+                        fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
+                    }
                 }
             }
         }
     }
-
+    private fun RlGetValueDouble(value:String):Double{
+        if (value.isNullOrEmpty()){
+            return 0.0
+        }else if(value.toDouble() < 0) {
+            return 0.0
+        }else{
+            return value.toDouble()
+        }
+    }
+    private fun RlGetValueInt(value:String):Int{
+        if (value.isNullOrEmpty()){
+            return 0
+        }else if(value.toDouble() < 0) {
+            return 0
+        }else{
+            return value.toDouble().toInt()
+        }
+    }
     override fun onStart() {
         super.onStart()
         // timerManager.resume()
