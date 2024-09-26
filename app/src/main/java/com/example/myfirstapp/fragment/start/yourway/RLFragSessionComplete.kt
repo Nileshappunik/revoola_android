@@ -400,6 +400,8 @@ class RLFragSessionComplete : RLBaseFragment(){
 //        entryWorkoutSessionDetails.totalRev=
 //        entryWorkoutSessionDetails.typeOfGoal=
 
+
+        
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
         entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
