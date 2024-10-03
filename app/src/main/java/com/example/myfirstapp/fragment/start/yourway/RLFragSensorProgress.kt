@@ -83,12 +83,6 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var maxxPaceNumber:Int=0
     private var totalTime:String =""
 
-
-
-    private val MET_WALKING = 3.8
-    private val MET_RUNNING = 7.5
-    private val userWeightKg = 70.0
-
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
         private const val REQUEST_ENABLE_BT = 1

@@ -59,11 +59,11 @@ class RLOverviewSessionListAdapter(val context: FragmentActivity?, val textColor
             }
 
             if (position % 2 == 0) {
-                // Even positionget
+                // Even positionGet
                 layoutBinding.viewEven.visibility=View.VISIBLE
                 layoutBinding.viewOdd.visibility=View.GONE
             } else {
-                // Odd position get
+                // Odd positionGet
                 layoutBinding.viewEven.visibility=View.GONE
                 layoutBinding.viewOdd.visibility=View.VISIBLE
             }

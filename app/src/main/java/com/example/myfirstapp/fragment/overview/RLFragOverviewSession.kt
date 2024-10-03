@@ -355,11 +355,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         adapterdata.RLsetList(dataList,isTextColorSetWhite)
     }
-    fun RLwebviewurlload(type:String){
+    private fun RLwebviewurlload(type:String){
         val imageUrl=RLConstants.BASE_URL+"getResponse_v2.php?q=overviewGraphChartHTML&RLuser=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type="+type
         fragBinding.webView.loadUrl(imageUrl)
     }
-    fun RLallactivitydialogopen() {
+    private fun RLallactivitydialogopen() {
         val  dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_allactivity)
@@ -390,7 +390,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
-    fun RLSelectBodyActivityDialogOpen() {
+    private fun RLSelectBodyActivityDialogOpen() {
         val  dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_allactivity)

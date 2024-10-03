@@ -94,7 +94,7 @@ data class RLSetgoaled_challengesSingle(var id:String, var type:String)
 data class RLFeedChallengesModel(var type: String, var text:RLFeedChallengesModelListData )
 data class RLFeedChallengesModelListData(var data:List<RLFeedChallengesModelData>)
 data class RLFeedChallengesModelData(var actualtotal:Double, var metric:String, var challenge_name:String,
-                                     var startdate:String, var enddate:String, var totaldays:Int, var totaltarget:Int, var userid:String,
+                                     var startdate:String, var enddate:String,  var timestamp:String,  var duration:String, var totaldays:Int, var totaltarget:Int, var userid:String,
                                      var username:String, var avatar:String, var first_name:String, var last_name:String, var full_name:String,
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
                                      var adminlastname:String, var adminfullname:String, var number_of_members:String, var challengeid:String,

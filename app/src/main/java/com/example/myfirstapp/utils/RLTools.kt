@@ -63,6 +63,7 @@ import kotlin.math.roundToInt
 
 import android.content.Context
 import android.net.NetworkCapabilities
+import com.example.myfirstapp.model.EffortZoneFeedModel
 
 
 object RLTools {
@@ -442,6 +443,73 @@ object RLTools {
         return returnValue
     }
 
+    fun RlVerifyFeedZoneName(REVPer: Double): EffortZoneFeedModel {
+        val roundedREVPer = REVPer.roundToInt()
+
+        return when {
+            roundedREVPer < 30 -> EffortZoneFeedModel(
+                efforZoneText = "CALM",
+                efforZoneBgrClr = "#FEF2F6",
+                efforZoneTxtClr = "#F177A0",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/nonactive.svg",
+                cloriesImage = "/assets/icon/svg/calories-calm.svg",
+                timeImage = "/assets/icon/svg/time/time-calm.svg"
+            )
+            roundedREVPer < 50 -> EffortZoneFeedModel(
+                efforZoneText = "WARM",
+                efforZoneBgrClr = "#FFFBEB",
+                efforZoneTxtClr = "#FFCF2F",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/warm.svg",
+                cloriesImage = "/assets/icon/svg/calories-warm.svg",
+                timeImage = "/assets/icon/svg/time/time-warm.svg"
+            )
+            roundedREVPer < 60 -> EffortZoneFeedModel(
+                efforZoneText = "CARDIO",
+                efforZoneBgrClr = "#ECF8ED",
+                efforZoneTxtClr = "#39B54A",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/cardio.svg",
+                cloriesImage = "/assets/icon/svg/calories-cardio.svg",
+                timeImage = "/assets/icon/svg/time/time-cardio.svg"
+            )
+            roundedREVPer < 70 -> EffortZoneFeedModel(
+                efforZoneText = "FAT BURN",
+                efforZoneBgrClr = "#E6F5FC",
+                efforZoneTxtClr = "#0099DA",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/fatburn.svg",
+                cloriesImage = "/assets/icon/svg/calories-fatburn.svg",
+                timeImage = "/assets/icon/svg/time/time-fatburn.svg"
+            )
+            roundedREVPer < 80 -> EffortZoneFeedModel(
+                efforZoneText = "ENDURANCE",
+                efforZoneBgrClr = "#FFF4ED",
+                efforZoneTxtClr = "#FE6902",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/endurance.svg",
+                cloriesImage = "/assets/icon/svg/calories-endurance.svg",
+                timeImage = "/assets/icon/svg/time/time-endurance.svg"
+            )
+            roundedREVPer < 90 -> EffortZoneFeedModel(
+                efforZoneText = "POWER",
+                efforZoneBgrClr = "#F8EDFB",
+                efforZoneTxtClr = "#9900CC",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/power.svg",
+                cloriesImage = "/assets/icon/svg/calories-power.svg",
+                timeImage = "/assets/icon/svg/time/time-power.svg"
+            )
+            roundedREVPer < 100 -> EffortZoneFeedModel(
+                efforZoneText = "PEEK",
+                efforZoneBgrClr = "#FEEDEC",
+                efforZoneTxtClr = "#ED4541",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/peak.svg",
+                cloriesImage = "/assets/icon/svg/calories-peak.svg",
+                timeImage = "/assets/icon/svg/time/time-peak.svg"
+            )
+            else -> EffortZoneFeedModel("", "", "", "", "", "")
+        }
+    }
+
+
+
+
     fun RLgetImage(typename:String): String {
         if (typename.isNullOrEmpty()){
             return  RLConstants.WALKIMAGE
@@ -781,10 +849,10 @@ object RLTools {
     fun RLconvertTimestampToDateTime(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
+
+                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at' HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
-                val dateall=dateTime.format(formatter)+" at "+dateTime.format(formatter2)
+                val dateall=dateTime.format(formatter)
                 return dateall
             }else{
                 return "0"
@@ -829,10 +897,10 @@ object RLTools {
     fun RLconvertTimestampToDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("EEE, MMM dd")
-                val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
+                val formatter = DateTimeFormatter.ofPattern("EEE, MMM dd '|' HH:mm")
+                //val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
-                val dateall=dateTime.format(formatter)+" | "+dateTime.format(formatter2)
+                val dateall=dateTime.format(formatter)//+" | "+dateTime.format(formatter2)
                 return dateall
             }else{
                 return "0"
@@ -1663,10 +1731,15 @@ object RLTools {
          </head>
          <body>
          <script>
-             let steps_so_far = '$steps_so_far'; //3364 number of steps taken
-             let target_steps = '$target_steps'; // 3333 total number of steps
-             let time_gone =' $time_gone'; //0 number of days passed away
-             let total_time = '$total_time'; //1total number of days for completing all steps
+//             let steps_so_far = '$steps_so_far'; //3364 number of steps taken
+//             let target_steps = '$target_steps'; // 3333 total number of steps
+//             let time_gone ='$time_gone'; //0 number of days passed away
+//             let total_time = '$total_time'; //1total number of days for completing all steps
+             
+               let steps_so_far = $steps_so_far; //3364 number of steps taken
+               let target_steps = $target_steps; // 3333 total number of steps
+               let time_gone =$time_gone; //0 number of days passed away
+               let total_time = $total_time; //1total number of days for completing all steps
              
              if(steps_so_far > target_steps) {
                  steps_so_far = target_steps;

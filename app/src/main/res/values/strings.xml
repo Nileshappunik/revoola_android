@@ -44,7 +44,7 @@
     <string name="effortsmall">Effort</string>
     <string name="climbed">Climbed</string>
     <string name="climbedm">CLIMBED (m)</string>
-    <string name="climbedft">CLIMBED(ft)</string>
+    <string name="climbedft">CLIMBED(FT)</string>
     <string name="mindfulminutes">MINDFUL MINUTES</string>
     <string name="session">SESSIONS</string>
     <string name="activetime">ACTIVE TIME</string>
@@ -282,9 +282,9 @@
     <string name="gpssatellitesfound">GPS(Satellites found)</string>
     <string name="inprogress">IN PROGRESS</string>
     <string name="cadencerpm">CADENCE(RPM)</string>
-    <string name="distancekm">DISTANCE(miles)</string>
+    <string name="distancekm">DISTANCE(MILES)</string>
     <string name="speedkmh">SPEED(KM/H)</string>
-    <string name="paceperkm">PACE(PER KM)</string>
+    <string name="paceperkm">PACE(PER MILES)</string>
     <string name="heartratebpm">HEART RATE(BPM)</string>
     <string name="avarageeffortsofar">AVERAGAE EFFORT SO FAR</string>
     <string name="avgeffortpersentage">AVG EFFORT %</string>

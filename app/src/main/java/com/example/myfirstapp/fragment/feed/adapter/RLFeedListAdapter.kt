@@ -1,6 +1,7 @@
 package com.example.myfirstapp.fragment.feed.adapter
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -114,7 +115,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                         RLthirdPartyTwoBodySet(cardData, layoutBinding)
                     }
                      else -> {// >10 Challenges
-                        RLthirdPartyTenBodySet(cardData, layoutBinding)
+                        RLthirdPartyTenBodySet(cardData, layoutBinding,position+1)
                     }
                 }
 
@@ -246,7 +247,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             RLshowEditDeleteDialog(cardData)
         }
     }
-    private fun RLthirdPartyTenBodySet(cardData: RLTextOverview,layoutBinding: RlLayoutFeedListBinding){
+    private fun RLthirdPartyTenBodySet(cardData: RLTextOverview,layoutBinding: RlLayoutFeedListBinding,pos:Int){
         layoutBinding.txtOrganizer.visibility=View.VISIBLE
         layoutBinding.txtOrganizerName.visibility=View.VISIBLE
         layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
@@ -271,19 +272,22 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
         layoutBinding.webViewChart.webViewClient = WebViewClient()
 
-        val totalDays = RLTools.RlconvertSecondsToDays(cardData.duration.toLong()).toString()
-        val metric =  RLTools.RLgetMetric(cardData.from_third_party_source,cardData)
-        val remainingDays = Math.round((System.currentTimeMillis() / 1000 - cardData.timestamp.toLong()) / 86400.0).toInt()
 
+        val metric =  RLTools.RLgetMetric(cardData.from_third_party_source,cardData)
         val stepsSoFar = if (metric.value ?: 0 > 0) metric.value ?: 0 else 0
         val targetSteps = if (cardData.goal.toDouble().toInt() ?: 0 > 0) cardData.goal.toDouble().toInt() ?: 0 else 0
 
-        var remainingDayss = remainingDays ?: 0
-        var timeGone = if (remainingDayss >0) remainingDayss else 0
-        val totalTime = if (totalDays.toInt() ?: 0 > 0) totalDays.toInt() ?: 0 else 0
+
+        val remainingDays = Math.round((System.currentTimeMillis() / 1000 - cardData.timestamp.toLong()) / 86400.0).toInt()?: 0
+        val timeGone = if (remainingDays >0) remainingDays else 0
+
+        val totalDays = (cardData.duration.toDouble().roundToInt() / 86400).toInt()
+        val totalTime = if (totalDays ?: 0 > 0) totalDays ?: 0 else 0
 
 
-        val htmlText=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
+        val htmlText= RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime)
+
+        //val htmlText=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
         layoutBinding.webViewChart.loadDataWithBaseURL(null,
             htmlText, "text/html", "UTF-8", null)
 
@@ -295,7 +299,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             if (daysremain>0){
                 layoutBinding.layTime.txtTimeNumber.setText(daysremain.toString()+" of "+totalDays.toString()+" Days")
             }else{
-                layoutBinding.layTime.txtTimeNumber.setText("0 of "+totalDays.toString()+" Days")
+                layoutBinding.layTime.txtTimeNumber.setText("${totalDays.toString()} of ${totalDays.toString()} Days")
             }
 
         }else{
@@ -306,7 +310,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             "effort"->{
                 layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
                 layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totalREV.toDouble()).toString())
 
             }
             "steps"->{
@@ -404,7 +408,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
     private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()).toString())
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()).toString())
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
@@ -428,10 +432,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
         }else{
 
+            val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText("CALM")
-            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
+            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+           // layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
 
 
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
@@ -447,7 +453,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
     private fun RLotherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()))
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
@@ -471,10 +477,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         }else{
+            val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText("BUNT CALLERIES")
-            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
+            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+            //layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
 
 
 
@@ -501,11 +509,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
 
-
+        val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
         layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText("FAT BURN")
-        layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
+        layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
+        layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+       // layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
 
         val cal=cardData.burntCalories.toDouble().toInt()
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
