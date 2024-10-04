@@ -8,6 +8,7 @@ import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
+import com.example.myfirstapp.model.RLOverviewGraphDataRequest
 import com.example.myfirstapp.model.RLOverviewGraphResponse
 import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
@@ -22,12 +23,16 @@ import com.example.myfirstapp.model.RLYourFriendsModel
 import com.example.myfirstapp.model.RLYourGroupModel
 import com.example.myfirstapp.model.RLrequestgroup_dataset
 import com.example.myfirstapp.utils.RLConstants
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
 interface RLNetworkService {
     @POST(RLConstants.URLALL)
     fun RLgetUserAggregatedData(@Body request: List<RLGetUserAggregatedDataRequest>): Call<RLOverViewModel>
+
+    @POST(RLConstants.URLALL)
+    fun RLgetOverviewGraph(@Body request: List<RLOverviewGraphDataRequest>): Call<RLOverviewGraphResponse>
 
     @POST(RLConstants.URLALL)
     fun RLgetUserFeedCardData(@Body request: List<RLSetoverview_thumbRequest>): Call<RLFeedModel>
@@ -46,17 +51,9 @@ interface RLNetworkService {
 
     @POST(RLConstants.URLALL)
     fun RLgoaled_challenges_Single(@Body request: List<RLSetgoaled_challenges_request_single>): Call<RLFeedChallengesModel>
- @POST(RLConstants.URLALL)
-    fun RLMetricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
 
-    @GET(RLConstants.URLALLV2)
-    fun RLgetOverviewGraph(
-        @Query("q") query: String,
-        @Query("user") user: String,
-        @Query("timestampfrom") timestampFrom: Long,
-        @Query("timestampto") timestampTo: Long,
-        @Query("classtype") classType: String
-    ): Call<RLOverviewGraphResponse>
+     @POST(RLConstants.URLALL)
+    fun RLMetricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
 
     @POST(RLConstants.URLALL)
     fun RLfriendsYouFollow(@Body request: List<RLSetsearch_userrequest>): Call<RLYourFriendsModel>

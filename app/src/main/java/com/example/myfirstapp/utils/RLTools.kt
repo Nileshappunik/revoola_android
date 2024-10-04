@@ -812,9 +812,7 @@ object RLTools {
     fun RLtransparentStatusBar(activity: Activity) {
         //status bar transparent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
             activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             activity.window.statusBarColor = Color.TRANSPARENT
@@ -1121,20 +1119,7 @@ object RLTools {
         activity.finish()
     }
 
-    fun RLshowSnackBar(activity: Activity, msg: String?, bgColor: Int, textColor: Int) {
-        val parent_view = activity.findViewById<View>(android.R.id.content)
-        val mSnackBar = Snackbar.make(parent_view, msg!!, Snackbar.LENGTH_SHORT)
-        val view = mSnackBar.view
-        val params = view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view.layoutParams = params
-        view.setBackgroundColor(bgColor)
-        val mainTextView =
-            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        mainTextView.setTextColor(textColor)
-        // view.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.slide_in))
-        mSnackBar.show()
-    }
+
 
     //for Device Id
     fun RLgetDeviceId(activity: Activity): String {
@@ -1167,7 +1152,7 @@ object RLTools {
          val formatter = NumberFormat.getInstance(Locale.getDefault())
          formatter.maximumFractionDigits = 2
          formatter.minimumFractionDigits = 0
-         return formatter.format(number)
+         return formatter.format(number?:0)
     }
 
     fun RLnumberToUUID(number: Int): UUID {

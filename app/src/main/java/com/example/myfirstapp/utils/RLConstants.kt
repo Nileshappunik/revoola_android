@@ -65,6 +65,8 @@ package com.example.myfirstapp.utils
         const val URLALLV2: String = "getResponse_v2.php"
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
 
+        const val friendsFab: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"
+
         const val PILATESIMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
         const val RIDEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
         const val RUNIMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"

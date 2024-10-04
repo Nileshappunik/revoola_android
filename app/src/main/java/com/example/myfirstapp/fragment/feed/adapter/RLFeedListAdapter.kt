@@ -453,13 +453,13 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
     private fun RLotherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()))
+        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()?:0))
         layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
 
         layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
         layoutBinding.layCalories.txtTime.setText(R.string.effort)
         if (cardData.totalREV.roundToInt()>0){
-            layoutBinding.layCalories.txtTimeNumber.setText(cardData.totalREV.roundToInt().toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(cardData.totalREV.roundToInt().toString()?:"0")
         }else{
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
@@ -469,12 +469,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()?:0.0))
 
 
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
-            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
+            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()?:0.0))
 
         }else{
             val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
@@ -488,7 +488,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.laySteps.txtTime.setText(R.string.calorie)
-            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()))
+            layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()?:0.0))
 
         }
 

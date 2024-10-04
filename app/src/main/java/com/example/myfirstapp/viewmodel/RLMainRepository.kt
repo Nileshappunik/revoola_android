@@ -8,6 +8,7 @@ import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
+import com.example.myfirstapp.model.RLOverviewGraphDataRequest
 import com.example.myfirstapp.model.RLOverviewGraphResponse
 import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
@@ -21,6 +22,7 @@ import com.example.myfirstapp.model.RLSetsearch_userrequest
 import com.example.myfirstapp.model.RLYourFriendsModel
 import com.example.myfirstapp.model.RLYourGroupModel
 import com.example.myfirstapp.model.RLrequestgroup_dataset
+import org.json.JSONObject
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -107,8 +109,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLgetOverviewGraph(q:String, user:String, timestampfrom:Long, timestampto:Long, classtype:String, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
-        apiService.RLgetOverviewGraph(q,user,timestampfrom,timestampto,classtype).enqueue(object : Callback<RLOverviewGraphResponse> {
+    fun RLgetOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
+        apiService.RLgetOverviewGraph(request).enqueue(object : Callback<RLOverviewGraphResponse> {
             override fun onResponse(call: Call<RLOverviewGraphResponse>, response: Response<RLOverviewGraphResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

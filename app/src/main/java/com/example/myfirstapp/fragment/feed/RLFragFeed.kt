@@ -38,6 +38,7 @@ import com.example.myfirstapp.model.RLSetoverview_thumbRequest_you
 import com.example.myfirstapp.model.RLSetoverview_thumb_you
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.loadSvg
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
 import com.example.myfirstapp.viewmodel.RLMainViewModelFactory
@@ -126,8 +127,8 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         /*  fragBinding.imgPlus.setOnClickListener{
             (context as RLMainActivityRL.RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
         }*/
-        fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_friends)
-        fragBinding.inlayFilter.ivLayoutFilter.setOnClickListener {
+        fragBinding.inlayFilter.loadSvg(RLConstants.friendsFab)
+        fragBinding.inlayFilter.setOnClickListener {
            when(currentState){
                "CHALLENGES"->{(context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)}
                "FRIENDS"->{(context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)}
@@ -350,8 +351,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 currentState="FRIENDS"
                 fragBinding.relayGroupname.visibility=View.GONE
                 fragBinding.relayListview.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivLayoutFilter.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_friends)
                 clickyou=false
                 RlGroupNameSetTitle("GROUPS",false)
                 RLfirsttimeApiCall(GroupId)
@@ -360,8 +359,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 currentState="GROUPS"
                 fragBinding.relayGroupname.visibility=View.VISIBLE
                 fragBinding.relayListview.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivLayoutFilter.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_groups)
                 clickyou=false
                 RlGroupNameSetTitle("123",true)
                 fragBinding.relayGroupname.setOnClickListener {
@@ -373,7 +370,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 currentState="YOU"
                 fragBinding.relayGroupname.visibility=View.GONE
                 fragBinding.relayListview.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivLayoutFilter.visibility=View.GONE
                 clickyou=true
                 RlGroupNameSetTitle("GROUPS",false)
                 if (RLApiClientRetrofit.RLisConnected()) {
@@ -392,8 +388,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             }
             "CHALLENGES"-> {
                 currentState="CHALLENGES"
-                fragBinding.inlayFilter.ivLayoutFilter.visibility=View.VISIBLE
-                fragBinding.inlayFilter.ivFilter.setImageResource(R.drawable.ic_award)
                 RlGroupNameSetTitle("GROUPS",false)
                 RLChallengesUISet()
             }

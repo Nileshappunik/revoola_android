@@ -38,12 +38,14 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
         fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
+       // RLonBackPresAct(fragBinding.toolbar.ivBack)
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
+        fragBinding.toolbar.ivBack.setOnClickListener { RLcloseFragment()
+            RLBottomHideShowSet(true)}
         // Check if the app has permission to read contacts
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             // Request the permission

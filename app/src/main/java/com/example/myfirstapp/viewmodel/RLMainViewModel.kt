@@ -8,6 +8,7 @@ import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLGroupModel
 import com.example.myfirstapp.model.RLNotificationModel
 import com.example.myfirstapp.model.RLOverViewModel
+import com.example.myfirstapp.model.RLOverviewGraphDataRequest
 import com.example.myfirstapp.model.RLOverviewGraphResponse
 import com.example.myfirstapp.model.RLSetGroupMemberRequest
 import com.example.myfirstapp.model.RLSetGroupRequest
@@ -41,8 +42,8 @@ class RLMainViewModel(val mainRepository:RLMainRepository): ViewModel() {
     fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
         mainRepository.RLGroupMembers(request, callback)
     }
-    fun RLgetOverviewGraph(q:String, user:String, timestampfrom:Long, timestampto:Long, classtype:String, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
-        mainRepository.RLgetOverviewGraph(q,user,timestampfrom,timestampto,classtype, callback)
+    fun RLgetOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
+        mainRepository.RLgetOverviewGraph(request, callback)
     }
 
     fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {

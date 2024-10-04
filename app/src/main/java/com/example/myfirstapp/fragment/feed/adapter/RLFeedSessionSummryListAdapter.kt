@@ -1,5 +1,6 @@
 package com.example.myfirstapp.fragment.feed.adapter
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.myfirstapp.enumclass.RLTypeOfMetrics
 import com.example.myfirstapp.fragment.feed.RLFragFeedCardLikeCommentView
 import com.example.myfirstapp.model.RLTextOverview
 import com.example.myfirstapp.utils.RLConstants
+import com.example.myfirstapp.utils.RLTools
 
 
 class RLFeedSessionSummryListAdapter(
@@ -49,7 +51,9 @@ class RLFeedSessionSummryListAdapter(
             layoutBinding.imgsessionimage.setImageResource(typeOfMetric.image)
             layoutBinding.txtNumber.setText(metricData.value)
             if (typeOfMetric.title.equals("EFFORT ZONE")){
-                layoutBinding.txtNumber.setTextColor(context!!.resources.getColor(R.color.AppZone1Color))
+                val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+                layoutBinding.txtNumber.setText(ZoneTextData.efforZoneText)
+                layoutBinding.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
             }
             if (typeOfMetric.showright){
                 layoutBinding.imgright.visibility=View.VISIBLE

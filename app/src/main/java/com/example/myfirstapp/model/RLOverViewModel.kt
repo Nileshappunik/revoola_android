@@ -24,4 +24,7 @@ data class RLAggregated(
     val steps: Int,
     val distance: Double)
 
+data class RLOverviewGraphDataRequest(val overview_graph: RLOverview_graphData)
+
+data class RLOverview_graphData(val user: String, val timestampfrom: Int, val timestampto: Int, val classtype: String,val fromthirdparty:String)
 

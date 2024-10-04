@@ -23,9 +23,8 @@
                 android:id="@+id/relay_OverviewName"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:visibility="gone"
-                android:background="@color/AppNEWBGColor"
-                android:gravity="bottom">
+                android:visibility="visible"
+                android:background="@color/AppNEWBGColor">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_user"
                     android:layout_width="30dp"
@@ -69,7 +68,9 @@
                     android:orientation="horizontal"
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
+                    android:gravity="bottom"
                     android:layout_below="@+id/txt_goodtoseeyou"
+                    android:layout_above="@+id/activityView"
                     android:weightSum="2">
                     <TextView
                         android:id="@+id/txt_youractivity"
@@ -96,11 +97,12 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/activityView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="15dp"
-                    android:layout_below="@+id/lay_youractivity"
+                    android:layout_alignParentBottom="true"
                     android:weightSum="2">
                     <View
                         android:id="@+id/view_even"
