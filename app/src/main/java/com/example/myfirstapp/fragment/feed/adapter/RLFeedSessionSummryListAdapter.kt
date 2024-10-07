@@ -72,20 +72,18 @@ class RLFeedSessionSummryListAdapter(
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     bundle.putString(RLConstants.TYPE, passstring)
                     (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
-
                 }
             }
             if (position % 2 == 0) {
-                // Even positionget
+                //Even position get
                 layoutBinding.viewEven.visibility=View.VISIBLE
                 layoutBinding.viewOdd.visibility=View.GONE
             } else {
-                // Odd position get
+                //Odd position get
                 layoutBinding.viewEven.visibility=View.GONE
                 layoutBinding.viewOdd.visibility=View.VISIBLE
             }
         }
     }
-
 
 }

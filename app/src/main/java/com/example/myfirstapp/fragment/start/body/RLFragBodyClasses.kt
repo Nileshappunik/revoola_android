@@ -115,7 +115,6 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         dialogMainBinding.cardTakenbyme.txtCardTitle.setText(R.string.takenbyme)
         dialogMainBinding.cardClasstype.txtCardTitle.setText(R.string.classtype)
 
-
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
         }

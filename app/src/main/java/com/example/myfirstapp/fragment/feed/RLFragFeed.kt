@@ -348,6 +348,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     override fun onItemClick(position: Int) {
         when(valueslist[position]){
             "FRIENDS"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
                 currentState="FRIENDS"
                 fragBinding.relayGroupname.visibility=View.GONE
                 fragBinding.relayListview.visibility=View.VISIBLE
@@ -356,6 +357,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLfirsttimeApiCall(GroupId)
             }
             "GROUPS"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
                 currentState="GROUPS"
                 fragBinding.relayGroupname.visibility=View.VISIBLE
                 fragBinding.relayListview.visibility=View.VISIBLE
@@ -367,6 +369,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 RLgroupAPiCall()
             }
             "YOU"-> {
+                fragBinding.inlayFilter.visibility=View.GONE
                 currentState="YOU"
                 fragBinding.relayGroupname.visibility=View.GONE
                 fragBinding.relayListview.visibility=View.VISIBLE
@@ -387,6 +390,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 }
             }
             "CHALLENGES"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
                 currentState="CHALLENGES"
                 RlGroupNameSetTitle("GROUPS",false)
                 RLChallengesUISet()
