@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver
 import android.view.Window
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -28,6 +29,7 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionListAdapter
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.example.myfirstapp.api.RLApiClientRet
+import com.example.myfirstapp.databinding.RlFilterOverviewBinding
 import com.example.myfirstapp.databinding.RlFragOverviewBinding
 import com.example.myfirstapp.databinding.RlFragOverviewSessionsBinding
 import com.example.myfirstapp.fragment.overview.adapter.RLAllDialogListAdapter
@@ -135,7 +137,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             RLshowDialogFullscreen()
         }
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
-            RLallactivitydialogopen()
+           // RLallactivitydialogopen()
+            RLFilterdialogopen()
         }
 
         // Set the touch listener to the root view (or any full-screen view)
@@ -149,6 +152,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onItemClick(position: Int) {
         swipePosition=position
         fragBinding.txtTotalsession.setText(valueslist[position])
@@ -209,6 +213,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun RLHandleApiResponse(carddate: RlOverviewGraphData, valueType:String) {
         val dataList= mutableListOf<RLSessionitemset>()
         var isTextColorSetWhite=false
@@ -486,6 +491,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         private val SWIPE_THRESHOLD = 100 // Minimum distance to detect swipe
         private val SWIPE_VELOCITY_THRESHOLD = 100 // Minimum velocity to detect swipe
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             val diffX = e2.x.minus(e1.x) ?: 0.0f
             val diffY = e2.y.minus(e1.y) ?: 0.0f
@@ -508,6 +514,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
     }
     // Handle swipe right gesture
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun onSwipeRight() {
         // Transition to the next screen or perform an action
         // Example: You could load another fragment or activity
@@ -530,6 +537,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
     }
     // Handle swipe left gesture
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun onSwipeLeft() {
         // Transition to the previous screen or perform an action
         println("Swiped left!")
@@ -548,5 +556,47 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             println("Exception:- ${e.message}")
         }
 
+    }
+
+    private fun RLFilterdialogopen() {
+        var isExpande:Boolean=false
+        val  dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        //dialog.setContentView(R.layout.rl_filter_overview)
+        val binding = RlFilterOverviewBinding.inflate(layoutInflater)
+        dialog.setContentView(binding.root)
+
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+       binding.inlayThisMonth.BoxTextFirst.setText("THIS")
+       binding.inlayThisMonth.BoxTextSecond.setText("MONTH")
+
+        binding.inlayLast3Month.BoxTextFirst.setText("LAST 3")
+        binding.inlayLast3Month.BoxTextSecond.setText("MONTHS")
+
+        binding.inlayLast6Month.BoxTextFirst.setText("LAST 6")
+        binding.inlayLast6Month.BoxTextSecond.setText("MONTHs")
+
+        binding.inlayThisYear.BoxTextFirst.setText("THIS")
+        binding.inlayThisYear.BoxTextSecond.setText("YEAR")
+
+
+        binding.layoutPeriod.setOnClickListener{
+            if (isExpande){
+                isExpande=false
+                binding.PERIODLAYOUT.visibility=View.VISIBLE
+            }else{
+                isExpande=true
+                binding.PERIODLAYOUT.visibility=View.GONE
+            }
+
+
+        }
+
+        binding.tvClose.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 }

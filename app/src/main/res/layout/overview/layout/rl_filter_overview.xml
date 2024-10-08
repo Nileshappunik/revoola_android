@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppWhiteColor">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:text="@string/filters"
+            android:fontFamily="@font/omnes_semibold_regular"
+            android:textColor="@color/AppBlackColor"/>
+
+        <ImageView
+            android:id="@+id/tv_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_arrow_back_ios"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tv_title"
+            android:layout_above="@+id/btnShowResults"
+            android:layout_marginTop="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/layoutPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/rl_filter_border_overview">
+                    <TextView
+                        android:id="@+id/TxtPeriod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:textColor="@color/AppBlackColor"
+                        android:text="@string/period"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="15dp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/AppMainColor"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/thismonth"/>
+                    <LinearLayout
+                        android:id="@+id/PERIODLAYOUT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/TxtPeriod"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+                            <include
+                                android:id="@+id/inlayThisMonth"
+                                android:layout_width="0dp"
+                                android:layout_height="60dp"
+                                android:layout_weight="1"
+                                android:layout_margin="10dp"
+                                layout="@layout/rl_common_filter_overview"/>
+
+                            <include
+                                android:id="@+id/inlayLast3Month"
+                                android:layout_width="0dp"
+                                android:layout_height="60dp"
+                                android:layout_weight="1"
+                                android:layout_margin="10dp"
+                                layout="@layout/rl_common_filter_overview"/>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+                            <include
+                                android:id="@+id/inlayLast6Month"
+                                android:layout_width="0dp"
+                                android:layout_height="60dp"
+                                android:layout_weight="1"
+                                android:layout_margin="10dp"
+                                layout="@layout/rl_common_filter_overview"/>
+
+                            <include
+                                android:id="@+id/inlayThisYear"
+                                android:layout_width="0dp"
+                                android:layout_height="60dp"
+                                android:layout_weight="1"
+                                android:layout_margin="10dp"
+                                layout="@layout/rl_common_filter_overview"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/layoutActivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="50dp"
+                    android:layout_below="@+id/layoutPeriod"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/rl_filter_border_overview">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="15dp"
+                        android:textColor="@color/AppBlackColor"
+                        android:text="@string/activity"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="15dp"
+                        android:textColor="@color/AppMainColor"
+                        android:layout_alignParentEnd="true"
+                        android:text="@string/multi"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/btnShowResults"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:backgroundTint="@color/AppMainColor"
+            android:background="@drawable/full_round"
+            android:gravity="center"
+            android:text="@string/showresults"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="16sp"
+            android:textColor="@color/AppWhiteColor"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"/>
+
+    </RelativeLayout>
+</layout>
+
+

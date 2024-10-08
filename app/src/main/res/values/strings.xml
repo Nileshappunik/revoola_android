@@ -454,6 +454,10 @@
     <string name="groupdetails">Group Details</string>
     <string name="assumedrelaxation">ASSUMED RELAXATIONS</string>
     <string name="stadinghour">STANDING HOURS</string>
+    <string name="period">PERIOD</string>
+    <string name="activity">ACTIVITY</string>
+    <string name="multi">MULTI</string>
+    <string name="showresults">SHOW RESULTS</string>
 
 
 </resources>

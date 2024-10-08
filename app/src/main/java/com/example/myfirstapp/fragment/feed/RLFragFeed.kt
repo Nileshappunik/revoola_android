@@ -262,8 +262,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.rl_dailog_group_name)
         dialog.setCancelable(true)
-        dialog.window?.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
 
         val recyclerSelectAssign = dialog.findViewById(R.id.listItems) as RecyclerView
         val btClear: TextView = dialog.findViewById(R.id.txtx_cancle)
