@@ -119,7 +119,9 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                 when (exception) {
                     is FirebaseAuthInvalidUserException -> {
                         // Handle case where user does not exist
-                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
+                        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_email,emailID)
+                        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_password,password)
+                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java))//.putExtra("EmailId",emailID).putExtra("Password",password))
                         finish()
                         Log.e(TAG, "User does not exist: ${exception.message}")
                     }

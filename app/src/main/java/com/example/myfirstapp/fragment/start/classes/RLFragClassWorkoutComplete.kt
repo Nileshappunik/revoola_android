@@ -213,8 +213,6 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.duration=videoCardData.duration
 
 
-
-
         RLMindNoAndSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails)
     }
     //Body Video with Speed sensor or Without Sensor

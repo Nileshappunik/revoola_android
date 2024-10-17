@@ -31,6 +31,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.example.myfirstapp.BuildConfig
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databasefirebase.RLAuthManager
@@ -41,10 +42,15 @@ import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlDialogHelpSigninBinding
 import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.utils.RLConstants
+import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener   {
@@ -66,6 +72,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     var displayweight:String=""
     var heightUnit:String=""
     var weightUnit:String=""
+    var  userId=""
     lateinit var  authManager:RLAuthManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +89,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         //Read DataBase
         val databaseManager:RLDatabaseManagerRead= RLDatabaseManagerRead()
         authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
+         userId = authManager.RlgetCurrentUser()!!.uid
         databaseManager.RLREVOOLAUSERFORSEARCHREADDATE(userId){ data, error ->
             if (data != null) {
                 val gson = Gson()
@@ -470,8 +477,13 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         return true
     }
     private fun RLRevoolaUserSettingWrite() {
+        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
        val databaseManager = RLDatabaseManagerWrite()
         val userId =authManager.RlgetCurrentUser()!!.uid
+        val myAge=RLTools.RLCalculateAge(DateTime)?:0
+        val versionName:String = BuildConfig.VERSION_NAME?:"0"
+
+
         val currentSubscriptionMap = hashMapOf(
             "validDaysMonth" to 0,
             "inviteUserSubsModel" to "0",
@@ -491,16 +503,17 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "subscriptionName" to "Trial-Premium",
             "inviteUserType" to "NormalUser",
             "plan" to "",
-            "timestamp" to 1718872384,
-            "validDays" to 14,)
+            "timestamp" to currentTimestamp,
+            "validDays" to 14)
 
         val revoolaUserSettingsMap = hashMapOf(
             "FCMToken" to tokenFCM,
-            "RFMHR" to 176,
-            "TMHR" to 176,
+            "RFMHR" to 220-myAge,
+            "TMHR" to 220-myAge,
+            "AMHR" to 220-myAge,
             "emailId" to emailId,
             "appUnit" to "Imperial",
-            "currentGroup" to "premium",
+            "currentGroup" to "freemium",
             "displayImage" to chooseimagefile,
             "displayName" to nickName,
             "dob" to DateTime,
@@ -511,10 +524,14 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "height" to displayheight,
             "heightUnit" to heightUnit,
             "isBasicDataAdded" to true,
-            "joiningDate" to 1718872384,
-            "lastLogin" to 1718872633,
+            "joiningDate" to 1718872384,//first time user create then date
+            "lastHRChange" to 0,
+            " lastHRChange90" to 0,
+            " lastHRUsed" to 0,
+            "lastLogin" to currentTimestamp,
             "lastName" to lastName,
-            "lastVersion" to "2.215",
+            "gender" to selectedGender,
+            "lastVersion" to versionName,//current app version
             "leaderBoardImage" to chooseimagefile,
             "currentSubscription" to currentSubscriptionMap,
             "location" to "United Kingdom",
@@ -537,6 +554,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             }
         }
     }
+
     private fun RLopencameragallerydialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
         AlertDialog.Builder(activity)
@@ -590,16 +608,29 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     private fun RluploadImage(filePath:Uri) {
         if (filePath != null) {
-            val ref = FirebaseStorage.getInstance().reference.child("images/" + UUID.randomUUID().toString())
-            val uploadTask = ref.putFile(filePath!!)
-            uploadTask.addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener { uri ->
+            val leaderboardPath = userId+"leaderboard.png"
+            val mainPath = userId+"main.png"
+
+            val leaderboardref = FirebaseStorage.getInstance().reference.child(leaderboardPath)
+            val uploadleaderboard = leaderboardref.putFile(filePath)
+            uploadleaderboard.addOnSuccessListener {
+                leaderboardref.downloadUrl.addOnSuccessListener { uri ->
                     chooseimagefile = uri.toString()
                     RLvalidation()
-                    Log.d(TAG,"imageUrl:- $chooseimagefile")
+                    Log.d(TAG,"imageUrl leaderboardPath:- $chooseimagefile")
                 }
             }.addOnFailureListener {
                RLopentoast("Failed to upload image")
+            }
+
+            val mainPathref = FirebaseStorage.getInstance().reference.child(mainPath)
+            val uploadmainPath= mainPathref.putFile(filePath)
+            uploadmainPath.addOnSuccessListener {
+                mainPathref.downloadUrl.addOnSuccessListener { uri ->
+                    Log.d(TAG,"imageUrl mainPath:- $chooseimagefile")
+                }
+            }.addOnFailureListener {
+                RLopentoast("Failed to upload image")
             }
         }
     }

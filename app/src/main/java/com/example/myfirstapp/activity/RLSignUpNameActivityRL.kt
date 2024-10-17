@@ -22,6 +22,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     var nickName: String = ""
     var emailID: String = ""
     var password: String = ""
+    var IsNewUser: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         RLScreenSet(false)
         super.onCreate(savedInstanceState)
@@ -33,10 +34,20 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.toolbarLogin.tvTitle.setText(R.string.basicdetails)
 
-        emailID= intent.getStringExtra("EmailId").toString()
-        password= intent.getStringExtra("Password").toString()
+        emailID= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.login_email,"")
+        password= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.login_password,"")
+
+        IsNewUser=intent.getBooleanExtra("IsNewUser",false)
+      //  emailID= intent.getStringExtra("EmailId").toString()
+      //  password= intent.getStringExtra("Password").toString()
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            RlupdateUserDetails()
+            if (IsNewUser){
+                RlupdateUserDetails()
+            }else{
+                val  userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
+                RlLoginSuccessful(userId)
+            }
+
         })
 
         activityBinding.etfirstname.addTextChangedListener(object : TextWatcher {
@@ -78,13 +89,13 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
 
     }
     fun RlupdateUserDetails() {
-          val authManager: RLAuthManager =RLAuthManager()
-           databaseManager =RLDatabaseManagerWrite()
+        val authManager: RLAuthManager =RLAuthManager()
+        databaseManager =RLDatabaseManagerWrite()
         authManager.RLRegisterUser(emailID, password) { user, error ->
             if (user != null) {
                 val userId = user.uid
                 RLLiveUserEmailWrite(userId)
-            } else {
+            }else {
                 RLopentoast("Registration failed: ${error?.message}")
             }
         }

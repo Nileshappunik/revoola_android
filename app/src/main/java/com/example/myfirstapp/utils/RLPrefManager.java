@@ -18,6 +18,9 @@ public class RLPrefManager {
     public static String last_device_connect = "LastDeviceConnect";
     public static String last_device_connect_type = "LastDeviceConnectType";
 
+    public static String login_email = "loginEmail";
+    public static String login_password = "loginPassword";
+
     public static String change_device_name = "ChangeDeviceName";
     public static String last_device_connect_name = "LastDeviceConnectName";
     public static String current_user = "current_user";

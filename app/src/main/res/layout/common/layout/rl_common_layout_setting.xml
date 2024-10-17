@@ -37,7 +37,6 @@
             android:layout_marginEnd="5dp"
             android:layout_toEndOf="@+id/txtusertitle"
             android:layout_toStartOf="@+id/img_edit"
-            android:text="@string/hidhruv"
             android:fontFamily="@font/omnes_semibold_regular"
             android:textColor="@color/AppBlackColor"
             android:textSize="16sp"/>

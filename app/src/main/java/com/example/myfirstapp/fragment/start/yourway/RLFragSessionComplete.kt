@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.util.UUID
+import kotlin.math.roundToInt
 
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
@@ -194,6 +195,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
+        entryWorkoutSessionDetails.totalPower=0
+        entryWorkoutSessionDetails.maxRevPercentage=0
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.goal=""
+        entryWorkoutSessionDetails.classImage=""
 
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
@@ -202,20 +211,12 @@ class RLFragSessionComplete : RLBaseFragment(){
 //
 
 //        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDate=
 //        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.classImage=
 //        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.goal=
-//        entryWorkoutSessionDetails.isClass=false
-//        entryWorkoutSessionDetails.isPowerDeviceConnected=
 //        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.maxRevPercentage=
 //        entryWorkoutSessionDetails.minRevPercentage=
 //        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.timestamp=
 //        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalPower=
 //        entryWorkoutSessionDetails.totalRev=
 //        entryWorkoutSessionDetails.typeOfGoal=
 
@@ -266,28 +267,27 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
+        entryWorkoutSessionDetails.totalPower=0
+        entryWorkoutSessionDetails.maxRevPercentage=0
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.goal=""
+        entryWorkoutSessionDetails.classImage=""
 
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
 //        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
 //        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
-//
 
 //        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDate=
 //        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.classImage=
 //        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.goal=
-//        entryWorkoutSessionDetails.isClass=false
-//        entryWorkoutSessionDetails.isPowerDeviceConnected=
 //        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.maxRevPercentage=
 //        entryWorkoutSessionDetails.minRevPercentage=
 //        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.timestamp=
 //        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalPower=
 //        entryWorkoutSessionDetails.totalRev=
 //        entryWorkoutSessionDetails.typeOfGoal=
 
@@ -375,6 +375,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
         entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
+        entryWorkoutSessionDetails.totalPower=0
+        entryWorkoutSessionDetails.maxRevPercentage=0
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.goal=""
+        entryWorkoutSessionDetails.classImage=""
 
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
 //        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
@@ -383,25 +391,15 @@ class RLFragSessionComplete : RLBaseFragment(){
 //
 
 //        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDate=
 //        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.classImage=
 //        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.goal=
-//        entryWorkoutSessionDetails.isClass=false
-//        entryWorkoutSessionDetails.isPowerDeviceConnected=
 //        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.maxRevPercentage=
 //        entryWorkoutSessionDetails.minRevPercentage=
 //        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.timestamp=
 //        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalPower=
 //        entryWorkoutSessionDetails.totalRev=
 //        entryWorkoutSessionDetails.typeOfGoal=
 
-
-        
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
         entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
@@ -410,6 +408,8 @@ class RLFragSessionComplete : RLBaseFragment(){
 //        entryWorkoutSessionDetails.zone1.totalRev=
 
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails)
+
+
     }
 
     private fun RLShareMapHide(isVisible:Boolean){
@@ -458,6 +458,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
+    //SELECTED IMAGE SENT TO SERVER
     private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
         val storageReference = FirebaseStorage.getInstance().reference
         val databaseReference = FirebaseDatabase.getInstance().reference.child("live")
@@ -511,7 +512,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.e("FirebaseStorage", "Image upload failed", e)
             }
     }
-
     private fun RLRevoolaUserSessionSummaryData(entry: RLWorkoutSessionSummaryModel) {
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
@@ -529,7 +529,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                 }
         }
     }
-
     private fun RLRevoolaUserSessionDetailData(entry: RLWorkoutSessionDetailsModel) {
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
@@ -549,7 +548,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
 
     private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+       // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
             databaseRef.child(it).setValue(entry)
@@ -599,5 +599,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                 }
         }
     }
+
 
 }

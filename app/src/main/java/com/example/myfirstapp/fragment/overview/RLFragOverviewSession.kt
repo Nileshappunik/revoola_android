@@ -16,6 +16,7 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
@@ -23,12 +24,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionListAdapter
 import com.example.myfirstapp.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.example.myfirstapp.api.RLApiClientRet
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFilterOverviewBinding
 import com.example.myfirstapp.databinding.RlFragOverviewBinding
 import com.example.myfirstapp.databinding.RlFragOverviewSessionsBinding
@@ -38,6 +42,7 @@ import com.example.myfirstapp.model.RLGetUserAggregatedData
 import com.example.myfirstapp.model.RLGetUserAggregatedDataRequest
 import com.example.myfirstapp.model.RLOverviewGraphDataRequest
 import com.example.myfirstapp.model.RLOverview_graphData
+import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.model.RLSessionitemset
 import com.example.myfirstapp.model.RlOverviewGraphData
 import com.example.myfirstapp.utils.RLConstants
@@ -150,8 +155,26 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             gestureDetector.onTouchEvent(event)
             true
         }
-
+        //FIREBASE TO GET NICKNAME AND DISPLAY
+        RLSetUsernameToFirebase()
     }
+
+   private fun RLSetUsernameToFirebase(){
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()!!.uid
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        databaseManager.RLREVOOLAUSERFORSEARCHREADDATE(userId){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val  userData = gson.fromJson(jsonObject, RLRevoolaSearchUserModel::class.java)
+                fragBinding.txtUsername.setText("Hi,${ userData.name}")
+                Glide.with(requireContext()).load(userData.displayImage)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
+            }
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onItemClick(position: Int) {
         swipePosition=position

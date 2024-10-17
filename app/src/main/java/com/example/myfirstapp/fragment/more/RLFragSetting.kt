@@ -32,11 +32,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.bumptech.glide.Glide
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.*
+import com.example.myfirstapp.model.RLRevoolaSearchUserModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
+import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -60,7 +66,6 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     var Day: String = ""
     var DateTime: String = ""
 
-    
     private val binding by lazy {
         RlFragSettingBinding.inflate(layoutInflater)
     }
@@ -77,8 +82,39 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
+        //Firebase To Fetch UserData
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()!!.uid
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        databaseManager.RlreadData(path){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                fragBinding.layFirstname.txtUsername.setText(userData.firstName)
+                fragBinding.laySurname.txtUsername.setText(userData.lastName)
+                fragBinding.layNickname.txtUsername.setText(userData.displayName)
+                Glide.with(requireContext()).load(userData.displayImage)
+                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.layAvatar.imgUser)
+                fragBinding.layEmail.txtUsername.setText(userData.emailId)
+                fragBinding.layGender.txtUsername.setText(userData.gender)
+                fragBinding.layDateofbirth.txtUsername.setText(userData.dob)
+                fragBinding.layWeight.txtUsername.setText(userData.weightkg+" "+userData.weightUnit)
+                fragBinding.layHeight.txtUsername.setText(userData.height+" "+userData.heightUnit)
+                fragBinding.layMaxheartrate.txtUsername.setText(userData.RFMHR.toString())//max hearrate
+                fragBinding.layRestingheartrate.txtUsername.setText(userData.restingHr)//base heartrate
+               if ( userData.appUnit.toLowerCase().equals("imperial")){
+                   fragBinding.radioGroup.check(R.id.radioButtonimperial)
+               }else{
+                   fragBinding.radioGroup.check(R.id.radioButtonmetric)
+               }
+
+            }
+        }
+
         fragBinding.layFirstname.txtusertitle.setText(R.string.firstname)
-        fragBinding.layFirstname.txtUsername.setText("Dhruv")
+       // fragBinding.layFirstname.txtUsername.setText("Dhruv")
         fragBinding.layFirstname.imgEdit.setOnClickListener {
             fragBinding.layFirstname.txtUsername.visibility=View.GONE
             fragBinding.layFirstname.imgEdit.visibility=View.GONE
@@ -96,7 +132,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
 
         fragBinding.laySurname.txtusertitle.setText(R.string.surname)
-        fragBinding.laySurname.txtUsername.setText("Khatrii")
+       // fragBinding.laySurname.txtUsername.setText("Khatrii")
         fragBinding.laySurname.imgEdit.setOnClickListener {
             fragBinding.laySurname.txtUsername.visibility=View.GONE
             fragBinding.laySurname.imgEdit.visibility=View.GONE
@@ -113,7 +149,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         }
 
         fragBinding.layNickname.txtusertitle.setText(R.string.nickname)
-        fragBinding.layNickname.txtUsername.setText("Dhruv90")
+        //fragBinding.layNickname.txtUsername.setText("Dhruv90")
         fragBinding.layNickname.imgEdit.setOnClickListener {
             fragBinding.layNickname.txtUsername.visibility=View.GONE
             fragBinding.layNickname.imgEdit.visibility=View.GONE
@@ -137,46 +173,46 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         }
 
         fragBinding.layEmail.txtusertitle.setText(R.string.email)
-        fragBinding.layEmail.txtUsername.setText("dhruvkhatri90@gmail.com")
+       // fragBinding.layEmail.txtUsername.setText("dhruvkhatri90@gmail.com")
         fragBinding.layEmail.imgEdit.visibility=View.GONE
 
         fragBinding.layGender.txtusertitle.setText(R.string.gender)
-        fragBinding.layGender.txtUsername.setText("Male")
+       // fragBinding.layGender.txtUsername.setText("Male")
         fragBinding.layGender.imgEdit.setOnClickListener {
             RLshowGenderDialog()
         }
 
         fragBinding.layDateofbirth.txtusertitle.setText(R.string.dateofbirth)
-        fragBinding.layDateofbirth.txtUsername.setText("29/08/1965")
+       // fragBinding.layDateofbirth.txtUsername.setText("29/08/1965")
         fragBinding.layDateofbirth.imgEdit.setOnClickListener {
             RLdialogStartDatePicker()
         }
 
         fragBinding.layWeight.txtusertitle.setText(R.string.weight)
-        fragBinding.layWeight.txtUsername.setText("73 lbs")
+       // fragBinding.layWeight.txtUsername.setText("73 lbs")
         fragBinding.layWeight.imgEdit.setOnClickListener {
             RLshowWeightDialog()
         }
 
         fragBinding.layHeight.txtusertitle.setText(R.string.height)
-        fragBinding.layHeight.txtUsername.setText("5 Feet 1inches")
+       // fragBinding.layHeight.txtUsername.setText("5 Feet 1inches")
         fragBinding.layHeight.imgEdit.setOnClickListener {
             RLshowHeightDialog()
         }
 
         fragBinding.layMaxheartrate.txtusertitle.setText(R.string.maxheartrateestimated)
-        fragBinding.layMaxheartrate.txtUsername.setText("190")
+        //fragBinding.layMaxheartrate.txtUsername.setText("190")
         fragBinding.layMaxheartrate.imgEdit.setOnClickListener {
             RLshowRestingHrDialog()
         }
 
         fragBinding.layRestingheartrate.txtusertitle.setText(R.string.restingheartrate)
-        fragBinding.layRestingheartrate.txtUsername.setText("60")
+       // fragBinding.layRestingheartrate.txtUsername.setText("60")
         fragBinding.layRestingheartrate.imgEdit.setOnClickListener {
             RLshowRestingHrDialog()
         }
 
-        fragBinding.radioGroup.check(R.id.radioButtonimperial)
+        //fragBinding.radioGroup.check(R.id.radioButtonimperial)
 
         fragBinding.layLocation.txtusertitle.setText(R.string.location)
         fragBinding.layLocation.txtUsername.visibility=View.GONE
@@ -209,9 +245,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
                 fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
             }
-
         }
-
 
         fragBinding.layNotification.txtusertitle.setText(R.string.notifications)
         fragBinding.layNotification.txtUsername.visibility=View.GONE

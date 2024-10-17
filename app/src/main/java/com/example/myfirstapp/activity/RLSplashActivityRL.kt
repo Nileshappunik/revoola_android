@@ -37,7 +37,7 @@ class RLSplashActivityRL : RLBaseActivity() {
 //        FirebaseApp.initializeApp(this)
 //        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         RLRemoteConfig()
-        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
+       // RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,"w2p8SQCvE3emjEEDo66f02eF6fG2")
        val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){
             activityBinding.txtFullrevoolaexperience.setOnClickListener {

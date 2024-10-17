@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.myfirstapp.R
 import com.example.myfirstapp.api.RLApiClientRet
 import com.example.myfirstapp.base.RLBaseActivity
+import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databinding.RlActivityVerificationCodeBinding
 import com.example.myfirstapp.viewmodel.RLMainRepository
 import com.example.myfirstapp.viewmodel.RLMainViewModel
@@ -37,9 +38,8 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
     private fun RLUisetup() {
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.toolbarLogin.tvTitle.setText(R.string.verificationcode)
-
-        val emailId= intent.getStringExtra("EmailId")
-        val password= intent.getStringExtra("Password")
+        //val emailId= intent.getStringExtra("EmailId")
+       // val password= intent.getStringExtra("Password")
 
         activityBinding.pincustom.pinDigit1.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -86,7 +86,7 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
                     val pinDigit4 = activityBinding.pincustom.pinDigit4.text.toString()
                     val pin:String = pinDigit1 + pinDigit2 + pinDigit3 + pinDigit4
                     if (pin.equals("1234")){
-                        startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java).putExtra("EmailId",emailId).putExtra("Password",password))
+                        startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",true))//.putExtra("EmailId",emailId).putExtra("Password",password))
                         finish()
                     }else{
                         Toast.makeText(this@RLVerificationCodeActivityRL, "Wrong Code", Toast.LENGTH_SHORT).show()

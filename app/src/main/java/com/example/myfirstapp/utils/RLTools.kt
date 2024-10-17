@@ -63,7 +63,12 @@ import kotlin.math.roundToInt
 
 import android.content.Context
 import android.net.NetworkCapabilities
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.model.EffortZoneFeedModel
+import com.example.myfirstapp.model.RLRevoolaSearchUserModel
+import com.google.gson.Gson
+import org.json.JSONObject
 
 
 object RLTools {
@@ -99,6 +104,32 @@ object RLTools {
         }
     }
 
+
+
+    fun RLCalculateAge(dateString: String): Int {
+        // Define the date format (day/month/year)
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // Parse the string into a Date object
+        val birthDate: Date = dateFormat.parse(dateString) ?: return 0
+
+        // Get the current date
+        val currentDate = Calendar.getInstance()
+
+        // Create a Calendar object for the birth date
+        val birthCalendar = Calendar.getInstance()
+        birthCalendar.time = birthDate
+
+        // Calculate age
+        var age = currentDate.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
+
+        // Check if the birthday hasn't occurred yet this year
+        if (currentDate.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
+            age--
+        }
+
+        return age
+    }
 
     fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -33,22 +33,6 @@ class RLDatabaseManagerRead {
     }
 
     fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-
-       /* val reference = database.child(RLConstants.PROPOSEDSTRUCTURE)
-            .child(RLConstants.CODESECTION)
-            .child(RLConstants.AVAILABLEMENUS)
-            .child(classname)
-
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                callback(snapshot.value, null)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                callback(null, error.toException())
-            }
-        })*/
-
         database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.CODESECTION)
             .child(RLConstants.AVAILABLEMENUS).child(classname)
             .get().addOnCompleteListener { task ->

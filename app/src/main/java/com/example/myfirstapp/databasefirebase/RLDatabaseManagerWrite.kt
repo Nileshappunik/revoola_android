@@ -1,5 +1,9 @@
 package com.example.myfirstapp.databasefirebase
 
+import android.util.Log
+import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
+import com.example.myfirstapp.model.RLHeartRateSensorWorkoutSessionDetailsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -56,5 +60,6 @@ class RLDatabaseManagerWrite {
                 }
             }
     }
+
 }
 

@@ -27,6 +27,21 @@ package com.example.myfirstapp.utils
         const val LIVE = "live"
         const val PROPOSEDSTRUCTURE = "proposedstructure"
         const val LIVEUSERSEMAIL = "liveUsersEmail"
+        const val DATAFORTESTING = "dataForTesting"
+        const val CONNECTIVITY = "connectivity"
+        const val DEVICERECORDEDDATA = "deviceRecordedData"
+        const val ELEVATIONNEW = "elevation"
+        const val GPX = "gpx"
+        const val GPT_T = "gpx_T"
+        const val GPX_T_SERVER = "gpx_T_Server"
+        const val GPX_T_SERVER_N = "gpx_T_Server_N"
+        const val LOCATION = "location"
+        const val REVOOLAUSERSESSIONSUMMARYDATA = "revoolaUserSessionSummaryData"
+        const val REVOOLAUSERSESSIONSUMMARYGRAPHDATA = "revoolaUserSessionSummaryGraphData"
+        const val REVOOLAUSERSESSIONDETAILDATA = "revoolaUserSessionDetailData"
+
+
+
         const val REVOOLAUSEREMAILS= "revoolaUserEmails"
         const val REVOOLAUSERFORSEARCH= "revoolaUsersForSearch"
         const val REVOOLAUSERSETTINGS= "revoolaUserSettings"
