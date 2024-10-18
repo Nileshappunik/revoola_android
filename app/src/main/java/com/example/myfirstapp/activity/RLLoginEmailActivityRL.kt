@@ -12,14 +12,19 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlActivityLoginEmailBinding
+import com.example.myfirstapp.model.RLRevoolaSearchUserModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.gson.Gson
 
 class RLLoginEmailActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginEmailActivityRL::class.java.simpleName
@@ -109,8 +114,8 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     val userEmail = profile.email
                     RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,uid)
                     RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
-                    startActivity(Intent(this, RLMainActivityRL::class.java))
-                    finish()
+                    RLSetUsernameToFirebase(uid)
+
                 } catch (e:Exception){
                     Log.e(TAG,"Exception:- "+e.message)
                 }
@@ -159,4 +164,29 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         sucDialog!!.show()
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
+
+    private fun RLSetUsernameToFirebase(userId:String){
+        //Firebase To Fetch UserData
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        databaseManager.RlreadData(path){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                if (userData.isBasicDataAdded){
+                    startActivity(Intent(this, RLMainActivityRL::class.java))
+                    finish()
+                }else{
+                    startActivity(Intent(this, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",false))//.putExtra("EmailId",emailId).putExtra("Password",password))
+                    finish()
+                }
+
+            }
+        }
+
+    }
+
+
+
 }

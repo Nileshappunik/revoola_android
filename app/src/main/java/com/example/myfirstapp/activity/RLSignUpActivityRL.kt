@@ -42,6 +42,7 @@ import com.example.myfirstapp.databinding.RlDialogHelpChallengesBinding
 import com.example.myfirstapp.databinding.RlDialogHelpSigninBinding
 import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.utils.RLConstants
+import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
@@ -86,24 +87,20 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         RLGetFcmToken()
+
+        firstName= intent.getStringExtra("firstName").toString()
+        lastName= intent.getStringExtra("lastName").toString()
+        nickName= intent.getStringExtra("nickName").toString()
+        activityBinding.edFirstname.setText(firstName)
+        activityBinding.edLastname.setText(lastName)
+        activityBinding.edNickname.setText(nickName)
+
         //Read DataBase
         val databaseManager:RLDatabaseManagerRead= RLDatabaseManagerRead()
         authManager = RLAuthManager()
          userId = authManager.RlgetCurrentUser()!!.uid
-        databaseManager.RLREVOOLAUSERFORSEARCHREADDATE(userId){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaSearchUserModel::class.java)
-                activityBinding.edFirstname.setText(userData.firstName)
-                activityBinding.edLastname.setText(userData.lastName)
-                activityBinding.edNickname.setText(userData.name)
-                emailId=userData.emailId
-                Log.e(TAG,"Response:- "+jsonObject)
-            } else {
-                Toast.makeText(this, "Read failed: ${error?.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
+        emailId = RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user_email,"")
+
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             RLRevoolaUserSettingWrite()
         })
@@ -476,6 +473,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         activityBinding.tvLoginNoClick.visibility=View.GONE
         return true
     }
+    //FIREBASE NEW USER ENTRY
     private fun RLRevoolaUserSettingWrite() {
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
        val databaseManager = RLDatabaseManagerWrite()
@@ -483,7 +481,22 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val myAge=RLTools.RLCalculateAge(DateTime)?:0
         val versionName:String = BuildConfig.VERSION_NAME?:"0"
 
+        //RevoolaUsersForSearch ENTRY
+        val revoolaUserForSearchMap = hashMapOf(
+            "displayImage" to chooseimagefile,
+            "emailId" to emailId,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "name" to nickName,
+            "remark" to "Android",
+            "userId" to userId)
+        databaseManager.REVOOLAUSERFORSEARCHWrite(userId,revoolaUserForSearchMap) { success, error ->
+            if (success) {
+               Log.d(TAG,"RevoolaUsersForSearch Successful Entry")
+            }
+        }
 
+        //REVOOLAUSERSETTINGS ENTRY
         val currentSubscriptionMap = hashMapOf(
             "validDaysMonth" to 0,
             "inviteUserSubsModel" to "0",
@@ -524,7 +537,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "height" to displayheight,
             "heightUnit" to heightUnit,
             "isBasicDataAdded" to true,
-            "joiningDate" to 1718872384,//first time user create then date
+            "joiningDate" to currentTimestamp,//first time user create then date
             "lastHRChange" to 0,
             " lastHRChange90" to 0,
             " lastHRUsed" to 0,

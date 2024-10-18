@@ -13,20 +13,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
 import com.example.myfirstapp.model.RLHeartRateSensorWorkoutSessionDetailsModel
 import com.example.myfirstapp.model.RLWorkoutSessionDetailsModel
 import com.example.myfirstapp.model.RLNoSensorWorkoutSessionDetailsModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.model.RLSpeedSensorWorkoutSessionDetailsModel
 import com.example.myfirstapp.model.RLWorkoutSessionSummaryModel
 import com.example.myfirstapp.utils.RLConstants
 
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.util.UUID
 import kotlin.math.roundToInt
@@ -36,6 +41,12 @@ class RLFragSessionComplete : RLBaseFragment(){
     lateinit var fragBinding: RlFragSessionCompleteBinding
     var imgUriList = mutableListOf<Uri>()
     var currentUser =""
+    private var wsWeight="60"
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+    private var RestingHR="50"
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
@@ -58,6 +69,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun RLuisetup() {
         //"Pilates","Ride","Run","Walk","Workout","Yoga"
+        RLFirebaseToFatchUserData()
+
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
         val totalTime = requireArguments().getString("totalTime").toString().trim()
         val heartRateList: ArrayList<Int>? = requireArguments().getIntegerArrayList("heartRateList")
@@ -259,37 +272,37 @@ class RLFragSessionComplete : RLBaseFragment(){
 //        entryWorkoutSessionDetails.arrPowerFromDevice=
 
         //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
-        entryWorkoutSessionDetails.classType= yourWayType
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation=RFMHR
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=RFMHR
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation=RestingHR.toInt()
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=RestingHR.toInt()
+
+        //entryWorkoutSessionDetails.avgRevPercentage=//value count
+        //entryWorkoutSessionDetails.burntCalories= // sum of every time calories plus
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.classDescription=""
+        entryWorkoutSessionDetails.classImage=""
         entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
-        entryWorkoutSessionDetails.classDate=currentTimestamp
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.maxRevPercentage=0
-        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.classType= yourWayType
+        entryWorkoutSessionDetails.demsElevation=-1
+        //entryWorkoutSessionDetails.distance = //// sum of every time distance plus
         entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.classImage=""
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.mapGeneratedUrl=""
+        //entryWorkoutSessionDetails.maxRevPercentage=//calculation of REV persentage
+        //entryWorkoutSessionDetails.minRevPercentage=//calculation of REV persentage
+        entryWorkoutSessionDetails.remark="android"
+        //entryWorkoutSessionDetails.revPercentage=//last value of arrRevPercentage
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toLong()
+        //entryWorkoutSessionDetails.totalElevation=//every time elevation sum
+        entryWorkoutSessionDetails.totalPower=0
+        //entryWorkoutSessionDetails.totalRev= sum of revpersentage
+        entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
+        entryWorkoutSessionDetails.typeOfGoal=yourWayType
 
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
-
-//        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.minRevPercentage=
-//        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalRev=
-//        entryWorkoutSessionDetails.typeOfGoal=
 
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
@@ -301,30 +314,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails)
 
         //Multi Array value set entry to database
-        /*val entryWorkoutSessionDetails = RLWorkoutSessionDetailsModel()
-        entryWorkoutSessionDetails.arrSpeed= speedList!!
-        entryWorkoutSessionDetails.arrCadence= stepsList!!
-        entryWorkoutSessionDetails.arrDistance= distanceList!!
-        entryWorkoutSessionDetails.arrElevation= paceList!!
-        entryWorkoutSessionDetails.arrHr= heartRateList!!
-        entryWorkoutSessionDetails.arrCumDistance= distanceList
-        entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList!!
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
-        entryWorkoutSessionDetails.displayName= "dhruv90"
-        entryWorkoutSessionDetails.displayImage= "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
-        entryWorkoutSessionDetails.classType= yourWayType
-        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.flagName= "United Kingdom"
-        entryWorkoutSessionDetails.flagImage="flag-of-United-Kingdom.png"
-
-        entryWorkoutSessionDetails.zone1.arrHr= heartRateList
-        entryWorkoutSessionDetails.zone1.arrCadence= stepsList
-        entryWorkoutSessionDetails.zone1.arrSpeed= speedList
-
-        RLRevoolaUserSessionDetailData(entryWorkoutSessionDetails)
-
-
+        /*
         //single value set entry to database
         val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()
@@ -600,5 +590,25 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-
+    //FIREBASE USERDATA GET
+    private fun RLFirebaseToFatchUserData() {
+        //Firebase To Fetch UserData
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()!!.uid
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        databaseManager.RlreadData(path){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+            }
+        }
+    }
 }

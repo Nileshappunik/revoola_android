@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import com.example.myfirstapp.BuildConfig
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databasefirebase.RLAuthManager
@@ -112,33 +113,20 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     private fun RevoolaUserEmailWrite(userId: String) {
         databaseManager.REVOOLAUSEREMAILSWrite(userId,emailID) { success, error ->
             if (success) {
-                RevoolaUserForSearchWrite(userId)
+                RLRevoolaUserSettingFirebaseEntry(userId,emailID)
             } else {
                 RLopentoast("User write operation failed: ${error?.message}")
             }
         }
     }
-    private fun RevoolaUserForSearchWrite(userId: String) {
-        val revoolaUserForSearchMap = hashMapOf(
-            "displayImage" to "",
-            "emailId" to emailID,
-            "firstName" to firstName,
-            "lastName" to lastName,
-            "name" to nickName,
-            "remark" to "Android",
-            "userId" to userId)
-        databaseManager.REVOOLAUSERFORSEARCHWrite(userId,revoolaUserForSearchMap) { success, error ->
-            if (success) {
-                RlLoginSuccessful(userId)
-            } else {
-                RLopentoast("User write operation failed: ${error?.message}")
-            }
-        }
-    }
+
     private fun RlLoginSuccessful(userId:String){
         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,userId)
         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,emailID)
-        startActivity(Intent(this, RLSignUpActivityRL::class.java))
+        startActivity(Intent(this, RLSignUpActivityRL::class.java)
+            .putExtra("firstName",firstName)
+            .putExtra("lastName",lastName)
+            .putExtra("nickName",nickName))
         finish()
     }
     private fun RLopentoast(messageprint: String) {
@@ -164,5 +152,80 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         activityBinding.tvLogin.visibility=View.VISIBLE
         activityBinding.tvLoginNoClick.visibility=View.GONE
         return true
+    }
+    ///FIREBASE Revoola User Setting USer Blanck Entry
+    private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
+        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+        val databaseManager = RLDatabaseManagerWrite()
+        val versionName:String = BuildConfig.VERSION_NAME?:"0"
+
+        val currentSubscriptionMap = hashMapOf(
+            "validDaysMonth" to 0,
+            "inviteUserSubsModel" to "0",
+            "referrerTag" to "Android",
+            "permissionLevelAfterTrial" to "Free",
+            "isTrialTaken" to true,
+            "isSubscriptionRequired" to true,
+            "commisionFlag" to "",
+            "discountPeriodMonth" to 0,
+            "remark" to "Android",
+            "familyPrice" to 0,
+            "onGoingPriceType" to "none",
+            "onGoingPrice" to 0,
+            "discountedPriceType" to "none",
+            "discountedPrice" to 0,
+            "isSubscriptionCheckRequired" to true,
+            "subscriptionName" to "Trial-Premium",
+            "inviteUserType" to "NormalUser",
+            "plan" to "",
+            "timestamp" to currentTimestamp,
+            "validDays" to 14)
+
+        val revoolaUserSettingsMap = hashMapOf(
+            "FCMToken" to "",
+            "RFMHR" to 196,
+            "TMHR" to 196,
+            "AMHR" to 196,
+            "emailId" to emailId,
+            "appUnit" to "Imperial",
+            "currentGroup" to "freemium",
+            "displayImage" to "none",
+            "displayName" to "Guest",
+            "dob" to "00/00/0000",
+            "firstName" to "Guest",
+            "flagImage" to "flag-of-United-Kingdom.png",
+            "flagName" to "United Kingdom",
+            "heartRate" to 0,
+            "height" to "167",
+            "heightUnit" to "FeetInch",
+            "isBasicDataAdded" to false,
+            "joiningDate" to currentTimestamp,//first time user create then date
+            "lastHRChange" to 0,
+            " lastHRChange90" to 0,
+            " lastHRUsed" to 0,
+            "lastLogin" to currentTimestamp,
+            "lastName" to "",
+            "gender" to "none",
+            "lastVersion" to versionName,//current app version
+            "leaderBoardImage" to "none",
+            "currentSubscription" to currentSubscriptionMap,
+            "location" to "United Kingdom",
+            "numberOfGhost" to "1",
+            "power" to 0,
+            "referUser" to "AndroidPlayStore",
+            "referalCode" to "",
+            "remark" to "Android",
+            "restingHr" to "60",
+            "totalRev" to 0,
+            "visibilityflagforthatsession" to 0,
+            "weightUnit" to "Metric",
+            "weightkg" to "77")
+        databaseManager.REVOOLAUSERSETTINGSWrite(userId,revoolaUserSettingsMap) { success, error ->
+            if (success) {
+                RlLoginSuccessful(userId)
+            }else {
+                Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

@@ -116,30 +116,36 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             fragBinding.cardHeartRateSensor.visibility = View.GONE
         }
         fragBinding.tvgo.setOnClickListener {
+            var isspeedsensor:Boolean=false
             val lastdevicetype= RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.last_device_connect_type, "")
             if (!lastdevicetype.isNullOrEmpty()){
                 connecetedDeviceType=lastdevicetype
             }
             if (connecetedDeviceType.equals("HEARTRATESENSOR")){
                 isHeartRateDevice=true
+                isspeedsensor=false
+            }else if (connecetedDeviceType.equals("SPEEDSENSOR")){
+                isHeartRateDevice=false
+                isspeedsensor=true
             }else{
                 isHeartRateDevice=false
+                isspeedsensor=false
             }
-            RLclickToNextScreenOpen(yourWayType)
+            RLclickToNextScreenOpen(yourWayType,isspeedsensor)
         }
         fragBinding.tvskip.setOnClickListener {
             isHeartRateDevice=false
-            RLclickToNextScreenOpen(yourWayType)
+            RLclickToNextScreenOpen(yourWayType,false)
         }
     }
 
-    private fun RLclickToNextScreenOpen(yourWayType:String){
+    private fun RLclickToNextScreenOpen(yourWayType:String,isspeedsensor:Boolean){
         if (rlbleService!=null){
             rlbleService!!.RLstopScan()
         }
-
         var bundle: Bundle = Bundle()
         bundle.putString("YourWayType", yourWayType)
+        bundle.putBoolean("isspeedsensor",isspeedsensor)
         if (isHeartRateDevice){
             (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
         }else{

@@ -39,7 +39,7 @@ package com.example.myfirstapp.model
     var minRevPercentage:Int=0
     var remark:String="android"//Done
     var revPercentage:Int=0
-    var timestamp:Int=0
+    var timestamp:Long=0
     var totalElevation:Int=0
     var totalPower:Int=0
     var totalRev:Double=0.0

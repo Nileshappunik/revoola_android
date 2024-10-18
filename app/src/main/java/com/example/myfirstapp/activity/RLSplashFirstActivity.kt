@@ -18,10 +18,14 @@ import android.widget.MediaController
 import android.widget.VideoView
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
+import kotlin.system.measureTimeMillis
 
 class RLSplashFirstActivity : AppCompatActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
@@ -51,5 +55,6 @@ class RLSplashFirstActivity : AppCompatActivity() {
         }, 2000)
 
     }
+
 
 }

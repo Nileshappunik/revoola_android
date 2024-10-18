@@ -108,6 +108,7 @@ class RLLocationRepository(application: Application) : SensorEventListener {
                     _paceData.postValue(RLgetPace(speed).toFloat())
                     _averagePaceData.postValue(RLgetAveragePace().toFloat())
                     _maxPaceData.postValue(RLgetMaxPace().toFloat())
+                    val ElevationMeter=lastLoc.altitude
                 }
                 // Update the last known location
                 lastLocation = newLocation
@@ -131,6 +132,10 @@ class RLLocationRepository(application: Application) : SensorEventListener {
     fun RLstopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         sensorManager.unregisterListener(this)
+    }
+
+    fun RLGetLocationElevation(location: Location): Double {
+        return location.altitude  // Returns elevation in meters
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
