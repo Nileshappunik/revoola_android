@@ -42,12 +42,8 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
       //  emailID= intent.getStringExtra("EmailId").toString()
       //  password= intent.getStringExtra("Password").toString()
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            if (IsNewUser){
-                RlupdateUserDetails()
-            }else{
-                val  userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
-                RlLoginSuccessful(userId)
-            }
+            val  userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
+            RlLoginSuccessful(userId)
 
         })
 
@@ -89,7 +85,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         })
 
     }
-    fun RlupdateUserDetails() {
+    /*fun RlupdateUserDetails() {
         val authManager: RLAuthManager =RLAuthManager()
         databaseManager =RLDatabaseManagerWrite()
         authManager.RLRegisterUser(emailID, password) { user, error ->
@@ -118,40 +114,6 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
                 RLopentoast("User write operation failed: ${error?.message}")
             }
         }
-    }
-
-    private fun RlLoginSuccessful(userId:String){
-        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,userId)
-        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,emailID)
-        startActivity(Intent(this, RLSignUpActivityRL::class.java)
-            .putExtra("firstName",firstName)
-            .putExtra("lastName",lastName)
-            .putExtra("nickName",nickName))
-        finish()
-    }
-    private fun RLopentoast(messageprint: String) {
-        Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
-    }
-    private fun RLvalidation(): Boolean {
-        firstName = activityBinding.etfirstname.text.toString().trim()
-        lastName = activityBinding.etlastname.text.toString().trim()
-        nickName = activityBinding.etnickname.text.toString().trim()
-        if (firstName.isEmpty()) {
-            activityBinding.tvLogin.visibility=View.GONE
-            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
-            return false
-        }else if (lastName.isEmpty()) {
-            activityBinding.tvLogin.visibility=View.GONE
-            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
-            return false
-        }else if (nickName.isEmpty()) {
-            activityBinding.tvLogin.visibility=View.GONE
-            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
-            return false
-        }
-        activityBinding.tvLogin.visibility=View.VISIBLE
-        activityBinding.tvLoginNoClick.visibility=View.GONE
-        return true
     }
     ///FIREBASE Revoola User Setting USer Blanck Entry
     private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
@@ -228,4 +190,40 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
             }
         }
     }
+    */
+
+    private fun RlLoginSuccessful(userId:String){
+        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,userId)
+        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,emailID)
+        startActivity(Intent(this, RLSignUpActivityRL::class.java)
+            .putExtra("firstName",firstName)
+            .putExtra("lastName",lastName)
+            .putExtra("nickName",nickName))
+        finish()
+    }
+    private fun RLopentoast(messageprint: String) {
+        Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
+    }
+    private fun RLvalidation(): Boolean {
+        firstName = activityBinding.etfirstname.text.toString().trim()
+        lastName = activityBinding.etlastname.text.toString().trim()
+        nickName = activityBinding.etnickname.text.toString().trim()
+        if (firstName.isEmpty()) {
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+            return false
+        }else if (lastName.isEmpty()) {
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+            return false
+        }else if (nickName.isEmpty()) {
+            activityBinding.tvLogin.visibility=View.GONE
+            activityBinding.tvLoginNoClick.visibility=View.VISIBLE
+            return false
+        }
+        activityBinding.tvLogin.visibility=View.VISIBLE
+        activityBinding.tvLoginNoClick.visibility=View.GONE
+        return true
+    }
+
 }

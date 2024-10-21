@@ -34,6 +34,7 @@ import androidx.lifecycle.Observer
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragHeartrateSensorProgressBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
@@ -55,38 +56,37 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private lateinit var rlLocationViewModel: RLLocationViewModel
     var  yourWayType:String=""
 
-    private var heartRateList:MutableList<Int> = mutableListOf()
-    private var stepsList:MutableList<Int> = mutableListOf()
-    private var distanceList:MutableList<Double> = mutableListOf()
-    private var climbedList:MutableList<Int> = mutableListOf()
-    private var activeCaloriesList:MutableList<Double> = mutableListOf()
-
-    private var paceList:MutableList<Int> = mutableListOf()
-    private var avgSpaceList:MutableList<Int> = mutableListOf()
-    private var maxxPaceList:MutableList<Int> = mutableListOf()
+    private var arrBurntCalories:MutableList<Double> = mutableListOf()
+    private var arrCadence:MutableList<Double> = mutableListOf()
+    private var arrDistance:MutableList<Double> = mutableListOf()
+    private var arrElevation:MutableList<Double> = mutableListOf()
+    private var arrHRRecordedSecond:MutableList<Int> = mutableListOf()
+    private var arrHr:MutableList<Int> = mutableListOf()
     private var arrRevPercentage:MutableList<Double> = mutableListOf()
-    private var arravgRevPercentage:MutableList<Double> = mutableListOf()
     private var arrRevSecond:MutableList<Double> = mutableListOf()
+    private var arrSpeed:MutableList<Double> = mutableListOf()
+    private var arrCumDistance:MutableList<Double> = mutableListOf()
+    private var arrCumElevation:MutableList<Double> = mutableListOf()
+    private var arrCumSpeed:MutableList<Double> = mutableListOf()
 
     private var speedList:MutableList<Double> = mutableListOf()
-    private var avgSpeedList:MutableList<Double> = mutableListOf()
-    private var maxsSpeedList:MutableList<Double> = mutableListOf()
+    private var paceList:MutableList<Int> = mutableListOf()
+
+
 
     private var heartRateNumber:Int=0
+    private var heartRate:Int=110
     private var stepsNumber:Int=0
-    private var distanceNumber:Double=0.0
-    private var climbedNumber:Int=0
-
-    private var activeCaloriesNumber:Double=0.0
+    private var distance:Double=0.0
+    private var elevationMeter:Double=0.0
     private var speedNumber:Double=0.0
-    private var avgSpeedNumber:Double=0.0
-    private var maxsSpeedNumber:Double=0.0
-
     private var paceNumber:Int=0
-    private var avgSpaceNumber:Int=0
-    private var maxxPaceNumber:Int=0
-    var totalTime:String =""
-
+    private var totalTime:String ="0"
+    private var avgRevPercentage=0.0
+    private var revPercentage=0.0
+    private var totalElevation=0.0
+    var lastGeoElevation: Int = 0
+    var totalGeoElevation: Int = 0
 
     private var wsWeight="60"
     private var wsHeight="167"
@@ -101,6 +101,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     var minRevPercentage =0.0
     var maxSpeed =0
     var maxHeartrate =0
+    var CumDistance =0.0
+    var CumSpeed =0.0
+    var cadenceData =0.0
+
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -131,6 +135,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         //fragBinding.txtMaintitle.setText(yourWayType)
         rlLocationViewModel =RLLocationViewModel(requireActivity().application)
         RLFirebaseToFatchUserData()
+
+        if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
+            RLstepGetToGPS()
+        }
 
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
         fragBinding.inlayTop.ivTitle.setText(yourWayType)
@@ -206,18 +214,31 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             bundle.putString("totalTime",totalTime)
-            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
-            bundle.putIntegerArrayList("stepsList",ArrayList(stepsList))
-            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
-            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
-            bundle.putIntegerArrayList("paceList",ArrayList(paceList))
-            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
-            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
-            bundle.putDoubleArray("avgSpeedList",avgSpeedList.toDoubleArray())
-            bundle.putDoubleArray("maxsSpeedList",maxsSpeedList.toDoubleArray())
-            bundle.putIntegerArrayList("avgSpaceList",ArrayList(avgSpaceList))
-            bundle.putIntegerArrayList("maxxPaceList",ArrayList(maxxPaceList))
             bundle.putString("SENSOR",RLConstants.HEARTSENSOR)
+            bundle.putDouble("avgRevPercentage",avgRevPercentage)
+            bundle.putDouble("burntCalories",burntCalories)
+            bundle.putDouble("distance",distance)
+            bundle.putDouble("maxRevPercentage",maxRevPercentage)
+            bundle.putDouble("minRevPercentage",minRevPercentage)
+            bundle.putDouble("revPercentage",revPercentage)
+            bundle.putDouble("totalElevation",totalElevation)
+            bundle.putDouble("totalRev",totalRev)
+            bundle.putInt("totalSteps",stepsNumber)
+
+
+            bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrDistance.toString(),arrDistance.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrElevation.toString(),arrElevation.toDoubleArray())
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrHRRecordedSecond.toString(),ArrayList(arrHRRecordedSecond))
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
+            bundle.putDoubleArray(RLYourWayArrayType.arrRevPercentage.toString(),arrRevPercentage.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrRevSecond.toString(),arrRevSecond.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrSpeed.toString(),arrSpeed.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
@@ -356,9 +377,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
     }
     private fun RLstartBLEService() {
-            if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                RLstepGetToGPS()
-            }
+
             val intent = Intent(requireContext(),RLBLEService::class.java)
             requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
 
@@ -402,12 +421,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                    // heartRateList.add(RlGetValueInt(data.toString()))
                     var heartRateSetValue=RlGetValueInt(data.toString())
                     if (heartRateSetValue > 0){
+                        arrHRRecordedSecond.add(totalTime.toInt()?:0)
                         fragBinding.txtEffortNumber.setText(data)
                         fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
                         maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
                         fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
-                        if (!heartRateList.isNullOrEmpty()){
-                            val avgHeartRate=heartRateList.average().roundToInt()?:0
+                        if (!arrHr.isNullOrEmpty()){
+                            val avgHeartRate=arrHr.average().roundToInt()?:0
                             fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
                         }
 
@@ -456,23 +476,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
     }
     private fun  RlDataFillAllArray(){
-
-        heartRateList.add(heartRateNumber)
-        stepsList.add(stepsNumber)
-        distanceList.add(distanceNumber)
-        climbedList.add(climbedNumber)
-        paceList.add(paceNumber)
-        speedList.add(speedNumber)
-        activeCaloriesList.add(activeCaloriesNumber)
-        avgSpeedList.add(avgSpeedNumber)
-        maxsSpeedList.add(maxsSpeedNumber)
-        avgSpaceList.add(avgSpaceNumber)
-        maxxPaceList.add(maxxPaceNumber)
-
         val currentCalories=calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble())
-        val REVPer=calculateREVPer(heartRateNumber,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
+        if (heartRateNumber>0){
+            heartRate=heartRateNumber
+        }
+        val REVPer=calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
         arrRevPercentage.add(REVPer)
-        arravgRevPercentage.add(avgOfArray(arrRevPercentage))
+        avgRevPercentage = avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
         arrRevSecond.add(REVSec)
         totalRev = totalRev+ REVSec
@@ -480,244 +490,44 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
         minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
         burntCalories=burntCalories+currentCalories
+        revPercentage=REVPer
 
+        arrBurntCalories.add(currentCalories)
+        arrCadence.add(cadenceData)
+        arrDistance.add(distance)
+        arrHr.add(heartRateNumber)
+        arrSpeed.add(speedNumber)
+
+        CumSpeed=CumSpeed+speedNumber
+        CumDistance=CumDistance+distance
+        arrCumDistance.add(CumDistance)
+        arrCumSpeed.add(CumSpeed)
+        distance=CumDistance
+
+        if (elevationMeter > 0) {
+            val relativeAltitude = elevationMeter
+            val roundedAltitude = relativeAltitude.toBigDecimal().setScale(1, java.math.RoundingMode.HALF_UP).toInt()
+
+            if (lastGeoElevation != null) {
+                if (lastGeoElevation!! < roundedAltitude) {
+                    totalGeoElevation += (roundedAltitude - lastGeoElevation!!)
+                    totalElevation=(totalGeoElevation/10).toDouble()
+                }
+            }
+            lastGeoElevation = roundedAltitude
+            arrElevation.add(lastGeoElevation.toDouble())
+            arrCumElevation.add((totalGeoElevation/10).toDouble())
+
+        }else{
+            arrElevation.add(0.0)
+            arrCumElevation.add(0.0)
+        }
 
         val totalCaloriesBurnedValue=RlGetValueDouble(burntCalories.toString()).roundToInt()
         fragBinding.inlayCalories.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
 
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
-
-   /* fun zoneDiff(REVPer: Int) {
-        when {
-            REVPer <= 30 -> {
-                //Zone 1
-                sessionDetails.zone1.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone1.arrHr.add(heartRate)
-                sessionDetails.zone1.arrPower.add(power)
-                sessionDetails.zone1.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone1.burntCalories += calory
-                sessionDetails.zone1.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-                sessionDetails.zone1.seconds++
-                sessionDetails.zone1.totalRev += REVSec
-
-                sessionSummary.zone1.avgCadence = avgOfArray(sessionDetails.zone1.arrCadence)
-                sessionSummary.zone1.avgHr = avgOfArray(sessionDetails.zone1.arrHr)
-                sessionSummary.zone1.avgPower = avgOfArray(sessionDetails.zone1.arrPower)
-                sessionSummary.zone1.avgSpeed = avgOfArray(sessionDetails.zone1.arrSpeed)
-
-                sessionSummary.zone1.burntCalories = sessionDetails.zone1.burntCalories
-                sessionSummary.zone1.distance = sessionDetails.zone1.distance
-                sessionSummary.zone1.seconds = sessionDetails.zone1.seconds
-                sessionSummary.zone1.totalRev = sessionDetails.zone1.totalRev
-            }
-            REVPer <= 50 -> {
-                //Zone 2
-                sessionDetails.zone2.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone2.arrHr.add(heartRate)
-                sessionDetails.zone2.arrPower.add(power)
-                sessionDetails.zone2.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone2.burntCalories += calory
-                sessionDetails.zone2.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-                sessionDetails.zone2.seconds++
-                sessionDetails.zone2.totalRev += REVSec
-
-                sessionSummary.zone2.avgCadence = avgOfArray(sessionDetails.zone2.arrCadence)
-                sessionSummary.zone2.avgHr = avgOfArray(sessionDetails.zone2.arrHr)
-                sessionSummary.zone2.avgPower = avgOfArray(sessionDetails.zone2.arrPower)
-                sessionSummary.zone2.avgSpeed = avgOfArray(sessionDetails.zone2.arrSpeed)
-
-                sessionSummary.zone2.burntCalories = sessionDetails.zone2.burntCalories
-                sessionSummary.zone2.distance = sessionDetails.zone2.distance
-                sessionSummary.zone2.seconds = sessionDetails.zone2.seconds
-                sessionSummary.zone2.totalRev = sessionDetails.zone2.totalRev
-            }
-            REVPer <= 60 -> {
-                //Zone 3
-                sessionDetails.zone3.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone3.arrHr.add(heartRate)
-                sessionDetails.zone3.arrPower.add(power)
-                sessionDetails.zone3.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone3.burntCalories += calory
-                sessionDetails.zone3.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-                sessionDetails.zone3.seconds++
-                sessionDetails.zone3.totalRev += REVSec
-
-                sessionSummary.zone3.avgCadence = avgOfArray(sessionDetails.zone3.arrCadence)
-                sessionSummary.zone3.avgHr = avgOfArray(sessionDetails.zone3.arrHr)
-                sessionSummary.zone3.avgPower = avgOfArray(sessionDetails.zone3.arrPower)
-                sessionSummary.zone3.avgSpeed = avgOfArray(sessionDetails.zone3.arrSpeed)
-
-                sessionSummary.zone3.burntCalories = sessionDetails.zone3.burntCalories
-                sessionSummary.zone3.distance = sessionDetails.zone3.distance
-                sessionSummary.zone3.seconds = sessionDetails.zone3.seconds
-                sessionSummary.zone3.totalRev = sessionDetails.zone3.totalRev
-            }
-            REVPer <= 70 -> {
-                //Zone 4
-                sessionDetails.zone4.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone4.arrHr.add(heartRate)
-                sessionDetails.zone4.arrPower.add(power)
-                sessionDetails.zone4.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone4.burntCalories += calory
-                sessionDetails.zone4.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-                sessionDetails.zone4.seconds++
-                sessionDetails.zone4.totalRev += REVSec
-
-                sessionSummary.zone4.avgCadence = avgOfArray(sessionDetails.zone4.arrCadence)
-                sessionSummary.zone4.avgHr = avgOfArray(sessionDetails.zone4.arrHr)
-                sessionSummary.zone4.avgPower = avgOfArray(sessionDetails.zone4.arrPower)
-                sessionSummary.zone4.avgSpeed = avgOfArray(sessionDetails.zone4.arrSpeed)
-
-                sessionSummary.zone4.burntCalories = sessionDetails.zone4.burntCalories
-                sessionSummary.zone4.distance = sessionDetails.zone4.distance
-                sessionSummary.zone4.seconds = sessionDetails.zone4.seconds
-                sessionSummary.zone4.totalRev = sessionDetails.zone4.totalRev
-            }
-            REVPer <= 80 -> {
-                //Zone 5
-                sessionDetails.zone5.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone5.arrHr.add(heartRate)
-                sessionDetails.zone5.arrPower.add(power)
-                sessionDetails.zone5.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone5.burntCalories += calory
-                sessionDetails.zone5.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-
-                sessionDetails.zone5.seconds++
-                sessionDetails.zone5.totalRev += REVSec
-
-                sessionSummary.zone5.avgCadence = avgOfArray(sessionDetails.zone5.arrCadence)
-                sessionSummary.zone5.avgHr = avgOfArray(sessionDetails.zone5.arrHr)
-                sessionSummary.zone5.avgPower = avgOfArray(sessionDetails.zone5.arrPower)
-                sessionSummary.zone5.avgSpeed = avgOfArray(sessionDetails.zone5.arrSpeed)
-
-                sessionSummary.zone5.burntCalories = sessionDetails.zone5.burntCalories
-                sessionSummary.zone5.distance = sessionDetails.zone5.distance
-                sessionSummary.zone5.seconds = sessionDetails.zone5.seconds
-                sessionSummary.zone5.totalRev = sessionDetails.zone5.totalRev
-            }
-            REVPer <= 90 -> {
-                //Zone 6
-                sessionDetails.zone6.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone6.arrHr.add(heartRate)
-                sessionDetails.zone6.arrPower.add(power)
-                sessionDetails.zone6.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone6.burntCalories += calory
-                sessionDetails.zone6.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-                sessionDetails.zone6.seconds++
-                sessionDetails.zone6.totalRev += REVSec
-
-                sessionSummary.zone6.avgCadence = avgOfArray(sessionDetails.zone6.arrCadence)
-                sessionSummary.zone6.avgHr = avgOfArray(sessionDetails.zone6.arrHr)
-                sessionSummary.zone6.avgPower = avgOfArray(sessionDetails.zone6.arrPower)
-                sessionSummary.zone6.avgSpeed = avgOfArray(sessionDetails.zone6.arrSpeed)
-
-                sessionSummary.zone6.burntCalories = sessionDetails.zone6.burntCalories
-                sessionSummary.zone6.distance = sessionDetails.zone6.distance
-                sessionSummary.zone6.seconds = sessionDetails.zone6.seconds
-                sessionSummary.zone6.totalRev = sessionDetails.zone6.totalRev
-            }
-            REVPer <= 100 -> {
-                //Zone 7
-                sessionDetails.zone7.arrCadence.add(CMCStatus.cadence)
-                sessionDetails.zone7.arrHr.add(heartRate)
-                sessionDetails.zone7.arrPower.add(power)
-                sessionDetails.zone7.arrSpeed.add(
-                    if (CMCStatus.speed == 0) {
-                        CMCStatus.speedT ?: 0
-                    } else {
-                        CMCStatus.speed ?: 0
-                    }
-                )
-                sessionDetails.zone7.burntCalories += calory
-                sessionDetails.zone7.distance +=
-                    if (sampleDistance == 0) {
-                        CMCStatus.distanceT ?: 0
-                    } else {
-                        sampleDistance ?: 0
-                    }
-
-                sessionDetails.zone7.seconds++
-                sessionDetails.zone7.totalRev += REVSec
-
-                sessionSummary.zone7.avgCadence = avgOfArray(sessionDetails.zone7.arrCadence)
-                sessionSummary.zone7.avgHr = avgOfArray(sessionDetails.zone7.arrHr)
-                sessionSummary.zone7.avgPower = avgOfArray(sessionDetails.zone7.arrPower)
-                sessionSummary.zone7.avgSpeed = avgOfArray(sessionDetails.zone7.arrSpeed)
-
-                sessionSummary.zone7.burntCalories = sessionDetails.zone7.burntCalories
-                sessionSummary.zone7.distance = sessionDetails.zone7.distance
-                sessionSummary.zone7.seconds = sessionDetails.zone7.seconds
-                sessionSummary.zone7.totalRev = sessionDetails.zone7.totalRev
-            }
-        }
-    }*/
 
     private fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String): Double {
 
@@ -756,32 +566,35 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         return REVPer
     }
 
-    fun sumOfArray(array: List<Int>): Int {
+    private fun sumOfArray(array: List<Int>): Int {
         return array.sum()
     }
 
-    fun RLmax(previous: Int, next: Int): Int {
-        return RLmax(previous, next)
-    }
-
-    fun RLmin(previous: Int, next: Int): Int {
+    private fun RLmax(previous: Int, next: Int): Int {
         return when {
-            next == 0 -> previous
-            previous == 0 -> next
-            else -> RLmin(previous, next)
+            previous > next -> previous
+            else ->next
         }
     }
 
-    fun avgOfArray2(array: List<Double>): Double {
+    private fun RLmin(previous: Int, next: Int): Int {
+        return when {
+            next == 0 -> previous
+            previous == 0 -> next
+            else -> next
+        }
+    }
+
+    private fun avgOfArray2(array: List<Double>): Double {
         return array.average()
     }
 
-    fun avgOfArray(array: List<Double>): Double {
+    private fun avgOfArray(array: List<Double>): Double {
         val sum = array?.sumOf { if (!it.isNaN() && it.isFinite()) it else 0.0 } ?: 0.0
         return if (array?.size ?: 0 <= 1) 0.0 else sum / (array.size - 1)
     }
 
-    fun calculateCurrentCalories(gender: String, age: Int, weight: Double, heartRate: Double): Double {
+    private fun calculateCurrentCalories(gender: String, age: Int, weight: Double, heartRate: Double): Double {
         if (heartRate != 0.0) {
             val total = when (gender.toLowerCase()) {
                 "male" -> {
@@ -844,6 +657,23 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
         })
 
+        rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
+            elevation?.let {
+                Log.d(TAG,"elevation: ${it} m")
+                val elevation=RlGetValueDouble(it.toString())
+                elevationMeter=elevation
+            }
+        })
+
+        rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
+            cadence?.let {
+                Log.d(TAG,"cadenceData: ${it} ")
+                val _cadenceData=RlGetValueDouble(it.toString())
+                cadenceData=_cadenceData
+            }
+        })
+
+
         rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
             stepCount?.let {
                 Log.d(TAG,"Steps: $stepCount")
@@ -862,7 +692,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 val totalDistance=it //round(it * 100) / 100
                 Log.d(TAG,"Distance: $totalDistance km")
                 val totalDistanceValue=RlGetValueDouble(totalDistance.toString())
-                distanceNumber=totalDistanceValue
+                this.distance =totalDistanceValue
                 //distanceList.add(totalDistanceValue)
                 if (totalDistanceValue>0){
                     fragBinding.inlayDistance.txtProgressTimeNumber.setText(totalDistance.toString())
@@ -890,79 +720,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 }
             }
         })
-
-     /*
-      rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
-            calories?.let {
-                val totalCaloriesBurned=it //     round(it * 100) / 100
-                Log.d(TAG,"CaloriesBurned: $totalCaloriesBurned")
-
-                val totalCaloriesBurnedValue=RlGetValueDouble(totalCaloriesBurned.toString())
-                activeCaloriesNumber=totalCaloriesBurnedValue
-                // distanceList.add(totalDistanceValue)
-                if (totalCaloriesBurnedValue>0){
-                    //fragBinding.inlayStep.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
-                }
-
-            }
-        })
-
-     rlLocationViewModel.averageSpeedData.observe(viewLifecycleOwner, Observer { averageSpeed ->
-            averageSpeed?.let {
-                val AvgSpeed=round(it * 100) / 100
-                Log.d(TAG,"Avg Speed: $AvgSpeed m/s")
-                val avgSpeedValue=RlGetValueDouble(AvgSpeed.toString())
-                //avgSpeedList.add(avgSpeedValue)
-                avgSpeedNumber=avgSpeedValue
-                if (avgSpeedValue>0){
-                    fragBinding.inlaySpeed.txtAvgNumber.setText(AvgSpeed.toString())
-                }
-
-            }
-        })
-
-        rlLocationViewModel.maxSpeedData.observe(viewLifecycleOwner, Observer { maxSpeed ->
-            maxSpeed?.let {
-                val maxsSpeed=round(it * 100) / 100
-                Log.d(TAG,"Max Speed: $maxsSpeed m/s")
-                val maxsSpeedValue=RlGetValueDouble(maxsSpeed.toString())
-                //maxsSpeedList.add(maxsSpeedValue)
-                maxsSpeedNumber=maxsSpeedValue
-                if (maxsSpeedValue>0){
-                    fragBinding.inlaySpeed.txtMaxNumber.setText(maxsSpeed.toString())
-                }
-
-            }
-        })*/
-
-
-
-      /*  rlLocationViewModel.averagePaceData.observe(viewLifecycleOwner, Observer { averagePace ->
-            averagePace?.let {
-                val avgspace=round(it * 100) / 100
-                Log.d(TAG, "Avg Pace: $avgspace min/km")
-                val avgspaceValue=RlGetValueInt(avgspace.toString())
-                //avgSpaceList.add(avgspaceValue)
-                avgSpaceNumber=avgspaceValue
-                if (avgspaceValue>0){
-                    fragBinding.inlayPace.txtAvgNumber.setText(avgspace.toString())
-                }
-
-            }
-        })
-
-        rlLocationViewModel.maxPaceData.observe(viewLifecycleOwner, Observer { maxPace ->
-            maxPace?.let {
-                val maxxpace=round(it * 100) / 100
-                Log.d(TAG, "Max Pace: $maxxpace min/km")
-                val maxxpaceValue=RlGetValueInt(maxxpace.toString())
-               // maxxPaceList.add(maxxpaceValue)
-                maxxPaceNumber=maxxpaceValue
-                if (maxxpaceValue>0){
-                    fragBinding.inlayPace.txtMaxNumber.setText(maxxpace.toString())
-                }
-            }
-        })*/
 
         rlLocationViewModel.RLstartLocationUpdates()
     }

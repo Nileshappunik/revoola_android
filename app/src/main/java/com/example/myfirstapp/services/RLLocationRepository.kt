@@ -29,20 +29,16 @@ class RLLocationRepository(application: Application) : SensorEventListener {
     private val _distanceData = MutableLiveData<Float>()
     val distanceData: LiveData<Float> = _distanceData
 
-    private val _averageSpeedData = MutableLiveData<Float>()
-    val averageSpeedData: LiveData<Float> = _averageSpeedData
-
-    private val _maxSpeedData = MutableLiveData<Float>()
-    val maxSpeedData: LiveData<Float> = _maxSpeedData
+    private val _cadenceData = MutableLiveData<Float>()
+    val cadenceData: LiveData<Float> = _cadenceData
 
     private val _paceData = MutableLiveData<Float>()
     val paceData: LiveData<Float> = _paceData
 
-    private val _averagePaceData = MutableLiveData<Float>()
-    val averagePaceData: LiveData<Float> = _averagePaceData
 
-    private val _maxPaceData = MutableLiveData<Float>()
-    val maxPaceData: LiveData<Float> = _maxPaceData
+    private val _elevationMeter = MutableLiveData<Double>()
+    val elevationMeter: LiveData<Double> = _elevationMeter
+
 
     private var initialStepCount: Int = -1
     private var startTime: Long = 0L
@@ -50,14 +46,15 @@ class RLLocationRepository(application: Application) : SensorEventListener {
     private val _caloriesBurnedData = MutableLiveData<Float>()
     val caloriesBurnedData: LiveData<Float> = _caloriesBurnedData
 
-    private var maximumSpeed = 0.0
     private var totalSpeed = 0.0
     private var speedReadings = 0
     private var lastUpdateTime: Long = 0
     private var totalDistance = 0.0
     private var totalCaloriesBurned = 0.0
+    private var lastStepCount = 0
+    private var currentStepCount = 0
+    private var cadence = 0.0
     private val weightInKg = RLConstants.weightInKg//  //you can change it dynamically
-
 
     private var lastLocation: Location? = null
 
@@ -68,6 +65,7 @@ class RLLocationRepository(application: Application) : SensorEventListener {
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
     }
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
@@ -77,48 +75,63 @@ class RLLocationRepository(application: Application) : SensorEventListener {
                 val newLocation = locations.last()
                 // Check if we have a last known location
                 lastLocation?.let { lastLoc ->
-                 /*  val distanceInMeters = lastLoc.distanceTo(newLocation)
-                    // Convert to kilometers
-                    val distanceInKm = distanceInMeters / 1000
-                    _distanceData.postValue(distanceInKm)*/
 
                     val speed = newLocation.speed * 3.6 // Convert to km/h
-                    if (speed > maximumSpeed) {
-                        maximumSpeed = speed
-                        _maxSpeedData.postValue(maximumSpeed.toFloat())
-                    }
+
                     totalSpeed += speed
                     speedReadings++
 
                     // Call the calories calculation function
-                    val durationInMinutes = (currentTime - startTime) / 60000.0 // Convert ms to minutes
-                    val caloriesBurned = ScxCalculateCalories(speed, weightInKg, durationInMinutes)
+                    val durationInMinutes =
+                        (currentTime - startTime) / 60000.0 // Convert ms to minutes
+                    val caloriesBurned = RlCalculateCalories(speed, weightInKg, durationInMinutes)
                     totalCaloriesBurned += caloriesBurned
                     _caloriesBurnedData.postValue(totalCaloriesBurned.toFloat())
 
-                    // Calculate distance in meters
-                    val timeInterval = (currentTime - lastUpdateTime) / 1000.0
-                    val distanceInKm = speed * (timeInterval / 3600.0)
-                    totalDistance += distanceInKm
                     _distanceData.postValue(totalDistance.toFloat())
-
                     _speedData.postValue(speed.toFloat())
-                    _averageSpeedData.postValue(RLgetAverageSpeed().toFloat())
-
                     _paceData.postValue(RLgetPace(speed).toFloat())
-                    _averagePaceData.postValue(RLgetAveragePace().toFloat())
-                    _maxPaceData.postValue(RLgetMaxPace().toFloat())
-                    val ElevationMeter=lastLoc.altitude
+                    _elevationMeter.postValue(lastLoc.altitude)
+
+                    //Distance Count
+                    val distanceInKm = RLGetDistance(
+                        lastLoc.latitude,
+                        lastLoc.longitude,
+                        newLocation.latitude,
+                        newLocation.longitude,
+                        "K"
+                    )
+                    _distanceData.postValue(distanceInKm.toFloat())
+
+                    // Cadence calculation
+                    if (lastUpdateTime > 0) {
+                        val timeIntervalInMinutes = (currentTime - lastUpdateTime) / 60000.0
+                        val stepsTaken = currentStepCount - lastStepCount
+                        cadence = if (timeIntervalInMinutes > 0) {
+                            stepsTaken / timeIntervalInMinutes
+                        } else {
+                            0.0
+                        }
+
+                        // Post cadence data
+                        _cadenceData.postValue(cadence.toFloat())
+
+                        // Update step count for the next interval
+                        lastStepCount = currentStepCount
+                    }
+
+                    // Update the last known location
+                    lastLocation = newLocation
+                    lastUpdateTime = currentTime
                 }
-                // Update the last known location
-                lastLocation = newLocation
-                lastUpdateTime = currentTime
+                val location: Location = locationResult.lastLocation!!
+                startTime = System.currentTimeMillis()
+                _locationData.postValue(location)
             }
-            val location:Location = locationResult.lastLocation!!
-            startTime = System.currentTimeMillis()
-            _locationData.postValue(location)
+
         }
     }
+
 
     @SuppressLint("MissingPermission")
     fun RLstartLocationUpdates() {
@@ -134,14 +147,11 @@ class RLLocationRepository(application: Application) : SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    fun RLGetLocationElevation(location: Location): Double {
-        return location.altitude  // Returns elevation in meters
-    }
-
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
             if (initialStepCount < 0) {
                 initialStepCount = event.values[0].toInt()
+                currentStepCount = event.values[0].toInt()- initialStepCount
             }
             _stepCountData.postValue(event.values[0].toInt() - initialStepCount)
         }
@@ -149,7 +159,7 @@ class RLLocationRepository(application: Application) : SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
-    private fun ScxCalculateCalories(speed: Double, weightInKg: Double, durationInMinutes: Double): Double {
+    private fun RlCalculateCalories(speed: Double, weightInKg: Double, durationInMinutes: Double): Double {
         val metValue = when {
             speed > 8 -> 7.5 // Running (high speed)
             speed > 4 -> 5.0 // Jogging (moderate speed)
@@ -158,16 +168,27 @@ class RLLocationRepository(application: Application) : SensorEventListener {
         return metValue * weightInKg * (durationInMinutes / 60)
     }
 
-    private fun RLgetAverageSpeed(): Double {
-        return if (speedReadings > 0) totalSpeed / speedReadings else 0.0
+    private fun RLGetDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double, unit: String): Double {
+        val radlat1 = Math.PI * lat1 / 180
+        val radlat2 = Math.PI * lat2 / 180
+        val theta = lon1 - lon2
+        val radtheta = Math.PI * theta / 180
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta)
+
+        dist = Math.acos(dist)
+        dist = dist * 180 / Math.PI
+        dist *= 60 * 1.1515
+
+        when (unit) {
+            "K" -> dist *= 1.609344  // Convert miles to kilometers
+            "N" -> dist *= 0.8684    // Convert miles to nautical miles
+        }
+
+        return dist
     }
+
     private fun RLgetPace(speed: Double): Double {
         return if (speed > 0) 60 / speed else 0.0
     }
-    private fun RLgetAveragePace(): Double {
-        return RLgetPace(RLgetAverageSpeed())
-    }
-    private fun RLgetMaxPace(): Double {
-        return RLgetPace(maximumSpeed)
-    }
+
 }

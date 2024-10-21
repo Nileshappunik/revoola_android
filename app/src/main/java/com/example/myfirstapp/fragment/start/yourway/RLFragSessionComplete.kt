@@ -16,6 +16,7 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
 import com.example.myfirstapp.model.RLHeartRateSensorWorkoutSessionDetailsModel
@@ -73,41 +74,8 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
         val totalTime = requireArguments().getString("totalTime").toString().trim()
-        val heartRateList: ArrayList<Int>? = requireArguments().getIntegerArrayList("heartRateList")
-        val stepsList: ArrayList<Int>? = requireArguments().getIntegerArrayList("stepsList")
-        val paceList: ArrayList<Int>? =requireArguments().getIntegerArrayList("paceList")
-        val climbedList: ArrayList<Int>? = requireArguments().getIntegerArrayList("climbedList")
-        val avgSpaceList: ArrayList<Int>? = requireArguments().getIntegerArrayList("avgSpaceList")
-        val maxPaceList: ArrayList<Int>? = requireArguments().getIntegerArrayList("maxxPaceList")
         val SensorType: String = requireArguments().getString("SENSOR").toString()
 
-        val speedArray = arguments?.getDoubleArray("speedList")
-        val avgSpeedArray = arguments?.getDoubleArray("avgSpeedList")
-        val maxSpeedArray = arguments?.getDoubleArray("maxsSpeedList")
-        val distanceArray = arguments?.getDoubleArray("distanceList")
-        val activeCaloriesArray = arguments?.getDoubleArray("activeCaloriesList")
-
-        val speedList: MutableList<Double> = speedArray?.toMutableList() ?: mutableListOf()
-        val avgSpeedList: MutableList<Double> = avgSpeedArray?.toMutableList() ?: mutableListOf()
-        val maxSpeedList: MutableList<Double> = maxSpeedArray?.toMutableList() ?: mutableListOf()
-        val distanceList: MutableList<Double> = distanceArray?.toMutableList() ?: mutableListOf()
-        val activeCaloriesList: MutableList<Double> = activeCaloriesArray?.toMutableList() ?: mutableListOf()
-
-        /*
-        val sizeallarray="heartRateList:- ${heartRateList!!.size}  " +
-                "stepsList:- ${stepsList!!.size}  "+
-                "distanceList:- ${distanceList!!.size}  "+
-                "paceList:- ${paceList!!.size}  "+
-                "speedList:- ${speedList!!.size}  "+
-                "activeCaloriesList:- ${activeCaloriesList!!.size}  "+
-                "climbedList:- ${climbedList!!.size}  "+
-                "avgSpeedList:- ${avgSpeedList!!.size}  "+
-                "maxSpeedList:- ${maxSpeedList!!.size}  "+
-                "avgSpaceList:- ${avgSpaceList!!.size}  "+
-                "maxPaceList:- ${maxPaceList!!.size}"
-
-
-        Log.e(TAG,"ALL ARRAY SIZE:- $sizeallarray")*/
 
         fragBinding.edtSessionName.setText("$yourWayType Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
@@ -154,14 +122,13 @@ class RLFragSessionComplete : RLBaseFragment(){
             }*/
             when (SensorType){
                 RLConstants.HEARTSENSOR->{
-                    RlHeartRateDataEntryToFirebase(yourWayType,totalTime,heartRateList,stepsList,paceList,climbedList,avgSpaceList,maxPaceList,speedList,avgSpeedList,maxSpeedList,distanceList,activeCaloriesList)
+                    RlHeartRateDataEntryToFirebase(yourWayType,totalTime)
                 }
                 RLConstants.SPEEDSENSOR->{
-                    RlSpeedSensorDataEntryToFirebase(yourWayType,totalTime,heartRateList,stepsList,paceList,climbedList,avgSpaceList,maxPaceList,speedList,avgSpeedList,maxSpeedList,distanceList,activeCaloriesList)
+                    RlSpeedSensorDataEntryToFirebase(yourWayType,totalTime)
                 }
                 RLConstants.NOSENSOR->{
-                    RlNoSensorDataEntryToFirebase(yourWayType,totalTime,heartRateList,stepsList,paceList,climbedList,avgSpaceList,maxPaceList,speedList,avgSpeedList,maxSpeedList,distanceList,activeCaloriesList)
-
+                    RlNoSensorDataEntryToFirebase(yourWayType,totalTime)
                 }
             }
 
@@ -169,116 +136,70 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     }
 
-    private fun RlHeartRateDataEntryToFirebase(
-        yourWayType: String,
-        totalTime: String,
-        heartRateList: ArrayList<Int>?,
-        stepsList: ArrayList<Int>?,
-        paceList: ArrayList<Int>?,
-        climbedList: ArrayList<Int>?,
-        avgSpaceList: ArrayList<Int>?,
-        maxPaceList: ArrayList<Int>?,
-        speedList: MutableList<Double>,
-        avgSpeedList: MutableList<Double>,
-        maxSpeedList: MutableList<Double>,
-        distanceList: MutableList<Double>,
-        activeCaloriesList: MutableList<Double>) {
+    //Ready Data To Firebase Entry
+    private fun RlHeartRateDataEntryToFirebase(yourWayType: String, totalTime: String) {
+
+        val avgRevPercentage=requireArguments().getDouble("avgRevPercentage")
+        val burntCalories=requireArguments().getDouble("burntCalories")
+        val distance=requireArguments().getDouble("distance")
+        val maxRevPercentage=requireArguments().getDouble("maxRevPercentage")
+        val minRevPercentage=requireArguments().getDouble("minRevPercentage")
+        val revPercentage=requireArguments().getDouble("revPercentage")
+        val totalElevation=requireArguments().getDouble("totalElevation")
+        val totalRev=requireArguments().getDouble("totalRev")
+        val totalSteps=requireArguments().getInt("totalSteps")
+
+
+        val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
+        val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
+        val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
+        val arrElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrElevation.toString())
+        val arrHRRecordedSecond: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHRRecordedSecond.toString())
+        val arrHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHr.toString())
+        val arrRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevPercentage.toString())
+        val arrRevSecondList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevSecond.toString())
+        val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
+        val arrCumDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumDistance.toString())
+        val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
+        val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
+
+        val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf()
+        val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf()
+        val arrDistance: MutableList<Double> = arrDistanceList?.toMutableList() ?: mutableListOf()
+        val arrElevation: MutableList<Double> = arrElevationList?.toMutableList() ?: mutableListOf()
+        val arrRevPercentage: MutableList<Double> = arrRevPercentageList?.toMutableList() ?: mutableListOf()
+        val arrRevSecond: MutableList<Double> = arrRevSecondList?.toMutableList() ?: mutableListOf()
+        val arrSpeed: MutableList<Double> = arrSpeedList?.toMutableList() ?: mutableListOf()
+        val arrCumDistance: MutableList<Double> = arrCumDistanceList?.toMutableList() ?: mutableListOf()
+        val arrCumElevation: MutableList<Double> = arrCumElevationList?.toMutableList() ?: mutableListOf()
+        val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf()
+
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
         val entryWorkoutSessionDetails = RLHeartRateSensorWorkoutSessionDetailsModel()
 
         //Array Entry Value
-        entryWorkoutSessionDetails.arrSpeed= speedList
-        entryWorkoutSessionDetails.arrDistance= distanceList
-        entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
-        entryWorkoutSessionDetails.arrHr= heartRateList!!
-        entryWorkoutSessionDetails.arrCadence= climbedList!!
-//        entryWorkoutSessionDetails.arrCadence=
-//        entryWorkoutSessionDetails.arrCumElevation=
-//        entryWorkoutSessionDetails.arrElevation=
-//        entryWorkoutSessionDetails.arrPower=
-//        entryWorkoutSessionDetails.arrPowerFromDevice=
+        entryWorkoutSessionDetails.arrBurntCalories= arrBurntCalories
+        entryWorkoutSessionDetails.arrCadence= arrCadence
+        entryWorkoutSessionDetails.arrCumDistance=arrCumDistance
+        entryWorkoutSessionDetails.arrCumElevation=arrCumElevation
+        entryWorkoutSessionDetails.arrCumSpeed=arrCumSpeed
+        entryWorkoutSessionDetails.arrDistance= arrDistance
+        entryWorkoutSessionDetails.arrElevation=arrElevation
+        entryWorkoutSessionDetails.arrHRRecordedSecond= arrHRRecordedSecond!!
+        entryWorkoutSessionDetails.arrHr= arrHr!!
+        entryWorkoutSessionDetails.arrRevPercentage=arrRevPercentage //ready value
+        entryWorkoutSessionDetails.arrRevSecond=arrRevSecond //ready value
+        entryWorkoutSessionDetails.arrSpeed= arrSpeed
 
-        //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
-        entryWorkoutSessionDetails.classType= yourWayType
-        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
-        entryWorkoutSessionDetails.classDate=currentTimestamp
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.maxRevPercentage=0
-        entryWorkoutSessionDetails.isClass=false
-        entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.classImage=""
-
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
-//
-
-//        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.minRevPercentage=
-//        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalRev=
-//        entryWorkoutSessionDetails.typeOfGoal=
-
-        //Zone Entry Value
-        entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-//        entryWorkoutSessionDetails.zone1.seconds=
-//        entryWorkoutSessionDetails.zone1.totalRev=
-
-        RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails)
-    }
-    private fun RlNoSensorDataEntryToFirebase(
-        yourWayType: String,
-        totalTime: String,
-        heartRateList: ArrayList<Int>?,
-        stepsList: ArrayList<Int>?,
-        paceList: ArrayList<Int>?,
-        climbedList: ArrayList<Int>?,
-        avgSpaceList: ArrayList<Int>?,
-        maxPaceList: ArrayList<Int>?,
-        speedList: MutableList<Double>,
-        avgSpeedList: MutableList<Double>,
-        maxSpeedList: MutableList<Double>,
-        distanceList: MutableList<Double>,
-        activeCaloriesList: MutableList<Double>) {
-        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-
-        val entryWorkoutSessionDetails = RLNoSensorWorkoutSessionDetailsModel()
-
-        //Array Entry Value
-        entryWorkoutSessionDetails.arrSpeed= speedList
-        entryWorkoutSessionDetails.arrDistance= distanceList
-        entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
-        entryWorkoutSessionDetails.arrCadence= climbedList!!
-//        entryWorkoutSessionDetails.arrCadence=
-//        entryWorkoutSessionDetails.arrCumElevation=
-//        entryWorkoutSessionDetails.arrElevation=
-//        entryWorkoutSessionDetails.arrPower=
-//        entryWorkoutSessionDetails.arrPowerFromDevice=
 
         //Normal Entry Value
         entryWorkoutSessionDetails.MaxHrUsedForCalculation=RFMHR
         entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=RFMHR
         entryWorkoutSessionDetails.RestingHrUsedForCalculation=RestingHR.toInt()
         entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=RestingHR.toInt()
-
-        //entryWorkoutSessionDetails.avgRevPercentage=//value count
-        //entryWorkoutSessionDetails.burntCalories= // sum of every time calories plus
+        entryWorkoutSessionDetails.avgRevPercentage=avgRevPercentage
+        entryWorkoutSessionDetails.burntCalories=burntCalories
         entryWorkoutSessionDetails.classDate=currentTimestamp
         entryWorkoutSessionDetails.classDescription=""
         entryWorkoutSessionDetails.classImage=""
@@ -286,120 +207,306 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
         entryWorkoutSessionDetails.classType= yourWayType
         entryWorkoutSessionDetails.demsElevation=-1
-        //entryWorkoutSessionDetails.distance = //// sum of every time distance plus
+        entryWorkoutSessionDetails.distance=distance
         entryWorkoutSessionDetails.goal=""
         entryWorkoutSessionDetails.isClass=false
         entryWorkoutSessionDetails.isPowerDeviceConnected=false
         entryWorkoutSessionDetails.mapGeneratedUrl=""
-        //entryWorkoutSessionDetails.maxRevPercentage=//calculation of REV persentage
-        //entryWorkoutSessionDetails.minRevPercentage=//calculation of REV persentage
+        entryWorkoutSessionDetails.maxRevPercentage=maxRevPercentage
+        entryWorkoutSessionDetails.minRevPercentage=minRevPercentage
         entryWorkoutSessionDetails.remark="android"
-        //entryWorkoutSessionDetails.revPercentage=//last value of arrRevPercentage
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toLong()
-        //entryWorkoutSessionDetails.totalElevation=//every time elevation sum
+        entryWorkoutSessionDetails.revPercentage=revPercentage
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
+        entryWorkoutSessionDetails.totalElevation=totalElevation
         entryWorkoutSessionDetails.totalPower=0
-        //entryWorkoutSessionDetails.totalRev= sum of revpersentage
-        entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
+        entryWorkoutSessionDetails.totalRev=totalRev
+        entryWorkoutSessionDetails.totalSteps=totalSteps
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
+        entryWorkoutSessionDetails.typeOfGoal=yourWayType
+        //Zone Entry Value
+        val REVPer=revPercentage.roundToInt()
+        when {
+            REVPer <= 30 -> {
+                //Zone 1
+                entryWorkoutSessionDetails.zone1.remark= "android"
+                entryWorkoutSessionDetails.zone1.distance=distance
+                entryWorkoutSessionDetails.zone1.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone1.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone1.totalRev=totalRev
+            }
+            REVPer <= 50 -> {
+                //Zone 2
+                entryWorkoutSessionDetails.zone2.remark= "android"
+                entryWorkoutSessionDetails.zone2.distance=distance
+                entryWorkoutSessionDetails.zone2.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone2.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone2.totalRev=totalRev
+            }
+            REVPer <= 60 -> {
+                //Zone 3
+                entryWorkoutSessionDetails.zone3.remark= "android"
+                entryWorkoutSessionDetails.zone3.distance=distance
+                entryWorkoutSessionDetails.zone3.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone3.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone3.totalRev=totalRev
+            }
+            REVPer <= 70 -> {
+                //Zone 4
+                entryWorkoutSessionDetails.zone4.remark= "android"
+                entryWorkoutSessionDetails.zone4.distance=distance
+                entryWorkoutSessionDetails.zone4.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone4.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone4.totalRev=totalRev
+            }
+            REVPer <= 80 -> {
+                //Zone 5
+                entryWorkoutSessionDetails.zone5.remark= "android"
+                entryWorkoutSessionDetails.zone5.distance=distance
+                entryWorkoutSessionDetails.zone5.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone5.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone5.totalRev=totalRev
+            }
+            REVPer <= 90 -> {
+                //Zone 6
+                entryWorkoutSessionDetails.zone6.remark= "android"
+                entryWorkoutSessionDetails.zone6.distance=distance
+                entryWorkoutSessionDetails.zone6.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone6.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone6.totalRev=totalRev
+            }
+            REVPer <= 100 -> {
+                //Zone 7
+                entryWorkoutSessionDetails.zone7.remark= "android"
+                entryWorkoutSessionDetails.zone7.distance=distance
+                entryWorkoutSessionDetails.zone7.burntCalories=burntCalories
+                entryWorkoutSessionDetails.zone7.seconds=totalTime.toInt()?:0
+                entryWorkoutSessionDetails.zone7.totalRev=totalRev
+            }
+        }
+
+        RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails)
+    }
+    private fun RlNoSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
+
+        val burntCalories=requireArguments().getDouble("burntCalories")
+        val totalElevation=requireArguments().getDouble("totalElevation")
+        val totalSteps=requireArguments().getInt("totalSteps")
+        val distance=requireArguments().getDouble("distance")
+
+        val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
+        val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
+        val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
+        val arrElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrElevation.toString())
+        val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
+        val arrCumDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumDistance.toString())
+        val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
+        val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
+
+
+        val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf()
+        val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf()
+        val arrDistance: MutableList<Double> = arrDistanceList?.toMutableList() ?: mutableListOf()
+        val arrElevation: MutableList<Double> = arrElevationList?.toMutableList() ?: mutableListOf()
+        val arrSpeed: MutableList<Double> = arrSpeedList?.toMutableList() ?: mutableListOf()
+        val arrCumDistance: MutableList<Double> = arrCumDistanceList?.toMutableList() ?: mutableListOf()
+        val arrCumElevation: MutableList<Double> = arrCumElevationList?.toMutableList() ?: mutableListOf()
+        val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf()
+
+
+        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+
+        val entryWorkoutSessionDetails = RLNoSensorWorkoutSessionDetailsModel()
+
+        //Array Entry Value
+        entryWorkoutSessionDetails.arrBurntCalories= arrBurntCalories
+        entryWorkoutSessionDetails.arrCadence= arrCadence
+        entryWorkoutSessionDetails.arrCumDistance= arrCumDistance
+        entryWorkoutSessionDetails.arrCumSpeed= arrCumSpeed
+        entryWorkoutSessionDetails.arrDistance= arrDistance
+        entryWorkoutSessionDetails.arrElevation=arrElevation
+        entryWorkoutSessionDetails.arrSpeed= arrSpeed
+        entryWorkoutSessionDetails.arrCumElevation=arrCumElevation
+
+
+        //Normal Entry Value
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation=RFMHR
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=RFMHR
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation=RestingHR.toInt()
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=RestingHR.toInt()
+
+        entryWorkoutSessionDetails.avgRevPercentage= 0//value count
+        entryWorkoutSessionDetails.burntCalories=burntCalories
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.classDescription=""
+        entryWorkoutSessionDetails.classImage=""
+        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
+        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
+        entryWorkoutSessionDetails.classType= yourWayType
+        entryWorkoutSessionDetails.demsElevation=-1
+        entryWorkoutSessionDetails.distance = distance
+        entryWorkoutSessionDetails.goal=""
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.mapGeneratedUrl=""
+        entryWorkoutSessionDetails.maxRevPercentage= 0 //calculation of REV persentage
+        entryWorkoutSessionDetails.minRevPercentage= 0 //calculation of REV persentage
+        entryWorkoutSessionDetails.remark="android"
+        entryWorkoutSessionDetails.revPercentage= 0 //last value of arrRevPercentage
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toLong()
+        entryWorkoutSessionDetails.totalElevation= totalElevation
+        entryWorkoutSessionDetails.totalPower=0
+        entryWorkoutSessionDetails.totalRev= 0.0 // sum of revpersentage
+        entryWorkoutSessionDetails.totalSteps=totalSteps
         entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.typeOfGoal=yourWayType
 
 
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-//        entryWorkoutSessionDetails.zone1.seconds=
-//        entryWorkoutSessionDetails.zone1.totalRev=
+        entryWorkoutSessionDetails.zone1.distance=distance
+        entryWorkoutSessionDetails.zone1.burntCalories=burntCalories
+        entryWorkoutSessionDetails.zone1.seconds=totalTime.toInt()?:0
+        entryWorkoutSessionDetails.zone1.totalRev=0
 
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails)
 
-        //Multi Array value set entry to database
-        /*
-        //single value set entry to database
-        val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
-        entryWorkoutSessionSummary.totalTime=totalTime.toInt()
-        entryWorkoutSessionSummary.classType= yourWayType
-        entryWorkoutSessionSummary.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionSummary.classNote= fragBinding.edtAddNotes.text.toString()
+        //  val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
 
-        //entryWorkoutSessionSummary.zone1.avgHr= heartRateList.average().roundToInt()
-        //entryWorkoutSessionSummary.zone1.avgSpeed= stepsList.map { it.toInt() }.toIntArray().average().toDouble()
-        //entryWorkoutSessionSummary.zone1.distance= distanceList.maxOrNull()!!.toDouble()
-
-       // RLRevoolaUserSessionSummaryData(entryWorkoutSessionSummary)*/
     }
-    private fun RlSpeedSensorDataEntryToFirebase(
-        yourWayType: String,
-        totalTime: String,
-        heartRateList: ArrayList<Int>?,
-        stepsList: ArrayList<Int>?,
-        paceList: ArrayList<Int>?,
-        climbedList: ArrayList<Int>?,
-        avgSpaceList: ArrayList<Int>?,
-        maxPaceList: ArrayList<Int>?,
-        speedList: MutableList<Double>,
-        avgSpeedList: MutableList<Double>,
-        maxSpeedList: MutableList<Double>,
-        distanceList: MutableList<Double>,
-        activeCaloriesList: MutableList<Double>) {
+    private fun RlSpeedSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
+
+        val burntCalories=requireArguments().getDouble("burntCalories")
+        val totalElevation=requireArguments().getDouble("totalElevation")
+        val totalSteps=requireArguments().getInt("totalSteps")
+        val distance=requireArguments().getDouble("distance")
+
+        val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
+        val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
+        val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
+        val arrElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrElevation.toString())
+        val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
+        val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
+
+
+        val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf()
+        val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf()
+        val arrDistance: MutableList<Double> = arrDistanceList?.toMutableList() ?: mutableListOf()
+        val arrElevation: MutableList<Double> = arrElevationList?.toMutableList() ?: mutableListOf()
+        val arrSpeed: MutableList<Double> = arrSpeedList?.toMutableList() ?: mutableListOf()
+        val arrCumElevation: MutableList<Double> = arrCumElevationList?.toMutableList() ?: mutableListOf()
+
+
+
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
         val entryWorkoutSessionDetails = RLSpeedSensorWorkoutSessionDetailsModel()
 
         //Array Entry Value
-        entryWorkoutSessionDetails.arrSpeed= speedList
-        entryWorkoutSessionDetails.arrDistance= distanceList
-        entryWorkoutSessionDetails.arrBurntCalories= activeCaloriesList
-//        entryWorkoutSessionDetails.arrCadence=
-//        entryWorkoutSessionDetails.arrCumElevation=
-//        entryWorkoutSessionDetails.arrElevation=
-//        entryWorkoutSessionDetails.arrPower=
-//        entryWorkoutSessionDetails.arrPowerFromDevice=
+        entryWorkoutSessionDetails.arrBurntCalories= arrBurntCalories
+        entryWorkoutSessionDetails.arrCadence=arrCadence
+        entryWorkoutSessionDetails.arrDistance= arrDistance
+        entryWorkoutSessionDetails.arrElevation=arrElevation
+        entryWorkoutSessionDetails.arrSpeed= arrSpeed
+        entryWorkoutSessionDetails.arrCumElevation=arrCumElevation
 
         //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
-        entryWorkoutSessionDetails.classType= yourWayType
+
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation=RFMHR
+        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=RFMHR
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation=RestingHR.toInt()
+        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=RestingHR.toInt()
+
+        entryWorkoutSessionDetails.avgRevPercentage=0
+        entryWorkoutSessionDetails.burntCalories=burntCalories
+        entryWorkoutSessionDetails.classDate=currentTimestamp
+        entryWorkoutSessionDetails.classDescription=""
+        entryWorkoutSessionDetails.classImage=""
         entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
         entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.distance=distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.burntCalories=activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.totalSteps=stepsList!!.maxOrNull()!! ?: 0
-        entryWorkoutSessionDetails.classDate=currentTimestamp
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.maxRevPercentage=0
-        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.classType= yourWayType
+        entryWorkoutSessionDetails.demsElevation=-1
+        entryWorkoutSessionDetails.distance=distance
         entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.classImage=""
+        entryWorkoutSessionDetails.isClass=false
+        entryWorkoutSessionDetails.isPowerDeviceConnected=false
+        entryWorkoutSessionDetails.mapGeneratedUrl=""
+        entryWorkoutSessionDetails.maxRevPercentage=0
+        entryWorkoutSessionDetails.minRevPercentage=0
+        entryWorkoutSessionDetails.remark="android"
+        entryWorkoutSessionDetails.revPercentage=0
+        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
+        entryWorkoutSessionDetails.totalElevation=totalElevation
+        entryWorkoutSessionDetails.totalPower=0
+        entryWorkoutSessionDetails.totalRev=0.0
+        entryWorkoutSessionDetails.totalSteps=totalSteps
+        entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
+        entryWorkoutSessionDetails.typeOfGoal=yourWayType
 
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation=
-//        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation=
-//        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=
-//
 
-//        entryWorkoutSessionDetails.avgRevPercentage=
-//        entryWorkoutSessionDetails.classDescription=
-//        entryWorkoutSessionDetails.demsElevation=
-//        entryWorkoutSessionDetails.mapGeneratedUrl=
-//        entryWorkoutSessionDetails.minRevPercentage=
-//        entryWorkoutSessionDetails.revPercentage=
-//        entryWorkoutSessionDetails.totalElevation=
-//        entryWorkoutSessionDetails.totalRev=
-//        entryWorkoutSessionDetails.typeOfGoal=
 
         //Zone Entry Value
         entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.distance= distanceList.maxOrNull()!!.toDouble() ?: 0.0
-        entryWorkoutSessionDetails.zone1.burntCalories= activeCaloriesList.maxOrNull()!!.toDouble() ?: 0.0
-//        entryWorkoutSessionDetails.zone1.seconds=
-//        entryWorkoutSessionDetails.zone1.totalRev=
+        entryWorkoutSessionDetails.zone1.distance=distance
+        entryWorkoutSessionDetails.zone1.burntCalories=burntCalories
+        entryWorkoutSessionDetails.zone1.seconds=totalTime.toInt()?:0
+        entryWorkoutSessionDetails.zone1.totalRev=0
 
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails)
 
 
+    }
+    //Entry to Firebase
+    private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel) {
+        // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(entry)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                    }
+                }
+        }
+    }
+    private fun RLHeartRateSensorUserSessionDetailData(entry: RLHeartRateSensorWorkoutSessionDetailsModel) {
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(entry)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                    }
+                }
+        }
+    }
+    private fun RLSpeedSensorUserSessionDetailData(entry: RLSpeedSensorWorkoutSessionDetailsModel) {
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(entry)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                    }
+                }
+        }
     }
 
     private fun RLShareMapHide(isVisible:Boolean){
@@ -447,7 +554,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.txtAddPhoto.visibility=View.VISIBLE
         }
     }
-
     //SELECTED IMAGE SENT TO SERVER
     private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
         val storageReference = FirebaseStorage.getInstance().reference
@@ -537,59 +643,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel) {
-       // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                    } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
-                    }
-                }
-        }
-    }
-    private fun RLHeartRateSensorUserSessionDetailData(entry: RLHeartRateSensorWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                    } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
-                    }
-                }
-        }
-    }
-    private fun RLSpeedSensorUserSessionDetailData(entry: RLSpeedSensorWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                    } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
-                    }
-                }
-        }
-    }
-
     //FIREBASE USERDATA GET
     private fun RLFirebaseToFatchUserData() {
         //Firebase To Fetch UserData
@@ -611,4 +664,37 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
         }
     }
+
+     fun zoneDiff(REVPer: Int) {
+       when {
+           REVPer <= 30 -> {
+               //Zone 1
+
+           }
+           REVPer <= 50 -> {
+               //Zone 2
+
+           }
+           REVPer <= 60 -> {
+               //Zone 3
+
+           }
+           REVPer <= 70 -> {
+               //Zone 4
+
+           }
+           REVPer <= 80 -> {
+               //Zone 5
+
+           }
+           REVPer <= 90 -> {
+               //Zone 6
+
+           }
+           REVPer <= 100 -> {
+               //Zone 7
+
+           }
+       }
+   }
 }

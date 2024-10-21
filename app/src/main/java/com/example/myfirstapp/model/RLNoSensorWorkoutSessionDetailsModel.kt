@@ -8,17 +8,17 @@ package com.example.myfirstapp.model
     var RestingHrUsedForCalculation_Last: Int = 0
 
     var arrBurntCalories: MutableList<Double> =  mutableListOf(0.0)//Done
-    var arrCadence: MutableList<Int> =  mutableListOf(0)
+    var arrCadence: MutableList<Double> =  mutableListOf(0.0)
     var arrCumDistance: MutableList<Double> =  mutableListOf(0.0)
     var arrCumSpeed: MutableList<Double> =  mutableListOf(0.0)
     var arrDistance: MutableList<Double> =  mutableListOf(0.0)//Done
-    var arrElevation: MutableList<Int> =  mutableListOf(0)
+    var arrElevation: MutableList<Double> =  mutableListOf(0.0)
     var arrPower: MutableList<Int> =  mutableListOf(0)
     var arrPowerFromDevice: MutableList<Int> =  mutableListOf(0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)//Done
 
     //this array some ride entry come And Some ride or other entry not come
-    var arrCumElevation: MutableList<Int> =  mutableListOf(0)
+    var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)
 
 
     var avgRevPercentage:Int=0
@@ -40,7 +40,7 @@ package com.example.myfirstapp.model
     var remark:String="android"//Done
     var revPercentage:Int=0
     var timestamp:Long=0
-    var totalElevation:Int=0
+    var totalElevation:Double=0.0
     var totalPower:Int=0
     var totalRev:Double=0.0
     var totalSteps:Int=0//Done

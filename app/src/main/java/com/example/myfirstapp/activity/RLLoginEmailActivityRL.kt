@@ -126,7 +126,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                         // Handle case where user does not exist
                         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_email,emailID)
                         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_password,password)
-                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java))//.putExtra("EmailId",emailID).putExtra("Password",password))
+                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
                         finish()
                         Log.e(TAG, "User does not exist: ${exception.message}")
                     }

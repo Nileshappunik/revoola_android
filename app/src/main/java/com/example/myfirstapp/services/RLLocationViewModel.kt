@@ -12,12 +12,10 @@ class RLLocationViewModel(application: Application) : AndroidViewModel(applicati
     val speedData: LiveData<Float> = RLLocationRepository.speedData
     val stepCountData: LiveData<Int> = RLLocationRepository.stepCountData
     val distanceData: LiveData<Float> = RLLocationRepository.distanceData
-    val averageSpeedData: LiveData<Float> = RLLocationRepository.averageSpeedData
-    val maxSpeedData: LiveData<Float> = RLLocationRepository.maxSpeedData
+    val cadenceData: LiveData<Float> = RLLocationRepository.cadenceData
     val paceData: LiveData<Float> = RLLocationRepository.paceData
-    val averagePaceData: LiveData<Float> = RLLocationRepository.averagePaceData
-    val maxPaceData: LiveData<Float> = RLLocationRepository.maxPaceData
     val caloriesBurnedData: LiveData<Float> = RLLocationRepository.caloriesBurnedData
+    val elevationMeter: LiveData<Double> = RLLocationRepository.elevationMeter
 
     fun RLstartLocationUpdates() {
         RLLocationRepository.RLstartLocationUpdates()

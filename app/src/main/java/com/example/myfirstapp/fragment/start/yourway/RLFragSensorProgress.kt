@@ -32,6 +32,7 @@ import com.example.myfirstapp.utils.RLPrefManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
 import com.example.myfirstapp.utils.RLConstants
@@ -54,37 +55,42 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var issGpsConnect:Boolean =false
     private var isSpeedSensorConnect:Boolean =false
 
-    private var heartRateList:MutableList<Int> = mutableListOf()
-    private var stepsList:MutableList<Int> = mutableListOf()
-    private var distanceList:MutableList<Double> = mutableListOf()
-    private var climbedList:MutableList<Int> = mutableListOf()
-
-
     private var paceList:MutableList<Int> = mutableListOf()
-    private var avgSpaceList:MutableList<Int> = mutableListOf()
-    private var maxxPaceList:MutableList<Int> = mutableListOf()
 
     private var speedList:MutableList<Double> = mutableListOf()
-    private var avgSpeedList:MutableList<Double> = mutableListOf()
-    private var maxsSpeedList:MutableList<Double> = mutableListOf()
-    private var activeCaloriesList:MutableList<Double> = mutableListOf()
 
-    private var heartRateNumber:Int=0
+    private var arrBurntCalories:MutableList<Double> = mutableListOf()
+    private var arrCadence:MutableList<Double> = mutableListOf()
+    private var arrDistance:MutableList<Double> = mutableListOf()
+    private var arrElevation:MutableList<Double> = mutableListOf()
+    private var arrSpeed:MutableList<Double> = mutableListOf()
+    private var arrCumDistance:MutableList<Double> = mutableListOf()
+    private var arrCumSpeed:MutableList<Double> = mutableListOf()
+    private var arrCumElevation:MutableList<Double> = mutableListOf()
+
+
     private var stepsNumber:Int=0
     private var distanceNumber:Double=0.0
     private var climbedNumber:Int=0
 
     private var activeCaloriesNumber:Double=0.0
     private var speedNumber:Double=0.0
-    private var avgSpeedNumber:Double=0.0
-    private var maxsSpeedNumber:Double=0.0
 
     private var paceNumber:Int=0
-    private var avgSpaceNumber:Int=0
-    private var maxxPaceNumber:Int=0
     private var totalTime:String =""
     private var maxSpeed =0
     private var maxPace =0
+
+    private var elevationMeter:Double=0.0
+    private var cadenceData =0.0
+    private var lastGeoElevation: Int = 0
+    private var totalGeoElevation: Int = 0
+    private var totalElevation=0.0
+    private var CumDistance =0.0
+    private var CumSpeed =0.0
+    private var distance:Double=0.0
+    private var burntCalories:Double=0.0
+
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -163,22 +169,27 @@ class RLFragSensorProgress : RLBaseFragment(){
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             bundle.putString("totalTime",totalTime)
-            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
-            bundle.putIntegerArrayList("stepsList",ArrayList(stepsList))
-            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
-            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
-            bundle.putIntegerArrayList("paceList",ArrayList(paceList))
-            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
-            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
-            bundle.putDoubleArray("avgSpeedList",avgSpeedList.toDoubleArray())
-            bundle.putDoubleArray("maxsSpeedList",maxsSpeedList.toDoubleArray())
-            bundle.putIntegerArrayList("avgSpaceList",ArrayList(avgSpaceList))
-            bundle.putIntegerArrayList("maxxPaceList",ArrayList(maxxPaceList))
+
             if (yourWayType.equals("Ride") && isSpeedSensorConnect){
                 bundle.putString("SENSOR", RLConstants.SPEEDSENSOR)
             }else{
                 bundle.putString("SENSOR", RLConstants.NOSENSOR)
             }
+            bundle.putDouble("burntCalories",burntCalories)
+            bundle.putDouble("totalElevation",totalElevation)
+            bundle.putInt("totalSteps",stepsNumber)
+            bundle.putDouble("distance",distance)
+
+
+            bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrDistance.toString(),arrDistance.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrElevation.toString(),arrElevation.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrSpeed.toString(),arrSpeed.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
+
 
             try {
                 timerManager.RLstop()
@@ -418,6 +429,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                     climbedNumber=RlGetValueInt(CADENCE!!.toString())
                     speedNumber=RlGetValueDouble(SPEED!!.toString())
                     activeCaloriesNumber=RlGetValueDouble(CALORIES!!.toString())
+                    cadenceData=RlGetValueDouble(CADENCE!!.toString())
 
                     if (yourWayType.toLowerCase().equals("ride")){
                         if (speedSetValue>0){
@@ -532,18 +544,35 @@ class RLFragSensorProgress : RLBaseFragment(){
         }
     }
     private fun  RlDataFillAllArray(){
+        burntCalories=burntCalories+activeCaloriesNumber
+        arrBurntCalories.add(activeCaloriesNumber)
+        arrCadence.add(cadenceData)
+        arrDistance.add(distanceNumber)
+        arrSpeed.add(speedNumber)
+        if (elevationMeter > 0) {
+            val relativeAltitude = elevationMeter
+            val roundedAltitude = relativeAltitude.toBigDecimal().setScale(1, java.math.RoundingMode.HALF_UP).toInt()
 
-        heartRateList.add(heartRateNumber)
-        stepsList.add(stepsNumber)
-        distanceList.add(distanceNumber)
-        climbedList.add(climbedNumber)
-        paceList.add(paceNumber)
-        speedList.add(speedNumber)
-        activeCaloriesList.add(activeCaloriesNumber)
-        avgSpeedList.add(avgSpeedNumber)
-        maxsSpeedList.add(maxsSpeedNumber)
-        avgSpaceList.add(avgSpaceNumber)
-        maxxPaceList.add(maxxPaceNumber)
+            if (lastGeoElevation != null) {
+                if (lastGeoElevation!! < roundedAltitude) {
+                    totalGeoElevation += (roundedAltitude - lastGeoElevation!!)
+                    totalElevation=(totalGeoElevation/10).toDouble()
+                }
+            }
+            lastGeoElevation = roundedAltitude
+            arrElevation.add(lastGeoElevation.toDouble())
+            arrCumElevation.add((totalGeoElevation/10).toDouble())
+
+        }else{
+            arrElevation.add(0.0)
+            arrCumElevation.add(0.0)
+        }
+
+        CumSpeed=CumSpeed+speedNumber
+        CumDistance=CumDistance+distanceNumber
+        arrCumDistance.add(CumDistance)
+        arrCumSpeed.add(CumSpeed)
+        distance=CumDistance
     }
     private fun RLformatElapsedTime(elapsedTime: Long): String {
         val seconds = (elapsedTime / 1000) % 60
@@ -663,83 +692,21 @@ class RLFragSensorProgress : RLBaseFragment(){
 
                 }
             })
-
-
-
-          /*
-           rlLocationViewModel.averageSpeedData.observe(viewLifecycleOwner, Observer { averageSpeed ->
-            averageSpeed?.let {
-                val AvgSpeed=round(it * 100) / 100
-                Log.d(TAG,"Avg Speed: $AvgSpeed m/s")
-                val avgSpeedValue=RlGetValueDouble(AvgSpeed.toString())
-                avgSpeedNumber=avgSpeedValue
-                //avgSpeedList.add(avgSpeedValue)
-                if (avgSpeedValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayPace.txtAvgNumber.setText(AvgSpeed.toString())
-                    }else{
-                        fragBinding.inlaySpeed.txtAvgNumber.setText(AvgSpeed.toString())
-                    }
+            rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
+                elevation?.let {
+                    Log.d(TAG,"elevation: ${it} m")
+                    val elevation=RlGetValueDouble(it.toString())
+                    elevationMeter=elevation
                 }
+            })
 
-
-            }
-        })
-
-            rlLocationViewModel.maxSpeedData.observe(viewLifecycleOwner, Observer { maxSpeed ->
-            maxSpeed?.let {
-                val maxsSpeed=round(it * 100)  / 100
-                Log.d(TAG,"Max Speed: $maxsSpeed m/s")
-
-                val maxsSpeedValue=RlGetValueDouble(maxsSpeed.toString())
-                maxsSpeedNumber=maxsSpeedValue
-               // maxsSpeedList.add(maxsSpeedValue)
-                if (maxsSpeedValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayPace.txtMaxNumber.setText(maxsSpeed.toString())
-                    }else{
-                        fragBinding.inlaySpeed.txtMaxNumber.setText(maxsSpeed.toString())
-                    }
+            rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
+                cadence?.let {
+                    Log.d(TAG,"cadenceData: ${it} ")
+                    val _cadenceData=RlGetValueDouble(it.toString())
+                    cadenceData=_cadenceData
                 }
-
-            }
-        })
-
-           rlLocationViewModel.averagePaceData.observe(viewLifecycleOwner, Observer { averagePace ->
-            averagePace?.let {
-                val avgspace=round(it * 100)  / 100
-                Log.d(TAG, "Avg Pace: $avgspace min/km")
-                val avgspaceValue=RlGetValueInt(avgspace.toString())
-                avgSpaceNumber=avgspaceValue
-                //avgSpaceList.add(avgspaceValue)
-                if (avgspaceValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayClimbed.txtAvgNumber.setText(avgspace.toString())
-                    }else{
-                        fragBinding.inlayPace.txtAvgNumber.setText(avgspace.toString())
-                    }
-                }
-
-            }
-        })
-
-            rlLocationViewModel.maxPaceData.observe(viewLifecycleOwner, Observer { maxPace ->
-            maxPace?.let {
-                val maxxpace=round(it * 100) / 100
-                Log.d(TAG, "Max Pace: $maxxpace min/km")
-                val maxxpaceValue=RlGetValueInt(maxxpace.toString())
-                maxxPaceNumber=maxxpaceValue
-                //maxxPaceList.add(maxxpaceValue)
-                if (maxxpaceValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayClimbed.txtMaxNumber.setText(maxxpace.toString())
-                    }else{
-                        fragBinding.inlayPace.txtMaxNumber.setText(maxxpace.toString())
-                    }
-                }
-
-            }
-        })*/
+            })
 
             rlLocationViewModel.RLstartLocationUpdates()
         }catch (e:Exception){
@@ -774,8 +741,11 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
 
     //Max Value get
-    private fun RLmax(previous: Int, next: Int): Int {
-        return RLmax(previous, next)
+    fun RLmax(previous: Int, next: Int): Int {
+        return when {
+            previous > next -> previous
+            else ->next
+        }
     }
 
 }
