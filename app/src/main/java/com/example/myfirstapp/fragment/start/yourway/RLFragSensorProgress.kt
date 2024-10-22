@@ -32,12 +32,16 @@ import com.example.myfirstapp.utils.RLPrefManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLTimerManager
 import com.example.myfirstapp.utils.RLTools
+import com.google.gson.Gson
 import java.lang.Math.round
 import kotlin.math.roundToInt
 
@@ -90,6 +94,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var CumSpeed =0.0
     private var distance:Double=0.0
     private var burntCalories:Double=0.0
+    private var appUnit:String=""
 
 
     companion object {
@@ -116,12 +121,15 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
     private fun RLuisetup(){
         RLstartCountdown()
+
         yourWayType = requireArguments().getString("YourWayType").toString().trim()
         isSpeedSensor = requireArguments().getBoolean("isspeedsensor",false)
 
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
         rlLocationViewModel =RLLocationViewModel(requireActivity().application)
 
+
+        RLFirebaseToFatchUserData()
 
        // fragBinding.txtMaintitle.setText(yourWayType)
         fragBinding.inlayTop.ivTitle.setText(yourWayType)
@@ -204,6 +212,21 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
+        }
+    }
+    private fun RLFirebaseToFatchUserData() {
+        //Firebase To Fetch UserData
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()!!.uid
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        databaseManager.RlreadData(path){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                appUnit=userData.appUnit
+            }
         }
     }
     fun  RLwayTypeDesignSet(yourWayType:String){
@@ -368,6 +391,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                     addAction("ACTION_CONNECTION_STATE_CHANGED")
                 }
                 requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
+                RLstepGetToGPS()
             }else{
                 if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                     RLstepGetToGPS()
@@ -410,63 +434,52 @@ class RLFragSensorProgress : RLBaseFragment(){
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "ACTION_DATA_RETRIEVED" -> {
-                    val data = intent.getStringExtra("EXTRA_DATA")
-                    val SPEED = intent.getStringExtra("SPEED")
-                    val AvgSPEED = intent.getStringExtra("AvgSPEED")
-                    val DISTANCE = intent.getStringExtra("DISTANCE")
-                    val CADENCE = intent.getStringExtra("CADENCE")
-                    val CALORIES = intent.getStringExtra("CALORIES")
+                    val data = intent.getStringExtra("EXTRA_DATA")?:"0"
+                    val SPEED = intent.getStringExtra("SPEED")?:"0"
+                    val AvgSPEED = intent.getStringExtra("AvgSPEED")?:"0"
+                    val DISTANCE = intent.getStringExtra("DISTANCE")?:"0"
+                    val CADENCE = intent.getStringExtra("CADENCE")?:"0"
+                    val CALORIES = intent.getStringExtra("CALORIES")?:"0"
 
-                    var speedSetValue=RlGetValueInt(SPEED!!.toString())
-                    var avgspeedSetValue=RlGetValueInt(AvgSPEED!!.toString())
-                    var distanceSetValue=RlGetValueInt(DISTANCE!!.toString())
-                    var cadenceSetValue=RlGetValueInt(CADENCE!!.toString())
+                    var speedSetValue=RlGetValueInt(SPEED.toString())?:0
+                    var avgspeedSetValue=RlGetValueInt(AvgSPEED.toString())?:0
+                    var distanceSetValue=RlGetValueInt(DISTANCE.toString())?:0
+                    var cadenceSetValue=RlGetValueInt(CADENCE.toString())?:0
 
-                   // speedList.add(RlGetValueInt(SPEED!!.toString()))
-                  // climbedList.add(RlGetValueInt(CADENCE!!.toString()))
-                  //  distanceList.add(RlGetValueInt(DISTANCE!!.toString()))
-                    distanceNumber=RlGetValueDouble(DISTANCE!!.toString())
-                    climbedNumber=RlGetValueInt(CADENCE!!.toString())
-                    speedNumber=RlGetValueDouble(SPEED!!.toString())
-                    activeCaloriesNumber=RlGetValueDouble(CALORIES!!.toString())
-                    cadenceData=RlGetValueDouble(CADENCE!!.toString())
+                    distanceNumber=RlGetValueDouble(DISTANCE.toString())?:0.0
+                    climbedNumber=RlGetValueInt(CADENCE.toString())?:0
+                    speedNumber=RlGetValueDouble(SPEED.toString())?:0.0
+                    activeCaloriesNumber=RlGetValueDouble(CALORIES.toString())?:0.0
+                    cadenceData=RlGetValueDouble(CADENCE.toString())?:0.0
 
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        if (speedSetValue>0){
-                            fragBinding.inlaySpeed.txtProgressTimeNumber.setText(SPEED.toString()+" km/h")
-                            if (!speedList.isNullOrEmpty()){
-                                fragBinding.inlaySpeed.txtAvgNumber.setText(speedList.average().toString())
-                                fragBinding.inlaySpeed.txtMaxNumber.setText(speedList.maxOrNull().toString())
-                            }
-                        }
-                       /* if (avgspeedSetValue>0){
-                            fragBinding.inlayPace.txtAvgNumber.setText(AvgSPEED.toString()+" km/h")
-                        }*/
-                        if (distanceSetValue>0){
-                            fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString()+" meter")
-                        }
-                        if (cadenceSetValue>0){
-                            fragBinding.inlayStep.txtProgressTimeNumber.setText(CADENCE.toString())
-                            fragBinding.inlayClimbed.txtProgressTimeNumber.setText(CADENCE.toString())
-                        }
+                    val floatSpeed:Float= speedSetValue.toFloat()?:0f
+                    paceNumber=calculatePace(floatSpeed)
 
-                    }else{
-                        if (speedSetValue>0){
-                            fragBinding.inlaySpeed.txtProgressTimeNumber.setText(SPEED.toString()+" km/h")
-                        }
-                        if (avgspeedSetValue>0){
-                            fragBinding.inlaySpeed.txtAvgNumber.setText(AvgSPEED.toString()+" km/h")
-                        }
-                        if (distanceSetValue>0){
-                            fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString()+" meter")
-                        }
-                        if (cadenceSetValue>0){
-                            fragBinding.inlayStep.txtProgressTimeNumber.setText(CADENCE.toString())
-                            fragBinding.inlayClimbed.txtProgressTimeNumber.setText(CADENCE.toString())
-                        }
-
+                    speedList.add(speedSetValue.toDouble())
+                    fragBinding.inlaySpeed.txtProgressTimeNumber.setText(speedSetValue.toString())
+                    if (!speedList.isNullOrEmpty()){
+                        val averageSpeed=speedList.average().toDouble()?:0.0
+                        maxSpeed=RLmax(maxSpeed,speedNumber.roundToInt())
+                        fragBinding.inlaySpeed.txtAvgNumber.setText(averageSpeed.toString())
+                        fragBinding.inlaySpeed.txtMaxNumber.setText( maxSpeed.toString())
                     }
-
+                    if (cadenceSetValue>0){
+                        fragBinding.inlayStep.txtProgressTimeNumber.setText(CADENCE.toString())
+                    }
+                    if (distanceSetValue>0){
+                        fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString())
+                    }
+                    if (paceNumber>0){
+                        fragBinding.inlayPace.txtProgressTimeNumber.setText(paceNumber.toString())
+                        paceList.add(paceNumber)
+                        if (!paceList.isNullOrEmpty()){
+                            val averagePace=paceList.average().roundToInt()?:0
+                            //val maxPace=paceList.maxOrNull()!!.toInt()?:0
+                            maxPace=RLmax(maxPace,paceNumber.toInt())
+                            fragBinding.inlayPace.txtAvgNumber.setText( averagePace.toString())
+                            fragBinding.inlayPace.txtMaxNumber.setText( maxPace.toString())
+                        }
+                    }
 
                 }
                 "ACTION_CONNECTION_STATE_CHANGED" -> {
@@ -486,6 +499,15 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
         }
     }
+    private fun calculatePace(speed: Float): Int {
+        // Cadence is typically measured in revolutions per minute (RPM)
+        // We can estimate cadence based on speed, assuming a typical stride length
+        // of 2.5 meters per revolution
+        val strideLength = 2.5f
+        val cadence = (speed / strideLength) * 60
+        return cadence.toInt()
+    }
+
     private fun RlGetValueInt(value:String):Int{
         if (value.isNullOrEmpty()){
            return 0
@@ -573,7 +595,35 @@ class RLFragSensorProgress : RLBaseFragment(){
         arrCumDistance.add(CumDistance)
         arrCumSpeed.add(CumSpeed)
         distance=CumDistance
+        if (yourWayType.equals("Ride")&& !isSpeedSensor){
+            fragBinding.inlayDistance.txtProgressTimeNumber.setText(getClimbData(totalElevation))
+        }else{
+            fragBinding.inlayClimbed.txtProgressTimeNumber.setText(getClimbData(totalElevation))
+        }
     }
+
+    private fun getClimbData(elevation: Number): String {
+        if (!isValidValue(elevation)) return "0"
+        val convertedElevation = if (getIsImperial()) elevation.toDouble() * 3.281 else elevation.toDouble()
+        val climbData=convertedElevation?:0
+        return climbData.toString()
+    }
+
+    private fun getIsImperial():Boolean {
+        if (appUnit.equals("Imperial")){
+            return true;
+        }else if (appUnit.equals("Metric")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    // check the valid value or not return 0
+    private fun isValidValue(value: Any?): Boolean {
+        return value!= null && value!= "" &&!value.toString().matches(Regex("\\d+"))
+    }
+
     private fun RLformatElapsedTime(elapsedTime: Long): String {
         val seconds = (elapsedTime / 1000) % 60
         val minutes = (elapsedTime / (1000 * 60)) % 60
@@ -584,133 +634,140 @@ class RLFragSensorProgress : RLBaseFragment(){
     private fun RLstepGetToGPS() {
         try {
             issGpsConnect=true
-            rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
-            speed?.let {
-                Log.d(TAG,"Speed: ${it} m/s")
-                val speedSetValue=RlGetValueDouble(it.toString())
-                speedNumber=speedSetValue
-                //speedList.add(speedSetValue)
-                if (speedSetValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayPace.txtProgressTimeNumber.setText("%.2f".format(it))
-                    }else {
-                        fragBinding.inlaySpeed.txtProgressTimeNumber.setText("%.2f".format(it))
+            if (isSpeedSensor){
+                rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
+                    elevation?.let {
+                        Log.d(TAG,"elevation: ${it} m")
+                        val elevation=RlGetValueDouble(it.toString())
+                        elevationMeter=elevation
                     }
-                    if (!speedList.isNullOrEmpty()){
-                        val averageSpeed=speedList.average().toDouble()?:0.0
-                        //val maxSpeed=speedList.maxOrNull()!!.toDouble()?:0.0
-                         maxSpeed=RLmax(maxSpeed,speedNumber.roundToInt())
-                        if (yourWayType.toLowerCase().equals("ride")){
-                            fragBinding.inlayPace.txtAvgNumber.setText( "%.2f".format(averageSpeed).toString())
-                            fragBinding.inlayPace.txtMaxNumber.setText( "%.2f".format(maxSpeed).toString())
-                        }else{
-                            fragBinding.inlaySpeed.txtAvgNumber.setText( "%.2f".format(averageSpeed).toString())
-                            fragBinding.inlaySpeed.txtMaxNumber.setText( "%.2f".format(maxSpeed).toString())
-                        }
-                    }
-                }
-
-
-            }
-        })
-            rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
-            stepCount?.let {
-                Log.d(TAG,"Steps: $stepCount")
-                val stepSetValue=RlGetValueInt(stepCount.toString())
-                stepsNumber=stepSetValue
-                //stepsList.add(stepSetValue)
-                if (stepSetValue>0){
-                    if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
-                        fragBinding.inlayStep.txtProgressTimeNumber.setText(stepCount.toString())
-                        fragBinding.inlayClimbed.txtProgressTimeNumber.setText(stepCount.toString())
-
-                    }
-                }
-            }
-        })
-            rlLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
-            distance?.let {
-                val totalDistance=it //     round(it * 100) / 100
-                Log.d(TAG,"Distance: $totalDistance km")
-
-                val totalDistanceValue=RlGetValueDouble(totalDistance.toString())
-                distanceNumber=totalDistanceValue
-               // distanceList.add(totalDistanceValue)
-                if (totalDistanceValue>0){
-                    if (yourWayType.toLowerCase().equals("ride")){
-                        fragBinding.inlayStep.txtProgressTimeNumber.setText(totalDistance.toString())
-                    }else{
-                        fragBinding.inlayDistance.txtProgressTimeNumber.setText(totalDistance.toString())
-                    }
-                }
-
-
-
-            }
-        })
-            rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
-                calories?.let {
-                    val totalCaloriesBurned=it
-                    Log.d(TAG,"CaloriesBurned: $totalCaloriesBurned")
-
-                    val totalCaloriesBurnedValue=RlGetValueDouble(totalCaloriesBurned.toString())
-                    activeCaloriesNumber=totalCaloriesBurnedValue
-                    if (totalCaloriesBurnedValue>0){
-                        //fragBinding.inlayStep.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
-                    }
-
-                }
-            })
-            rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
-                pace?.let {
-                    val totalspace=round(it * 100)  / 100
-                    Log.d(TAG, "Pace: $totalspace min/km")
-                    val totalspaceValue=RlGetValueInt(totalspace.toString())
-                    paceNumber=totalspaceValue
-                    // paceList.add(totalspaceValue)
-                    if (totalspaceValue>0){
-                        if (yourWayType.toLowerCase().equals("ride")){
-                            fragBinding.inlayClimbed.txtProgressTimeNumber.setText(totalspace.toString())
-                        }else{
-                            fragBinding.inlayPace.txtProgressTimeNumber.setText(totalspace.toString())
-                        }
-                        if (!paceList.isNullOrEmpty()){
-                            val averagePace=paceList.average().roundToInt()?:0
-                            //val maxPace=paceList.maxOrNull()!!.toInt()?:0
-                             maxPace=RLmax(maxPace,paceNumber.toInt())
-                            if (yourWayType.toLowerCase().equals("ride")){
-                                fragBinding.inlayClimbed.txtAvgNumber.setText(averagePace.toString())
-                                fragBinding.inlayClimbed.txtMaxNumber.setText(maxPace.toString())
-                            }else{
-                                fragBinding.inlayPace.txtAvgNumber.setText(averagePace.toString())
-                                fragBinding.inlayPace.txtMaxNumber.setText(maxPace.toString())
+                })
+            }else{
+                rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
+                    speed?.let {
+                        Log.d(TAG,"Speed: ${it} m/s")
+                        val speedSetValue=RlGetValueDouble(it.toString())
+                        speedNumber=speedSetValue
+                        speedList.add("%.2f".format(it).toDouble())
+                        if (speedSetValue>0){
+                            if (yourWayType.equals("Ride")&& !isSpeedSensor){
+                                fragBinding.inlayPace.txtProgressTimeNumber.setText("%.2f".format(it))
+                            }else {
+                                fragBinding.inlaySpeed.txtProgressTimeNumber.setText("%.2f".format(it))
+                            }
+                            if (!speedList.isNullOrEmpty()){
+                                val averageSpeed=speedList.average().toDouble()?:0.0
+                                //val maxSpeed=speedList.maxOrNull()!!.toDouble()?:0.0
+                                maxSpeed=RLmax(maxSpeed,speedNumber.roundToInt())
+                                if (yourWayType.equals("Ride")&& !isSpeedSensor){
+                                    fragBinding.inlayPace.txtAvgNumber.setText("%.2f".format(averageSpeed).toString())
+                                    fragBinding.inlayPace.txtMaxNumber.setText(maxSpeed.toString())
+                                }else{
+                                    fragBinding.inlaySpeed.txtAvgNumber.setText("%.2f".format(averageSpeed).toString())
+                                    fragBinding.inlaySpeed.txtMaxNumber.setText( maxSpeed.toString())
+                                }
                             }
                         }
 
+
                     }
+                })
+                rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
+                    stepCount?.let {
+                        Log.d(TAG,"Steps: $stepCount")
+                        val stepSetValue=RlGetValueInt(stepCount.toString())
+                        stepsNumber=stepSetValue
+                        //stepsList.add(stepSetValue)
+                        if (stepSetValue>0){
+                            if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
+                                fragBinding.inlayStep.txtProgressTimeNumber.setText(stepCount.toString())
+                            }
+                        }
+                    }
+                })
+                rlLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
+                    distance?.let {
+                        val totalDistance=it //     round(it * 100) / 100
+                        Log.d(TAG,"Distance: $totalDistance km")
+
+                        val totalDistanceValue=RlGetValueDouble(totalDistance.toString())
+                        distanceNumber=totalDistanceValue
+                        // distanceList.add(totalDistanceValue)
+                        if (totalDistanceValue>0){
+                            if  (yourWayType.equals("Ride")&& !isSpeedSensor){
+                                fragBinding.inlayStep.txtProgressTimeNumber.setText( "%.2f".format(it).toString())
+                            }else{
+                                fragBinding.inlayDistance.txtProgressTimeNumber.setText( "%.2f".format(it).toString())
+                            }
+                        }
 
 
-                }
-            })
-            rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
-                elevation?.let {
-                    Log.d(TAG,"elevation: ${it} m")
-                    val elevation=RlGetValueDouble(it.toString())
-                    elevationMeter=elevation
-                }
-            })
 
-            rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
-                cadence?.let {
-                    Log.d(TAG,"cadenceData: ${it} ")
-                    val _cadenceData=RlGetValueDouble(it.toString())
-                    cadenceData=_cadenceData
-                }
-            })
+                    }
+                })
+                rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
+                    calories?.let {
+                        val totalCaloriesBurned=it
+                        Log.d(TAG,"CaloriesBurned: $totalCaloriesBurned")
 
+                        val totalCaloriesBurnedValue=RlGetValueDouble(totalCaloriesBurned.toString())
+                        activeCaloriesNumber=totalCaloriesBurnedValue
+                        if (totalCaloriesBurnedValue>0){
+                            //fragBinding.inlayStep.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
+                        }
+
+                    }
+                })
+                rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
+                    pace?.let {
+                        val totalspace=round(it * 100)  / 100
+                        Log.d(TAG, "Pace: $totalspace min/km")
+                        val totalspaceValue=RlGetValueInt(totalspace.toString())
+                        paceNumber=totalspaceValue
+                        paceList.add(totalspaceValue)
+                        if (totalspaceValue>0){
+                            if (yourWayType.equals("Ride")&& !isSpeedSensor){
+                                fragBinding.inlayClimbed.txtProgressTimeNumber.setText( "%.2f".format(it).toString())
+                            }else{
+                                fragBinding.inlayPace.txtProgressTimeNumber.setText( "%.2f".format(it).toString())
+                            }
+                            if (!paceList.isNullOrEmpty()){
+                                val averagePace=paceList.average().roundToInt()?:0
+                                //val maxPace=paceList.maxOrNull()!!.toInt()?:0
+                                maxPace=RLmax(maxPace,paceNumber.toInt())
+                                if (yourWayType.equals("Ride")&& !isSpeedSensor){
+                                    fragBinding.inlayClimbed.txtAvgNumber.setText(averagePace.toString())
+                                    fragBinding.inlayClimbed.txtMaxNumber.setText( maxPace.toString())
+                                }else{
+                                    fragBinding.inlayPace.txtAvgNumber.setText( averagePace.toString())
+                                    fragBinding.inlayPace.txtMaxNumber.setText( maxPace.toString())
+                                }
+                            }
+
+                        }
+
+
+                    }
+                })
+                rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
+                    elevation?.let {
+                        Log.d(TAG,"elevation: ${it} m")
+                        val elevation=RlGetValueDouble(it.toString())
+                        elevationMeter=elevation
+                    }
+                })
+                rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
+                    cadence?.let {
+                        Log.d(TAG,"cadenceData: ${it} ")
+                        val _cadenceData=RlGetValueDouble(it.toString())
+                        cadenceData=_cadenceData
+                    }
+                })
+            }
             rlLocationViewModel.RLstartLocationUpdates()
-        }catch (e:Exception){
-            Log.e(TAG,"EXCEPTION GETGPS:- ${e.message}")
+        }
+        catch (e:Exception){
+            Log.e(TAG,"EXCEPTION GetGPS:- ${e.message}")
         }
     }
 

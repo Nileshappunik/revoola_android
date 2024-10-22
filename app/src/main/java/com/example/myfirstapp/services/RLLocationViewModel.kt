@@ -11,10 +11,10 @@ class RLLocationViewModel(application: Application) : AndroidViewModel(applicati
     val locationData: LiveData<Location> = RLLocationRepository.locationData
     val speedData: LiveData<Float> = RLLocationRepository.speedData
     val stepCountData: LiveData<Int> = RLLocationRepository.stepCountData
-    val distanceData: LiveData<Float> = RLLocationRepository.distanceData
-    val cadenceData: LiveData<Float> = RLLocationRepository.cadenceData
-    val paceData: LiveData<Float> = RLLocationRepository.paceData
-    val caloriesBurnedData: LiveData<Float> = RLLocationRepository.caloriesBurnedData
+    val distanceData: LiveData<Double> = RLLocationRepository.distanceData
+    val cadenceData: LiveData<Double> = RLLocationRepository.cadenceData
+    val paceData: LiveData<Double> = RLLocationRepository.paceData
+    val caloriesBurnedData: LiveData<Double> = RLLocationRepository.caloriesBurnedData
     val elevationMeter: LiveData<Double> = RLLocationRepository.elevationMeter
 
     fun RLstartLocationUpdates() {

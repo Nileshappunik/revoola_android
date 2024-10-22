@@ -370,8 +370,8 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails)
 
-        //  val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
-
+        //val entryWorkoutSessionSummary = RLWorkoutSessionSummaryModel()
+       // RLWorkoutSessionSummaryData(entryWorkoutSessionSummary)
     }
     private fun RlSpeedSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
 
@@ -493,6 +493,23 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun RLSpeedSensorUserSessionDetailData(entry: RLSpeedSensorWorkoutSessionDetailsModel) {
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(entry)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                    }
+                }
+        }
+    }
+    private fun RLWorkoutSessionSummaryData(entry: RLWorkoutSessionSummaryModel){
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
             databaseRef.child(it).setValue(entry)

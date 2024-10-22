@@ -46,7 +46,7 @@
                 android:layout_below="@+id/txt_progress_time"
                 android:layout_toEndOf="@+id/img_time"
                 android:layout_marginStart="10dp"
-                android:text="00:00:01"
+                android:text="0"
                 android:textColor="@color/AppWhiteColor"
                 android:textSize="22sp"/>
         </RelativeLayout>
