@@ -1,4 +1,4 @@
-package com.example.myfirstapp.model
+package com.example.myfirstapp.firebaseModel
 
 class RLRevoolaUserSettingsRequestModel {
     var AMHR:Int = 191

@@ -1,6 +1,6 @@
-package com.example.myfirstapp.model
+package com.example.myfirstapp.firebaseModel
 
- class RLNoSensorWorkoutSessionDetailsModel {
+ class RLHeartRateSensorWorkoutSessionDetailsModel {
 
     var MaxHrUsedForCalculation: Int = 0
     var MaxHrUsedForCalculation_Last: Int = 0
@@ -10,18 +10,20 @@ package com.example.myfirstapp.model
     var arrBurntCalories: MutableList<Double> =  mutableListOf(0.0)//Done
     var arrCadence: MutableList<Double> =  mutableListOf(0.0)
     var arrCumDistance: MutableList<Double> =  mutableListOf(0.0)
+    var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)
     var arrCumSpeed: MutableList<Double> =  mutableListOf(0.0)
     var arrDistance: MutableList<Double> =  mutableListOf(0.0)//Done
     var arrElevation: MutableList<Double> =  mutableListOf(0.0)
+    var arrHRRecordedSecond: MutableList<Int> =  mutableListOf(0)
+    var arrHr: MutableList<Int> =  mutableListOf(0)
     var arrPower: MutableList<Int> =  mutableListOf(0)
     var arrPowerFromDevice: MutableList<Int> =  mutableListOf(0)
+    var arrRevPercentage: MutableList<Double> =  mutableListOf(0.0)
+    var arrRevSecond: MutableList<Double> =  mutableListOf(0.0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)//Done
 
-    //this array some ride entry come And Some ride or other entry not come
-    var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)
 
-
-    var avgRevPercentage:Int=0
+    var avgRevPercentage:Double=0.0
     var burntCalories:Double=0.0//Done
     var classDate:String=""
     var classDescription:String=""
@@ -35,11 +37,11 @@ package com.example.myfirstapp.model
     var isClass:Boolean=false
     var isPowerDeviceConnected:Boolean=false
     var mapGeneratedUrl:String=""
-    var maxRevPercentage:Int=0
-    var minRevPercentage:Int=0
+    var maxRevPercentage:Double=0.0
+    var minRevPercentage:Double=0.0
     var remark:String="android"//Done
-    var revPercentage:Int=0
-    var timestamp:Long=0
+    var revPercentage:Double=0.0
+    var timestamp:Int=0
     var totalElevation:Double=0.0
     var totalPower:Int=0
     var totalRev:Double=0.0
@@ -63,7 +65,7 @@ package com.example.myfirstapp.model
        var distance:Double = 0.0//Done
        var remark:String= "android"//Done
        var seconds:Int = 0
-       var totalRev:Int = 0
+       var totalRev:Double = 0.0
     }
 }
 

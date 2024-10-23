@@ -2,7 +2,6 @@ package com.example.myfirstapp.activity
 
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,13 +11,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlActivityLoginEmailBinding
-import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools

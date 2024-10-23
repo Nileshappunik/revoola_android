@@ -1,9 +1,9 @@
-package com.example.myfirstapp.model
+package com.example.myfirstapp.firebaseModel
 
 class RLWorkoutSessionSummaryModel {
 
-    var avgBurntCalories: Int = 0
-    var avgCadence: Int = 0
+    var avgBurntCalories: Double = 0.0
+    var avgCadence: Double = 0.0
     var avgHr: Int = 0
     var avgPower: Int = 0
     var avgPowerFromDevice: Int = 0
@@ -11,7 +11,7 @@ class RLWorkoutSessionSummaryModel {
     var avgSpeed: Double = 0.0
     var avgSpeedForOneKm: Double = 0.0
     var avgSpeedForOneMile: Double = 0.0
-    var burntCalories: Int = 0
+    var burntCalories: Double = 0.0
     var classDate: String = ""
     var classDescription: String = ""
     var classImage: String = ""
@@ -29,7 +29,7 @@ class RLWorkoutSessionSummaryModel {
     var maxPower: Int = 0
     var maxPowerFromDevice: Int = 0
     var maxRevPercentage: Double = 0.0
-    var maxSpeed: Double = 0.0
+    var maxSpeed: Int = 0
     var maxSpeedForOneKm: Double = 0.0
     var maxSpeedForOneMile: Double = 0.0
     var minHr: Int = 0
@@ -39,9 +39,9 @@ class RLWorkoutSessionSummaryModel {
     var timestamp: Long = 0
     var totalElevation: Double = 0.0
     var totalPower: Int = 0
-    var totalRev: Int = 0
+    var totalRev: Double = 0.0
     var totalSteps: Int = 0
-    var totalTime: Long = 0
+    var totalTime: Int = 0
     var typeOfGoal: String = ""
     var visibilityflagforthatsession: Int = 0
 
@@ -55,16 +55,16 @@ class RLWorkoutSessionSummaryModel {
     var zone7: Zone = Zone()
 
     class Zone {
-        var avgCadence: Int = 0
+        var avgCadence: Double = 0.0
         var avgHr: Int = 0
         var avgPower: Int = 0
         var avgPowerFromDevice: Int = 0
         var avgSpeed: Double = 0.0
-        var burntCalories: Int = 0
+        var burntCalories: Double = 0.0
         var distance: Double = 0.0
         var remark:String="Android"
         var seconds: Int = 0
-        var totalRev: Int = 0
+        var totalRev: Double = 0.0
     }
 }
 

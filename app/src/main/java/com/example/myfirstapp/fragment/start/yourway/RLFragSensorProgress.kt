@@ -1,6 +1,5 @@
 package com.example.myfirstapp.fragment.start.yourway
 
-import android.content.pm.ActivityInfo
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.bluetooth.BluetoothAdapter
@@ -35,6 +34,8 @@ import androidx.lifecycle.Observer
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
+import com.example.myfirstapp.firebaseModel.RLElevationPoint
+import com.example.myfirstapp.firebaseModel.RLLocationDetails
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
@@ -84,6 +85,8 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var totalTime:String =""
     private var maxSpeed =0
     private var maxPace =0
+    private var maxCadence =0
+    private var maxBurntCalories =0
 
     private var elevationMeter:Double=0.0
     private var cadenceData =0.0
@@ -95,6 +98,11 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var distance:Double=0.0
     private var burntCalories:Double=0.0
     private var appUnit:String=""
+
+    private var arrDataLocation:MutableList<RLElevationPoint> = mutableListOf()
+    private var arrLocationDetails:MutableList<RLLocationDetails> = mutableListOf()
+    private var latitude:Double =0.0
+    private var longitude:Double =0.0
 
 
     companion object {
@@ -187,7 +195,9 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putDouble("totalElevation",totalElevation)
             bundle.putInt("totalSteps",stepsNumber)
             bundle.putDouble("distance",distance)
-
+            bundle.putInt("maxSpeed",maxSpeed)
+            bundle.putInt("maxCadence",maxCadence)
+            bundle.putInt("maxBurntCalories",maxBurntCalories)
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
@@ -197,6 +207,9 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
+
+             bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
+             bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
 
 
             try {
@@ -451,6 +464,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                     speedNumber=RlGetValueDouble(SPEED.toString())?:0.0
                     activeCaloriesNumber=RlGetValueDouble(CALORIES.toString())?:0.0
                     cadenceData=RlGetValueDouble(CADENCE.toString())?:0.0
+                    maxCadence=RLmax(maxCadence,cadenceData.toInt())
 
                     val floatSpeed:Float= speedSetValue.toFloat()?:0f
                     paceNumber=calculatePace(floatSpeed)
@@ -567,6 +581,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     }
     private fun  RlDataFillAllArray(){
         burntCalories=burntCalories+activeCaloriesNumber
+        maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
         arrBurntCalories.add(activeCaloriesNumber)
         arrCadence.add(cadenceData)
         arrDistance.add(distanceNumber)
@@ -600,6 +615,11 @@ class RLFragSensorProgress : RLBaseFragment(){
         }else{
             fragBinding.inlayClimbed.txtProgressTimeNumber.setText(getClimbData(totalElevation))
         }
+
+        val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
+        arrDataLocation.add(elevationpoint)
+        val locationDetails= RLLocationDetails(-1.0,speedNumber,latitude,0.0, longitude,elevationMeter)
+        arrLocationDetails.add(locationDetails)
     }
 
     private fun getClimbData(elevation: Number): String {
@@ -640,6 +660,14 @@ class RLFragSensorProgress : RLBaseFragment(){
                         Log.d(TAG,"elevation: ${it} m")
                         val elevation=RlGetValueDouble(it.toString())
                         elevationMeter=elevation
+                    }
+                })
+
+                rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
+                    location?.let {
+                        Log.d(TAG,"location: ${it}")
+                        latitude=it.latitude
+                        longitude=it.longitude
                     }
                 })
             }else{
@@ -756,11 +784,21 @@ class RLFragSensorProgress : RLBaseFragment(){
                         elevationMeter=elevation
                     }
                 })
+
+                rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
+                    location?.let {
+                        Log.d(TAG,"location: ${it}")
+                        latitude=it.latitude
+                        longitude=it.longitude
+                    }
+                })
+
                 rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
                     cadence?.let {
                         Log.d(TAG,"cadenceData: ${it} ")
                         val _cadenceData=RlGetValueDouble(it.toString())
                         cadenceData=_cadenceData
+                        maxCadence=RLmax(maxCadence,cadenceData.toInt())
                     }
                 })
             }

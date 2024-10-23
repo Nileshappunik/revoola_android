@@ -1,7 +1,6 @@
 package com.example.myfirstapp.activity
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 
 import android.util.Log
@@ -12,13 +11,8 @@ import com.example.myfirstapp.base.RLBaseActivity
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerWrite
 import com.example.myfirstapp.databinding.RlActivityLoginBinding
-import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
-import com.example.myfirstapp.model.RLHeartRateSensorWorkoutSessionDetailsModel
-import com.example.myfirstapp.model.RLRevoolaUserSettingsRequestModel
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
-import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.utils.RLTools
 import com.facebook.*
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.login.LoginManager
@@ -34,7 +28,6 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 
 class RLLoginActivityRL : RLBaseActivity() {

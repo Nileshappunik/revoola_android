@@ -5,27 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.MediaController
-import android.widget.VideoView
 import com.example.myfirstapp.R
-import com.example.myfirstapp.databasefirebase.RLAuthManager
-import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
-import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
-import com.example.myfirstapp.utils.RLPrefManager
-import com.example.myfirstapp.utils.RLTools
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
-import kotlin.system.measureTimeMillis
 
 class RLSplashFirstActivity : AppCompatActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName

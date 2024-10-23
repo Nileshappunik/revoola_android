@@ -1,5 +1,7 @@
 package com.example.myfirstapp.model
 
+import com.example.myfirstapp.firebaseModel.RLWorkoutSessionDetailsModel
+import com.example.myfirstapp.firebaseModel.RLWorkoutSessionSummaryModel
 import java.io.Serializable
 
 data class RLWorkoutDataModel (

@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -39,7 +38,6 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.*
-import com.example.myfirstapp.model.RLRevoolaSearchUserModel
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.gson.Gson

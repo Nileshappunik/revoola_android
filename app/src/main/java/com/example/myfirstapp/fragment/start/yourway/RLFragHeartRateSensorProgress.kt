@@ -35,6 +35,8 @@ import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragHeartrateSensorProgressBinding
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
+import com.example.myfirstapp.firebaseModel.RLElevationPoint
+import com.example.myfirstapp.firebaseModel.RLLocationDetails
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.services.RLLocationViewModel
@@ -72,8 +74,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var speedList:MutableList<Double> = mutableListOf()
     private var paceList:MutableList<Int> = mutableListOf()
 
-
-
     private var heartRateNumber:Int=0
     private var heartRate:Int=110
     private var stepsNumber:Int=0
@@ -101,11 +101,19 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     var maxRevPercentage =0.0
     var minRevPercentage =0.0
     var maxSpeed =0
+    var maxCadence =0
+    var maxBurntCalories =0
     var maxHeartrate =0
+    var minHeartrate =0
     var CumDistance =0.0
     var CumSpeed =0.0
     var cadenceData =0.0
     private var maxPace =0
+
+    private var arrDataLocation:MutableList<RLElevationPoint> = mutableListOf()
+    private var arrLocationDetails:MutableList<RLLocationDetails> = mutableListOf()
+    private var latitude:Double =0.0
+    private var longitude:Double =0.0
 
 
     companion object {
@@ -226,6 +234,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putDouble("totalElevation",totalElevation)
             bundle.putDouble("totalRev",totalRev)
             bundle.putInt("totalSteps",stepsNumber)
+            bundle.putInt("maxSpeed",maxSpeed)
+            bundle.putInt("maxHeartRate",maxHeartrate)
+            bundle.putInt("maxCadence",maxCadence)
+            bundle.putInt("maxBurntCalories",maxBurntCalories)
+            bundle.putInt("minHeartrate",minHeartrate)
 
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
@@ -240,6 +253,9 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+
+            bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
+            bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
 
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
@@ -428,6 +444,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                         fragBinding.txtEffortNumber.setText(data)
                         fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
                         maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
+                        minHeartrate=RLmin(minHeartrate,heartRateNumber)
                         fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
                         if (!arrHr.isNullOrEmpty()){
                             val avgHeartRate=arrHr.average().roundToInt()?:0
@@ -493,6 +510,9 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
         minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
         burntCalories=burntCalories+currentCalories
+
+        maxBurntCalories=RLmax(maxBurntCalories,burntCalories.toInt())
+
         revPercentage=REVPer
 
         arrBurntCalories.add(currentCalories)
@@ -530,6 +550,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragBinding.inlayCalories.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
 
         fragBinding.inlayClimbed.txtProgressTimeNumber.setText(getClimbData(totalElevation))
+
+        val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
+        arrDataLocation.add(elevationpoint)
+        val locationDetails= RLLocationDetails(-1.0,speedNumber,latitude,0.0, longitude,elevationMeter)
+        arrLocationDetails.add(locationDetails)
 
     }
 
@@ -694,11 +719,20 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
         })
 
+        rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
+            location?.let {
+                Log.d(TAG,"location: ${it}")
+                latitude=it.latitude
+                longitude=it.longitude
+            }
+        })
+
         rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
             cadence?.let {
                 Log.d(TAG,"cadenceData: ${it} ")
                 val _cadenceData=RlGetValueDouble(it.toString())
                 cadenceData=_cadenceData
+                maxCadence=RLmax(maxCadence,cadenceData.roundToInt())
             }
         })
 

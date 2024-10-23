@@ -1,9 +1,6 @@
 package com.example.myfirstapp.databasefirebase
 
 import android.util.Log
-import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
-import com.example.myfirstapp.model.RLHeartRateSensorWorkoutSessionDetailsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -51,14 +48,17 @@ class RLDatabaseManagerWrite {
             }
     }
     fun RlWriteData(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
-        database.child(path).setValue(data)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(true, null)
-                } else {
-                    callback(false, task.exception)
+        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        entryIdSummery.let {
+            database.child(path).child(it).setValue(data)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        callback(true, null)
+                    } else {
+                        callback(false, task.exception)
+                    }
                 }
-            }
+        }
     }
 
 }
