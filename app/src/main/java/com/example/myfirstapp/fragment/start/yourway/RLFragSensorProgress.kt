@@ -73,6 +73,8 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var arrCumSpeed:MutableList<Double> = mutableListOf()
     private var arrCumElevation:MutableList<Double> = mutableListOf()
 
+    private var arrAvgCadence:MutableList<Double> = mutableListOf()
+    private var arrMaxCadence:MutableList<Int> = mutableListOf()
 
     private var stepsNumber:Int=0
     private var distanceNumber:Double=0.0
@@ -207,6 +209,9 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
+
+            bundle.putDoubleArray(RLYourWayArrayType.arrAvgCadence.toString(),arrAvgCadence.toDoubleArray())
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString(),ArrayList(arrMaxCadence))
 
              bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
              bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
@@ -618,8 +623,11 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
         arrDataLocation.add(elevationpoint)
-        val locationDetails= RLLocationDetails(-1.0,speedNumber,latitude,0.0, longitude,elevationMeter)
+        val locationDetails= RLLocationDetails(speedNumber,speedNumber,latitude,0.0, longitude,elevationMeter)
         arrLocationDetails.add(locationDetails)
+
+        arrAvgCadence.add(arrCadence.average())
+        arrMaxCadence.add(maxCadence)
     }
 
     private fun getClimbData(elevation: Number): String {

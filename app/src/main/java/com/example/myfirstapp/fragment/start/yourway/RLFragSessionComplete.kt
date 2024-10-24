@@ -58,6 +58,11 @@ class RLFragSessionComplete : RLBaseFragment(){
     private var RFMHR=191
     private var RestingHR="50"
 
+    private var displayImage =""
+    private var displayName =""
+    private var yourWayType ="Walk"
+    private var visibilityflagforthatsession:Int =0
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
         fragment.arguments = bundle
@@ -81,7 +86,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         //"Pilates","Ride","Run","Walk","Workout","Yoga"
         RLFirebaseToFatchUserData()
 
-        val yourWayType = requireArguments().getString("YourWayType").toString().trim()
+         yourWayType = requireArguments().getString("YourWayType").toString().trim()
         val totalTime = requireArguments().getString("totalTime").toString().trim()
         val SensorType: String = requireArguments().getString("SENSOR").toString()
 
@@ -94,6 +99,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
             when(titleTxt){
                 "FRIENDS"->{
+                    visibilityflagforthatsession=0
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
                     fragBinding.tvShareTitle.setText(R.string.privatetx)
@@ -101,6 +107,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RLShareMapHide(false)
                 }
                 "EVERYONE"->{
+                    visibilityflagforthatsession=1
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
                     fragBinding.tvShareTitle.setText(R.string.friendstx)
@@ -108,6 +115,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RLShareMapHide(true)
                 }
                 "PRIVATE"->{
+                    visibilityflagforthatsession=2
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
                     fragBinding.tvShareTitle.setText(R.string.everyone)
@@ -164,6 +172,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val minHeartrate=requireArguments().getInt("minHeartrate")
 
 
+
         val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
         val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
         val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
@@ -176,6 +185,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         val arrCumDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumDistance.toString())
         val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
         val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
+
+        val arrAvgHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrAvgHr.toString())
+        val arrAvgRevPercentage: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString())
+        val arrMaxCadence: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString())
+        val arrMaxHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrMaxHr.toString())
+        val arrMaxRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString())
+        val arrAvgCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrAvgCadence.toString())
+
 
         val arrDataLocation = arguments?.getParcelableArrayList<RLElevationPoint>(RLYourWayArrayType.arrDataLocation.toString())
         val arrLocationDetails = arguments?.getParcelableArrayList<RLLocationDetails>(RLYourWayArrayType.arrLocationDetails.toString())
@@ -191,6 +208,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         val arrCumDistance: MutableList<Double> = arrCumDistanceList?.toMutableList() ?: mutableListOf()
         val arrCumElevation: MutableList<Double> = arrCumElevationList?.toMutableList() ?: mutableListOf()
         val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf()
+
+        val arrAvgCadence: MutableList<Double> = arrAvgCadenceList?.toMutableList() ?: mutableListOf()
+        val arrMaxRevPercentage: MutableList<Double> = arrMaxRevPercentageList?.toMutableList() ?: mutableListOf()
 
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
@@ -412,7 +432,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.totalSteps=totalSteps
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()?:0
         entryWorkoutSessionSummary.typeOfGoal=yourWayType
-        //entryWorkoutSessionSummary.visibilityflagforthatsession=
+        entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession
 
         //dataForTesting Entry
         val deviceRecordedDataMap = hashMapOf(
@@ -434,9 +454,30 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //GhostData Entry
         val ghostDataEntry= RLGhostDataModel()
+        ghostDataEntry.RestingHrUsedForCalculation_Last=RFMHR
+        ghostDataEntry.arrAvgCadence=arrAvgCadence
+        ghostDataEntry.arrAvgHr=arrAvgHr!!
+        ghostDataEntry.arrAvgRevPercentage=arrAvgRevPercentage!!
+        ghostDataEntry.arrHr=arrHr
+        ghostDataEntry.arrMaxCadence=arrMaxCadence!!
+        ghostDataEntry.arrMaxHr=arrMaxHr!!
+        ghostDataEntry.arrMaxRevPercentage=arrMaxRevPercentage
+        ghostDataEntry.arrRevPercentage=arrRevPercentage
+        ghostDataEntry.arrRevSecond=arrRevSecond
+        ghostDataEntry.classDate=currentTimestamp.toLong()
+        ghostDataEntry.displayImage=displayImage
+        ghostDataEntry.displayName=displayName
+        //ghostDataEntry.location=
+        //ghostDataEntry.maxHrUsedForCalculation=
+        //ghostDataEntry.maxHrUsedForCalculation_Last=
+        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.timestamp=currentTimestamp.toLong()
+        ghostDataEntry.totalRev=totalRev
+        ghostDataEntry.totalTime=totalTime.toInt()?:0
+        ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
 
         RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap)
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
 
     }
     private fun RlNoSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
@@ -458,6 +499,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
         val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
 
+        val arrMaxCadence: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString())
+        val arrAvgCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrAvgCadence.toString())
+        val arrAvgCadence: MutableList<Double> = arrAvgCadenceList?.toMutableList() ?: mutableListOf()
 
         val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf()
         val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf()
@@ -556,7 +600,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.totalSteps=totalSteps
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()?:0
         entryWorkoutSessionSummary.typeOfGoal=yourWayType
-        //entryWorkoutSessionSummary.visibilityflagforthatsession=
+        entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession
 
 
         //Zone 1 WorkoutSessionSummary Data Entery
@@ -585,11 +629,26 @@ class RLFragSessionComplete : RLBaseFragment(){
             "speedDic" to arrSpeed,//ARRAY
             "totalRev" to 0)
 
+
         //GhostData Entry
         val ghostDataEntry= RLGhostDataModel()
+        ghostDataEntry.RestingHrUsedForCalculation_Last=RFMHR
+        ghostDataEntry.arrAvgCadence=arrAvgCadence
+        ghostDataEntry.arrMaxCadence=arrMaxCadence!!
+        ghostDataEntry.classDate=currentTimestamp.toLong()
+        ghostDataEntry.displayImage=displayImage
+        ghostDataEntry.displayName=displayName
+        //ghostDataEntry.location=
+        //ghostDataEntry.maxHrUsedForCalculation=
+        //ghostDataEntry.maxHrUsedForCalculation_Last=
+        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.timestamp=currentTimestamp.toLong()
+        ghostDataEntry.totalTime=totalTime.toInt()?:0
+        ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
+
 
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap)
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
     }
     private fun RlSpeedSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
 
@@ -607,6 +666,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         val arrElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrElevation.toString())
         val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
         val arrCumElevationList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumElevation.toString())
+
+        val arrMaxCadence: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString())
+        val arrAvgCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrAvgCadence.toString())
+        val arrAvgCadence: MutableList<Double> = arrAvgCadenceList?.toMutableList() ?: mutableListOf()
 
 
         val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf()
@@ -704,7 +767,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.totalSteps=totalSteps
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()?:0
         entryWorkoutSessionSummary.typeOfGoal=yourWayType
-        //entryWorkoutSessionSummary.visibilityflagforthatsession=
+        entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession
 
 
         //Zone 1 WorkoutSessionSummary Data Entery
@@ -735,20 +798,33 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //GhostData Entry
         val ghostDataEntry= RLGhostDataModel()
+        ghostDataEntry.RestingHrUsedForCalculation_Last=RFMHR
+        ghostDataEntry.arrAvgCadence=arrAvgCadence
+        ghostDataEntry.arrMaxCadence=arrMaxCadence!!
+        ghostDataEntry.classDate=currentTimestamp.toLong()
+        ghostDataEntry.displayImage=displayImage
+        ghostDataEntry.displayName=displayName
+        //ghostDataEntry.location=
+        //ghostDataEntry.maxHrUsedForCalculation=
+        //ghostDataEntry.maxHrUsedForCalculation_Last=
+        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.timestamp=currentTimestamp.toLong()
+        ghostDataEntry.totalTime=totalTime.toInt()?:0
+        ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
 
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap)
-
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
 
     }
     //Entry to Firebase
     private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel,entryGraph:RLAllWaySessionSummaryGraphDataModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                deviceRecordedData:Any,elevationData:Any,locationData:Any) {
+                                                deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel) {
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
         val deviceRecordedDataPath="/proposedstructure/dataForTesting/$currentUser/deviceRecordedData"
         val elevationDataPath="/proposedstructure/dataForTesting/$currentUser/elevation"
         val locationDataPath="/proposedstructure/dataForTesting/$currentUser/location"
+
 
          databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
              if (success) {
@@ -771,7 +847,31 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.e(TAG,"Error  location Entry:- $error")
             }
         }
+        val justRide_=yourWayType+"_justRide_"
 
+        //Entry GhostData lastForClass Walk_justRide_
+        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                }
+            }
+
+        //Entry GhostData bestForClass Walk_justRide_
+        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                }
+            }
 
         //Entry Summery
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
@@ -822,7 +922,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
     private fun RLHeartRateSensorUserSessionDetailData(entry: RLHeartRateSensorWorkoutSessionDetailsModel,entryGraph: RLAllWaySessionSummaryGraphDataHRModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                       deviceRecordedData:Any,elevationData:Any,locationData:Any) {
+                                                       deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel) {
 
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
@@ -852,6 +952,31 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
         }
 
+        val justRide_=yourWayType+"_justRide_"
+
+        //Entry GhostData lastForClass Walk_justRide_
+        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                }
+            }
+
+        //Entry GhostData bestForClass
+        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                }
+            }
 
         //Entry Summery
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
@@ -900,7 +1025,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
     private fun RLSpeedSensorUserSessionDetailData(entry: RLSpeedSensorWorkoutSessionDetailsModel,entryGraph:RLAllWaySessionSummaryGraphDataModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                   deviceRecordedData:Any,elevationData:Any,locationData:Any) {
+                                                   deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel) {
 
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
@@ -929,6 +1054,32 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.e(TAG,"Error  location Entry:- $error")
             }
         }
+
+        val justRide_=yourWayType+"_justRide_"
+
+        //Entry GhostData lastForClass Walk_justRide_
+        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                }
+            }
+
+        //Entry GhostData bestForClass
+        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+
+                } else {
+                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                }
+            }
 
         //Entry Summery
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
@@ -977,7 +1128,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-
     private fun RLShareMapHide(isVisible:Boolean){
         if (isVisible){
             fragBinding.txtShareMap.visibility=View.VISIBLE
@@ -1023,6 +1173,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.txtAddPhoto.visibility=View.VISIBLE
         }
     }
+
     //SELECTED IMAGE SENT TO SERVER
     private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
         val storageReference = FirebaseStorage.getInstance().reference
@@ -1130,11 +1281,13 @@ class RLFragSessionComplete : RLBaseFragment(){
                 gender=userData.gender
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
+                 displayImage =userData.displayImage
+                 displayName =userData.displayName
             }
         }
     }
 
-     fun zoneDiff(REVPer: Int) {
+    private fun zoneDiff(REVPer: Int) {
        when {
            REVPer <= 30 -> {
                //Zone 1

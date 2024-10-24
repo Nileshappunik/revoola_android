@@ -71,6 +71,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var arrCumElevation:MutableList<Double> = mutableListOf()
     private var arrCumSpeed:MutableList<Double> = mutableListOf()
 
+    private var arrAvgCadence:MutableList<Double> = mutableListOf()
+    private var arrAvgHr:MutableList<Int> = mutableListOf()
+    private var arrAvgRevPercentage:MutableList<Int> = mutableListOf()
+    private var arrMaxCadence:MutableList<Int> = mutableListOf()
+    private var arrMaxHr:MutableList<Int> = mutableListOf()
+    private var arrMaxRevPercentage:MutableList<Double> = mutableListOf()
+
     private var speedList:MutableList<Double> = mutableListOf()
     private var paceList:MutableList<Int> = mutableListOf()
 
@@ -253,6 +260,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+
+            bundle.putDoubleArray(RLYourWayArrayType.arrAvgCadence.toString(),arrAvgCadence.toDoubleArray())
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgHr.toString(),ArrayList(arrAvgHr))
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString(),ArrayList(arrAvgRevPercentage))
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString(),ArrayList(arrMaxCadence))
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxHr.toString(),ArrayList(arrMaxHr))
+            bundle.putDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString(),arrMaxRevPercentage.toDoubleArray())
 
             bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
             bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
@@ -553,11 +567,19 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
         arrDataLocation.add(elevationpoint)
-        val locationDetails= RLLocationDetails(-1.0,speedNumber,latitude,0.0, longitude,elevationMeter)
+        val locationDetails= RLLocationDetails(speedNumber,speedNumber,latitude,0.0, longitude,elevationMeter)
         arrLocationDetails.add(locationDetails)
 
-    }
+        arrAvgCadence.add(arrCadence.average())
+        arrAvgHr.add(arrHr.average().roundToInt())
+        arrAvgRevPercentage.add(avgRevPercentage.roundToInt())
+        arrMaxCadence.add(maxCadence)
+        arrMaxHr.add(maxHeartrate)
+        arrMaxRevPercentage.add(maxRevPercentage)
 
+
+
+    }
 
     private fun getClimbData(elevation: Number): String {
         if (!isValidValue(elevation)) return "0"
@@ -581,7 +603,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         return value!= null && value!= "" &&!value.toString().matches(Regex("\\d+"))
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////// calculate All Value Start //////////////////////////
 
     private fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String): Double {
 
@@ -620,10 +642,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         return REVPer
     }
 
-    private fun sumOfArray(array: List<Int>): Int {
-        return array.sum()
-    }
-
     private fun RLmax(previous: Int, next: Int): Int {
         return when {
             previous > next -> previous
@@ -637,10 +655,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             previous == 0 -> next
             else -> next
         }
-    }
-
-    private fun avgOfArray2(array: List<Double>): Double {
-        return array.average()
     }
 
     private fun avgOfArray(array: List<Double>): Double {
@@ -680,8 +694,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         return 0.0
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-
+    ///////////////////////////// calculate All Value End ////////////////////////
 
     private fun RLformatElapsedTime(elapsedTime: Long): String {
         val seconds = (elapsedTime / 1000) % 60
@@ -736,7 +749,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
         })
 
-
         rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
             stepCount?.let {
                 Log.d(TAG,"Steps: $stepCount")
@@ -749,6 +761,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 }
             }
         })
+
         rlLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
             distance?.let {
                 val totalDistance=it //round(it * 100) / 100
@@ -761,7 +774,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 }
             }
         })
-
 
         rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
             pace?.let {
