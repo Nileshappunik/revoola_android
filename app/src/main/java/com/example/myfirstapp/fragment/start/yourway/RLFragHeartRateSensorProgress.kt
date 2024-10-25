@@ -230,22 +230,22 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
-            bundle.putString("totalTime",totalTime)
+            bundle.putString("totalTime",(totalTime?:"0"))
             bundle.putString("SENSOR",RLConstants.HEARTSENSOR)
-            bundle.putDouble("avgRevPercentage",avgRevPercentage)
-            bundle.putDouble("burntCalories",burntCalories)
-            bundle.putDouble("distance",distance)
-            bundle.putDouble("maxRevPercentage",maxRevPercentage)
-            bundle.putDouble("minRevPercentage",minRevPercentage)
-            bundle.putDouble("revPercentage",revPercentage)
-            bundle.putDouble("totalElevation",totalElevation)
-            bundle.putDouble("totalRev",totalRev)
-            bundle.putInt("totalSteps",stepsNumber)
-            bundle.putInt("maxSpeed",maxSpeed)
-            bundle.putInt("maxHeartRate",maxHeartrate)
-            bundle.putInt("maxCadence",maxCadence)
-            bundle.putInt("maxBurntCalories",maxBurntCalories)
-            bundle.putInt("minHeartrate",minHeartrate)
+            bundle.putDouble("avgRevPercentage",noNanValueDouble(avgRevPercentage?:0.00))
+            bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
+            bundle.putDouble("distance",noNanValueDouble(distance?:0.00))
+            bundle.putDouble("maxRevPercentage",noNanValueDouble(maxRevPercentage?:0.00))
+            bundle.putDouble("minRevPercentage",noNanValueDouble(minRevPercentage?:0.00))
+            bundle.putDouble("revPercentage",noNanValueDouble(revPercentage?:0.00))
+            bundle.putDouble("totalElevation",noNanValueDouble(totalElevation?:0.00))
+            bundle.putDouble("totalRev",noNanValueDouble(totalRev?:0.00))
+            bundle.putInt("totalSteps",stepsNumber?:0)
+            bundle.putInt("maxSpeed",maxSpeed?:0)
+            bundle.putInt("maxHeartRate",maxHeartrate?:0)
+            bundle.putInt("maxCadence",maxCadence?:0)
+            bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
+            bundle.putInt("minHeartrate",minHeartrate?:0)
 
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
@@ -515,10 +515,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             heartRate=heartRateNumber
         }
         val REVPer=calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
-        arrRevPercentage.add(REVPer)
+        arrRevPercentage.add(noNanValueDouble(REVPer))
         avgRevPercentage = avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
-        arrRevSecond.add(REVSec)
+        arrRevSecond.add(noNanValueDouble(REVSec))
         totalRev = totalRev+ REVSec
         lastrevPercentage=REVPer
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
@@ -529,16 +529,20 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         revPercentage=REVPer
 
-        arrBurntCalories.add(currentCalories)
-        arrCadence.add(cadenceData)
-        arrDistance.add(distance)
+
+
+
+
+        arrBurntCalories.add( noNanValueDouble(currentCalories))
+        arrCadence.add(noNanValueDouble(cadenceData))
+        arrDistance.add( noNanValueDouble(distance))
         arrHr.add(heartRateNumber)
-        arrSpeed.add(speedNumber)
+        arrSpeed.add(noNanValueDouble(speedNumber))
 
         CumSpeed=CumSpeed+speedNumber
         CumDistance=CumDistance+distance
-        arrCumDistance.add(CumDistance)
-        arrCumSpeed.add(CumSpeed)
+        arrCumDistance.add(noNanValueDouble(CumDistance))
+        arrCumSpeed.add(noNanValueDouble(CumSpeed))
         distance=CumDistance
 
         if (elevationMeter > 0) {
@@ -552,8 +556,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 }
             }
             lastGeoElevation = roundedAltitude
-            arrElevation.add(lastGeoElevation.toDouble())
-            arrCumElevation.add((totalGeoElevation/10).toDouble())
+            arrElevation.add(noNanValueDouble(lastGeoElevation.toDouble()))
+            arrCumElevation.add(noNanValueDouble((totalGeoElevation/10).toDouble()))
 
         }else{
             arrElevation.add(0.0)
@@ -565,20 +569,28 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         fragBinding.inlayClimbed.txtProgressTimeNumber.setText(getClimbData(totalElevation))
 
-        val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
-        arrDataLocation.add(elevationpoint)
-        val locationDetails= RLLocationDetails(speedNumber,speedNumber,latitude,0.0, longitude,elevationMeter)
+        val elevationpoint=RLElevationPoint(noNanValueDouble(elevationMeter),noNanValueDouble(latitude), noNanValueDouble(longitude))
+        arrDataLocation.add((elevationpoint))
+        val locationDetails= RLLocationDetails(noNanValueDouble(speedNumber),noNanValueDouble(speedNumber),noNanValueDouble(latitude),0.0, noNanValueDouble(longitude),noNanValueDouble(elevationMeter))
         arrLocationDetails.add(locationDetails)
 
-        arrAvgCadence.add(arrCadence.average())
+        arrAvgCadence.add(noNanValueDouble(arrCadence.average()))
         arrAvgHr.add(arrHr.average().roundToInt())
         arrAvgRevPercentage.add(avgRevPercentage.roundToInt())
         arrMaxCadence.add(maxCadence)
         arrMaxHr.add(maxHeartrate)
-        arrMaxRevPercentage.add(maxRevPercentage)
+        arrMaxRevPercentage.add(noNanValueDouble(maxRevPercentage))
 
 
 
+    }
+
+    private fun noNanValueDouble(value:Double):Double{
+        if (value.isNaN()){
+            return 0.00
+        }else{
+            return  value
+        }
     }
 
     private fun getClimbData(elevation: Number): String {

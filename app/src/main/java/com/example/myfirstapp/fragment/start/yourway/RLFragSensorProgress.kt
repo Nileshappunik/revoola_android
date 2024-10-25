@@ -193,13 +193,13 @@ class RLFragSensorProgress : RLBaseFragment(){
             }else{
                 bundle.putString("SENSOR", RLConstants.NOSENSOR)
             }
-            bundle.putDouble("burntCalories",burntCalories)
-            bundle.putDouble("totalElevation",totalElevation)
-            bundle.putInt("totalSteps",stepsNumber)
-            bundle.putDouble("distance",distance)
-            bundle.putInt("maxSpeed",maxSpeed)
-            bundle.putInt("maxCadence",maxCadence)
-            bundle.putInt("maxBurntCalories",maxBurntCalories)
+            bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
+            bundle.putDouble("totalElevation",noNanValueDouble(totalElevation?:0.00))
+            bundle.putInt("totalSteps",stepsNumber?:0)
+            bundle.putDouble("distance",noNanValueDouble(distance?:0.00))
+            bundle.putInt("maxSpeed",maxSpeed?:0)
+            bundle.putInt("maxCadence",maxCadence?:0)
+            bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
@@ -587,10 +587,10 @@ class RLFragSensorProgress : RLBaseFragment(){
     private fun  RlDataFillAllArray(){
         burntCalories=burntCalories+activeCaloriesNumber
         maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
-        arrBurntCalories.add(activeCaloriesNumber)
-        arrCadence.add(cadenceData)
-        arrDistance.add(distanceNumber)
-        arrSpeed.add(speedNumber)
+        arrBurntCalories.add(noNanValueDouble(activeCaloriesNumber?:0.00))
+        arrCadence.add(noNanValueDouble(cadenceData?:0.00))
+        arrDistance.add(noNanValueDouble(distanceNumber?:0.00))
+        arrSpeed.add(noNanValueDouble(speedNumber?:0.00))
         if (elevationMeter > 0) {
             val relativeAltitude = elevationMeter
             val roundedAltitude = relativeAltitude.toBigDecimal().setScale(1, java.math.RoundingMode.HALF_UP).toInt()
@@ -602,8 +602,8 @@ class RLFragSensorProgress : RLBaseFragment(){
                 }
             }
             lastGeoElevation = roundedAltitude
-            arrElevation.add(lastGeoElevation.toDouble())
-            arrCumElevation.add((totalGeoElevation/10).toDouble())
+            arrElevation.add(noNanValueDouble(lastGeoElevation.toDouble()?:0.00))
+            arrCumElevation.add(noNanValueDouble((totalGeoElevation/10).toDouble()?:0.00))
 
         }else{
             arrElevation.add(0.0)
@@ -612,8 +612,8 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         CumSpeed=CumSpeed+speedNumber
         CumDistance=CumDistance+distanceNumber
-        arrCumDistance.add(CumDistance)
-        arrCumSpeed.add(CumSpeed)
+        arrCumDistance.add(noNanValueDouble(CumDistance?:0.00))
+        arrCumSpeed.add(noNanValueDouble(CumSpeed?:0.00))
         distance=CumDistance
         if (yourWayType.equals("Ride")&& !isSpeedSensor){
             fragBinding.inlayDistance.txtProgressTimeNumber.setText(getClimbData(totalElevation))
@@ -621,13 +621,21 @@ class RLFragSensorProgress : RLBaseFragment(){
             fragBinding.inlayClimbed.txtProgressTimeNumber.setText(getClimbData(totalElevation))
         }
 
-        val elevationpoint=RLElevationPoint(elevationMeter,latitude, longitude)
+        val elevationpoint=RLElevationPoint(noNanValueDouble(elevationMeter?:0.00),noNanValueDouble(latitude?:0.00), noNanValueDouble(longitude?:0.00))
         arrDataLocation.add(elevationpoint)
-        val locationDetails= RLLocationDetails(speedNumber,speedNumber,latitude,0.0, longitude,elevationMeter)
+        val locationDetails= RLLocationDetails(noNanValueDouble(speedNumber?:0.00),noNanValueDouble(speedNumber?:0.00),noNanValueDouble(latitude?:0.00),0.0, noNanValueDouble(longitude?:0.00),noNanValueDouble(elevationMeter?:0.00))
         arrLocationDetails.add(locationDetails)
 
-        arrAvgCadence.add(arrCadence.average())
+        arrAvgCadence.add(noNanValueDouble(arrCadence.average()?:0.00))
         arrMaxCadence.add(maxCadence)
+    }
+
+    private fun noNanValueDouble(value:Double):Double{
+        if (value.isNaN()){
+            return 0.00
+        }else{
+            return  value
+        }
     }
 
     private fun getClimbData(elevation: Number): String {
