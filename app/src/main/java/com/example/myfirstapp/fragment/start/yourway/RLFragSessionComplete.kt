@@ -887,7 +887,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         val elevationDataPath="/proposedstructure/dataForTesting/$currentUser/elevation"
         val locationDataPath="/proposedstructure/dataForTesting/$currentUser/location"
 
-
             databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
                 if (success) {
                     Log.d(TAG,"Successful connectivity Entry")
