@@ -21,11 +21,16 @@ data class RLLocationDetails(
     }
 
     override fun describeContents(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
-    override fun writeToParcel(p0: Parcel, p1: Int) {
-        TODO("Not yet implemented")
+    override fun writeToParcel(parcel: Parcel, p1: Int) {
+        parcel.writeDouble(deviceSpeed)
+        parcel.writeDouble(speed)
+        parcel.writeDouble(lat)
+        parcel.writeDouble(state)
+        parcel.writeDouble(long)
+        parcel.writeDouble(elevation)
     }
 
     companion object CREATOR : Parcelable.Creator<RLLocationDetails> {

@@ -17,11 +17,14 @@ import java.io.Serializable
      }
 
      override fun describeContents(): Int {
-         TODO("Not yet implemented")
+         return 0
+
      }
 
-     override fun writeToParcel(p0: Parcel, p1: Int) {
-         TODO("Not yet implemented")
+     override fun writeToParcel(parcel: Parcel, p1: Int) {
+         parcel.writeDouble(elevation)
+         parcel.writeDouble(latitude)
+         parcel.writeDouble(longitude)
      }
 
      companion object CREATOR : Parcelable.Creator<RLElevationPoint> {

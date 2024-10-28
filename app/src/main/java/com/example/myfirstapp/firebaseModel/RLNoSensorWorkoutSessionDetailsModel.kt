@@ -17,6 +17,9 @@ package com.example.myfirstapp.firebaseModel
     var arrPowerFromDevice: MutableList<Int> =  mutableListOf(0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)//Done
 
+    var speedForOneKm: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
+    var speedForOneMile: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
+
     //this array some ride entry come And Some ride or other entry not come
     var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)
 

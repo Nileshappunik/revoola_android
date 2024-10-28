@@ -12,6 +12,7 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -81,6 +82,16 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var speedList:MutableList<Double> = mutableListOf()
     private var paceList:MutableList<Int> = mutableListOf()
 
+
+    private var arrSpeedForOneKm:MutableList<Double> = mutableListOf()
+    private var arrSpeedForOneMile:MutableList<Double> = mutableListOf()
+
+    private var avgSpeedForOneKm:Double=0.0
+    private var avgSpeedForOneMile:Double=0.0
+
+    private var maxSpeedForOneKm:Double=0.0
+    private var maxSpeedForOneMile:Double=0.0
+
     private var heartRateNumber:Int=0
     private var heartRate:Int=110
     private var stepsNumber:Int=0
@@ -122,6 +133,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var latitude:Double =0.0
     private var longitude:Double =0.0
 
+    private var startTimeKm: Long = 0
+    private var startTimeMile: Long = 0
+    private var lastLocation: Location? = null
+    private var totalDistance = 0.0
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -247,6 +262,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
             bundle.putInt("minHeartrate",minHeartrate?:0)
 
+            bundle.putDouble("maxSpeedForOneKm",noNanValueDouble(maxSpeedForOneKm?:0.00))
+            bundle.putDouble("maxSpeedForOneMile",noNanValueDouble(maxSpeedForOneMile?:0.00))
+            bundle.putDouble("avgSpeedForOneKm",noNanValueDouble(avgSpeedForOneKm?:0.00))
+            bundle.putDouble("avgSpeedForOneMile",noNanValueDouble(avgSpeedForOneMile?:0.00))
+
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
@@ -267,6 +287,15 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString(),ArrayList(arrMaxCadence))
             bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxHr.toString(),ArrayList(arrMaxHr))
             bundle.putDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString(),arrMaxRevPercentage.toDoubleArray())
+
+            if (arrSpeedForOneKm.isNullOrEmpty()){
+                arrSpeedForOneKm= mutableListOf(0.00)
+            }
+            if (arrSpeedForOneMile.isNullOrEmpty()){
+                arrSpeedForOneMile= mutableListOf(0.00)
+            }
+            bundle.putDoubleArray(RLYourWayArrayType.speedForOneKm.toString(),arrSpeedForOneKm.toDoubleArray())
+            bundle.putDoubleArray(RLYourWayArrayType.speedForOneMile.toString(),arrSpeedForOneMile.toDoubleArray())
 
             bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
             bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
@@ -530,9 +559,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         revPercentage=REVPer
 
 
-
-
-
         arrBurntCalories.add( noNanValueDouble(currentCalories))
         arrCadence.add(noNanValueDouble(cadenceData))
         arrDistance.add( noNanValueDouble(distance))
@@ -581,8 +607,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         arrMaxHr.add(maxHeartrate)
         arrMaxRevPercentage.add(noNanValueDouble(maxRevPercentage))
 
+        if (!arrSpeedForOneKm.isNullOrEmpty()){
 
+        }
+        if (!arrSpeedForOneMile.isNullOrEmpty()){
 
+        }
     }
 
     private fun noNanValueDouble(value:Double):Double{
@@ -746,6 +776,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
             location?.let {
+                RLtrackTimePerKilometer(it)
                 Log.d(TAG,"location: ${it}")
                 latitude=it.latitude
                 longitude=it.longitude
@@ -822,11 +853,50 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private fun RlGetValueDouble(value:String):Double{
         if (value.isNullOrEmpty()){
             return 0.0
-        }else if(value.toDouble() < 0) {
+        } else if(value.toDouble() < 0) {
             return 0.0
         }else{
             return value.toDouble()
         }
+    }
+
+    private fun RLtrackTimePerKilometer(location: Location) {
+        if (lastLocation != null) {
+            val distance = lastLocation!!.distanceTo(location)
+            totalDistance += distance
+
+            // Check if one kilometer is reached
+            if (totalDistance >= 1000) {
+                val currentTime = System.currentTimeMillis()
+                val elapsedTimeKm = (currentTime - startTimeKm) / 1000.0 // in seconds
+                maxSpeedForOneKm=RLmax(maxSpeedForOneKm.roundToInt(),elapsedTimeKm.roundToInt()).toDouble()
+                arrSpeedForOneKm.add(RlGetValueDouble(elapsedTimeKm.toString()))
+                avgSpeedForOneKm=arrSpeedForOneKm.average()
+                println("Time taken for last kilometer: $elapsedTimeKm seconds")
+
+                // Reset distance and start time for the next kilometer
+                totalDistance -= 1000
+                startTimeKm = currentTime
+            }
+
+            // Check if one mile is reached
+            if (totalDistance >= 1609.34) {
+                val currentTime = System.currentTimeMillis()
+                val elapsedTimeMile = (currentTime - startTimeMile) / 1000.0 // in seconds
+                maxSpeedForOneMile=RLmax(maxSpeedForOneMile.roundToInt(),elapsedTimeMile.roundToInt()).toDouble()
+                println("Time taken for last mile: $elapsedTimeMile seconds")
+                arrSpeedForOneMile.add(RlGetValueDouble(elapsedTimeMile.toString()))
+                avgSpeedForOneMile=arrSpeedForOneMile.average()
+                // Reset distance and start time for the next mile
+                totalDistance -= 1609.34
+                startTimeMile = currentTime
+            }
+        } else {
+            // Initialize start times for the first kilometer and mile
+            startTimeKm = System.currentTimeMillis()
+            startTimeMile = System.currentTimeMillis()
+        }
+        lastLocation = location
     }
 
     override fun onStart() {

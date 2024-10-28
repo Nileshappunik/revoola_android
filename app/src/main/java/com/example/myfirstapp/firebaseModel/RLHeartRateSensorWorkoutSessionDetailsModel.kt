@@ -21,6 +21,8 @@ package com.example.myfirstapp.firebaseModel
     var arrRevPercentage: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
     var arrRevSecond: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
+    var speedForOneKm: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
+    var speedForOneMile: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
 
 
     var avgRevPercentage:Double=0.0?:0.0
