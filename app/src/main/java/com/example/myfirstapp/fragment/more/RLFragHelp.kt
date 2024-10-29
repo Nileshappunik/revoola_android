@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.*
+import com.example.myfirstapp.fragment.more.adapter.RLHelpItemListAdapter
+import com.example.myfirstapp.model.RLMoreGroupItemModel
 import com.example.myfirstapp.utils.RLPrefManager
 
 class RLFragHelp : RLBaseFragment() {
@@ -32,25 +35,19 @@ class RLFragHelp : RLBaseFragment() {
     }
 
     private fun RLuisetup() {
-
         RLonBackPresAct(fragBinding.ivBack)
 
-        fragBinding.relayGettingStarted.txtAccount.setText(R.string.getttingstarted)
-        fragBinding.relayGettingStarted.imgAccount.setImageResource(R.drawable.ic_account_g)
-        fragBinding.relayGettingStarted.viewimgtxt.visibility=View.GONE
+        // AppointmentList
+        val moreList = listOf(
+            RLMoreGroupItemModel(R.drawable.ic_videocam_outline,resources.getString(R.string.aquickintroduction), emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_account_g,resources.getString(R.string.getttingstarted),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.faqs), emptyList()))
 
-        fragBinding.relayFaqus.txtAccount.setText(R.string.faqs)
-        fragBinding.relayFaqus.imgAccount.setImageResource(R.drawable.ic_settings_g)
-        fragBinding.relayFaqus.viewimgtxt.visibility=View.GONE
+        val linearLayoutMain = LinearLayoutManager(activity)
+        fragBinding.recyclerview.layoutManager = linearLayoutMain
+        val adapter = RLHelpItemListAdapter(activity, moreList)
+        fragBinding.recyclerview.adapter = adapter
 
-        fragBinding.relayLogs.imgAccount.setImageResource(R.drawable.ic_help)
-        fragBinding.relayLogs.txtAccount.setText(R.string.logs)
-        fragBinding.relayLogs.viewimgtxt.visibility=View.GONE
-        fragBinding.relayLogs.layMoreClick.visibility=View.GONE
-
-        fragBinding.relayGettingStarted.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)
-        }
     }
 
 }

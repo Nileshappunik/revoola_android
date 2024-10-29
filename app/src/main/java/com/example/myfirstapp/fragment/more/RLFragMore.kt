@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -12,6 +13,8 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMoreBinding
+import com.example.myfirstapp.fragment.more.adapter.RlMoreExpandableListAdapter
+import com.example.myfirstapp.model.RLMoreGroupItemModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.google.firebase.auth.ktx.auth
@@ -31,37 +34,11 @@ class RLFragMore : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_more, container) as RlFragMoreBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMore" )
-        RLsetupui()
+        RLsetupuiList()
         return fragBinding.root
     }
 
-    private fun RLsetupui() {
-
-        fragBinding.layAccount.layMoreClick.visibility=View.VISIBLE
-        fragBinding.layAccount.txtAccount.setText(R.string.account)
-        fragBinding.layAccount.imgAccount.setImageResource(R.drawable.ic_account_g)
-
-        fragBinding.laySetting.txtAccount.setText(R.string.settings)
-        fragBinding.laySetting.imgAccount.setImageResource(R.drawable.ic_settings_g)
-
-        fragBinding.layChangepassword.txtAccount.setText(R.string.changepassword)
-        fragBinding.layChangepassword.imgAccount.setImageResource(R.drawable.ic_envelope_g)
-
-        fragBinding.layHelp.txtAccount.setText(R.string.help)
-        fragBinding.layHelp.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.laySyncwatchdara.txtAccount.setText(R.string.syncwatchdata)
-        fragBinding.laySyncwatchdara.imgAccount.setImageResource(R.drawable.ic_sensors_g)
-
-        fragBinding.layRestorepurchase.txtAccount.setText(R.string.restorepurchase)
-        fragBinding.layRestorepurchase.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.layRequesttodeletedata.txtAccount.setText(R.string.requesttodeleteyourdata)
-        fragBinding.layRequesttodeletedata.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.laySignout.txtAccount.setText(R.string.signout)
-        fragBinding.laySignout.imgAccount.setImageResource(R.drawable.ic_sign_out_g)
-
+    private fun RLsetupuiList(){
         fragBinding.cardNotification.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
         }
@@ -69,30 +46,56 @@ class RLFragMore : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
 
-        fragBinding.layChangepassword.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragChangePassword(), TAG, true, null, false)
-        }
-        fragBinding.layAccount.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+        // Prepare the data
+        val groupList = listOf(
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_sensors_g,resources.getString(R.string.syncwatchdata),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.edit_your_account_data), listOf("CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")),
+            RLMoreGroupItemModel(R.drawable.ic_sign_out_g,resources.getString(R.string.signout), emptyList()))
+
+        // Set up the adapter
+        val adapter = RlMoreExpandableListAdapter(requireContext(), groupList)
+        fragBinding.expandableListView.setAdapter(adapter)
+
+        // Optionally: Set listeners for group and child clicks
+        fragBinding.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
+            // Handle group click if needed
+            when(groupList[groupPosition].title){
+                resources.getString(R.string.helpvideotutorials)->{
+                    (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
+                }
+                resources.getString(R.string.syncwatchdata)->{
+                   // (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+                }
+                resources.getString(R.string.signout)->{
+                    RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
+                }
+            }
+            false
         }
 
-        fragBinding.layHelp.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
-        }
-
-        fragBinding.laySetting.layMoreClick.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
-        }
-        fragBinding.layRequesttodeletedata.layMoreClick.setOnClickListener {
-            RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
-        }
-        fragBinding.laySignout.layMoreClick.setOnClickListener {
-            RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
-        }
-        fragBinding.layRestorepurchase.layMoreClick.setOnClickListener {
-            RLshowDialogAlert(getString(R.string.youhavesuccessfullyrestored))
+        fragBinding.expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+            // Handle child click if needed
+            Log.e(TAG,"CHILDNAME:- ${groupList[groupPosition].childItems[childPosition].toString()}")
+            when(groupList[groupPosition].childItems[childPosition].toString())
+            {
+                "CHANGE YOUR APP SETTINGS"->{
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
+                }
+                "RESTORE YOUR PURCHASES"->{
+                    RLshowDialogAlert(getString(R.string.youhavesuccessfullyrestored))
+                }
+                "CHANGE YOUR PASSWORD"->{
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChangePassword(), TAG, true, null, false)
+                }
+                "REQUEST TO DELETE YOUR DATA"->{
+                    RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
+                }
+            }
+            false
         }
     }
+
 
     private fun RLshowBasicAlertDialog() {
         val builder = AlertDialog.Builder(requireContext())

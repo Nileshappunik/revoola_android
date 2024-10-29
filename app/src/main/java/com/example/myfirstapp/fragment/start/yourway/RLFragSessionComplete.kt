@@ -1370,8 +1370,8 @@ class RLFragSessionComplete : RLBaseFragment(){
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
                 val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                wsWeight=userData.weightkg
-                wsHeight=userData.height
+                wsWeight=userData.weightkg?:"60"
+                wsHeight=userData.height?:"167"
                 wsAge= RLTools.RLCalculateAge(userData.dob)
                 gender=userData.gender
                 RFMHR=userData.RFMHR

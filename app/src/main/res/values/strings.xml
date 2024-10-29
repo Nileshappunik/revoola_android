@@ -185,8 +185,11 @@
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
     <string name="settings">Settings</string>
+    <string name="edit_your_account_data">EDIT YOUR ACCOUNT DATA</string>
     <string name="changepassword">Change Password</string>
     <string name="help">Help</string>
+    <string name="helpvideotutorials">HELP &amp; VIDEO TUTORIALS</string>
+    <string name="aquickintroduction">A QUICK INTRODUCTION</string>
     <string name="connecttohealthconnect">Connect to Health Connect</string>
     <string name="requesttodeleteyourdata">Request to delete your data</string>
     <string name="linktoaccount">Link to Account</string>

@@ -29,25 +29,13 @@
             android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />
 
-        <View
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/AppWhiteColor"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"/>
 
-        <include
-            android:id="@+id/relay_getting_started"
-            layout="@layout/rl_common_image_text_image_rl" />
 
-        <include
-            android:id="@+id/relay_faqus"
-            layout="@layout/rl_common_image_text_image_rl" />
-
-        <include
-            android:id="@+id/relay_logs"
-            layout="@layout/rl_common_image_text_image_rl" />
 
     </LinearLayout>
 </layout>

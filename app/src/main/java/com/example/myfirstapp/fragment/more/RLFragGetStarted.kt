@@ -6,9 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.databinding.*
+import com.example.myfirstapp.fragment.more.adapter.RLGetStartedItemListAdapter
+import com.example.myfirstapp.fragment.more.adapter.RLHelpItemListAdapter
+import com.example.myfirstapp.fragment.more.adapter.RlMoreExpandableListAdapter
+import com.example.myfirstapp.model.RLMoreGroupItemModel
 import com.example.myfirstapp.utils.RLPrefManager
 
 class RLFragGetStarted : RLBaseFragment() {
@@ -31,28 +36,20 @@ class RLFragGetStarted : RLBaseFragment() {
     }
 
     private fun RLuisetup() {
-        
         RLonBackPresAct(fragBinding.ivBack)
+        //List
+        val dataList = listOf(
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.heartratesensor), emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.connectingaspeedsensor),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.aquicktourofrevoola),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.connectionapplewatch),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.icantfindmysensor),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.nameyoursensor), emptyList()))
 
-        fragBinding.relayApplewatch.txtAccount.setText(R.string.connectionapplewatch)
-        fragBinding.relayApplewatch.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.relayRatesensor.txtAccount.setText(R.string.heartratesensor)
-        fragBinding.relayRatesensor.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.relaySpeedsensor.txtAccount.setText(R.string.connectingaspeedsensor)
-        fragBinding.relaySpeedsensor.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.relayYourensor.txtAccount.setText(R.string.nameyoursensor)
-        fragBinding.relayYourensor.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.relayTourofrevoola.txtAccount.setText(R.string.aquicktourofrevoola)
-        fragBinding.relayTourofrevoola.imgAccount.setImageResource(R.drawable.ic_help_g)
-
-        fragBinding.relayCantfindmysensor.txtAccount.setText(R.string.icantfindmysensor)
-        fragBinding.relayCantfindmysensor.imgAccount.setImageResource(R.drawable.ic_help_g)
-        //fragBinding.relayCantfindmysensor.viewimgtxt.visibility=View.GONE
-
+        val linearLayoutMain = LinearLayoutManager(activity)
+        fragBinding.recyclerview.layoutManager = linearLayoutMain
+        val adapter = RLGetStartedItemListAdapter(activity, dataList)
+        fragBinding.recyclerview.adapter = adapter
     }
 
 }
