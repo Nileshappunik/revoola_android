@@ -108,7 +108,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RLShareMapHide(false)
                 }
                 "EVERYONE"->{
-                    visibilityflagforthatsession=1
+                    visibilityflagforthatsession=2
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
                     fragBinding.tvShareTitle.setText(R.string.friendstx)
@@ -116,7 +116,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RLShareMapHide(true)
                 }
                 "PRIVATE"->{
-                    visibilityflagforthatsession=2
+                    visibilityflagforthatsession=1
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
                     fragBinding.tvShareTitle.setText(R.string.everyone)
@@ -498,10 +498,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.classDate=currentTimestamp.toLong()
         ghostDataEntry.displayImage=displayImage
         ghostDataEntry.displayName=displayName
-        //ghostDataEntry.location=
-        //ghostDataEntry.maxHrUsedForCalculation=
-        //ghostDataEntry.maxHrUsedForCalculation_Last=
-        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.location= ""
+        ghostDataEntry.maxHrUsedForCalculation=RFMHR?:0
+        ghostDataEntry.maxHrUsedForCalculation_Last=RFMHR?:0
+        ghostDataEntry.restingHrUsedForCalculation=RFMHR?:0
         ghostDataEntry.timestamp=currentTimestamp.toLong()
         ghostDataEntry.totalRev=totalRev
         ghostDataEntry.totalTime=totalTime.toInt()?:0
@@ -699,10 +699,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.classDate=currentTimestamp.toLong()
         ghostDataEntry.displayImage=displayImage
         ghostDataEntry.displayName=displayName
-        //ghostDataEntry.location=
-        //ghostDataEntry.maxHrUsedForCalculation=
-        //ghostDataEntry.maxHrUsedForCalculation_Last=
-        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.location= ""
+        ghostDataEntry.maxHrUsedForCalculation=RFMHR?:0
+        ghostDataEntry.maxHrUsedForCalculation_Last=RFMHR?:0
+        ghostDataEntry.restingHrUsedForCalculation=RFMHR?:0
         ghostDataEntry.timestamp=currentTimestamp.toLong()
         ghostDataEntry.totalTime=totalTime.toInt()?:0
         ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
@@ -880,10 +880,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.classDate=currentTimestamp.toLong()
         ghostDataEntry.displayImage=displayImage
         ghostDataEntry.displayName=displayName
-        //ghostDataEntry.location=
-        //ghostDataEntry.maxHrUsedForCalculation=
-        //ghostDataEntry.maxHrUsedForCalculation_Last=
-        //ghostDataEntry.restingHrUsedForCalculation=
+        ghostDataEntry.location= ""
+        ghostDataEntry.maxHrUsedForCalculation=RFMHR?:0
+        ghostDataEntry.maxHrUsedForCalculation_Last=RFMHR?:0
+        ghostDataEntry.restingHrUsedForCalculation=RFMHR?:0
         ghostDataEntry.timestamp=currentTimestamp.toLong()
         ghostDataEntry.totalTime=totalTime.toInt()?:0
         ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
@@ -975,10 +975,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
                     }
                 }
         }
@@ -990,9 +990,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
                     }
                 }
         }
@@ -1006,12 +1006,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
                     }
                 }
         }
@@ -1079,10 +1079,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
                     }
                 }
         }
@@ -1094,9 +1094,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
                     }
                 }
         }
@@ -1108,12 +1108,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
                     }
                 }
         }
@@ -1182,10 +1182,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryData!")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
                     }
                 }
         }
@@ -1197,9 +1197,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryGraphData!")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
                     }
                 }
         }
@@ -1211,12 +1211,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
                     }
                 }
         }
