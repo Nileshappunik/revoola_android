@@ -21,8 +21,8 @@ class RLWorkoutSessionSummaryModel {
     var demsElevation: Int = -1
     var distance: Double = 0.0
     var goal: String = ""
-    var isClass: Boolean = false
-    var isPowerDeviceConnected: Boolean = false
+    val isClass: Boolean = false
+    val isPowerDeviceConnected: Boolean = false
     var maxBurntCalories: Int = 0
     var maxCadence: Int = 0
     var maxHr: Int = 0

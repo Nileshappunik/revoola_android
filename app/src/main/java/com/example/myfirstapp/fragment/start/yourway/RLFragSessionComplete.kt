@@ -262,8 +262,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.demsElevation=-1
         entryWorkoutSessionDetails.distance=distance?:0.0
         entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.isClass=false
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
         entryWorkoutSessionDetails.mapGeneratedUrl=""
         entryWorkoutSessionDetails.maxRevPercentage=maxRevPercentage?:0.0
         entryWorkoutSessionDetails.minRevPercentage=minRevPercentage?:0.0
@@ -448,6 +446,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession?:0
 
 
+
         if (distance.isNaN() ){
             distance=0.0
         }
@@ -604,8 +603,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.demsElevation=-1
         entryWorkoutSessionDetails.distance = distance
         entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.isClass=false
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
         entryWorkoutSessionDetails.mapGeneratedUrl=""
         entryWorkoutSessionDetails.maxRevPercentage= 0 //calculation of REV persentage
         entryWorkoutSessionDetails.minRevPercentage= 0 //calculation of REV persentage
@@ -786,8 +783,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.demsElevation=-1
         entryWorkoutSessionDetails.distance=distance
         entryWorkoutSessionDetails.goal=""
-        entryWorkoutSessionDetails.isClass=false
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
         entryWorkoutSessionDetails.mapGeneratedUrl=""
         entryWorkoutSessionDetails.maxRevPercentage=0
         entryWorkoutSessionDetails.minRevPercentage=0
@@ -906,13 +901,13 @@ class RLFragSessionComplete : RLBaseFragment(){
     private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel,entryGraph:RLAllWaySessionSummaryGraphDataModel,entrysummery:RLWorkoutSessionSummaryModel,
                                                 deviceRecordedData: Any,elevationData: Any,locationData:Any,entryGhost:RLGhostDataModel) {
 
-       Log.e(TAG,"entry:- $entry")
-       Log.e(TAG,"entryGraph:- $entryGraph")
-       Log.e(TAG,"entrysummery:- $entrysummery")
-       Log.e(TAG,"deviceRecordedData:- $deviceRecordedData")
-       Log.e(TAG,"elevationData:- $elevationData")
-       Log.e(TAG,"locationData:- $locationData")
-       Log.e(TAG,"entryGhost:- $entryGhost")
+       Log.e(TAG,"revoolaUserSessionDetailData entry:- ${Gson().toJson(entry)}")
+       Log.e(TAG,"revoolaUserSessionSummaryGraphData entryGraph:- $entryGraph")
+       Log.e(TAG,"revoolaUserSessionSummaryData entrysummery:- ${Gson().toJson(entrysummery)}")
+       Log.e(TAG,"dataForTesting deviceRecordedData:- $deviceRecordedData")
+       Log.e(TAG,"dataForTesting elevationData:- $elevationData")
+       Log.e(TAG,"dataForTesting locationData:- $locationData")
+       Log.e(TAG,"GhostData entryGhost:- $entryGhost")
 
 
         //dataForTesting Entry
@@ -946,7 +941,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData lastForClass Walk_justRide_
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
-        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
@@ -958,7 +953,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData bestForClass Walk_justRide_
         val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
-        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
@@ -972,7 +967,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
-            databaseRefSummery.child(it).setValue(entrysummery)
+            databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
@@ -1002,8 +997,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
         val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
+        Log.e(TAG,"print when call sessionDetail api ${Gson().toJson(entry)}")
         entryId.let {
-            databaseRef.child(it).setValue(entry)
+            databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
@@ -1050,7 +1046,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData lastForClass Walk_justRide_
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
-        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
@@ -1062,7 +1058,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData bestForClass
         val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
-        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
@@ -1076,7 +1072,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
-            databaseRefSummery.child(it).setValue(entrysummery)
+            databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
@@ -1105,7 +1101,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
-            databaseRef.child(it).setValue(entry)
+            databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
@@ -1153,7 +1149,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData lastForClass Walk_justRide_
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
-        databaseRefGhostLast.child(justRide_).setValue(entryGhost)
+        databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
@@ -1165,7 +1161,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry GhostData bestForClass
         val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
-        databaseRefGhostBest.child(justRide_).setValue(entryGhost)
+        databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
@@ -1179,7 +1175,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
-            databaseRefSummery.child(it).setValue(entrysummery)
+            databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryData!")
@@ -1208,7 +1204,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
-            databaseRef.child(it).setValue(entry)
+            databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
@@ -1414,4 +1410,297 @@ class RLFragSessionComplete : RLBaseFragment(){
            }
        }
    }
+
+    fun RLNoSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
+        return mapOf(
+            "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
+            "MaxHrUsedForCalculation_Last" to MaxHrUsedForCalculation_Last,
+            "RestingHrUsedForCalculation" to RestingHrUsedForCalculation,
+            "RestingHrUsedForCalculation_Last" to RestingHrUsedForCalculation_Last,
+            "arrBurntCalories" to arrBurntCalories,
+            "arrCadence" to arrCadence,
+            "arrCumDistance" to arrCumDistance,
+            "arrCumSpeed" to arrCumSpeed,
+            "arrDistance" to arrDistance,
+            "arrElevation" to arrElevation,
+            "arrPower" to arrPower,
+            "arrPowerFromDevice" to arrPowerFromDevice,
+            "arrSpeed" to arrSpeed,
+            "speedForOneKm" to speedForOneKm,
+            "speedForOneMile" to speedForOneMile,
+            "arrCumElevation" to arrCumElevation,
+            "avgRevPercentage" to avgRevPercentage,
+            "burntCalories" to burntCalories,
+            "classDate" to classDate,
+            "classDescription" to classDescription,
+            "classImage" to classImage,
+            "className" to className,
+            "classNote" to classNote,
+            "classType" to classType,
+            "demsElevation" to demsElevation,
+            "distance" to distance,
+            "goal" to goal,
+            "isClass" to isClass,
+            "isPowerDeviceConnected" to isPowerDeviceConnected,
+            "mapGeneratedUrl" to mapGeneratedUrl,
+            "maxRevPercentage" to maxRevPercentage,
+            "minRevPercentage" to minRevPercentage,
+            "remark" to remark,
+            "revPercentage" to revPercentage,
+            "timestamp" to timestamp,
+            "totalElevation" to totalElevation,
+            "totalPower" to totalPower,
+            "totalRev" to totalRev,
+            "totalSteps" to totalSteps,
+            "totalTime" to totalTime,
+            "typeOfGoal" to typeOfGoal,
+            "zone1" to zone1.toMap(),
+            "zone2" to zone2.toMap(),
+            "zone3" to zone3.toMap(),
+            "zone4" to zone4.toMap(),
+            "zone5" to zone5.toMap(),
+            "zone6" to zone6.toMap(),
+            "zone7" to zone7.toMap()
+        )
+    }
+    fun RLNoSensorWorkoutSessionDetailsModel.ZoneNew.toMap(): Map<String, Any?> {
+        return mapOf(
+            "burntCalories" to burntCalories,
+            "distance" to distance,
+            "remark" to remark,
+            "seconds" to seconds,
+            "totalRev" to totalRev
+        )
+    }
+
+    fun RLWorkoutSessionSummaryModel.toMap(): Map<String, Any?> {
+        return mapOf(
+            "avgBurntCalories" to avgBurntCalories,
+            "avgCadence" to avgCadence,
+            "avgHr" to avgHr,
+            "avgPower" to avgPower,
+            "avgPowerFromDevice" to avgPowerFromDevice,
+            "avgRevPercentage" to avgRevPercentage,
+            "avgSpeed" to avgSpeed,
+            "avgSpeedForOneKm" to avgSpeedForOneKm,
+            "avgSpeedForOneMile" to avgSpeedForOneMile,
+            "burntCalories" to burntCalories,
+            "classDate" to classDate,
+            "classDescription" to classDescription,
+            "classImage" to classImage,
+            "className" to className,
+            "classNote" to classNote,
+            "classType" to classType,
+            "demsElevation" to demsElevation,
+            "distance" to distance,
+            "goal" to goal,
+            "isClass" to isClass,
+            "isPowerDeviceConnected" to isPowerDeviceConnected,
+            "maxBurntCalories" to maxBurntCalories,
+            "maxCadence" to maxCadence,
+            "maxHr" to maxHr,
+            "maxPower" to maxPower,
+            "maxPowerFromDevice" to maxPowerFromDevice,
+            "maxRevPercentage" to maxRevPercentage,
+            "maxSpeed" to maxSpeed,
+            "maxSpeedForOneKm" to maxSpeedForOneKm,
+            "maxSpeedForOneMile" to maxSpeedForOneMile,
+            "minHr" to minHr,
+            "minRevPercentage" to minRevPercentage,
+            "remark" to remark,
+            "revPercentage" to revPercentage,
+            "timestamp" to timestamp,
+            "totalElevation" to totalElevation,
+            "totalPower" to totalPower,
+            "totalRev" to totalRev,
+            "totalSteps" to totalSteps,
+            "totalTime" to totalTime,
+            "typeOfGoal" to typeOfGoal,
+            "visibilityflagforthatsession" to visibilityflagforthatsession,
+            "zone1" to zone1.toMap(),
+            "zone2" to zone2.toMap(),
+            "zone3" to zone3.toMap(),
+            "zone4" to zone4.toMap(),
+            "zone5" to zone5.toMap(),
+            "zone6" to zone6.toMap(),
+            "zone7" to zone7.toMap()
+        )
+    }
+
+    fun RLWorkoutSessionSummaryModel.Zone.toMap(): Map<String, Any?> {
+        return mapOf(
+            "avgCadence" to avgCadence,
+            "avgHr" to avgHr,
+            "avgPower" to avgPower,
+            "avgPowerFromDevice" to avgPowerFromDevice,
+            "avgSpeed" to avgSpeed,
+            "burntCalories" to burntCalories,
+            "distance" to distance,
+            "remark" to remark,
+            "seconds" to seconds,
+            "totalRev" to totalRev
+        )
+    }
+
+    fun RLGhostDataModel.toMap(): Map<String, Any?> {
+        return mapOf(
+            "RestingHrUsedForCalculation_Last" to RestingHrUsedForCalculation_Last,
+            "arrAvgCadence" to arrAvgCadence,
+            "arrAvgHr" to arrAvgHr,
+            "arrAvgPower" to arrAvgPower,
+            "arrAvgRevPercentage" to arrAvgRevPercentage,
+            "arrHr" to arrHr,
+            "arrMaxCadence" to arrMaxCadence,
+            "arrMaxHr" to arrMaxHr,
+            "arrMaxPower" to arrMaxPower,
+            "arrMaxRevPercentage" to arrMaxRevPercentage,
+            "arrPower" to arrPower,
+            "arrPowerFromDevice" to arrPowerFromDevice,
+            "arrRevPercentage" to arrRevPercentage,
+            "arrRevSecond" to arrRevSecond,
+            "classDate" to classDate,
+            "displayImage" to displayImage,
+            "displayName" to displayName,
+            "flagImage" to flagImage,
+            "flagName" to flagName,
+            "isPowerDeviceConnected" to isPowerDeviceConnected,
+            "location" to location,
+            "maxHrUsedForCalculation" to maxHrUsedForCalculation,
+            "maxHrUsedForCalculation_Last" to maxHrUsedForCalculation_Last,
+            "restingHrUsedForCalculation" to restingHrUsedForCalculation,
+            "timestamp" to timestamp,
+            "totalRev" to totalRev,
+            "totalTime" to totalTime,
+            "visibilityflagforthatsession" to visibilityflagforthatsession
+        )
+    }
+
+    fun RLHeartRateSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
+        return mapOf(
+            "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
+            "MaxHrUsedForCalculation_Last" to MaxHrUsedForCalculation_Last,
+            "RestingHrUsedForCalculation" to RestingHrUsedForCalculation,
+            "RestingHrUsedForCalculation_Last" to RestingHrUsedForCalculation_Last,
+            "arrBurntCalories" to arrBurntCalories,
+            "arrCadence" to arrCadence,
+            "arrCumDistance" to arrCumDistance,
+            "arrCumElevation" to arrCumElevation,
+            "arrCumSpeed" to arrCumSpeed,
+            "arrDistance" to arrDistance,
+            "arrElevation" to arrElevation,
+            "arrHRRecordedSecond" to arrHRRecordedSecond,
+            "arrHr" to arrHr,
+            "arrPower" to arrPower,
+            "arrPowerFromDevice" to arrPowerFromDevice,
+            "arrRevPercentage" to arrRevPercentage,
+            "arrRevSecond" to arrRevSecond,
+            "arrSpeed" to arrSpeed,
+            "speedForOneKm" to speedForOneKm,
+            "speedForOneMile" to speedForOneMile,
+            "avgRevPercentage" to avgRevPercentage,
+            "burntCalories" to burntCalories,
+            "classDate" to classDate,
+            "classDescription" to classDescription,
+            "classImage" to classImage,
+            "className" to className,
+            "classNote" to classNote,
+            "classType" to classType,
+            "demsElevation" to demsElevation,
+            "distance" to distance,
+            "goal" to goal,
+            "isClass" to isClass,
+            "isPowerDeviceConnected" to isPowerDeviceConnected,
+            "mapGeneratedUrl" to mapGeneratedUrl,
+            "maxRevPercentage" to maxRevPercentage,
+            "minRevPercentage" to minRevPercentage,
+            "remark" to remark,
+            "revPercentage" to revPercentage,
+            "timestamp" to timestamp,
+            "totalElevation" to totalElevation,
+            "totalPower" to totalPower,
+            "totalRev" to totalRev,
+            "totalSteps" to totalSteps,
+            "totalTime" to totalTime,
+            "typeOfGoal" to typeOfGoal,
+            "zone1" to zone1.toMap(),
+            "zone2" to zone2.toMap(),
+            "zone3" to zone3.toMap(),
+            "zone4" to zone4.toMap(),
+            "zone5" to zone5.toMap(),
+            "zone6" to zone6.toMap(),
+            "zone7" to zone7.toMap()
+        )
+    }
+
+    fun RLHeartRateSensorWorkoutSessionDetailsModel.ZoneNew.toMap(): Map<String, Any?> {
+        return mapOf(
+            "burntCalories" to burntCalories,
+            "distance" to distance,
+            "remark" to remark,
+            "seconds" to seconds,
+            "totalRev" to totalRev
+        )
+    }
+
+    fun RLSpeedSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
+        return mapOf(
+            "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
+            "MaxHrUsedForCalculation_Last" to MaxHrUsedForCalculation_Last,
+            "RestingHrUsedForCalculation" to RestingHrUsedForCalculation,
+            "RestingHrUsedForCalculation_Last" to RestingHrUsedForCalculation_Last,
+            "arrBurntCalories" to arrBurntCalories,
+            "arrCadence" to arrCadence,
+            "arrCumElevation" to arrCumElevation,
+            "arrDistance" to arrDistance,
+            "arrElevation" to arrElevation,
+            "arrPower" to arrPower,
+            "arrPowerFromDevice" to arrPowerFromDevice,
+            "arrSpeed" to arrSpeed,
+            "speedForOneKm" to speedForOneKm,
+            "speedForOneMile" to speedForOneMile,
+            "avgRevPercentage" to avgRevPercentage,
+            "burntCalories" to burntCalories,
+            "classDate" to classDate,
+            "classDescription" to classDescription,
+            "classImage" to classImage,
+            "className" to className,
+            "classNote" to classNote,
+            "classType" to classType,
+            "demsElevation" to demsElevation,
+            "distance" to distance,
+            "goal" to goal,
+            "isClass" to isClass,
+            "isPowerDeviceConnected" to isPowerDeviceConnected,
+            "mapGeneratedUrl" to mapGeneratedUrl,
+            "maxRevPercentage" to maxRevPercentage,
+            "minRevPercentage" to minRevPercentage,
+            "remark" to remark,
+            "revPercentage" to revPercentage,
+            "timestamp" to timestamp,
+            "totalElevation" to totalElevation,
+            "totalPower" to totalPower,
+            "totalRev" to totalRev,
+            "totalSteps" to totalSteps,
+            "totalTime" to totalTime,
+            "typeOfGoal" to typeOfGoal,
+            "zone1" to zone1.toMap(),
+            "zone2" to zone2.toMap(),
+            "zone3" to zone3.toMap(),
+            "zone4" to zone4.toMap(),
+            "zone5" to zone5.toMap(),
+            "zone6" to zone6.toMap(),
+            "zone7" to zone7.toMap()
+        )
+    }
+
+    fun RLSpeedSensorWorkoutSessionDetailsModel.ZoneNew.toMap(): Map<String, Any?> {
+        return mapOf(
+            "burntCalories" to burntCalories,
+            "distance" to distance,
+            "remark" to remark,
+            "seconds" to seconds,
+            "totalRev" to totalRev
+        )
+    }
+
 }

@@ -36,8 +36,8 @@ package com.example.myfirstapp.firebaseModel
     var demsElevation:Int=-1?:-1
     var distance:Double=0.0?:0.0
     var goal:String=""?:""
-    var isClass:Boolean=false?:false
-    var isPowerDeviceConnected:Boolean=false?:false
+    val isClass:Boolean=false?:false
+    val isPowerDeviceConnected:Boolean=false?:false
     var mapGeneratedUrl:String=""?:""
     var maxRevPercentage:Double=0.0?:0.0
     var minRevPercentage:Double=0.0?:0.0

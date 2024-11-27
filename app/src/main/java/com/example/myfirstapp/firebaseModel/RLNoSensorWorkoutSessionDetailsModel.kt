@@ -1,6 +1,9 @@
 package com.example.myfirstapp.firebaseModel
 
+import com.google.firebase.database.PropertyName
  class RLNoSensorWorkoutSessionDetailsModel {
+
+
 
     var MaxHrUsedForCalculation: Int = 0
     var MaxHrUsedForCalculation_Last: Int = 0
@@ -14,6 +17,7 @@ package com.example.myfirstapp.firebaseModel
     var arrDistance: MutableList<Double> =  mutableListOf(0.0)//Done
     var arrElevation: MutableList<Double> =  mutableListOf(0.0)
     var arrPower: MutableList<Int> =  mutableListOf(0)
+
     var arrPowerFromDevice: MutableList<Int> =  mutableListOf(0)
     var arrSpeed: MutableList<Double> =  mutableListOf(0.0)//Done
 
@@ -21,7 +25,7 @@ package com.example.myfirstapp.firebaseModel
     var speedForOneMile: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
 
     //this array some ride entry come And Some ride or other entry not come
-    var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)
+    var arrCumElevation: MutableList<Double> =  mutableListOf(0.0)?:mutableListOf(0.0)
 
 
     var avgRevPercentage:Int=0
@@ -68,7 +72,7 @@ package com.example.myfirstapp.firebaseModel
        var seconds:Int = 0
        var totalRev:Int = 0
     }
-}
 
+ }
 
 
