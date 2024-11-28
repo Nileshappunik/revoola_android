@@ -108,6 +108,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         }
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
+            val videoID=  requireArguments().getString("videoID","")
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -119,6 +120,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
             bundle.putDoubleArray("speedList",speedList.toDoubleArray())
             bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
+            bundle.putString("videoID",videoID)
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

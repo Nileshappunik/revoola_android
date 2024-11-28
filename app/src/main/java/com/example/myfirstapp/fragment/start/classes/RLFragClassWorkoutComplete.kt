@@ -13,24 +13,37 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
-import com.example.myfirstapp.fragment.start.classes.model.RLBodyVideoHRSensorWorkoutSessionDetailsModel
-import com.example.myfirstapp.fragment.start.classes.model.RLBodyVideoWorkoutSessionDetailsModel
-import com.example.myfirstapp.fragment.start.classes.model.RLMindAudioWorkoutSessionDetailsModel
 import com.example.myfirstapp.model.RLFulllVideoModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import gun0912.tedimagepicker.builder.TedImagePicker
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class RLFragClassWorkoutComplete : RLBaseFragment(){
     val TAG: String = RLFragClassWorkoutComplete::class.java.simpleName
     lateinit var fragBinding: RlFragSessionCompleteBinding
-    var imgUriList = mutableListOf<Uri>()
-    var currentUser =""
+    private var imgUriList = mutableListOf<Uri>()
+    private var currentUser =""
+    private var wsWeight="60"
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+    private var RestingHR="50"
+    private var displayImage =""
+    private var displayName =""
+    private var visibilityflagforthatsession:Int =0
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragClassWorkoutComplete()
@@ -50,6 +63,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLFirebaseToFatchUserData()
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
@@ -60,6 +74,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
             when(titleTxt){
                 "FRIENDS"->{
+                    visibilityflagforthatsession=0
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
                     fragBinding.tvShareTitle.setText(R.string.privatetx)
@@ -67,6 +82,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     RLShareMapHide(false)
                 }
                 "EVERYONE"->{
+                    visibilityflagforthatsession=2
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
                     fragBinding.tvShareTitle.setText(R.string.friendstx)
@@ -74,6 +90,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     RLShareMapHide(true)
                 }
                 "PRIVATE"->{
+                    visibilityflagforthatsession=1
                     fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
                     fragBinding.tvShareTitle.setText(R.string.everyone)
@@ -107,12 +124,14 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 val activeCaloriesList: MutableList<Double> = activeCaloriesArray?.toMutableList() ?: mutableListOf()
 
                 if (sensorType.equals(RLConstants.HEARTSENSOR)){
-                    RlBodyHeartRateDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
+                    RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
+                    //RlBodyHeartRateDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
                 }else  {
-                    RlBodyNoSensorDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
+                    RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
+                    //RlBodyNoSensorDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
                 }
             }else{
-                RlMindNoSensorDataEntryToFirebase(classType,totalTime,VideoCardData,heartRateList)
+               // RlMindNoSensorDataEntryToFirebase(classType,totalTime,VideoCardData,heartRateList)
             }
 
         }
@@ -168,264 +187,544 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
     }
 
-    //All Mind Video with Sensor or Without Sensor
-    private fun RlMindNoSensorDataEntryToFirebase(classType: String, totalTime: String, videoCardData: RLFulllVideoModel, heartRateList: ArrayList<Int>?) {
+    //ALL BODY DATA TO FIREABSE ENTRY
+    private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData:RLFulllVideoModel){
+        var sessionUserSessionDetailData= hashMapOf<String, Any>()
+        var sessionUserSessionSummaryGraphData= hashMapOf<String, Any>()
+        var sessionGhostForClassBestForClass= hashMapOf<String, Any>()
+        var sessionGhostForClassLastForClass= hashMapOf<String, Any>()
+        val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())//"20241128105036"
+        val totalTime=  requireArguments().getString("totalTime","0")
+        val videoID=  requireArguments().getString("videoID","")
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
-        val entryWorkoutSessionDetails = RLMindAudioWorkoutSessionDetailsModel()
+        when(sensorType){
+            "HEART_SENSOR"->{
+                 sessionUserSessionDetailData = hashMapOf(
+                    "MaxHrUsedForCalculation" to RFMHR,
+                    "MaxHrUsedForCalculation_Last" to RFMHR,
+                    "RestingHrUsedForCalculation" to RestingHR,
+                    "RestingHrUsedForCalculation_Last" to RestingHR,
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrBurntCalories" to listOf(0, 0, 0, 0),
+                    "arrCadence" to listOf(0, 0, 0, 0),
+                    "arrCumDistance" to listOf(0, 0, 0, 0),
+                    "arrCumSpeed" to listOf(0, 0, 0, 0),
+                    "arrDistance" to listOf(0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0),
+                    "arrSpeed" to listOf(0, 0, 0, 0),
+                    "arrHr" to listOf(0, 0, 0, 0),
+                    "arrRevSecond" to listOf(0, 0, 0, 0),
+                    "arrRevPercentage" to listOf(0, 0, 0, 0),
+                    "avgRevPercentage" to 0,
+                    "burntCalories" to 22.712962282347366,
+                    "classDate" to classDate,
+                    "classDescription" to videoCardData.rideDescription,
+                    "classImage" to "",
+                    "className" to fragBinding.edtSessionName.text.toString(),
+                    "classNote" to fragBinding.edtAddNotes.text.toString(),
+                    "classType" to videoCardData.classType,
+                    "demsElevation" to 0,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "distance" to 0,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "imageLinkLarge" to videoCardData.imageLinkLarge,
+                    "imageLinkSmall" to videoCardData.imageLinkSmall,
+                    "isClass" to true,
+                    "isPowerDeviceConnected" to false,
+                    "location" to "Ahmedabad",
+                    "maxRevPercentage" to 0,
+                    "minRevPercentage" to 0,
+                    "remark" to "Android",
+                    "revPercentage" to 0,
+                    "rms" to 0,
+                    "timestamp" to currentTimestamp,
+                    "totalElevation" to 0,
+                    "totalPower" to 0,
+                    "totalRev" to 35.87709318525651,
+                    "totalTime" to totalTime,
+                    "videoKey" to videoID,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession,
+                    "zone1" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to totalTime,
+                        "totalRev" to 0
+                    ),
+                    "zone2" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone3" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone4" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone5" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone6" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone7" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    )
+                )
+                 sessionUserSessionSummaryGraphData = hashMapOf(
+                    "arrCadence" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrHr" to listOf(0, 0, 0, 0, 0),
+                    "arrSpeed" to listOf(0, 0, 0, 0, 0),
+                    "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "remark" to "Android"
+                )
+                 sessionGhostForClassBestForClass = hashMapOf(
+                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
+                    "arrHr" to listOf(0, 0, 0, 0, 0),
+                    "arrRevSecond" to listOf(0, 0, 0, 0, 0),
+                    "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "classDate" to classDate,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "isPowerDeviceConnected" to false,
+                    "location" to "",
+                    "remark" to "Android",
+                    "totalRev" to 35.87709318525651,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession
+                )
+                 sessionGhostForClassLastForClass = hashMapOf(
+                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
+                     "arrHr" to listOf(0, 0, 0, 0, 0),
+                     "arrRevSecond" to listOf(0, 0, 0, 0, 0),
+                     "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "classDate" to classDate,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "isPowerDeviceConnected" to false,
+                    "location" to "",
+                    "remark" to "Android",
+                    "totalRev" to 35.87709318525651,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession
+                )
+            }
+            "NO_SENSOR"->{
+                 sessionUserSessionDetailData = hashMapOf(
+                    "MaxHrUsedForCalculation" to RFMHR,
+                    "MaxHrUsedForCalculation_Last" to RFMHR,
+                    "RestingHrUsedForCalculation" to RestingHR,
+                    "RestingHrUsedForCalculation_Last" to RestingHR,
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrBurntCalories" to listOf(0, 0, 0, 0),
+                    "arrCadence" to listOf(0, 0, 0, 0),
+                    "arrCumDistance" to listOf(0, 0, 0, 0),
+                    "arrCumSpeed" to listOf(0, 0, 0, 0),
+                    "arrDistance" to listOf(0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0),
+                    "arrSpeed" to listOf(0, 0, 0, 0),
+                    "avgRevPercentage" to 0,
+                    "burntCalories" to 22.712962282347366,
+                    "classDate" to classDate,
+                    "classDescription" to videoCardData.rideDescription,
+                    "classImage" to "",
+                    "className" to fragBinding.edtSessionName.text.toString(),
+                    "classNote" to fragBinding.edtAddNotes.text.toString(),
+                    "classType" to videoCardData.classType,
+                    "demsElevation" to 0,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "distance" to 0,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "imageLinkLarge" to videoCardData.imageLinkLarge,
+                    "imageLinkSmall" to videoCardData.imageLinkSmall,
+                    "isClass" to true,
+                    "isPowerDeviceConnected" to false,
+                    "location" to "",
+                    "maxRevPercentage" to 0,
+                    "minRevPercentage" to 0,
+                    "remark" to "Android",
+                    "revPercentage" to 0,
+                    "rms" to 0,
+                    "timestamp" to currentTimestamp,
+                    "totalElevation" to 0,
+                    "totalPower" to 0,
+                    "totalRev" to 35.87709318525651,
+                    "totalTime" to totalTime,
+                    "videoKey" to videoID,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession,
+                    "zone1" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to totalTime,
+                        "totalRev" to 0
+                    ),
+                    "zone2" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone3" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone4" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone5" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone6" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    ),
+                    "zone7" to hashMapOf(
+                        "burntCalories" to 0,
+                        "distance" to 0,
+                        "remark" to "Android",
+                        "seconds" to 0,
+                        "totalRev" to 0
+                    )
+                )
+                 sessionUserSessionSummaryGraphData = hashMapOf(
+                    "arrCadence" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrSpeed" to listOf(0, 0, 0, 0, 0),
+                    "remark" to "Android"
+                )
+                 sessionGhostForClassBestForClass = hashMapOf(
+                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
+                    "classDate" to classDate,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "isPowerDeviceConnected" to false,
+                    "location" to "",
+                    "remark" to "Android",
+                    "totalRev" to 35.87709318525651,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession
+                )
+                 sessionGhostForClassLastForClass = hashMapOf(
+                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrPower" to listOf(0, 0, 0, 0, 0),
+                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
+                    "classDate" to classDate,
+                    "displayImage" to displayImage,
+                    "displayName" to displayName,
+                    "flagImage" to "flag-of-United-Kingdom.png",
+                    "flagName" to "United Kingdom",
+                    "isPowerDeviceConnected" to false,
+                    "location" to "",
+                    "remark" to "Android",
+                    "totalRev" to 35.87709318525651,
+                    "visibilityflagforthatsession" to visibilityflagforthatsession
+                )
+            }
+        }
 
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation=0
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=0
+        val sessionUserSessionSummaryData = hashMapOf(
+            "avgBurntCalories" to 0,
+            "avgCadence" to 0,
+            "avgHr" to 0,
+            "avgPower" to 0,
+            "avgPowerFromDevice" to 0,
+            "avgRevPercentage" to 0,
+            "avgSpeed" to 0,
+            "avgSpeedForOneKm" to 0,
+            "avgSpeedForOneMile" to 0,
+            "burntCalories" to 22.712962282347366,
+            "classDate" to classDate,
+            "classDescription" to videoCardData.rideDescription,
+            "classImage" to "",
+            "className" to fragBinding.edtSessionName.text.toString(),
+            "classNote" to fragBinding.edtAddNotes.text.toString(),
+            "classType" to videoCardData.classType,
+            "demsElevation" to 0,
+            "distance" to 0,
+            "imageLinkLarge" to videoCardData.imageLinkLarge,
+            "imageLinkSmall" to videoCardData.imageLinkSmall,
+            "isClass" to true,
+            "isPowerDeviceConnected" to false,
+            "location" to "",
+            "maxBurntCalories" to 0,
+            "maxCadence" to 0,
+            "maxHr" to 0,
+            "maxPower" to 0,
+            "maxPowerFromDevice" to 0,
+            "maxRevPercentage" to 0,
+            "maxSpeed" to 0,
+            "maxSpeedForOneKm" to 0,
+            "maxSpeedForOneMile" to 0,
+            "minHr" to 0,
+            "minRevPercentage" to 0,
+            "remark" to "Android",
+            "revPercentage" to 0,
+            "rms" to 0,
+            "timestamp" to currentTimestamp,
+            "totalElevation" to 0,
+            "totalPower" to 0,
+            "totalRev" to 35.87709318525651,
+            "totalTime" to totalTime,
+            "videoKey" to videoID,
+            "visibilityflagforthatsession" to visibilityflagforthatsession,
+            "zone1" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to totalTime,
+                "totalRev" to 0
+            ),
+            "zone2" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            ),
+            "zone3" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            ),
+            "zone4" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            ),
+            "zone5" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            ),
+            "zone6" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            ),
+            "zone7" to hashMapOf(
+                "avgCadence" to 0,
+                "avgHr" to 0,
+                "avgPower" to 0,
+                "avgPowerFromDevice" to 0,
+                "avgSpeed" to 0,
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            )
+        )
 
-        //Array Entry Value
-        entryWorkoutSessionDetails.arrHr= heartRateList!!
+        val sessionUserCompletedVideos = hashMapOf(videoID to true)
 
+        //Entry GhostData lastForClass
+        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
+        databaseRefGhostLast.child(videoID).setValue(sessionGhostForClassLastForClass).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "revoola_GhostData LastForClass Entry saved successfully!")
 
-        //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
-        entryWorkoutSessionDetails.classType= videoCardData.classType// yourWayType
-        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.instructor=videoCardData.instructor
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.imageLinkLarge=videoCardData.imageLinkLarge
-        entryWorkoutSessionDetails.imageLinkSmall=videoCardData.imageLinkSmall
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.videoKey=videoCardData.videoLinkiPhone
-        entryWorkoutSessionDetails.rideTitle=videoCardData.rideTitle
-        entryWorkoutSessionDetails.classDescription=videoCardData.rideDescription
-        entryWorkoutSessionDetails.displayImage="https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
-        entryWorkoutSessionDetails.displayName="dhruv90"
-        entryWorkoutSessionDetails.flagName= "United Kingdom"
-        entryWorkoutSessionDetails.flagImage="flag-of-United-Kingdom.png"
-        entryWorkoutSessionDetails.isClass=true
-        entryWorkoutSessionDetails.originalClassDate=videoCardData.originalClassDate
+                } else {
+                    Log.e("FirebaseDatabase", "revoola_GhostData LastForClass Entry Failed to save", task.exception)
+                }
+            }
 
-        entryWorkoutSessionDetails.classDate=""
-        entryWorkoutSessionDetails.classImage=""
-        entryWorkoutSessionDetails.location=0
-        entryWorkoutSessionDetails.rms=0
-        entryWorkoutSessionDetails.visibilityflagforthatsession=0
-        entryWorkoutSessionDetails.isMindClass=0
-        entryWorkoutSessionDetails.mainTitle=""
-        entryWorkoutSessionDetails.duration=videoCardData.duration
+        //Entry GhostData bestForClass
+        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
+        databaseRefGhostBest.child(videoID).setValue(sessionGhostForClassBestForClass).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "revoola_GhostData BestForClass Entry saved successfully!")
 
+                } else {
+                    Log.e("FirebaseDatabase", "revoola_GhostData BestForClass Entry Failed to save", task.exception)
+                }
+            }
 
-        RLMindNoAndSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails)
-    }
-    //Body Video with Speed sensor or Without Sensor
-    private fun RlBodyNoSensorDataEntryToFirebase(yourWayType: String, totalTime: String, heartRateList: ArrayList<Int>?, videoCardData: RLFulllVideoModel,
-                                                  climbedList: ArrayList<Int>,
-                                                  speedList: MutableList<Double>,
-                                                  distanceList: MutableList<Double>,
-                                                  activeCaloriesList: MutableList<Double>) {
-        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-
-        val entryWorkoutSessionDetails = RLBodyVideoWorkoutSessionDetailsModel()
-
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation=0
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=0
-
-        //Array Entry Value
-        entryWorkoutSessionDetails.arrBurntCalories=activeCaloriesList
-        entryWorkoutSessionDetails.arrCadence=climbedList
-        entryWorkoutSessionDetails.arrSpeed=speedList
-        entryWorkoutSessionDetails.arrDistance=distanceList
-//        entryWorkoutSessionDetails.arrCumDistance=
-//        entryWorkoutSessionDetails.arrCumSpeed=
-//         entryWorkoutSessionDetails.arrAvgRevPercentage=
-//        entryWorkoutSessionDetails.arrMaxRevPercentage=
-//        entryWorkoutSessionDetails.arrPower=
-//        entryWorkoutSessionDetails.arrPowerFromDevice=
-
-
-        //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
-        entryWorkoutSessionDetails.classType= videoCardData.classType// yourWayType
-        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.imageLinkLarge=videoCardData.imageLinkLarge
-        entryWorkoutSessionDetails.imageLinkSmall=videoCardData.imageLinkSmall
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.videoKey=videoCardData.videoLinkiPhone
-        entryWorkoutSessionDetails.classDescription=videoCardData.rideDescription
-        entryWorkoutSessionDetails.displayImage="https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
-        entryWorkoutSessionDetails.displayName="dhruv90"
-        entryWorkoutSessionDetails.flagName= "United Kingdom"
-        entryWorkoutSessionDetails.flagImage="flag-of-United-Kingdom.png"
-        entryWorkoutSessionDetails.isClass=true
-
-
-        entryWorkoutSessionDetails.avgRevPercentage=0
-        entryWorkoutSessionDetails.burntCalories=0.0
-        entryWorkoutSessionDetails.classDate=""
-        entryWorkoutSessionDetails.classImage=""
-        entryWorkoutSessionDetails.demsElevation=0
-        entryWorkoutSessionDetails.distance=0.0
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
-        entryWorkoutSessionDetails.location=0
-        entryWorkoutSessionDetails.maxRevPercentage=0
-        entryWorkoutSessionDetails.minRevPercentage=0
-        entryWorkoutSessionDetails.revPercentage=0
-        entryWorkoutSessionDetails.rms=0
-        entryWorkoutSessionDetails.totalElevation=0
-        entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.totalRev=0.0
-        entryWorkoutSessionDetails.visibilityflagforthatsession=0
-
-
-        //Zone Entry Value
-        entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.burntCalories=0.0
-        entryWorkoutSessionDetails.zone1.distance=0.0
-        entryWorkoutSessionDetails.zone1.seconds=0
-        entryWorkoutSessionDetails.zone1.totalRev=0
-
-        RLBodyNoSensorUserSessionDetailData(entryWorkoutSessionDetails)
-
-
-    }
-    //Body Video with HR Sensor
-    private fun RlBodyHeartRateDataEntryToFirebase(
-        yourWayType: String,
-        totalTime: String,
-        heartRateList: ArrayList<Int>?,
-        videoCardData: RLFulllVideoModel,
-        climbedList: ArrayList<Int>,
-        speedList: MutableList<Double>,
-        distanceList: MutableList<Double>,
-        activeCaloriesList: MutableList<Double>
-    ) {
-        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-
-        val entryWorkoutSessionDetails = RLBodyVideoHRSensorWorkoutSessionDetailsModel()
-
-        //Array Entry Value
-        entryWorkoutSessionDetails.arrHr= heartRateList!!
-        entryWorkoutSessionDetails.arrDistance=distanceList
-        entryWorkoutSessionDetails.arrBurntCalories=activeCaloriesList
-        entryWorkoutSessionDetails.arrCadence=climbedList
-        entryWorkoutSessionDetails.arrSpeed=speedList
-//        entryWorkoutSessionDetails.arrCumDistance=
-//        entryWorkoutSessionDetails.arrCumSpeed=
-//        entryWorkoutSessionDetails.arrAvgRevPercentage=
-//        entryWorkoutSessionDetails.arrMaxRevPercentage=
-//        entryWorkoutSessionDetails.arrPower=
-//        entryWorkoutSessionDetails.arrPowerFromDevice=
-//        entryWorkoutSessionDetails.arrSpeed=speedList
-//        entryWorkoutSessionDetails.arrRevPercentage=
-//        entryWorkoutSessionDetails.arrRevSecond=
-
-
-        //Normal Entry Value
-        entryWorkoutSessionDetails.totalTime= totalTime.toInt()
-        entryWorkoutSessionDetails.classType= videoCardData.classType// yourWayType
-        entryWorkoutSessionDetails.className= fragBinding.edtSessionName.text.toString()
-        entryWorkoutSessionDetails.classNote= fragBinding.edtAddNotes.text.toString()
-        entryWorkoutSessionDetails.remark="android"
-        entryWorkoutSessionDetails.imageLinkLarge=videoCardData.imageLinkLarge
-        entryWorkoutSessionDetails.imageLinkSmall=videoCardData.imageLinkSmall
-        entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
-        entryWorkoutSessionDetails.videoKey=videoCardData.videoLinkiPhone
-        entryWorkoutSessionDetails.classDescription=videoCardData.rideDescription
-        entryWorkoutSessionDetails.displayImage="https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/user_profile_pictures%2Fw2p8SQCvE3emjEEDo66f02eF6fG2%2F1710150587477?alt=media&token=6b0382e2-70cc-4e7d-aa5d-03acf32b05ab"
-        entryWorkoutSessionDetails.displayName="dhruv90"
-        entryWorkoutSessionDetails.flagName= "United Kingdom"
-        entryWorkoutSessionDetails.flagImage="flag-of-United-Kingdom.png"
-        entryWorkoutSessionDetails.isClass=true
-
-        entryWorkoutSessionDetails.avgRevPercentage=0
-        entryWorkoutSessionDetails.burntCalories=0.0
-        entryWorkoutSessionDetails.classDate=""
-        entryWorkoutSessionDetails.classImage=""
-        entryWorkoutSessionDetails.demsElevation=0
-        entryWorkoutSessionDetails.distance= 0.0
-        entryWorkoutSessionDetails.isPowerDeviceConnected=false
-        entryWorkoutSessionDetails.location=0
-        entryWorkoutSessionDetails.maxRevPercentage=0
-        entryWorkoutSessionDetails.minRevPercentage=0
-        entryWorkoutSessionDetails.revPercentage=0
-        entryWorkoutSessionDetails.rms=0
-        entryWorkoutSessionDetails.totalElevation=0
-        entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.totalRev=0.0
-        entryWorkoutSessionDetails.visibilityflagforthatsession=0
-
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation=0
-        entryWorkoutSessionDetails.MaxHrUsedForCalculation_Last=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation=0
-        entryWorkoutSessionDetails.RestingHrUsedForCalculation_Last=0
-
-
-        //Zone Entry Value
-        entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.remark= "android"
-        entryWorkoutSessionDetails.zone1.burntCalories=0.0
-        entryWorkoutSessionDetails.zone1.distance=0.0
-        entryWorkoutSessionDetails.zone1.seconds=0
-        entryWorkoutSessionDetails.zone1.totalRev=0
-
-
-        RLBodyHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails)
-
-    }
-
-    private fun RLBodyHeartRateSensorUserSessionDetailData(entry: RLBodyVideoHRSensorWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
+        //revoola_UserSessionSummaryData
+        val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
+        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        entryIdSummery.let {
+            databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save", task.exception)
                     }
                 }
         }
-    }
-    private fun RLBodyNoSensorUserSessionDetailData(entry: RLBodyVideoWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
-                .addOnCompleteListener { task ->
-                    Log.d("FirebaseDatabase", "Entry saved successfully!")
-                    if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                    } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
-                    }
-                }
 
-        }
-    }
-    private fun RLMindNoAndSpeedSensorUserSessionDetailData(entry: RLMindAudioWorkoutSessionDetailsModel) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val entryId = (System.currentTimeMillis() / 1000).toString()
-        entryId.let {
-            databaseRef.child(it).setValue(entry)
+        //revoola_UserSessionSummaryGraphData
+        val databaseRefGraph = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryGraphData/$currentUser")
+        val entryIdGraph = (System.currentTimeMillis() / 1000).toString()
+        entryIdGraph.let {
+            databaseRefGraph.child(it).setValue(sessionUserSessionSummaryGraphData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry saved successfully!")
+                    } else {
+                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry Failed to save", task.exception)
+                    }
+                }
+        }
+
+        //revoolaUserCompletedVideos
+        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/revoolaUserCompletedVideos")
+        databaseRefCompletedVideos.setValue(sessionUserCompletedVideos)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                } else {
+                    Log.e("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save", task.exception)
+                }
+            }
+
+
+        //revoola_UserSessionDetailData
+         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(sessionUserSessionDetailData)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                        Log.e("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save", task.exception)
                     }
                 }
+        }
+
+    }
+
+    //FIREBASE USERDATA GET
+    private fun RLFirebaseToFatchUserData() {
+        //Firebase To Fetch UserData
+        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()!!.uid
+        currentUser=userId
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        databaseManager.RlreadData(path){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                wsWeight=userData.weightkg?:"60"
+                wsHeight=userData.height?:"167"
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                displayImage =userData.displayImage
+                displayName =userData.displayName
+            }
         }
     }
 }

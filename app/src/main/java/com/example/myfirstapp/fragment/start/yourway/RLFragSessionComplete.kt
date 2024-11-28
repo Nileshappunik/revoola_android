@@ -1411,6 +1411,7 @@ class RLFragSessionComplete : RLBaseFragment(){
        }
    }
 
+    //revoolaUserSessionDetailData Model to Map
     fun RLNoSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
         return mapOf(
             "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
@@ -1473,6 +1474,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
     }
 
+    //revoolaUserSessionSummaryData  Model to Map
     fun RLWorkoutSessionSummaryModel.toMap(): Map<String, Any?> {
         return mapOf(
             "avgBurntCalories" to avgBurntCalories,
@@ -1526,7 +1528,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             "zone7" to zone7.toMap()
         )
     }
-
     fun RLWorkoutSessionSummaryModel.Zone.toMap(): Map<String, Any?> {
         return mapOf(
             "avgCadence" to avgCadence,
@@ -1542,6 +1543,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
     }
 
+    //ghostForClass / bestForClass and lastForClass Model to Map
     fun RLGhostDataModel.toMap(): Map<String, Any?> {
         return mapOf(
             "RestingHrUsedForCalculation_Last" to RestingHrUsedForCalculation_Last,
@@ -1575,6 +1577,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
     }
 
+    //revoolaUserSessionDetailData Model to Map
     fun RLHeartRateSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
         return mapOf(
             "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
@@ -1631,7 +1634,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             "zone7" to zone7.toMap()
         )
     }
-
     fun RLHeartRateSensorWorkoutSessionDetailsModel.ZoneNew.toMap(): Map<String, Any?> {
         return mapOf(
             "burntCalories" to burntCalories,
@@ -1642,6 +1644,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
     }
 
+    //revoolaUserSessionDetailData Model to Map
     fun RLSpeedSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {
         return mapOf(
             "MaxHrUsedForCalculation" to MaxHrUsedForCalculation,
@@ -1692,7 +1695,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             "zone7" to zone7.toMap()
         )
     }
-
     fun RLSpeedSensorWorkoutSessionDetailsModel.ZoneNew.toMap(): Map<String, Any?> {
         return mapOf(
             "burntCalories" to burntCalories,

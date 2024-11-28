@@ -103,11 +103,12 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         RLstartCountdown()
 
         val data=  requireArguments().getString("VIDEODATA","")
+        val videoID=  requireArguments().getString("videoID","")
         ride=  requireArguments().getBoolean("Ride")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLBodyUISet(VideoCardData)
-        RLVideoUISet(VideoCardData,data)
+        RLVideoUISet(VideoCardData,data,videoID)
     }
     private fun RLVideotimeset(time:String){
        // val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
@@ -115,7 +116,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         leftFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
         leftFragment?.RLUpdateVideoTime(time)
     }
-    private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
+    private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String,videoID:String){
         val videoUri = Uri.parse(VideoCardData.videoLinkiPhonex)
         // Set the URI for the VideoView
         fragBinding.videoView.setVideoURI(videoUri)
@@ -134,6 +135,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             true
         }
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
+
             fragBinding.videoView.stopPlayback()
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -145,6 +147,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             bundle.putDoubleArray("speedList",speedList.toDoubleArray())
             bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
             bundle.putString("totalTime",totalTime)
+            bundle.putString("videoID",videoID)
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

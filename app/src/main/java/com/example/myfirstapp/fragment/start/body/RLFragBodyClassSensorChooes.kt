@@ -128,8 +128,10 @@ class RLFragBodyClassSensorChooes : RLBaseFragment() , RLItemClickListenerAdapte
     }
     private fun RLclickToNextScreenOpen(withoutsensor:Boolean){
         val data=  requireArguments().getString("VIDEODATA","")
+        val videoID=  requireArguments().getString("videoID","")
         val bundle = Bundle()
         bundle.putString("VIDEODATA",data)
+        bundle.putString("videoID",videoID)
         bundle.putBoolean("Ride",ridetype)
         if (withoutsensor){
             (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)

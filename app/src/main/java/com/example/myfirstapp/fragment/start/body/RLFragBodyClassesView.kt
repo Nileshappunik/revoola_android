@@ -88,6 +88,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
                 fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putString("VIDEODATA",jsonObject)
+                    bundle.putString("videoID",videoID)
                     bundle.putBoolean("Ride",ride)
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassSensorChooes().newInstance(bundle), TAG, true,null, false)
                 }
