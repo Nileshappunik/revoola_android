@@ -38,8 +38,10 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragBodyClassesSpeedVideoStartBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.fragment.start.adapter.RLStartClassAttendListAdapter
 import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
+
 import com.example.myfirstapp.interfaceall.RLItemClickListener
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.services.RLBLEService
@@ -48,6 +50,7 @@ import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     val TAG: String = RLFragBodyClassesSpeedVideoStart::class.java.simpleName
@@ -56,22 +59,70 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
 
+    private var rlbleService: RLBLEService? = null
+    private var isServiceBound = false
+    private lateinit var handler: Handler
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+
     private var totalTime:String =""
     private val timerManager = RLTimerManager()
-    private var heartRateList:MutableList<Int> = mutableListOf()
-    private var distanceList:MutableList<Double> = mutableListOf()
-    private var climbedList:MutableList<Int> = mutableListOf()
-    private var speedList:MutableList<Double> = mutableListOf()
-    private var activeCaloriesList:MutableList<Double> = mutableListOf()
+
 
     private var distanceNumber:Double=0.0
     private var climbedNumber:Int=0
     private var activeCaloriesNumber:Double=0.0
     private var speedNumber:Double=0.0
+    private var cadenceData:Double=0.0
+    private var CumDistance =0.0
+    private var CumSpeed =0.0
 
     private val handlerprogress = Handler(Looper.getMainLooper())
     private lateinit var gestureDetectorleft: GestureDetectorCompat
+    private var speedList:MutableList<Double> = mutableListOf()
 
+    // this all arr need to insert
+    private var arrAvgRevPercentage:MutableList<Int> = mutableListOf()
+    private var arrBurntCalories:MutableList<Double> = mutableListOf()
+    private var arrCadence:MutableList<Double> = mutableListOf()
+    private var arrCumDistance:MutableList<Double> = mutableListOf()
+    private var arrCumSpeed:MutableList<Double> = mutableListOf()
+    private var arrDistance:MutableList<Double> = mutableListOf()
+    private var arrPower:MutableList<Int> = mutableListOf()
+    private var arrPowerFromDevice:MutableList<Int> = mutableListOf()
+    private var arrSpeed:MutableList<Double> = mutableListOf()
+    private var arrHr:MutableList<Int> = mutableListOf()
+    private var arrRevPercentage:MutableList<Double> = mutableListOf()
+    private var arrRevSecond:MutableList<Double> = mutableListOf()
+    private var arrMaxRevPercentage:MutableList<Double> = mutableListOf()
+
+
+
+    private var avgRevPercentage=0.0
+    var burntCalories =0.0
+    private var distance:Double=0.0
+    var maxRevPercentage =0.0
+    var minRevPercentage =0.0
+    private var revPercentage=0.0
+    var totalRev  =0.0
+    var maxBurntCalories =0
+    var avgBurntCalories  =0.0
+    var avgCadence  =0.0
+    var avgHr  =0
+    var avgSpeed  =0.0
+    private var avgSpeedForOneKm:Double=0.0
+    private var avgSpeedForOneMile:Double=0.0
+    var maxCadence =0
+    var maxHeartrate =0
+    var maxSpeed =0
+    private var maxSpeedForOneKm:Double=0.0
+    private var maxSpeedForOneMile:Double=0.0
+    var minHeartrate =0
+
+    companion object {
+        private val REQUEST_CODE_BLE_PERMISSIONS = 1
+        private const val REQUEST_ENABLE_BT = 1
+        private const val REQUEST_PERMISSIONS = 2
+    }
     private val binding by lazy {
         RlFragBodyClassesSpeedVideoStartBinding.inflate(layoutInflater)
     }
@@ -145,20 +196,10 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             val videoID=  requireArguments().getString("videoID","")
             fragBinding.videoView.stopPlayback()
-            val bundle = Bundle()
-            bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.BODY)
-            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.SPEEDSENSOR)
-            bundle.putString("totalTime",totalTime)
-            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
-            bundle.putDoubleArray("distanceList",distanceList.toDoubleArray())
-            bundle.putIntegerArrayList("climbedList",ArrayList(climbedList))
-            bundle.putDoubleArray("speedList",speedList.toDoubleArray())
-            bundle.putDoubleArray("activeCaloriesList",activeCaloriesList.toDoubleArray())
-            bundle.putString("videoID",videoID)
-
-            (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
-
+            if (isServiceBound) {
+                rlbleService!!.RLstopNotifications()
+            }
+            RLCompleteSessionFragmentOpen(data,videoID,VideoCardData)
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
@@ -166,11 +207,17 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
                 pauseVideo=false
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
+                if (isServiceBound) {
+                    rlbleService!!.RLpauseNotifications()
+                }
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
+                if (isServiceBound) {
+                    rlbleService!!.RLresumeNotifications()
+                }
             }
         }
         fragBinding.relayVideoplay.setOnClickListener {
@@ -228,44 +275,30 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             }
         }
     }
+
     private fun  RlDataFillAllArray(){
-        heartRateList.add(0)
-        distanceList.add(distanceNumber)
-        climbedList.add(climbedNumber)
-        speedList.add(speedNumber)
-        activeCaloriesList.add(activeCaloriesNumber)
-    }
-
-
-    private fun RLGetSpeedDataBLEService() {
-        val filter = IntentFilter().apply {
-            addAction("ACTION_DATA_RETRIEVED")
+        CumSpeed=CumSpeed+speedNumber
+        CumDistance=CumDistance+distanceNumber
+        arrCumDistance.add(noNanValueDouble(CumDistance?:0.00))
+        arrCumSpeed.add(noNanValueDouble(CumSpeed?:0.00))
+        arrAvgRevPercentage.add(0)
+        arrPower.add(0)
+        arrPowerFromDevice.add(0)
+        arrHr.add(0)
+        arrBurntCalories.add(activeCaloriesNumber)
+        arrCadence.add(cadenceData)
+        arrDistance.add(distanceNumber)
+        arrSpeed.add(speedNumber)
+        arrRevPercentage.add(0.0)
+        arrRevSecond.add(0.0)
+        arrMaxRevPercentage.add(0.0)
+        burntCalories=burntCalories+activeCaloriesNumber
+        distance=CumDistance
+        if (!arrBurntCalories.isNullOrEmpty()){
+            maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
+            avgBurntCalories=arrBurntCalories.average()?:0.00
         }
-        requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
 
-    }
-    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                "ACTION_DATA_RETRIEVED" -> {
-                    val SPEED = intent.getStringExtra("SPEED")
-                    val AvgSPEED = intent.getStringExtra("AvgSPEED")
-                    val DISTANCE = intent.getStringExtra("DISTANCE")
-                    val CADENCE = intent.getStringExtra("CADENCE")
-                    val CALORIES = intent.getStringExtra("CALORIES")
-
-                    distanceNumber=RlGetValueDouble(DISTANCE!!.toString())
-                    climbedNumber=RlGetValueInt(CADENCE!!.toString())
-                    speedNumber=RlGetValueDouble(SPEED!!.toString())
-                    activeCaloriesNumber=RlGetValueDouble(CALORIES!!.toString())
-
-                    var cadenceSetValue=RlGetValueInt(CADENCE!!.toString())
-                    if (cadenceSetValue>0){
-                        fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
-                    }
-                }
-            }
-        }
     }
     private fun RlGetValueDouble(value:String):Double{
         if (value.isNullOrEmpty()){
@@ -285,26 +318,8 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             return value.toDouble().toInt()
         }
     }
-    override fun onStart() {
-        super.onStart()
-        // timerManager.resume()
-        RLGetSpeedDataBLEService()
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        fragBinding.videoView.stopPlayback()
-        try {
-            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
-            // Show the status bar and navigation bar again and set dark color
-            @Suppress("DEPRECATION")
-            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-            @Suppress("DEPRECATION")
-            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
-        }catch (e:Exception){
-            Log.e(TAG,"Exception:- "+e.message)
-        }
-    }
+
     private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100
@@ -353,5 +368,241 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         fragBinding.linearHeart.startAnimation(anim)
     }
 
+    //when all data set and new open then this function call
+    private fun RLCompleteSessionFragmentOpen(data: String, videoID: String,VideoCardData: RLFulllVideoModel) {
+        val bundle: Bundle = Bundle()
 
+        val assumedREV=VideoCardData.assumedREV?:"0"
+        totalRev=assumedREV.toDouble()
+
+        bundle.putString("VIDEODATA",data)
+        bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
+        bundle.putString(RLConstants.HEARTSENSOR, RLConstants.SPEEDSENSOR)
+        bundle.putString("videoID",videoID)
+
+        bundle.putString("totalTime",(totalTime?:"0"))
+        bundle.putDouble("avgRevPercentage",noNanValueDouble(avgRevPercentage?:0.00))
+        bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
+        bundle.putDouble("distance",noNanValueDouble(distance?:0.00))
+        bundle.putDouble("maxRevPercentage",noNanValueDouble(maxRevPercentage?:0.00))
+        bundle.putDouble("minRevPercentage",noNanValueDouble(minRevPercentage?:0.00))
+        bundle.putDouble("revPercentage",noNanValueDouble(revPercentage?:0.00))
+        bundle.putDouble("totalRev",noNanValueDouble(totalRev?:0.00))
+        bundle.putInt("maxSpeed",maxSpeed?:0)
+        bundle.putInt("maxHeartRate",maxHeartrate?:0)
+        bundle.putInt("maxCadence",maxCadence?:0)
+        bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
+        bundle.putInt("minHeartrate",minHeartrate?:0)
+
+        bundle.putDouble("avgBurntCalories",avgBurntCalories?:0.0)
+        bundle.putDouble("avgCadence",avgCadence?:0.0)
+        bundle.putInt("avgHr",avgHr?:0)
+        bundle.putDouble("avgSpeed",avgSpeed?:0.0)
+
+        bundle.putDouble("maxSpeedForOneKm",noNanValueDouble(maxSpeedForOneKm?:0.00))
+        bundle.putDouble("maxSpeedForOneMile",noNanValueDouble(maxSpeedForOneMile?:0.00))
+        bundle.putDouble("avgSpeedForOneKm",noNanValueDouble(avgSpeedForOneKm?:0.00))
+        bundle.putDouble("avgSpeedForOneMile",noNanValueDouble(avgSpeedForOneMile?:0.00))
+
+
+
+        bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrDistance.toString(),arrDistance.toDoubleArray())
+        bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
+        bundle.putIntegerArrayList(RLYourWayArrayType.arrPower.toString(),ArrayList(arrPower))
+        bundle.putIntegerArrayList(RLYourWayArrayType.arrPowerFromDevice.toString(),ArrayList(arrPowerFromDevice))
+
+
+
+        bundle.putDoubleArray(RLYourWayArrayType.arrRevPercentage.toString(),arrRevPercentage.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrRevSecond.toString(),arrRevSecond.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrSpeed.toString(),arrSpeed.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
+        bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+
+        bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString(),ArrayList(arrAvgRevPercentage))
+        bundle.putDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString(),arrMaxRevPercentage.toDoubleArray())
+
+        (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
+    }
+
+    //////////////////////// calculate All Value Start //////////////////////////
+
+    private fun RLmax(previous: Int, next: Int): Int {
+        return when {
+            previous > next -> previous
+            else ->next
+        }
+    }
+
+    private fun RLmin(previous: Int, next: Int): Int {
+        return when {
+            next == 0 -> previous
+            previous == 0 -> next
+            else -> next
+        }
+    }
+
+    private fun noNanValueDouble(value:Double):Double{
+        if (value.isNaN()){
+            return 0.00
+        }else{
+            return  value
+        }
+    }
+
+    ///////////////////////////// calculate All Value End ////////////////////////
+
+    //BLE DEVICE CODE START
+    private fun RLcheckAndRequestPermissions() {
+        val permissions = mutableListOf<String>()
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.BLUETOOTH)
+        }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
+        }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+            }
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+            }
+        }
+
+        if (permissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(),
+                REQUEST_CODE_BLE_PERMISSIONS
+            )
+        } else {
+            RLsetupBlutooth()
+        }
+    }
+    private fun RLsetupBlutooth() {
+        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothAdapter = bluetoothManager.adapter
+        handler = Handler(Looper.getMainLooper())
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH,Manifest.permission.BLUETOOTH_ADMIN),
+                REQUEST_PERMISSIONS
+            )
+        } else {
+            if (!bluetoothAdapter.isEnabled) {
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableBtIntent,
+                    REQUEST_ENABLE_BT
+                )
+            } else {
+                RLstartBLEService()
+            }
+        }
+
+    }
+    private fun RLstartBLEService() {
+        val lastconnectdevicetype= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
+        if (!lastconnectdevicetype.isNullOrEmpty()){
+            val intent = Intent(requireContext(),RLBLEService::class.java)
+            requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
+
+            val filter = IntentFilter().apply {
+                addAction("ACTION_DATA_RETRIEVED")
+                addAction("ACTION_CONNECTION_STATE_CHANGED")
+            }
+            requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
+        }
+    }
+    private val RLserviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // Request necessary permissions
+            }
+            Log.d(TAG,"onServiceConnected")
+            val binder = service as RLBLEService.RLLocalBinder
+            rlbleService = binder.getService()
+            // Check if devices are not connected then scan
+            isServiceBound = true
+            val lastConnectDeviceAddress = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+            RLhandleDeviceFound(lastConnectDeviceAddress)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceBound = false
+            Log.d(TAG,"onServiceDisconnected")
+        }
+    }
+    fun RLhandleDeviceFound(deviceAddress: String) {
+        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
+        if (device != null) {
+            rlbleService!!.RLconnectToDevice(device)
+        }
+    }
+    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                "ACTION_DATA_RETRIEVED" -> {
+                    val SPEED = intent.getStringExtra("SPEED")
+                    val AvgSPEED = intent.getStringExtra("AvgSPEED")
+                    val DISTANCE = intent.getStringExtra("DISTANCE")
+                    val CADENCE = intent.getStringExtra("CADENCE")
+                    val CALORIES = intent.getStringExtra("CALORIES")
+
+                    var speedSetValue=RlGetValueInt(SPEED.toString())?:0
+                    var avgspeedSetValue=RlGetValueInt(AvgSPEED.toString())?:0
+                    var distanceSetValue=RlGetValueInt(DISTANCE.toString())?:0
+                    var cadenceSetValue=RlGetValueInt(CADENCE!!.toString())?:0
+                    if (cadenceSetValue>0){
+                        fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
+                    }
+
+                    distanceNumber=RlGetValueDouble(DISTANCE.toString())?:0.0
+                    climbedNumber=RlGetValueInt(CADENCE.toString())?:0
+                    speedNumber=RlGetValueDouble(SPEED.toString())?:0.0
+                    activeCaloriesNumber=RlGetValueDouble(CALORIES.toString())?:0.0
+                    cadenceData=RlGetValueDouble(CADENCE.toString())?:0.0
+                    if (!arrCadence.isNullOrEmpty()){
+                        maxCadence=RLmax(maxCadence,cadenceData.toInt())
+                        avgCadence=arrCadence.average()?:0.00
+                    }
+                    speedList.add(speedSetValue.toDouble())
+                    if (!speedList.isNullOrEmpty()){
+                        avgSpeed=speedList.average()?:0.00
+                        maxSpeed=RLmax(maxSpeed,speedNumber.roundToInt())
+                    }
+
+                }
+            }
+        }
+    }
+    //BLE DEVICE CODE CLOSE
+
+    override fun onStart() {
+        super.onStart()
+        RLcheckAndRequestPermissions()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        fragBinding.videoView.stopPlayback()
+        try {
+            if (isServiceBound) {
+                requireActivity().unbindService(RLserviceConnection)
+                isServiceBound = false
+            }
+            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
+            // Show the status bar and navigation bar again and set dark color
+            @Suppress("DEPRECATION")
+            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            @Suppress("DEPRECATION")
+            requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+        }catch (e:Exception){
+            Log.e(TAG,"Exception:- "+e.message)
+        }
+    }
 }

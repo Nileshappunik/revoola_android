@@ -16,6 +16,9 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
+import com.example.myfirstapp.firebaseModel.RLElevationPoint
+import com.example.myfirstapp.firebaseModel.RLLocationDetails
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
 import com.example.myfirstapp.model.RLFulllVideoModel
@@ -125,10 +128,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
                 if (sensorType.equals(RLConstants.HEARTSENSOR)){
                     RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
-                    //RlBodyHeartRateDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
                 }else  {
                     RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
-                    //RlBodyNoSensorDataEntryToFirebase(classType,totalTime,heartRateList,VideoCardData,climbedList!!,speedList,distanceList,activeCaloriesList)
                 }
             }else{
                // RlMindNoSensorDataEntryToFirebase(classType,totalTime,VideoCardData,heartRateList)
@@ -198,6 +199,56 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val videoID=  requireArguments().getString("videoID","")
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
+        val avgRevPercentage=requireArguments().getDouble("avgRevPercentage")?:0.0
+        val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
+        var distance=requireArguments().getDouble("distance")?:0.0
+        val maxRevPercentage=requireArguments().getDouble("maxRevPercentage")?:0.0
+        val minRevPercentage=requireArguments().getDouble("minRevPercentage")?:0.0
+        val revPercentage=requireArguments().getDouble("revPercentage")?:0.0
+        val totalRev=requireArguments().getDouble("totalRev")?:0.0
+        val maxSpeed=requireArguments().getInt("maxSpeed")?:0
+        val maxHr=requireArguments().getInt("maxHeartrate")?:0
+        val maxCadence=requireArguments().getInt("maxCadence")?:0
+        val maxBurntCalories=requireArguments().getInt("maxBurntCalories")?:0
+        val minHr=requireArguments().getInt("minHeartrate")?:0
+        val avgBurntCalories=requireArguments().getDouble("avgBurntCalories")?:0.0
+        val avgCadence=requireArguments().getDouble("avgCadence")?:0.0
+        val avgHr=requireArguments().getDouble("avgHr")?:0.0
+        val avgSpeed=requireArguments().getDouble("avgSpeed")?:0.0
+        val maxSpeedForOneKm=requireArguments().getDouble("maxSpeedForOneKm")?:0.0
+        val maxSpeedForOneMile=requireArguments().getDouble("maxSpeedForOneMile")?:0.0
+        val avgSpeedForOneKm=requireArguments().getDouble("avgSpeedForOneKm")?:0.0
+        val avgSpeedForOneMile=requireArguments().getDouble("avgSpeedForOneMile")?:0.0
+
+        val arrHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHr.toString())
+        val arrPower: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrPower.toString())
+        val arrPowerFromDevice: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrPowerFromDevice.toString())
+        val arrAvgRevPercentage: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString())
+
+        val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
+        val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
+        val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
+        val arrRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevPercentage.toString())
+        val arrRevSecondList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevSecond.toString())
+        val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
+        val arrCumDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumDistance.toString())
+        val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
+        val arrMaxRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString())
+
+
+        val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf(0.0)
+        val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf(0.0)
+        val arrDistance: MutableList<Double> = arrDistanceList?.toMutableList() ?: mutableListOf(0.0)
+        val arrRevPercentage: MutableList<Double> = arrRevPercentageList?.toMutableList() ?: mutableListOf(0.0)
+        val arrRevSecond: MutableList<Double> = arrRevSecondList?.toMutableList() ?: mutableListOf(0.0)
+        val arrSpeed: MutableList<Double> = arrSpeedList?.toMutableList() ?: mutableListOf(0.0)
+        val arrCumDistance: MutableList<Double> = arrCumDistanceList?.toMutableList() ?: mutableListOf(0.0)
+        val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf(0.0)
+        val arrMaxRevPercentage: MutableList<Double> = arrMaxRevPercentageList?.toMutableList() ?: mutableListOf(0.0)
+
+        if (distance.isNaN() ){
+            distance=0.0
+        }
         when(sensorType){
             "HEART_SENSOR"->{
                  sessionUserSessionDetailData = hashMapOf(
@@ -205,21 +256,21 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "MaxHrUsedForCalculation_Last" to RFMHR,
                     "RestingHrUsedForCalculation" to RestingHR,
                     "RestingHrUsedForCalculation_Last" to RestingHR,
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrBurntCalories" to listOf(0, 0, 0, 0),
-                    "arrCadence" to listOf(0, 0, 0, 0),
-                    "arrCumDistance" to listOf(0, 0, 0, 0),
-                    "arrCumSpeed" to listOf(0, 0, 0, 0),
-                    "arrDistance" to listOf(0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0),
-                    "arrSpeed" to listOf(0, 0, 0, 0),
-                    "arrHr" to listOf(0, 0, 0, 0),
-                    "arrRevSecond" to listOf(0, 0, 0, 0),
-                    "arrRevPercentage" to listOf(0, 0, 0, 0),
-                    "avgRevPercentage" to 0,
-                    "burntCalories" to 22.712962282347366,
+                    "arrAvgRevPercentage" to  (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrBurntCalories" to (arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumDistance" to (arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumSpeed" to (arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrDistance" to (arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to  (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to  (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrHr" to  (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "avgRevPercentage" to avgRevPercentage,
+                    "burntCalories" to burntCalories,
                     "classDate" to classDate,
                     "classDescription" to videoCardData.rideDescription,
                     "classImage" to "",
@@ -229,7 +280,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "demsElevation" to 0,
                     "displayImage" to displayImage,
                     "displayName" to displayName,
-                    "distance" to 0,
+                    "distance" to distance,
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "imageLinkLarge" to videoCardData.imageLinkLarge,
@@ -237,24 +288,24 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isClass" to true,
                     "isPowerDeviceConnected" to false,
                     "location" to "Ahmedabad",
-                    "maxRevPercentage" to 0,
-                    "minRevPercentage" to 0,
+                    "maxRevPercentage" to maxRevPercentage,
+                    "minRevPercentage" to minRevPercentage,
                     "remark" to "Android",
-                    "revPercentage" to 0,
+                    "revPercentage" to revPercentage,
                     "rms" to 0,
                     "timestamp" to currentTimestamp,
                     "totalElevation" to 0,
                     "totalPower" to 0,
-                    "totalRev" to 35.87709318525651,
+                    "totalRev" to totalRev,
                     "totalTime" to totalTime,
                     "videoKey" to videoID,
                     "visibilityflagforthatsession" to visibilityflagforthatsession,
                     "zone1" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
+                        "burntCalories" to burntCalories,
+                        "distance" to distance,
                         "remark" to "Android",
                         "seconds" to totalTime,
-                        "totalRev" to 0
+                        "totalRev" to totalRev
                     ),
                     "zone2" to hashMapOf(
                         "burntCalories" to 0,
@@ -300,22 +351,22 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     )
                 )
                  sessionUserSessionSummaryGraphData = hashMapOf(
-                    "arrCadence" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrHr" to listOf(0, 0, 0, 0, 0),
-                    "arrSpeed" to listOf(0, 0, 0, 0, 0),
-                    "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrCadence" to (arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "remark" to "Android"
                 )
                  sessionGhostForClassBestForClass = hashMapOf(
-                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
-                    "arrHr" to listOf(0, 0, 0, 0, 0),
-                    "arrRevSecond" to listOf(0, 0, 0, 0, 0),
-                    "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "classDate" to classDate,
                     "displayImage" to displayImage,
                     "displayName" to displayName,
@@ -324,29 +375,29 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isPowerDeviceConnected" to false,
                     "location" to "",
                     "remark" to "Android",
-                    "totalRev" to 35.87709318525651,
+                    "totalRev" to totalRev,
                     "visibilityflagforthatsession" to visibilityflagforthatsession
                 )
-                 sessionGhostForClassLastForClass = hashMapOf(
-                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
-                     "arrHr" to listOf(0, 0, 0, 0, 0),
-                     "arrRevSecond" to listOf(0, 0, 0, 0, 0),
-                     "arrRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "classDate" to classDate,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
-                    "flagImage" to "flag-of-United-Kingdom.png",
-                    "flagName" to "United Kingdom",
-                    "isPowerDeviceConnected" to false,
-                    "location" to "",
-                    "remark" to "Android",
-                    "totalRev" to 35.87709318525651,
-                    "visibilityflagforthatsession" to visibilityflagforthatsession
-                )
+                 sessionGhostForClassLastForClass =  hashMapOf(
+                     "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "classDate" to classDate,
+                     "displayImage" to displayImage,
+                     "displayName" to displayName,
+                     "flagImage" to "flag-of-United-Kingdom.png",
+                     "flagName" to "United Kingdom",
+                     "isPowerDeviceConnected" to false,
+                     "location" to "",
+                     "remark" to "Android",
+                     "totalRev" to totalRev,
+                     "visibilityflagforthatsession" to visibilityflagforthatsession
+                 )
             }
             "NO_SENSOR"->{
                  sessionUserSessionDetailData = hashMapOf(
@@ -354,18 +405,18 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "MaxHrUsedForCalculation_Last" to RFMHR,
                     "RestingHrUsedForCalculation" to RestingHR,
                     "RestingHrUsedForCalculation_Last" to RestingHR,
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrBurntCalories" to listOf(0, 0, 0, 0),
-                    "arrCadence" to listOf(0, 0, 0, 0),
-                    "arrCumDistance" to listOf(0, 0, 0, 0),
-                    "arrCumSpeed" to listOf(0, 0, 0, 0),
-                    "arrDistance" to listOf(0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0),
-                    "arrSpeed" to listOf(0, 0, 0, 0),
-                    "avgRevPercentage" to 0,
-                    "burntCalories" to 22.712962282347366,
+                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrBurntCalories" to (arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumDistance" to (arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumSpeed" to (arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrDistance" to (arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "avgRevPercentage" to avgRevPercentage,
+                    "burntCalories" to burntCalories,
                     "classDate" to classDate,
                     "classDescription" to videoCardData.rideDescription,
                     "classImage" to "",
@@ -375,7 +426,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "demsElevation" to 0,
                     "displayImage" to displayImage,
                     "displayName" to displayName,
-                    "distance" to 0,
+                    "distance" to distance,
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "imageLinkLarge" to videoCardData.imageLinkLarge,
@@ -383,24 +434,24 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isClass" to true,
                     "isPowerDeviceConnected" to false,
                     "location" to "",
-                    "maxRevPercentage" to 0,
-                    "minRevPercentage" to 0,
+                    "maxRevPercentage" to maxRevPercentage,
+                    "minRevPercentage" to minRevPercentage,
                     "remark" to "Android",
-                    "revPercentage" to 0,
+                    "revPercentage" to revPercentage,
                     "rms" to 0,
                     "timestamp" to currentTimestamp,
                     "totalElevation" to 0,
                     "totalPower" to 0,
-                    "totalRev" to 35.87709318525651,
+                    "totalRev" to totalRev,
                     "totalTime" to totalTime,
                     "videoKey" to videoID,
                     "visibilityflagforthatsession" to visibilityflagforthatsession,
                     "zone1" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
+                        "burntCalories" to burntCalories,
+                        "distance" to distance,
                         "remark" to "Android",
                         "seconds" to totalTime,
-                        "totalRev" to 0
+                        "totalRev" to totalRev
                     ),
                     "zone2" to hashMapOf(
                         "burntCalories" to 0,
@@ -446,17 +497,17 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     )
                 )
                  sessionUserSessionSummaryGraphData = hashMapOf(
-                    "arrCadence" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrSpeed" to listOf(0, 0, 0, 0, 0),
+                    "arrCadence" to (arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "remark" to "Android"
                 )
                  sessionGhostForClassBestForClass = hashMapOf(
-                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
+                    "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
                     "classDate" to classDate,
                     "displayImage" to displayImage,
                     "displayName" to displayName,
@@ -465,40 +516,41 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isPowerDeviceConnected" to false,
                     "location" to "",
                     "remark" to "Android",
-                    "totalRev" to 35.87709318525651,
+                    "totalRev" to totalRev,
                     "visibilityflagforthatsession" to visibilityflagforthatsession
                 )
-                 sessionGhostForClassLastForClass = hashMapOf(
-                    "arrAvgPower" to listOf(0, 0, 0, 0, 0),
-                    "arrAvgRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrMaxRevPercentage" to listOf(0, 0, 0, 0, 0),
-                    "arrPower" to listOf(0, 0, 0, 0, 0),
-                    "arrPowerFromDevice" to listOf(0, 0, 0, 0, 0),
-                    "classDate" to classDate,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
-                    "flagImage" to "flag-of-United-Kingdom.png",
-                    "flagName" to "United Kingdom",
-                    "isPowerDeviceConnected" to false,
-                    "location" to "",
-                    "remark" to "Android",
-                    "totalRev" to 35.87709318525651,
-                    "visibilityflagforthatsession" to visibilityflagforthatsession
-                )
+                 sessionGhostForClassLastForClass =  hashMapOf(
+                     "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "classDate" to classDate,
+                     "displayImage" to displayImage,
+                     "displayName" to displayName,
+                     "flagImage" to "flag-of-United-Kingdom.png",
+                     "flagName" to "United Kingdom",
+                     "isPowerDeviceConnected" to false,
+                     "location" to "",
+                     "remark" to "Android",
+                     "totalRev" to totalRev,
+                     "visibilityflagforthatsession" to visibilityflagforthatsession
+                 )
             }
         }
 
+        //revoola_UserSessionSummaryData  Prepaire
         val sessionUserSessionSummaryData = hashMapOf(
-            "avgBurntCalories" to 0,
-            "avgCadence" to 0,
-            "avgHr" to 0,
+            "avgBurntCalories" to avgBurntCalories,
+            "avgCadence" to avgCadence,
+            "avgHr" to avgHr,
             "avgPower" to 0,
             "avgPowerFromDevice" to 0,
-            "avgRevPercentage" to 0,
-            "avgSpeed" to 0,
-            "avgSpeedForOneKm" to 0,
-            "avgSpeedForOneMile" to 0,
-            "burntCalories" to 22.712962282347366,
+            "avgRevPercentage" to avgRevPercentage,
+            "avgSpeed" to avgSpeed,
+            "avgSpeedForOneKm" to avgSpeedForOneKm,
+            "avgSpeedForOneMile" to avgSpeedForOneMile,
+            "burntCalories" to burntCalories,
             "classDate" to classDate,
             "classDescription" to videoCardData.rideDescription,
             "classImage" to "",
@@ -506,44 +558,44 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             "classNote" to fragBinding.edtAddNotes.text.toString(),
             "classType" to videoCardData.classType,
             "demsElevation" to 0,
-            "distance" to 0,
+            "distance" to distance,
             "imageLinkLarge" to videoCardData.imageLinkLarge,
             "imageLinkSmall" to videoCardData.imageLinkSmall,
             "isClass" to true,
             "isPowerDeviceConnected" to false,
             "location" to "",
-            "maxBurntCalories" to 0,
-            "maxCadence" to 0,
-            "maxHr" to 0,
+            "maxBurntCalories" to maxBurntCalories,
+            "maxCadence" to maxCadence,
+            "maxHr" to maxHr,
             "maxPower" to 0,
             "maxPowerFromDevice" to 0,
-            "maxRevPercentage" to 0,
-            "maxSpeed" to 0,
-            "maxSpeedForOneKm" to 0,
-            "maxSpeedForOneMile" to 0,
-            "minHr" to 0,
-            "minRevPercentage" to 0,
+            "maxRevPercentage" to maxRevPercentage,
+            "maxSpeed" to maxSpeed,
+            "maxSpeedForOneKm" to maxSpeedForOneKm,
+            "maxSpeedForOneMile" to maxSpeedForOneMile,
+            "minHr" to minHr,
+            "minRevPercentage" to minRevPercentage,
             "remark" to "Android",
-            "revPercentage" to 0,
+            "revPercentage" to revPercentage,
             "rms" to 0,
             "timestamp" to currentTimestamp,
             "totalElevation" to 0,
             "totalPower" to 0,
-            "totalRev" to 35.87709318525651,
+            "totalRev" to totalRev,
             "totalTime" to totalTime,
             "videoKey" to videoID,
             "visibilityflagforthatsession" to visibilityflagforthatsession,
             "zone1" to hashMapOf(
-                "avgCadence" to 0,
-                "avgHr" to 0,
+                "avgCadence" to avgCadence,
+                "avgHr" to avgHr,
                 "avgPower" to 0,
                 "avgPowerFromDevice" to 0,
-                "avgSpeed" to 0,
-                "burntCalories" to 0,
-                "distance" to 0,
+                "avgSpeed" to avgSpeed,
+                "burntCalories" to burntCalories,
+                "distance" to distance,
                 "remark" to "Android",
                 "seconds" to totalTime,
-                "totalRev" to 0
+                "totalRev" to totalRev
             ),
             "zone2" to hashMapOf(
                 "avgCadence" to 0,
@@ -619,7 +671,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             )
         )
 
-        val sessionUserCompletedVideos = hashMapOf(videoID to true)
+        val sessionUserCompletedVideos = mapOf(videoID to true)
 
         //Entry GhostData lastForClass
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
@@ -674,7 +726,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         //revoolaUserCompletedVideos
         val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/revoolaUserCompletedVideos")
-        databaseRefCompletedVideos.setValue(sessionUserCompletedVideos)
+        databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
@@ -682,7 +734,6 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     Log.e("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save", task.exception)
                 }
             }
-
 
         //revoola_UserSessionDetailData
          val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
@@ -727,4 +778,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
         }
     }
+
+
+
+
 }

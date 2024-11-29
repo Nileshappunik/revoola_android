@@ -25,6 +25,7 @@ import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragMindClassesViewBinding
 import com.example.myfirstapp.fragment.start.classes.RLClassesSchedule
+import com.example.myfirstapp.fragment.start.yourway.RLFragChooseYourSensor
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
@@ -88,9 +89,21 @@ class RLFragMindClassesView : RLBaseFragment() {
                 RLClickToSechedule(jsonObject,RLConstants.MIND,audioVideoType)
                 fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
+
+                    bundle.putString("YourWayType","all")
+                    bundle.putBoolean("isBody",false)
+                    bundle.putBoolean("isMind",true)
+                    bundle.putBoolean("isYourWay",false)
+
                     bundle.putString("VIDEODATA",jsonObject)
                     bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)
+
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+
+
+                   /* bundle.putString("VIDEODATA",jsonObject)
+                    bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)*/
                 }
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {
                     videoLink=VideoData.videoLinkiPhonex.toString()

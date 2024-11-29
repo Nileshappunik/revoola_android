@@ -445,8 +445,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.typeOfGoal=yourWayType?:""
         entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession?:0
 
-
-
         if (distance.isNaN() ){
             distance=0.0
         }

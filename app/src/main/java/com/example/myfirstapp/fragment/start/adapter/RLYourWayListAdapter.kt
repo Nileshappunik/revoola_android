@@ -73,6 +73,9 @@ class RLYourWayListAdapter(val context: FragmentActivity?,
         fun RLNextViewOpen(name:String){
             var bundle: Bundle = Bundle()
             bundle.putString("YourWayType",name)
+            bundle.putBoolean("isBody",false)
+            bundle.putBoolean("isMind",false)
+            bundle.putBoolean("isYourWay",true)
             (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
         }

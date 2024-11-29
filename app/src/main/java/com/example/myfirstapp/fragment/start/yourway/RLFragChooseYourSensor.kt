@@ -40,6 +40,11 @@ import com.example.myfirstapp.fragment.start.adapter.RLBleListModel
 import com.example.myfirstapp.fragment.start.adapter.RLSensorCadenceListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLSensorHeartListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLSensorSpeedListAdapter
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesHeartVideoStart
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesNormalVideoStart
+import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesSpeedVideoStart
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesHeartVideoStart
+import com.example.myfirstapp.fragment.start.mind.RLFragMindClassesNormalVideoStart
 import com.example.myfirstapp.interfaceall.RLItemClickListenerAdapter
 import com.example.myfirstapp.services.RLBLEService
 import com.example.myfirstapp.utils.RLPrefManager
@@ -140,17 +145,54 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
     }
 
     private fun RLclickToNextScreenOpen(yourWayType:String,isspeedsensor:Boolean){
-        if (rlbleService!=null){
-            rlbleService!!.RLstopScan()
+        val isBodyClass=requireArguments().getBoolean("isBody")
+        val isMindClass=requireArguments().getBoolean("isMind")
+        val isYourWayClass=requireArguments().getBoolean("isYourWay")
+
+        if (isYourWayClass){
+            //All Your Way Class Next Open
+            if (rlbleService!=null){
+                rlbleService!!.RLstopScan()
+            }
+            var bundle: Bundle = Bundle()
+            bundle.putString("YourWayType", yourWayType)
+            bundle.putBoolean("isspeedsensor",isspeedsensor)
+            if (isHeartRateDevice){
+                (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
+            }else{
+                (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, true, RLFragSensorProgress::class.java.simpleName, false)
+            }
+        }else if (isBodyClass){
+            //All Body Class Next Open
+            val data=  requireArguments().getString("VIDEODATA","")
+            val videoID=  requireArguments().getString("videoID","")
+            val  ridetype=  requireArguments().getBoolean("Ride")
+            val bundle = Bundle()
+            bundle.putString("VIDEODATA",data)
+            bundle.putString("videoID",videoID)
+            bundle.putBoolean("Ride",ridetype)
+
+            if (isHeartRateDevice){
+                (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+            }else if(isspeedsensor){
+                (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, true, null, false)
+            }else{
+                (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+            }
+        }else if (isMindClass){
+            //All Mind Class Next Open
+            val data=  requireArguments().getString("VIDEODATA","")
+            val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+            val bundle = Bundle()
+            bundle.putString("VIDEODATA",data)
+            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            if (isHeartRateDevice){
+                (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+            }else{
+                (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+            }
         }
-        var bundle: Bundle = Bundle()
-        bundle.putString("YourWayType", yourWayType)
-        bundle.putBoolean("isspeedsensor",isspeedsensor)
-        if (isHeartRateDevice){
-            (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
-        }else{
-            (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, true, RLFragSensorProgress::class.java.simpleName, false)
-        }
+
     }
     private fun RLcheckAndRequestPermissions() {
         val permissions = mutableListOf<String>()
