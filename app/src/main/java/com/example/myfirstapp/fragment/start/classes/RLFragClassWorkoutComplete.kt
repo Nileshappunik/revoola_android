@@ -113,8 +113,6 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding.inlayButton.commonButton.setOnClickListener {
             val classType=  requireArguments().getString(RLConstants.CLASSTYPE,"")
             val sensorType=  requireArguments().getString(RLConstants.HEARTSENSOR,"")
-            val totalTime=  requireArguments().getString("totalTime","0")
-            val heartRateList: ArrayList<Int>? = requireArguments().getIntegerArrayList("heartRateList")
             if (classType.equals(RLConstants.BODY)){
 
                 val speedArray = arguments?.getDoubleArray("speedList")
@@ -132,7 +130,12 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
                 }
             }else{
-               // RlMindNoSensorDataEntryToFirebase(classType,totalTime,VideoCardData,heartRateList)
+                if (sensorType.equals(RLConstants.HEARTSENSOR)){
+                    RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
+                }else  {
+                    RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
+                }
+
             }
 
         }
@@ -188,7 +191,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
     }
 
-    //ALL BODY DATA TO FIREABSE ENTRY
+    //ALL BODY DATA TO FIREBASE ENTRY
     private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData:RLFulllVideoModel){
         var sessionUserSessionDetailData= hashMapOf<String, Any>()
         var sessionUserSessionSummaryGraphData= hashMapOf<String, Any>()
@@ -779,7 +782,127 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
     }
 
+    //ALL MiND DATA TO FIREBASE ENTRY
+    private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData:RLFulllVideoModel){
+        val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
+        val totalTime=  requireArguments().getString("totalTime","0")
+        val videoID=  requireArguments().getString("videoID","")
+        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
+        val avgHr=  requireArguments().getInt("avgHr",0)?:0
+        val maxHr=  requireArguments().getInt("maxHr",0)?:0
+        val minHr=  requireArguments().getInt("minHr",0)?:0
+        val rms=  requireArguments().getDouble("rms",0.0)?:0.0
 
+        val arrHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHr.toString())
+
+        val sessionUserSessionDetailData = hashMapOf(
+            "MaxHrUsedForCalculation" to RFMHR,
+            "MaxHrUsedForCalculation_Last" to RFMHR,
+            "RestingHrUsedForCalculation" to RestingHR,
+            "RestingHrUsedForCalculation_Last" to RestingHR,
+            "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+            "classDate" to classDate,
+            "classDescription" to videoCardData.rideDescription,
+            "classImage" to "",
+            "className" to fragBinding.edtSessionName.text.toString(),
+            "classNote" to fragBinding.edtAddNotes.text.toString(),
+            "classType" to videoCardData.classType,
+            "displayImage" to displayImage,
+            "displayName" to displayName,
+            "duration" to videoCardData.duration,
+            "flagImage" to "flag-of-United-Kingdom.png",
+            "flagName" to "United Kingdom",
+            "imageLinkLarge" to videoCardData.imageLinkLarge,
+            "imageLinkSmall" to videoCardData.imageLinkSmall,
+            "instructor" to videoCardData.instructor,
+            "isClass" to true,
+            "isMindClass" to true,
+            "location" to "",
+            "mainTitle" to videoCardData.classType,
+            "originalClassDate" to videoCardData.originalClassDate,
+            "remark" to "Android",
+            "rideTitle" to videoCardData.rideTitle,
+            "rms" to rms,
+            "timestamp" to currentTimestamp,
+            "totalTime" to totalTime,
+            "videoKey" to videoID,
+            "visibilityflagforthatsession" to visibilityflagforthatsession
+        )
+
+        val sessionUserSessionSummaryData = hashMapOf(
+            "avgHr" to avgHr,
+            "classDate" to classDate,
+            "classDescription" to videoCardData.rideDescription,
+            "classImage" to "",
+            "className" to fragBinding.edtSessionName.text.toString(),
+            "classNote" to fragBinding.edtAddNotes.text.toString(),
+            "classType" to videoCardData.classType,
+            "duration" to videoCardData.duration,
+            "imageLinkLarge" to videoCardData.imageLinkLarge,
+            "imageLinkSmall" to videoCardData.imageLinkSmall,
+            "instructor" to videoCardData.instructor,
+            "isClass" to true,
+            "isMindClass" to true,
+            "location" to "",
+            "mainTitle" to videoCardData.classType,
+            "maxHr" to maxHr,
+            "minHr" to minHr,
+            "originalClassDate" to videoCardData.originalClassDate,
+            "remark" to "Android",
+            "rideTitle" to videoCardData.rideTitle,
+            "rms" to rms,
+            "timestamp" to currentTimestamp,
+            "totalTime" to totalTime,
+            "videoKey" to videoID,
+            "visibilityflagforthatsession" to visibilityflagforthatsession
+        )
+
+        val sessionUserCompletedVideos = mapOf(videoID to true)
+
+        //revoola_UserSessionSummaryData
+        val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
+        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        entryIdSummery.let {
+            databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+
+                    } else {
+                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save", task.exception)
+                    }
+                }
+        }
+
+        //revoolaUserCompletedVideos
+        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/revoolaUserCompletedVideos")
+        databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                } else {
+                    Log.e("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save", task.exception)
+                }
+            }
+
+        //revoola_UserSessionDetailData
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val entryId = (System.currentTimeMillis() / 1000).toString()
+        entryId.let {
+            databaseRef.child(it).setValue(sessionUserSessionDetailData)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    } else {
+                        Log.e("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save", task.exception)
+                    }
+                }
+        }
+
+    }
 
 }

@@ -95,6 +95,7 @@ class RLFragMindClassesView : RLBaseFragment() {
                     bundle.putBoolean("isMind",true)
                     bundle.putBoolean("isYourWay",false)
 
+                    bundle.putString("videoID",VideoID)
                     bundle.putString("VIDEODATA",jsonObject)
                     bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
 

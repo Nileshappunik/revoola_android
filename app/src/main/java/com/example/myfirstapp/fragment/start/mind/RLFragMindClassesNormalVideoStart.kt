@@ -23,6 +23,7 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMindClassesNormalVideoStartBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
 import com.example.myfirstapp.utils.RLConstants
@@ -41,7 +42,8 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
     private var totalTime:String =""
     private val timerManager = RLTimerManager()
-    var heartRateList:MutableList<Int> = mutableListOf()
+
+    var arrHr:MutableList<Int> = mutableListOf()
 
     private val binding by lazy {
         RlFragMindClassesNormalVideoStartBinding.inflate(layoutInflater)
@@ -105,12 +107,25 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
+
+            var rms = VideoCardData.assumedRMS?:"0.0"
+            val videoID=  requireArguments().getString("videoID","")
+            if (rms.isNullOrEmpty()){
+                rms="0.0"
+            }
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEARTSENSOR, RLConstants.NOSENSOR)
+
+
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
             bundle.putString("totalTime",totalTime)
-            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+            bundle.putString("videoID",videoID)
+            bundle.putInt("avgHr",0)
+            bundle.putInt("maxHr",0)
+            bundle.putInt("minHr",0)
+            bundle.putDouble("rms",rms.toDouble())
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -178,7 +193,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     }
 
     private fun  RlDataFillAllArray(){
-        heartRateList.add(0)
+        arrHr.add(0)
     }
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams

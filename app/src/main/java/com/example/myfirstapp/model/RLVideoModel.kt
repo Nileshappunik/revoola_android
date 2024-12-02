@@ -20,6 +20,7 @@ data class RLVideoModel (
 
 data class RLFulllVideoModel (
     val assumedREV: String,
+    val assumedRMS: String,
     val classType: String,
     val cumulativeRiders: String,
     val currentVideoGroup: String,

@@ -38,6 +38,7 @@ import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
 import com.example.myfirstapp.databinding.RlFragMindClassesHeartVideoStartBinding
+import com.example.myfirstapp.enumclass.RLYourWayArrayType
 import com.example.myfirstapp.fragment.start.adapter.RLStartClassAttendListAdapter
 import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesHeartVideoStart
 import com.example.myfirstapp.fragment.start.body.RLFragBodyClassesHeartVideoStart.Companion
@@ -65,8 +66,13 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     private lateinit var gestureDetector: GestureDetectorCompat
     private var totalTime:String =""
     private val timerManager = RLTimerManager()
-    var heartRateList:MutableList<Int> = mutableListOf()
+
+    var arrHr:MutableList<Int> = mutableListOf()
     var heartRateNumber:Int=0
+
+    var maxHeartrate=0
+    var minHeartrate=0
+    var avgHr=0
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -154,12 +160,19 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             if (isServiceBound) {
                 rlbleService!!.RLstopNotifications()
             }
+            val videoID=  requireArguments().getString("videoID","")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEARTSENSOR, RLConstants.HEARTSENSOR)
-            bundle.putIntegerArrayList("heartRateList",ArrayList(heartRateList))
+
+            bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
             bundle.putString("totalTime",totalTime)
+            bundle.putString("videoID",videoID)
+            bundle.putInt("avgHr",avgHr)
+            bundle.putInt("maxHr",maxHeartrate)
+            bundle.putInt("minHr",minHeartrate)
+            bundle.putDouble("rms",0.0)
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -244,10 +257,9 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
     }
     private fun  RlDataFillAllArray(){
-        heartRateList.add(heartRateNumber)
+        arrHr.add(heartRateNumber)
+        avgHr = arrHr.average().roundToInt()?:0
     }
-
-
     //SWIPE LEFT RIGHT WITH ANIMATION SET
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
         val layoutParams = videoView.layoutParams
@@ -413,10 +425,31 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
                 "ACTION_DATA_RETRIEVED_HEART" -> {
                     val data = intent.getStringExtra("EXTRA_DATA")
                     heartRateNumber=RlGetValueInt(data.toString())
+                    var heartRateSetValue=RlGetValueInt(data.toString())
+                    if (heartRateSetValue > 0){
+                        maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
+                        minHeartrate=RLmin(minHeartrate,heartRateNumber)
+                    }
                 }
             }
         }
     }
+
+    private fun RLmax(previous: Int, next: Int): Int {
+        return when {
+            previous > next -> previous
+            else ->next
+        }
+    }
+
+    private fun RLmin(previous: Int, next: Int): Int {
+        return when {
+            next == 0 -> previous
+            previous == 0 -> next
+            else -> next
+        }
+    }
+
     //BLE DEVICE CODE CLOSE
 
     override fun onStart() {
@@ -444,5 +477,8 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             Log.e(TAG,"Exception:- "+e.message)
         }
     }
+
+
+
 
 }

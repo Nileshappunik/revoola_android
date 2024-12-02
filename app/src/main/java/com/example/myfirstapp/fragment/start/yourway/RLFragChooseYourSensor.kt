@@ -183,9 +183,11 @@ class RLFragChooseYourSensor : RLBaseFragment(),RLItemClickListenerAdapter {
             //All Mind Class Next Open
             val data=  requireArguments().getString("VIDEODATA","")
             val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+            val videoID=  requireArguments().getString("videoID","")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            bundle.putString("videoID",videoID)
             if (isHeartRateDevice){
                 (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
             }else{
