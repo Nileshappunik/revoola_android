@@ -1,11 +1,13 @@
 package com.example.myfirstapp.databasefirebase
 
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.gson.Gson
 
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -76,6 +78,17 @@ class RLDatabaseManagerRead {
             }
     }
     fun RlreadData(path: String, callback: (Any?, Exception?) -> Unit) {
+        database.child(path).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(task.result?.value, null)
+            } else {
+                callback(null, task.exception)
+            }
+        }
+    }
+
+    fun RlUserBasicDataRead(userId: String,callback: (Any?, Exception?) -> Unit) {
+        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)

@@ -166,7 +166,20 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         val yourWayType = requireArguments().getString("YourWayType").toString().trim()
         //fragBinding.txtMaintitle.setText(yourWayType)
         rlLocationViewModel =RLLocationViewModel(requireActivity().application)
-        RLFirebaseToFatchUserData()
+
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge=RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                appUnit=userData.appUnit
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
 
         if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
             RLstepGetToGPS()
@@ -303,27 +316,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
-        }
-    }
-    private fun RLFirebaseToFatchUserData() {
-        //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                wsWeight=userData.weightkg
-                wsHeight=userData.height
-                wsAge=RLTools.RLCalculateAge(userData.dob)
-                gender=userData.gender
-                RFMHR=userData.RFMHR
-                RestingHR=userData.restingHr
-                appUnit=userData.appUnit
-            }
         }
     }
 

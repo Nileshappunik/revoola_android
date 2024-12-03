@@ -13,16 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
-import com.example.myfirstapp.databasefirebase.RLAuthManager
-import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragSessionCompleteBinding
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
-import com.example.myfirstapp.firebaseModel.RLElevationPoint
-import com.example.myfirstapp.firebaseModel.RLLocationDetails
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.adapter.RLSelectedImagesAdapter
 import com.example.myfirstapp.model.RLFulllVideoModel
-import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTools
@@ -31,7 +26,9 @@ import com.google.gson.Gson
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.HashMap
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class RLFragClassWorkoutComplete : RLBaseFragment(){
     val TAG: String = RLFragClassWorkoutComplete::class.java.simpleName
@@ -66,7 +63,21 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLFirebaseToFatchUserData()
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg?:"60"
+                wsHeight=userData.height?:"167"
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                displayImage =userData.displayImage
+                displayName =userData.displayName
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
+
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
@@ -249,6 +260,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf(0.0)
         val arrMaxRevPercentage: MutableList<Double> = arrMaxRevPercentageList?.toMutableList() ?: mutableListOf(0.0)
 
+        val REVPer = revPercentage.roundToInt()
+        val activeZone = RLzoneDiff(REVPer) // Determine the active zone
+
         if (distance.isNaN() ){
             distance=0.0
         }
@@ -303,55 +317,13 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "totalTime" to totalTime,
                     "videoKey" to videoID,
                     "visibilityflagforthatsession" to visibilityflagforthatsession,
-                    "zone1" to hashMapOf(
-                        "burntCalories" to burntCalories,
-                        "distance" to distance,
-                        "remark" to "Android",
-                        "seconds" to totalTime,
-                        "totalRev" to totalRev
-                    ),
-                    "zone2" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    ),
-                    "zone3" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    ),
-                    "zone4" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    ),
-                    "zone5" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    ),
-                    "zone6" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    ),
-                    "zone7" to hashMapOf(
-                        "burntCalories" to 0,
-                        "distance" to 0,
-                        "remark" to "Android",
-                        "seconds" to 0,
-                        "totalRev" to 0
-                    )
+                     "zone1" to RlZoneValueGet("zone1",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone2" to RlZoneValueGet("zone2",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone3" to RlZoneValueGet("zone3",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone4" to RlZoneValueGet("zone4",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone5" to RlZoneValueGet("zone5",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone6" to RlZoneValueGet("zone6",activeZone,burntCalories,distance,totalTime,totalRev),
+                     "zone7" to RlZoneValueGet("zone7",activeZone,burntCalories,distance,totalTime,totalRev),
                 )
                  sessionUserSessionSummaryGraphData = hashMapOf(
                     "arrCadence" to (arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
@@ -403,6 +375,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                  )
             }
             "NO_SENSOR"->{
+
                  sessionUserSessionDetailData = hashMapOf(
                     "MaxHrUsedForCalculation" to RFMHR,
                     "MaxHrUsedForCalculation_Last" to RFMHR,
@@ -757,31 +730,34 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
     }
 
-    //FIREBASE USERDATA GET
-    private fun RLFirebaseToFatchUserData() {
-        //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        currentUser=userId
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                wsWeight=userData.weightkg?:"60"
-                wsHeight=userData.height?:"167"
-                wsAge= RLTools.RLCalculateAge(userData.dob)
-                gender=userData.gender
-                RFMHR=userData.RFMHR
-                RestingHR=userData.restingHr
-                displayImage =userData.displayImage
-                displayName =userData.displayName
-            }
+    private fun RlZoneValueGet(
+        zoneKey: String,
+        activeZone: Int,
+        burntCalories: Double,
+        distance: Double,
+        totalTime: String,
+        totalRev: Double
+    ): HashMap<String, out Any> {
+        if (zoneKey.equals("zone$activeZone")) {
+            // Fill the data for the active zone
+          return  hashMapOf(
+                "burntCalories" to burntCalories,
+                "distance" to distance,
+                "remark" to "Android",
+                "seconds" to totalTime,
+                "totalRev" to totalRev
+            )
+        } else {
+            // Fill blank/default data for other zones
+            return  hashMapOf(
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            )
         }
     }
-
     //ALL MiND DATA TO FIREBASE ENTRY
     private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData:RLFulllVideoModel){
         val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())

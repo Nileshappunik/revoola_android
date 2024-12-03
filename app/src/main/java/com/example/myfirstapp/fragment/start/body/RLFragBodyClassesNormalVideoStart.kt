@@ -1,14 +1,11 @@
 package com.example.myfirstapp.fragment.start.body
 
-import android.app.UiModeManager
-import android.content.Context
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -23,15 +20,23 @@ import androidx.fragment.app.Fragment
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlFragBodyClassesNormalVideoStartBinding
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
-import com.example.myfirstapp.firebaseModel.RLElevationPoint
-import com.example.myfirstapp.firebaseModel.RLLocationDetails
+import com.example.myfirstapp.firebaseModel.RLAssumedCalories
+import com.example.myfirstapp.firebaseModel.RLAssumedRev
 import com.example.myfirstapp.fragment.start.classes.RLFragClassWorkoutComplete
 import com.example.myfirstapp.model.RLFulllVideoModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
 import com.example.myfirstapp.utils.RLTimerManager
+import com.example.myfirstapp.utils.RLTools
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -85,6 +90,8 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     private var maxSpeedForOneMile:Double=0.0
     var minHeartrate =0
 
+
+
     private val binding by lazy {
         RlFragBodyClassesNormalVideoStartBinding.inflate(layoutInflater)
     }
@@ -118,9 +125,10 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         val data=  requireArguments().getString("VIDEODATA","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
-
         RLMindBodyUISet(VideoCardData)
         RLVideoUISet(VideoCardData,data)
+
+
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String){
         fragBinding.inlayTime.progressView2.visibility=View.GONE
@@ -383,6 +391,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
 
         (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
     }
+
 
 
 }

@@ -156,7 +156,19 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLFirebaseToFatchUserData()
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                appUnit=userData.appUnit
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
         // Initialize the GestureDetector
         gestureDetectorleft = GestureDetectorCompat(requireContext(), SwipeGestureListenerLeft())
         gestureDetectorright = GestureDetectorCompat(requireContext(), SwipeGestureListenerRight())
@@ -619,28 +631,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
     }
     ///////////////////////////// calculate All Value End ////////////////////////
-
-    private fun RLFirebaseToFatchUserData() {
-        //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                wsWeight=userData.weightkg
-                wsHeight=userData.height
-                wsAge= RLTools.RLCalculateAge(userData.dob)
-                gender=userData.gender
-                RFMHR=userData.RFMHR
-                RestingHR=userData.restingHr
-                appUnit=userData.appUnit
-            }
-        }
-    }
 
     //BLE DEVICE CODE START
     private fun RLcheckAndRequestPermissions() {

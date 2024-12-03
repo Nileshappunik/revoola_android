@@ -16,10 +16,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.databasefirebase.RLAuthManager
+import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
+import com.example.myfirstapp.firebaseModel.RLAssumedCalories
+import com.example.myfirstapp.firebaseModel.RLAssumedRev
 import com.example.myfirstapp.fragment.common.RLFragNoInternet
 import com.example.myfirstapp.fragment.start.RLStartHelpModel
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
 import com.example.myfirstapp.utils.RLTools.RLnextFinishAllActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 
 
@@ -172,6 +182,187 @@ open class RLBaseFragment : Fragment() {
         }else{
             imageHelp.visibility=View.GONE
         }*/
+    }
+
+
+    //Firebase To Fetch UserBasic Data
+     fun RLFirebaseToFetchUserData(callback: (RLRevoolaUsersSettingsModel?) -> Unit) {
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()?.uid ?: run {
+            callback(null) // Return null if user is not logged in
+            return
+        }
+
+        // Firebase to fetch user data
+        RLDatabaseManagerRead().RlUserBasicDataRead(userId) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                callback(userData) // Return userData through the callback
+            } else {
+                callback(null) // Return null in case of an error
+            }
+        }
+    }
+    //Firebase To Fetch AssumedCalories Data
+    fun RLfetchAssumedCalories(callback: (RLAssumedCalories?) -> Unit) {
+        // Firebase to fetch user data
+        val path ="/proposedstructure/codeSection/assumedCalories"
+        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLAssumedCalories::class.java)
+                callback(userData) // Return userData through the callback
+            } else {
+                callback(null) // Return null in case of an error
+            }
+        }
+    }
+    //Firebase To Fetch AssumedRev Data
+    fun RLfetchAssumedRev(callback: (RLAssumedRev?) -> Unit) {
+        // Firebase to fetch user data
+        val path ="/proposedstructure/codeSection/assumedRev"
+        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLAssumedRev::class.java)
+                callback(userData) // Return userData through the callback
+            } else {
+                callback(null) // Return null in case of an error
+            }
+        }
+    }
+     fun RLCalculateAssumedCalories(hr: Double, weight: Double, age: Int, time: Double, assumedRev: Double,assumedCalories:RLAssumedCalories,gender:String): Double {
+        val maxAssumedRev = (1000.0 / 3600.0) * time
+        val normalizedAssumedRev = assumedRev / maxAssumedRev / 100
+
+        val assumedCalory = if (gender.lowercase() == "male") {
+            assumedCalories.Male
+        } else {
+            assumedCalories.Female
+        } ?: assumedCalories.Male
+
+        assumedCalory?.let {
+            val first = it.assumedcaloriesY * hr
+            val second = it.assumedcaloriesZ * weight
+            val third = it.assumedcaloriesAge * age
+            val fourth = it.assumedcaloriesX + first + second + third
+            val fifth = fourth / it.assumedcaloriesAgeCo
+            val sixth = fifth * normalizedAssumedRev
+            val seventh = sixth * time
+            val eighth = seventh * it.assumedcaloriesFactor
+            return eighth
+        }
+        return 0.0
+    }
+     fun RLGenerateAssumedRev(classType:String,assumedRev:RLAssumedRev,distancevalue:Double,totalElevation:Double,totalTime:Double): Double {
+        var assumedRevValue = 0.0
+        val distance = distancevalue//
+        val elevation =totalElevation  //
+        val totalTravelled = elevation + distance
+
+        when (classType.lowercase()) {
+            "ride" -> {
+                if (distance > 0.1) {
+                    assumedRev?.rideout?.let { rideOutAssumedRev ->
+                        val assumedRevClimbed = elevation *
+                                rideOutAssumedRev.RevPerMeterClimbed *
+                                (elevation / totalTravelled)
+                        val assumedRevTravelled = distance *
+                                rideOutAssumedRev.RevPerMeterTravelled *
+                                (distance / totalTravelled)
+                        assumedRevValue = assumedRevClimbed + assumedRevTravelled
+                    }
+                } else {
+                    assumedRev?.ridein?.let { rideInAssumedRev ->
+                        val assumedRevClimbed = elevation *
+                                rideInAssumedRev.RevPerMeterClimbed *
+                                (elevation / totalTravelled)
+                        val assumedRevTravelled = distance *
+                                rideInAssumedRev.RevPerMeterTravelled *
+                                (distance / totalTravelled)
+                        assumedRevValue = assumedRevClimbed + assumedRevTravelled
+                    }
+                }
+            }
+            "run" -> {
+                assumedRev?.run?.let { runAssumedRev ->
+                    val assumedRevClimbed = elevation *
+                            runAssumedRev.RevPerMeterClimbed *
+                            (elevation / totalTravelled)
+                    val assumedRevTravelled = distance *
+                            runAssumedRev.RevPerMeterTravelled *
+                            (distance / totalTravelled)
+                    assumedRevValue = assumedRevClimbed + assumedRevTravelled
+                }
+            }
+            "walk" -> {
+                assumedRev?.walk?.let { walkAssumedRev ->
+                    val assumedRevClimbed = elevation *
+                            walkAssumedRev.RevPerMeterClimbed *
+                            (elevation / totalTravelled)
+                    val assumedRevTravelled = distance *
+                            walkAssumedRev.RevPerMeterTravelled *
+                            (distance / totalTravelled)
+                    assumedRevValue = assumedRevClimbed + assumedRevTravelled
+                }
+            }
+            "pilates" -> {
+                assumedRev?.pilates?.let { pilatesAssumedRev ->
+                    assumedRevValue = (totalTime.toDouble() ?: 0.0) *
+                            pilatesAssumedRev.RevPerSecond
+                }
+            }
+            "yoga" -> {
+                assumedRev?.yoga?.let { yogaAssumedRev ->
+                    assumedRevValue = (totalTime.toDouble() ?: 0.0) *
+                            yogaAssumedRev.RevPerSecond
+                }
+            }
+            "workout" -> {
+                assumedRev?.workout?.let { workoutAssumedRev ->
+                    assumedRevValue = (totalTime.toDouble() ?: 0.0) *
+                            workoutAssumedRev.RevPerSecond
+                }
+            }
+        }
+        return assumedRevValue
+    }
+    fun RLzoneDiff(REVPer: Int):Int {
+        when {
+            REVPer <= 30 -> {
+                //Zone 1
+                return 1
+            }
+            REVPer <= 50 -> {
+                //Zone 2
+                return 2
+            }
+            REVPer <= 60 -> {
+                //Zone 3
+                return 3
+            }
+            REVPer <= 70 -> {
+                //Zone 4
+                return 4
+            }
+            REVPer <= 80 -> {
+                //Zone 5
+                return 5
+            }
+            REVPer <= 90 -> {
+                //Zone 6
+                return 6
+            }
+            REVPer <= 100 -> {
+                //Zone 7
+                return 7
+            }
+        }
+         return 1
     }
 
 }

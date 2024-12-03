@@ -104,8 +104,6 @@ object RLTools {
         }
     }
 
-
-
     fun RLCalculateAge(dateString: String): Int {
         // Define the date format (day/month/year)
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -139,6 +137,7 @@ object RLTools {
             window.statusBarColor = act.resources.getColor(color)
         }
     }
+
     fun RLheightsetimageview(testImage:ImageView) {
 
 
@@ -383,6 +382,7 @@ object RLTools {
            return R.drawable.ic_dance
        }
     }
+
     fun RLgetImage1(typename:String): Int {
         if (typename.isNullOrEmpty()){
             return R.drawable.walk
@@ -539,8 +539,6 @@ object RLTools {
     }
 
 
-
-
     fun RLgetImage(typename:String): String {
         if (typename.isNullOrEmpty()){
             return  RLConstants.WALKIMAGE
@@ -658,8 +656,6 @@ object RLTools {
 
 
     }
-
-
 
     fun RLroundnumbert(number:Double):String{
         val roundedNumber = BigDecimal(number).setScale(2, BigDecimal.ROUND_HALF_EVEN).toDouble()
@@ -939,9 +935,6 @@ object RLTools {
         }
     }
 
-
-
-
     fun RLgetMetric(thirdPartySource: Int,cardData: RLTextOverview): RlMetric {
         return when (thirdPartySource) {
             in listOf(20, 26, 32, 38) -> RlMetric(
@@ -1149,7 +1142,6 @@ object RLTools {
         activity.startActivity(intent)
         activity.finish()
     }
-
 
 
     //for Device Id

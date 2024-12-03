@@ -40,6 +40,7 @@ import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.*
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -81,15 +82,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
         //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
                 fragBinding.layFirstname.txtUsername.setText(userData.firstName)
                 fragBinding.laySurname.txtUsername.setText(userData.lastName)
                 fragBinding.layNickname.txtUsername.setText(userData.displayName)
@@ -102,15 +96,15 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layHeight.txtUsername.setText(userData.height+" "+userData.heightUnit)
                 fragBinding.layMaxheartrate.txtUsername.setText(userData.RFMHR.toString())//max hearrate
                 fragBinding.layRestingheartrate.txtUsername.setText(userData.restingHr)//base heartrate
-               if ( userData.appUnit.toLowerCase().equals("imperial")){
-                   fragBinding.radioGroup.check(R.id.radioButtonimperial)
-               }else{
-                   fragBinding.radioGroup.check(R.id.radioButtonmetric)
-               }
-
+                if ( userData.appUnit.toLowerCase().equals("imperial")){
+                    fragBinding.radioGroup.check(R.id.radioButtonimperial)
+                }else{
+                    fragBinding.radioGroup.check(R.id.radioButtonmetric)
+                }
+            } else {
+                Log.e(TAG, "Error fetching user data")
             }
         }
-
         fragBinding.layFirstname.txtusertitle.setText(R.string.firstname)
        // fragBinding.layFirstname.txtUsername.setText("Dhruv")
         fragBinding.layFirstname.imgEdit.setOnClickListener {

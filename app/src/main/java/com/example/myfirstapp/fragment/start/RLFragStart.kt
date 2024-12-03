@@ -20,8 +20,10 @@ import com.example.myfirstapp.databinding.RlFragStartBinding
 import com.example.myfirstapp.enumclass.RLStartAllMenuModel
 import com.example.myfirstapp.fragment.start.adapter.RLHelpListAdapter
 import com.example.myfirstapp.fragment.start.adapter.RLStartListAdapter
+import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
 import com.example.myfirstapp.utils.RLConstants
 import com.example.myfirstapp.utils.RLPrefManager
+import com.example.myfirstapp.utils.RLTools
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -73,7 +75,6 @@ class RLFragStart : RLBaseFragment() {
             RLshowHelpDialog()
         }
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp,RLPrefManager.start_help_content)
-
     }
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()

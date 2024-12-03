@@ -279,9 +279,7 @@ class RLLoginActivityRL : RLBaseActivity() {
 
     private fun RLSetUsernameToFirebase(userId:String,email:String){
         //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
+        RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)

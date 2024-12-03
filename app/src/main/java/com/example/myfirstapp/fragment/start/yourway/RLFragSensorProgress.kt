@@ -35,6 +35,8 @@ import androidx.lifecycle.Observer
 import com.example.myfirstapp.databasefirebase.RLAuthManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.enumclass.RLYourWayArrayType
+import com.example.myfirstapp.firebaseModel.RLAssumedCalories
+import com.example.myfirstapp.firebaseModel.RLAssumedRev
 import com.example.myfirstapp.firebaseModel.RLElevationPoint
 import com.example.myfirstapp.firebaseModel.RLLocationDetails
 import com.example.myfirstapp.model.RLRevoolaUsersSettingsModel
@@ -95,7 +97,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var distanceNumber:Double=0.0
     private var climbedNumber:Int=0
 
-    private var activeCaloriesNumber:Double=0.0
+    //private var activeCaloriesNumber:Double=0.0
     private var speedNumber:Double=0.0
 
     private var paceNumber:Int=0
@@ -114,12 +116,23 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var CumSpeed =0.0
     private var distance:Double=0.0
     private var burntCalories:Double=0.0
+    private var totalRev:Double=0.0
+    //UserBasic Data Get Value
     private var appUnit:String=""
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+
 
     private var arrDataLocation:MutableList<RLElevationPoint> = mutableListOf()
     private var arrLocationDetails:MutableList<RLLocationDetails> = mutableListOf()
     private var latitude:Double =0.0
     private var longitude:Double =0.0
+
+    private var classType="workout"
+    var assumedCalories= RLAssumedCalories()
+    var assumedRev= RLAssumedRev()
 
 
     companion object {
@@ -153,8 +166,36 @@ class RLFragSensorProgress : RLBaseFragment(){
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
         rlLocationViewModel =RLLocationViewModel(requireActivity().application)
 
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                appUnit=userData.appUnit
+                wsHeight=userData.height?:"167"
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
 
-        RLFirebaseToFatchUserData()
+        //Firebase AssumedCalories Data Fetch
+        RLfetchAssumedCalories{assumedCaloriesvalue->
+            if (assumedCaloriesvalue != null) {
+                // Use the data as needed
+                assumedCalories=assumedCaloriesvalue
+            } else {
+                Log.e(TAG, "Error fetching AssumedCalories data")
+            }
+        }
+        //Firebase AssumedRev Data Fetch
+        RLfetchAssumedRev{assumedRevValue->
+            if (assumedRevValue != null) {
+                // Use the data as needed
+                assumedRev=assumedRevValue
+            } else {
+                Log.e(TAG, "Error fetching AssumedRev data")
+            }
+        }
 
        // fragBinding.txtMaintitle.setText(yourWayType)
         fragBinding.inlayTop.ivTitle.setText(yourWayType)
@@ -210,6 +251,7 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
             bundle.putDouble("totalElevation",noNanValueDouble(totalElevation?:0.00))
+            bundle.putDouble("totalRev",noNanValueDouble(totalRev?:0.00))
 
             bundle.putDouble("maxSpeedForOneKm",noNanValueDouble(maxSpeedForOneKm?:0.00))
             bundle.putDouble("maxSpeedForOneMile",noNanValueDouble(maxSpeedForOneMile?:0.00))
@@ -261,21 +303,6 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
-        }
-    }
-    private fun RLFirebaseToFatchUserData() {
-        //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                appUnit=userData.appUnit
-            }
         }
     }
     fun  RLwayTypeDesignSet(yourWayType:String){
@@ -488,7 +515,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                     val AvgSPEED = intent.getStringExtra("AvgSPEED")?:"0"
                     val DISTANCE = intent.getStringExtra("DISTANCE")?:"0"
                     val CADENCE = intent.getStringExtra("CADENCE")?:"0"
-                    val CALORIES = intent.getStringExtra("CALORIES")?:"0"
+                    //val CALORIES = intent.getStringExtra("CALORIES")?:"0"
 
                     var speedSetValue=RlGetValueInt(SPEED.toString())?:0
                     var avgspeedSetValue=RlGetValueInt(AvgSPEED.toString())?:0
@@ -498,7 +525,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                     distanceNumber=RlGetValueDouble(DISTANCE.toString())?:0.0
                     climbedNumber=RlGetValueInt(CADENCE.toString())?:0
                     speedNumber=RlGetValueDouble(SPEED.toString())?:0.0
-                    activeCaloriesNumber=RlGetValueDouble(CALORIES.toString())?:0.0
+                    //activeCaloriesNumber=RlGetValueDouble(CALORIES.toString())?:0.0
                     cadenceData=RlGetValueDouble(CADENCE.toString())?:0.0
                     maxCadence=RLmax(maxCadence,cadenceData.toInt())
 
@@ -616,9 +643,6 @@ class RLFragSensorProgress : RLBaseFragment(){
         }
     }
     private fun  RlDataFillAllArray(){
-        burntCalories=burntCalories+activeCaloriesNumber
-        maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
-        arrBurntCalories.add(noNanValueDouble(activeCaloriesNumber?:0.00))
         arrCadence.add(noNanValueDouble(cadenceData?:0.00))
         arrDistance.add(noNanValueDouble(distanceNumber?:0.00))
         arrSpeed.add(noNanValueDouble(speedNumber?:0.00))
@@ -659,6 +683,20 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         arrAvgCadence.add(noNanValueDouble(arrCadence.average()?:0.00))
         arrMaxCadence.add(maxCadence)
+
+        val distancevalue= (distance?: 0.0) * 1000
+        val  totalElevation =totalElevation?: 0.0
+
+        //Calculation AssumedRev
+        val assumedRevValue = RLGenerateAssumedRev(classType,assumedRev,distancevalue,totalElevation,totalTime.toDouble())
+        totalRev=assumedRevValue
+        //Calculation AssumedCalories
+        val assumedCalories=RLCalculateAssumedCalories(RFMHR.toDouble(),wsHeight.toDouble(),wsAge.toDouble().roundToInt(),totalTime.toDouble(),assumedRevValue,assumedCalories,gender)
+
+        burntCalories=assumedCalories
+        maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
+        arrBurntCalories.add(noNanValueDouble(assumedCalories?:0.00))
+
     }
 
     private fun noNanValueDouble(value:Double):Double{
@@ -781,7 +819,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
                     }
                 })
-                rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
+                /*rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
                     calories?.let {
                         val totalCaloriesBurned=it
                         Log.d(TAG,"CaloriesBurned: $totalCaloriesBurned")
@@ -793,7 +831,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                         }
 
                     }
-                })
+                })*/
                 rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
                     pace?.let {
                         val totalspace=round(it * 100)  / 100

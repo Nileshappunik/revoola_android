@@ -44,6 +44,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import gun0912.tedimagepicker.builder.TedImagePicker
+import java.util.HashMap
 import java.util.UUID
 import kotlin.math.roundToInt
 
@@ -85,7 +86,20 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun RLuisetup() {
         //"Pilates","Ride","Run","Walk","Workout","Yoga"
-        RLFirebaseToFatchUserData()
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg?:"60"
+                wsHeight=userData.height?:"167"
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                displayImage =userData.displayImage
+                displayName =userData.displayName
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
 
          yourWayType = requireArguments().getString("YourWayType").toString().trim()
         val totalTime = requireArguments().getString("totalTime").toString().trim()
@@ -276,8 +290,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.typeOfGoal=yourWayType?:""
         //Zone Entry Value
         val REVPer=revPercentage.roundToInt()
-        when {
-            REVPer <= 30 -> {
+        when (RLzoneDiff(REVPer)){
+            1 -> {
                 //Zone 1
                 entryWorkoutSessionDetails.zone1.remark= "android"
                 entryWorkoutSessionDetails.zone1.distance=distance?:0.0
@@ -295,7 +309,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone1.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone1.totalRev=totalRev?:0.0
             }
-            REVPer <= 50 -> {
+            2 -> {
                 //Zone 2
                 entryWorkoutSessionDetails.zone2.remark= "android"
                 entryWorkoutSessionDetails.zone2.distance=distance?:0.0
@@ -313,7 +327,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone2.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone2.totalRev=totalRev?:0.0
             }
-            REVPer <= 60 -> {
+            3 -> {
                 //Zone 3
                 entryWorkoutSessionDetails.zone3.remark= "android"
                 entryWorkoutSessionDetails.zone3.distance=distance?:0.0
@@ -331,7 +345,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone3.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone3.totalRev=totalRev?:0.0
             }
-            REVPer <= 70 -> {
+            4 -> {
                 //Zone 4
                 entryWorkoutSessionDetails.zone4.remark= "android"
                 entryWorkoutSessionDetails.zone4.distance=distance?:0.0
@@ -349,7 +363,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone4.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone4.totalRev=totalRev?:0.0
             }
-            REVPer <= 80 -> {
+            5 -> {
                 //Zone 5
                 entryWorkoutSessionDetails.zone5.remark= "android"
                 entryWorkoutSessionDetails.zone5.distance=distance?:0.0
@@ -367,7 +381,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone5.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone5.totalRev=totalRev?:0.0
             }
-            REVPer <= 90 -> {
+            6 -> {
                 //Zone 6
                 entryWorkoutSessionDetails.zone6.remark= "android"
                 entryWorkoutSessionDetails.zone6.distance=distance?:0.0
@@ -385,7 +399,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 entryWorkoutSessionSummary.zone6.seconds=totalTime.toInt()?:0
                 entryWorkoutSessionSummary.zone6.totalRev=totalRev?:0.0
             }
-            REVPer <= 100 -> {
+            7 -> {
                 //Zone 7
                 entryWorkoutSessionDetails.zone7.remark= "android"
                 entryWorkoutSessionDetails.zone7.distance=distance?:0.0
@@ -525,6 +539,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private fun RlNoSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
 
         val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
+        val totalRev=requireArguments().getDouble("totalRev")?:0.0
         val totalElevation=requireArguments().getDouble("totalElevation")?:0.0
         val totalSteps=requireArguments().getInt("totalSteps")?:0
         var distance=requireArguments().getDouble("distance")?:0.0
@@ -609,7 +624,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.timestamp=currentTimestamp.toLong()
         entryWorkoutSessionDetails.totalElevation= totalElevation
         entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.totalRev= 0.0 // sum of revpersentage
+        entryWorkoutSessionDetails.totalRev= totalRev // sum of revpersentage
         entryWorkoutSessionDetails.totalSteps=totalSteps
         entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.typeOfGoal=yourWayType
@@ -652,6 +667,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.totalSteps=totalSteps
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()?:0
         entryWorkoutSessionSummary.typeOfGoal=yourWayType
+        entryWorkoutSessionSummary.totalRev=totalRev
         entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession
 
 
@@ -683,7 +699,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             "elevationDic" to arrElevation,//ARRAY
             "locationDic" to arrLocationDetails,//ARRAY
             "speedDic" to arrSpeed,//ARRAY
-            "totalRev" to 0)
+            "totalRev" to totalRev)
 
 
         //GhostData Entry
@@ -700,6 +716,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.restingHrUsedForCalculation=RFMHR?:0
         ghostDataEntry.timestamp=currentTimestamp.toLong()
         ghostDataEntry.totalTime=totalTime.toInt()?:0
+        ghostDataEntry.totalRev=totalRev?:0.0
         ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
 
 
@@ -709,6 +726,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private fun RlSpeedSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
 
         val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
+        val totalRev=requireArguments().getDouble("totalRev")?:0.0
         val totalElevation=requireArguments().getDouble("totalElevation")?:0.0
         val totalSteps=requireArguments().getInt("totalSteps")?:0
         var distance=requireArguments().getDouble("distance")?:0.0
@@ -789,7 +807,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionDetails.timestamp=currentTimestamp.toInt()
         entryWorkoutSessionDetails.totalElevation=totalElevation
         entryWorkoutSessionDetails.totalPower=0
-        entryWorkoutSessionDetails.totalRev=0.0
+        entryWorkoutSessionDetails.totalRev=totalRev
         entryWorkoutSessionDetails.totalSteps=totalSteps
         entryWorkoutSessionDetails.totalTime= totalTime.toInt()?:0
         entryWorkoutSessionDetails.typeOfGoal=yourWayType
@@ -833,6 +851,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryWorkoutSessionSummary.totalSteps=totalSteps
         entryWorkoutSessionSummary.totalTime=totalTime.toInt()?:0
         entryWorkoutSessionSummary.typeOfGoal=yourWayType
+        entryWorkoutSessionSummary.totalRev=totalRev
         entryWorkoutSessionSummary.visibilityflagforthatsession=visibilityflagforthatsession
 
         //Zone 1 WorkoutSessionSummary Data Entery
@@ -863,7 +882,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             "elevationDic" to arrElevation,//ARRAY
             "locationDic" to arrLocationDetails,//ARRAY
             "speedDic" to arrSpeed,//ARRAY
-            "totalRev" to 0)
+            "totalRev" to totalRev)
 
         //GhostData Entry
         val ghostDataEntry= RLGhostDataModel()
@@ -879,6 +898,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.restingHrUsedForCalculation=RFMHR?:0
         ghostDataEntry.timestamp=currentTimestamp.toLong()
         ghostDataEntry.totalTime=totalTime.toInt()?:0
+        ghostDataEntry.totalRev=totalRev?:0.0
         ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
 
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
@@ -1350,64 +1370,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                 }
         }
     }
-
-    //FIREBASE USERDATA GET
-    private fun RLFirebaseToFatchUserData() {
-        //Firebase To Fetch UserData
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
-        currentUser=userId
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
-        databaseManager.RlreadData(path){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                wsWeight=userData.weightkg?:"60"
-                wsHeight=userData.height?:"167"
-                wsAge= RLTools.RLCalculateAge(userData.dob)
-                gender=userData.gender
-                RFMHR=userData.RFMHR
-                RestingHR=userData.restingHr
-                 displayImage =userData.displayImage
-                 displayName =userData.displayName
-            }
-        }
-    }
-
-    private fun zoneDiff(REVPer: Int) {
-       when {
-           REVPer <= 30 -> {
-               //Zone 1
-
-           }
-           REVPer <= 50 -> {
-               //Zone 2
-
-           }
-           REVPer <= 60 -> {
-               //Zone 3
-
-           }
-           REVPer <= 70 -> {
-               //Zone 4
-
-           }
-           REVPer <= 80 -> {
-               //Zone 5
-
-           }
-           REVPer <= 90 -> {
-               //Zone 6
-
-           }
-           REVPer <= 100 -> {
-               //Zone 7
-
-           }
-       }
-   }
 
     //revoolaUserSessionDetailData Model to Map
     fun RLNoSensorWorkoutSessionDetailsModel.toMap(): Map<String, Any?> {

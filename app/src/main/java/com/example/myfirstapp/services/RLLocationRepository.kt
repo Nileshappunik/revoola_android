@@ -49,8 +49,8 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
     private var initialStepCount: Int = -1
     private var startTime: Long = 0L
 
-    private val _caloriesBurnedData = MutableLiveData<Double>()
-    val caloriesBurnedData: LiveData<Double> = _caloriesBurnedData
+   // private val _caloriesBurnedData = MutableLiveData<Double>()
+ //   val caloriesBurnedData: LiveData<Double> = _caloriesBurnedData
 
     private var stepCount=0
     private val weightInKg = RLConstants.weightInKg//  //you can change it dynamically
@@ -114,10 +114,10 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                     }
 
                     // Call the calories calculation function
-                    val durationInMinutes = (currentTime - startTime) / 60000.0 // Convert ms to minutes
-                    val caloriesBurned = RlCalculateCalories(location.speed.toDouble(), weightInKg, durationInMinutes)
-                    totalCaloriesBurned = totalCaloriesBurned + caloriesBurned
-                    _caloriesBurnedData.postValue(totalCaloriesBurned.toDouble())
+                   // val durationInMinutes = (currentTime - startTime) / 60000.0 // Convert ms to minutes
+                   // val caloriesBurned = RlCalculateCalories(location.speed.toDouble(), weightInKg, durationInMinutes)
+                   // totalCaloriesBurned = totalCaloriesBurned + caloriesBurned
+                   // _caloriesBurnedData.postValue(totalCaloriesBurned.toDouble())
 
                 }
             }
