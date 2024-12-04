@@ -170,7 +170,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     //Ready Data To Firebase Entry
     private fun RlHeartRateDataEntryToFirebase(yourWayType: String, totalTime: String) {
-
+       val gpxString=requireArguments().getString("gpxStringBuilder")?:""
         val avgRevPercentage=requireArguments().getDouble("avgRevPercentage")?:0.0
         val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
         var distance=requireArguments().getDouble("distance")?:0.0
@@ -191,6 +191,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         val avgSpeedForOneKm=requireArguments().getDouble("avgSpeedForOneKm")?:0.0
         val avgSpeedForOneMile=requireArguments().getDouble("avgSpeedForOneMile")?:0.0
 
+        val retrievedConnectionArray = requireArguments().getBooleanArray("arrConnection")
+        val arrConnection: MutableList<Boolean> = retrievedConnectionArray?.toMutableList() ?: mutableListOf()
 
 
         val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
@@ -463,11 +465,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             distance=0.0
         }
 
-        //dataForTesting Entry
-        val deviceRecordedDataMap = hashMapOf(
-            "distance" to distance,
-            "elevation" to totalElevation)
 
+
+        //dataForTesting Entry
         var arrDataLocation1 =arrDataLocation
         var arrElevation1 =arrElevation?: mutableListOf(0)
         var arrLocationDetails1 =arrLocationDetails
@@ -481,9 +481,51 @@ class RLFragSessionComplete : RLBaseFragment(){
             val dataclass= RLLocationDetails(0.00,0.00,0.00,0.00,0.00,0.00)
             arrLocationDetails1?.add(dataclass)
         }
+
+        /*val connectivityDataMap = hashMapOf(
+            "cadence" to arrCadence,
+            "connection" to arrConnection,
+            "HR" to arrHr,
+            "Power" to emptyList<Int>(),
+            "Remark" to "android",
+            "Speed" to arrSpeed)*/
+
+        val deviceRecordedDataMap = hashMapOf(
+            "distance" to distance,
+            "elevation" to totalElevation)
+
+
         val elevationDataMap = hashMapOf(
             "data" to arrDataLocation1,//ARRAY
             "status" to true)
+
+        val gpxDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_TDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "elevation" to totalElevation,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_T_ServerDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace" to distance,
+            "generatedDisntace_T" to 0,
+            "generatedElevation" to -1,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android",
+            "statusForElevationUpdate" to true)
+
+        val gpx_T_Server_NDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace_T" to 0,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android")
 
         val locationDataMap = hashMapOf(
             "className" to fragBinding.edtSessionName.text.toString(),
@@ -533,11 +575,11 @@ class RLFragSessionComplete : RLBaseFragment(){
 
 
         RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,gpx_T_Server_NDataMap)
 
     }
     private fun RlNoSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
-
+        val gpxString=requireArguments().getString("gpxStringBuilder")?:""
         val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
         val totalRev=requireArguments().getDouble("totalRev")?:0.0
         val totalElevation=requireArguments().getDouble("totalElevation")?:0.0
@@ -551,6 +593,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         val maxSpeedForOneMile=requireArguments().getDouble("maxSpeedForOneMile")?:0.0
         val avgSpeedForOneKm=requireArguments().getDouble("avgSpeedForOneKm")?:0.0
         val avgSpeedForOneMile=requireArguments().getDouble("avgSpeedForOneMile")?:0.0
+
+        val retrievedConnectionArray = requireArguments().getBooleanArray("arrConnection")
+        val arrConnection: MutableList<Boolean> = retrievedConnectionArray?.toMutableList() ?: mutableListOf()
 
         val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
         val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
@@ -691,6 +736,33 @@ class RLFragSessionComplete : RLBaseFragment(){
         val elevationDataMap = hashMapOf(
             "data" to arrDataLocation,//ARRAY
             "status" to true)
+        val gpxDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_TDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "elevation" to totalElevation,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_T_ServerDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace" to distance,
+            "generatedDisntace_T" to 0,
+            "generatedElevation" to -1,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android",
+            "statusForElevationUpdate" to true)
+
+        val gpx_T_Server_NDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace_T" to 0,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android")
 
         val locationDataMap = hashMapOf(
             "className" to fragBinding.edtSessionName.text.toString(),
@@ -721,10 +793,10 @@ class RLFragSessionComplete : RLBaseFragment(){
 
 
         RLNoSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,gpx_T_Server_NDataMap)
     }
     private fun RlSpeedSensorDataEntryToFirebase(yourWayType: String, totalTime: String) {
-
+        val gpxString=requireArguments().getString("gpxStringBuilder")?:""
         val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
         val totalRev=requireArguments().getDouble("totalRev")?:0.0
         val totalElevation=requireArguments().getDouble("totalElevation")?:0.0
@@ -738,6 +810,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         val maxSpeedForOneMile=requireArguments().getDouble("maxSpeedForOneMile")?:0.0
         val avgSpeedForOneKm=requireArguments().getDouble("avgSpeedForOneKm")?:0.0
         val avgSpeedForOneMile=requireArguments().getDouble("avgSpeedForOneMile")?:0.0
+
+        val retrievedConnectionArray = requireArguments().getBooleanArray("arrConnection")
+        val arrConnection: MutableList<Boolean> = retrievedConnectionArray?.toMutableList() ?: mutableListOf()
 
         val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
         val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
@@ -874,6 +949,33 @@ class RLFragSessionComplete : RLBaseFragment(){
         val elevationDataMap = hashMapOf(
             "data" to arrDataLocation,//ARRAY
             "status" to true)
+        val gpxDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_TDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "elevation" to totalElevation,
+            "gpxString" to gpxString,
+            "remark" to "android")
+
+        val gpx_T_ServerDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace" to distance,
+            "generatedDisntace_T" to 0,
+            "generatedElevation" to -1,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android",
+            "statusForElevationUpdate" to true)
+
+        val gpx_T_Server_NDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "generatedDisntace_T" to 0,
+            "generatedElevation_T" to 0,
+            "gpxString" to gpxString,
+            "remark" to "android")
 
         val locationDataMap = hashMapOf(
             "className" to fragBinding.edtSessionName.text.toString(),
@@ -902,7 +1004,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         ghostDataEntry.visibilityflagforthatsession=visibilityflagforthatsession
 
         RLSpeedSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
-            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry)
+            deviceRecordedDataMap,elevationDataMap,locationDataMap,ghostDataEntry,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,gpx_T_Server_NDataMap)
 
     }
 
@@ -917,27 +1019,33 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     //Entry to Firebase
     private fun RLNoSensorUserSessionDetailData(entry: RLNoSensorWorkoutSessionDetailsModel,entryGraph:RLAllWaySessionSummaryGraphDataModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                deviceRecordedData: Any,elevationData: Any,locationData:Any,entryGhost:RLGhostDataModel) {
-
-       Log.e(TAG,"revoolaUserSessionDetailData entry:- ${Gson().toJson(entry)}")
-       Log.e(TAG,"revoolaUserSessionSummaryGraphData entryGraph:- $entryGraph")
-       Log.e(TAG,"revoolaUserSessionSummaryData entrysummery:- ${Gson().toJson(entrysummery)}")
-       Log.e(TAG,"dataForTesting deviceRecordedData:- $deviceRecordedData")
-       Log.e(TAG,"dataForTesting elevationData:- $elevationData")
-       Log.e(TAG,"dataForTesting locationData:- $locationData")
-       Log.e(TAG,"GhostData entryGhost:- $entryGhost")
-
+                                                deviceRecordedData: Any,elevationData: Any,locationData:Any,entryGhost:RLGhostDataModel,
+                                                gpxDataMap:Any,gpx_TDataMap:Any,gpx_T_ServerDataMap:Any,gpx_T_Server_NDataMap:Any) {
 
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
         val deviceRecordedDataPath="/proposedstructure/dataForTesting/$currentUser/deviceRecordedData"
         val elevationDataPath="/proposedstructure/dataForTesting/$currentUser/elevation"
         val locationDataPath="/proposedstructure/dataForTesting/$currentUser/location"
+        val gpxDataPath="/proposedstructure/dataForTesting/$currentUser/gpx"
+        val gpx_TDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T"
+        val gpx_T_ServerDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server"
+        val gpx_T_Server_NDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server_N"
+        val connectivityDataPath="/proposedstructure/dataForTesting/$currentUser/connectivity"
+
+        /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+            }
+        }*/
+
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful connectivity Entry")
+                Log.d(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error connectivity Entry:- $error")
+                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
@@ -945,6 +1053,37 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.d(TAG,"Successful elevation Entry")
             }else {
                 Log.e(TAG,"Error elevation Entry:- $error")
+            }
+        }
+        databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->
@@ -1031,18 +1170,33 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
     private fun RLHeartRateSensorUserSessionDetailData(entry: RLHeartRateSensorWorkoutSessionDetailsModel,entryGraph: RLAllWaySessionSummaryGraphDataHRModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                       deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel) {
+                                                       deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel,
+                                                       gpxDataMap:Any,gpx_TDataMap:Any,gpx_T_ServerDataMap:Any,gpx_T_Server_NDataMap:Any) {
 
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
         val deviceRecordedDataPath="/proposedstructure/dataForTesting/$currentUser/deviceRecordedData"
         val elevationDataPath="/proposedstructure/dataForTesting/$currentUser/elevation"
         val locationDataPath="/proposedstructure/dataForTesting/$currentUser/location"
+        val gpxDataPath="/proposedstructure/dataForTesting/$currentUser/gpx"
+        val gpx_TDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T"
+        val gpx_T_ServerDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server"
+        val gpx_T_Server_NDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server_N"
+        val connectivityDataPath="/proposedstructure/dataForTesting/$currentUser/connectivity"
+
+        /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+            }
+        }*/
+
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful connectivity Entry")
+                Log.d(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error connectivity Entry:- $error")
+                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
@@ -1050,6 +1204,37 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.d(TAG,"Successful elevation Entry")
             }else {
                 Log.e(TAG,"Error elevation Entry:- $error")
+            }
+        }
+        databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->
@@ -1135,18 +1320,33 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     }
     private fun RLSpeedSensorUserSessionDetailData(entry: RLSpeedSensorWorkoutSessionDetailsModel,entryGraph:RLAllWaySessionSummaryGraphDataModel,entrysummery:RLWorkoutSessionSummaryModel,
-                                                   deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel) {
+                                                   deviceRecordedData:Any,elevationData:Any,locationData:Any,entryGhost:RLGhostDataModel,
+                                                   gpxDataMap:Any,gpx_TDataMap:Any,gpx_T_ServerDataMap:Any,gpx_T_Server_NDataMap:Any) {
 
         //dataForTesting Entry
         val databaseManager = RLDatabaseManagerWrite()
         val deviceRecordedDataPath="/proposedstructure/dataForTesting/$currentUser/deviceRecordedData"
         val elevationDataPath="/proposedstructure/dataForTesting/$currentUser/elevation"
         val locationDataPath="/proposedstructure/dataForTesting/$currentUser/location"
+        val gpxDataPath="/proposedstructure/dataForTesting/$currentUser/gpx"
+        val gpx_TDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T"
+        val gpx_T_ServerDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server"
+        val gpx_T_Server_NDataPath="/proposedstructure/dataForTesting/$currentUser/gpx_T_Server_N"
+        val connectivityDataPath="/proposedstructure/dataForTesting/$currentUser/connectivity"
+
+        /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+            }
+        }*/
+
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful connectivity Entry")
+                Log.d(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error connectivity Entry:- $error")
+                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
@@ -1154,6 +1354,37 @@ class RLFragSessionComplete : RLBaseFragment(){
                 Log.d(TAG,"Successful elevation Entry")
             }else {
                 Log.e(TAG,"Error elevation Entry:- $error")
+            }
+        }
+        databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+            }
+        }
+
+        databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
+            if (success) {
+                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+            }else {
+                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->

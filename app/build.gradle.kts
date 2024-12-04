@@ -20,6 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0-${System.getenv("VERSION_SHA")}"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -124,6 +125,9 @@ dependencies {
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
+
+    //Branch.io Use for Share
+    implementation("io.branch.sdk.android:library:5.+")
 
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")

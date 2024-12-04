@@ -75,6 +75,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var arrCumDistance:MutableList<Double> = mutableListOf()
     private var arrCumSpeed:MutableList<Double> = mutableListOf()
     private var arrCumElevation:MutableList<Double> = mutableListOf()
+    private var arrConnection:MutableList<Boolean> = mutableListOf()
 
     private var arrAvgCadence:MutableList<Double> = mutableListOf()
     private var arrMaxCadence:MutableList<Int> = mutableListOf()
@@ -134,6 +135,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     var assumedCalories= RLAssumedCalories()
     var assumedRev= RLAssumedRev()
 
+    val gpxStringBuilder = StringBuilder()
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -243,7 +245,7 @@ class RLFragSensorProgress : RLBaseFragment(){
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             bundle.putString("totalTime",totalTime)
-
+            bundle.putString("gpxStringBuilder",gpxStringBuilder.toString()?:"")
             if (yourWayType.equals("Ride") && isSpeedSensorConnect){
                 bundle.putString("SENSOR", RLConstants.SPEEDSENSOR)
             }else{
@@ -257,6 +259,8 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putDouble("maxSpeedForOneMile",noNanValueDouble(maxSpeedForOneMile?:0.00))
             bundle.putDouble("avgSpeedForOneKm",noNanValueDouble(avgSpeedForOneKm?:0.00))
             bundle.putDouble("avgSpeedForOneMile",noNanValueDouble(avgSpeedForOneMile?:0.00))
+
+            bundle.putBooleanArray("arrConnection",arrConnection.toBooleanArray())
 
             bundle.putInt("totalSteps",stepsNumber?:0)
             bundle.putDouble("distance",noNanValueDouble(distance?:0.00))
@@ -697,6 +701,17 @@ class RLFragSensorProgress : RLBaseFragment(){
         maxBurntCalories=RLmax(maxBurntCalories,burntCalories.roundToInt())
         arrBurntCalories.add(noNanValueDouble(assumedCalories?:0.00))
 
+        val isodate=RLgetCurrentDateTimeIsoFormatted()
+        gpxStringBuilder.append(
+            """
+                <trkpt lat="$latitude" lon="$longitude">
+                    <ele>$totalElevation</ele>
+                    <time>$isodate}</time>
+                </trkpt>
+                
+                """.trimIndent())
+
+        arrConnection.add(true)
     }
 
     private fun noNanValueDouble(value:Double):Double{

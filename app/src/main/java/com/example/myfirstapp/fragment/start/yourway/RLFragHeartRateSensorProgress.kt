@@ -71,6 +71,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var arrCumDistance:MutableList<Double> = mutableListOf()
     private var arrCumElevation:MutableList<Double> = mutableListOf()
     private var arrCumSpeed:MutableList<Double> = mutableListOf()
+    private var arrConnection:MutableList<Boolean> = mutableListOf()
 
     private var arrAvgCadence:MutableList<Double> = mutableListOf()
     private var arrAvgHr:MutableList<Int> = mutableListOf()
@@ -137,6 +138,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var startTimeMile: Long = 0
     private var lastLocation: Location? = null
     private var totalDistance = 0.0
+
+    val gpxStringBuilder = StringBuilder()
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -259,6 +262,9 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             val bundle: Bundle = Bundle()
             bundle.putString("YourWayType",yourWayType)
             bundle.putString("totalTime",(totalTime?:"0"))
+            bundle.putString("gpxStringBuilder",gpxStringBuilder.toString()?:"")
+
+
             bundle.putString("SENSOR",RLConstants.HEARTSENSOR)
             bundle.putDouble("avgRevPercentage",noNanValueDouble(avgRevPercentage?:0.00))
             bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
@@ -280,6 +286,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putDouble("avgSpeedForOneKm",noNanValueDouble(avgSpeedForOneKm?:0.00))
             bundle.putDouble("avgSpeedForOneMile",noNanValueDouble(avgSpeedForOneMile?:0.00))
 
+            bundle.putBooleanArray("arrConnection",arrConnection.toBooleanArray())
 
             bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
             bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
@@ -605,6 +612,18 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         if (!arrSpeedForOneMile.isNullOrEmpty()){
 
         }
+
+        val isodate=RLgetCurrentDateTimeIsoFormatted()
+        gpxStringBuilder.append(
+            """
+                <trkpt lat="$latitude" lon="$longitude">
+                    <ele>$totalElevation</ele>
+                    <time>$isodate}</time>
+                </trkpt>
+                
+                """.trimIndent())
+
+        arrConnection.add(true)
     }
 
     private fun noNanValueDouble(value:Double):Double{

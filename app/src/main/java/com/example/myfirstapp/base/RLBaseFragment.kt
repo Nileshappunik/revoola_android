@@ -31,6 +31,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 open class RLBaseFragment : Fragment() {
@@ -73,7 +75,16 @@ open class RLBaseFragment : Fragment() {
             window.statusBarColor = requireActivity()!!.resources.getColor(color)
         }
     }
+    fun RLgetCurrentDateTimeIsoFormatted(): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val currentDateTime = ZonedDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
+            return currentDateTime.format(formatter)
+        }else{
+            return "0000-00-00'T'00:00:00"
+        }
 
+    }
 
     open fun RLnextActivity(cls: Class<*>?) {
         val intent = Intent(activity, cls)

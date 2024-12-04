@@ -14,6 +14,7 @@ import android.view.Window
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myfirstapp.RLBaseFragment
 import com.example.myfirstapp.R
+import com.example.myfirstapp.branchManagerIo.RLBranchManager
 import com.example.myfirstapp.databasefirebase.RLDatabaseManagerRead
 import com.example.myfirstapp.databinding.RlDialogHelpStartBinding
 import com.example.myfirstapp.databinding.RlFragStartBinding
@@ -30,6 +31,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Branch
+import io.branch.referral.util.LinkProperties
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -48,6 +52,7 @@ class RLFragStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
+
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
@@ -140,5 +145,7 @@ class RLFragStart : RLBaseFragment() {
 
         dialog.show()
     }
+
+
 
 }

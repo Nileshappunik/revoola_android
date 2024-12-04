@@ -2,6 +2,7 @@ package com.example.myfirstapp.activity
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,6 +29,9 @@ import com.example.myfirstapp.fragment.more.RLFragMore
 import com.example.myfirstapp.fragment.overview.RLFragOverviewSession
 import com.example.myfirstapp.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import io.branch.referral.Branch
+import io.branch.referral.BranchError
+import org.json.JSONObject
 
 class RLMainActivityRL  : RLBaseActivity() {
     val TAG: String = RLMainActivityRL::class.java.simpleName
@@ -203,6 +208,24 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onDestroy()
       //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
     }
+
+    override fun onStart() {
+        super.onStart()
+        // Branch init
+        Branch.sessionBuilder(this).withCallback { referringParams: JSONObject?, error: BranchError? ->
+            if (error == null) {
+                // Process the deep link data (if available)
+                referringParams?.let {
+                    val value = it.optString("key")
+                    // Handle the data (e.g., navigate to a specific screen)
+                    Log.e(TAG,"Branch params: $it")
+                }
+            } else {
+                Log.e(TAG,"Branch Error: ${error.message}")
+            }
+        }.withData(this.intent.data).init()
+    }
+
 
 /*
     override fun onBackPressed() {
