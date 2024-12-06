@@ -146,6 +146,4 @@ class RLFragStart : RLBaseFragment() {
         dialog.show()
     }
 
-
-
 }

@@ -95,7 +95,26 @@ class RLMainActivityRL  : RLBaseActivity() {
         networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
+
+
+        // Initialize Branch session
+        Branch.sessionBuilder(this)
+            .withCallback { referringParams: JSONObject?, error: BranchError? ->
+                if (error == null) {
+                    // Handle the deep link data
+                    referringParams?.let {
+                        val deeplinkPath = it.optString("\$deeplink_path")
+                        Log.e(TAG, "Deep link path: $deeplinkPath")
+                    }
+                } else {
+                    Log.e(TAG, "Branch Error: ${error.message}")
+                }
+            }
+            .withData(intent?.data) // Handle the deep link data
+            .init()
+
     }
+
 
     private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
         // Iterate over the BottomNavigationView items

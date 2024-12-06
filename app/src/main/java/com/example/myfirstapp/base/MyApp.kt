@@ -25,6 +25,8 @@ class MyApp : Application() {
 
         // Initialize Branch SDK
         Branch.getAutoInstance(this)
+
+
     }
 }
 

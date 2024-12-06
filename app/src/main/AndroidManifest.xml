@@ -2,13 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myfirstapp">
+   <!-- package="com.revoola"> change this package name on Monday-->
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA"
+        tools:ignore="PermissionImpliesUnsupportedChromeOsHardware" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -63,15 +65,22 @@
         <activity
             android:name=".activity.RLMainActivityRL"
             android:configChanges="orientation|screenSize"
-            android:exported="true" />
+            android:launchMode="singleTask"
+            android:exported="true" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="www.revoola.com" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".activity.RLForgotPasswordActivityRL"
             android:exported="false" />
         <activity
             android:name=".activity.RLLoginEmailActivityRL"
-            android:exported="false" />
-        <activity
-            android:name=".activity.RLSignUpActivityRL"
             android:exported="false" />
         <activity
             android:name=".activity.RLLoginActivityRL"

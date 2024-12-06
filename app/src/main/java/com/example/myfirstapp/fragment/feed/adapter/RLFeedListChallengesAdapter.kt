@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.branchManagerIo.RLBranchManager
 import com.example.myfirstapp.databinding.RlLayoutChallengesListBinding
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
 import com.example.myfirstapp.fragment.feed.RLFragChallengeSummary
@@ -162,6 +163,12 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.webViewClient = WebViewClient()
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
                     RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+
+                layoutBinding.imgShare.setOnClickListener {
+                 // RLBranchManager(context!!).RLGenerateBranchLink(cardData.challenge_name, cardData.adminfullname,cardData.avatar)
+                  //RLBranchManager(context!!).generateBranchLink()
+
+                }
             } catch (e: Exception) {
                 Log.d(TAG, "exceptionAdaptermsg= " + e.message)
             }

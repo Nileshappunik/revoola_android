@@ -2,6 +2,8 @@ package com.example.myfirstapp.fragment.feed.adapter
 
 import android.app.Dialog
 import android.graphics.Color
+import android.net.Uri
+import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +24,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.myfirstapp.R
 import com.example.myfirstapp.activity.RLMainActivityRL
+import com.example.myfirstapp.branchManagerIo.RLBranchManager
 import com.example.myfirstapp.databinding.RlLayoutFeedListBinding
 import com.example.myfirstapp.enumclass.RLYourWayName
 import com.example.myfirstapp.fragment.feed.RLFragBodySessionSummary
@@ -119,6 +122,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                     }
                 }
 
+
+
             } catch (e: Exception) {
             Log.d(TAG, "exception= " + e.message)
                 val temptext="pos:- ${position.toString()} , ctype:- $classType , third:- ${dataList[position].from_third_party_source.toString()} , bmo:- ${dataList[position].bmo.toString()}, HR:- ${dataList[position].hrm.toString()}"
@@ -199,14 +204,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(layoutBinding.imgUser)
 
-
         Glide.with(context)
             .load(RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
             .into(layoutBinding.imgMain)
 
         layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}, HR:- ${cardData.hrm.toString()}")
-        layoutBinding.cardChalengis.setOnClickListener {
-
+        layoutBinding.cardChalengis.setOnClickListener{
             if (cardData.from_third_party_source == 0){
                 when (cardData.bmo){
                     0->{
@@ -232,12 +235,14 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                     }
 
                 }
-            }else if(cardData.from_third_party_source > 10){
+            }
+            else if(cardData.from_third_party_source > 10){
                 //Challenge design
                 val bundle = Bundle()
                 bundle.putSerializable(RLConstants.CardData, cardData)
                 (context as RLMainActivityRL).RLloadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, true)
-            }else{
+            }
+            else{
                 RLshowAlertDialog()
             }
 
@@ -245,6 +250,21 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
         layoutBinding.imgThreedot.setOnClickListener {
             RLshowEditDeleteDialog(cardData)
+        }
+
+        layoutBinding.imgShare.setOnClickListener {
+           // val bitmap = RLBranchManager(context!!).RLCaptureScreen(context!!)
+            val bitmap = RLBranchManager(context!!).RLCaptureSpecificView(layoutBinding.cardChalengis)
+           // val pathUri =RLBranchManager(context!!).RLSaveBitmapToInternalStorage(bitmap,"Capture")
+            val imgUri = RLBranchManager(context!!).RLBitmapToUri(bitmap)
+
+            Log.e(TAG,"catch image  Uri:- $imgUri")
+            if (imgUri != null) {
+                RLBranchManager(context!!).RLShareImage(imgUri)
+            }else{
+                Log.e(TAG,"Test Uri:- $imgUri")
+            }
+
         }
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview,layoutBinding: RlLayoutFeedListBinding,pos:Int){
