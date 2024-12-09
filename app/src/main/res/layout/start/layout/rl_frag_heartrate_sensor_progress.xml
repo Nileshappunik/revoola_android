@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1">
-                    <com.example.myfirstapp.ui.RLCircularProgressBar
+                    <com.revoola.ui.RLCircularProgressBar
                         android:id="@+id/circularProgressBar"
                         android:layout_width="100dp"
                         android:layout_height="100dp"

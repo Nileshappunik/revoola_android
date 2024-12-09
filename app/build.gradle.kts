@@ -11,10 +11,10 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myfirstapp"
+    namespace = "com.revoola"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.example.myfirstapp"
+        applicationId = "com.revoola"
         minSdk = 23
         targetSdk = 33
         versionCode = 1
@@ -128,6 +128,11 @@ dependencies {
 
     //Branch.io Use for Share
     implementation("io.branch.sdk.android:library:5.+")
+
+    //moengage SDK for use inapp purchase  ,revenue and pushnotification
+    //implementation ("com.moengage.core:moe-core:10.1.0")
+    //implementation ("com.moengage:push-notification:9.4.3")
+
 
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")

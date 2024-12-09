@@ -1,0 +1,425 @@
+package com.revoola.fragment.feed
+
+import android.app.Dialog
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.revoola.RLBaseFragment
+import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
+import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
+import com.revoola.fragment.feed.adapter.RLFeedListAdapter
+import com.revoola.fragment.feed.adapter.RLFeedListChallengesAdapter
+import com.revoola.api.RLApiClientRet
+import com.revoola.databinding.RlFragFeedBinding
+import com.revoola.fragment.feed.adapter.RLFeedGroupNameAdapter
+import com.revoola.fragment.friends.RLFragFindOnRevoola
+import com.revoola.fragment.friends.RLFragYourGroup
+import com.revoola.fragment.start.challenges.RLFragChalengesType
+import com.revoola.interfaceall.RLItemClickListener
+import com.revoola.model.RLGroupCardModel
+import com.revoola.model.RLSetGroupData
+import com.revoola.model.RLSetGroupRequest
+import com.revoola.model.RLSetgoaled_challenges
+import com.revoola.model.RLSetgoaled_challenges_request
+import com.revoola.model.RLSetoverview_thumb
+import com.revoola.model.RLSetoverview_thumbRequest
+import com.revoola.model.RLSetoverview_thumbRequest_you
+import com.revoola.model.RLSetoverview_thumb_you
+import com.revoola.utils.RLConstants
+import com.revoola.utils.loadSvg
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
+
+class RLFragFeed : RLBaseFragment() , RLItemClickListener {
+    val TAG: String = RLFragFeed::class.java.simpleName
+    lateinit var fragBinding: RlFragFeedBinding
+    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
+    private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
+    //val valuesList = arrayOf("Friends", "Groups","You","Challenges")
+    private val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
+    private var adapter : RLFeedListAdapter?=null
+    private var clickyou:Boolean=false
+    private var currentState:String="FRIENDS"
+
+    private var isLoading = false
+    private var  limit = 100
+    private var index=0
+    private var currentUser:String=""
+    private var GroupId:String="w2p8SQCvE3emjEEDo66f02eF6fG2_friends"
+    private var lastfragmentopen=""
+
+    private val binding by lazy {
+        RlFragFeedBinding.inflate(layoutInflater)
+    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+         RLScreenSet(false)
+        RLBottomHideShowSet(true)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
+         lastfragmentopen= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"" )
+        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragFeed" )
+         currentUser=  com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        // Api call
+        RLApiClientRetrofit = RLApiClientRet(activity)
+        val apiService = RLApiClientRetrofit.RLNetworkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(requireActivity(),
+            RLMainViewModelFactory(
+                userRepository
+            )
+        ).get(RLMainViewModel::class.java)
+
+        RLuisetup()
+        return fragBinding.root
+    }
+    private fun RLuisetup() {
+        fragBinding.inlayTop.ivBack.visibility=View.GONE
+        fragBinding.inlayTop.ivhelp.visibility=View.GONE
+        fragBinding.inlayTop.ivTitle.setText(getString(R.string.feedsmall))
+        fragBinding.inlayTop.ivDescription.setText("")
+
+        if (lastfragmentopen.equals("RLFragChallengeSummary")){
+            //CHALLENGES view back event get
+            val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
+             adaptertitle = RLOverviewSessionTitleListAdapter("CHALLENGES",this,valueslist,activity)
+            fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
+            RLChallengesUISet()
+        }
+        else{
+            RLfirsttimeApiCall(GroupId)
+            //do title
+            val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
+            adaptertitle = RLOverviewSessionTitleListAdapter("FRIENDS",this,valueslist,activity)
+            fragBinding.inlayTop.recyclerTitle.adapter = adaptertitle
+        }
+        // Add scroll listener for pagination
+        fragBinding.rvItemFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                try {
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    if (!isLoading && layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.itemCount - 1) {
+                        if (clickyou){
+                            RLapicallYou()
+                        }else{
+                            RLapicall(GroupId)
+                        }
+                    }
+                }catch (e:Exception){
+                    Log.d(TAG,"Catch="+e.message)
+                }
+            }
+        })
+
+        /*  fragBinding.imgPlus.setOnClickListener{
+            (context as RLMainActivityRL.RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
+        }*/
+        fragBinding.inlayFilter.loadSvg(RLConstants.friendsFab)
+        fragBinding.inlayFilter.setOnClickListener {
+           when(currentState){
+               "CHALLENGES"->{(context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)}
+               "FRIENDS"->{(context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, true)}
+               "GROUPS"->{(context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, true)}
+           }
+        }
+    }
+    private fun RLapicall(groupId:String) {
+        isLoading = true
+      adapter!!.RLaddLoadingFooter()
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
+        val request = listOf(
+            RLSetoverview_thumbRequest(
+                overview_thumb = RLSetoverview_thumb(
+                    timestampfrom = 0,
+                    timestampto = currentTimestamp,
+                    groupid = groupId,
+                    limit = limit,
+                    index=index,
+                    goal="all",
+                    current_user = currentUser,
+                    isall = 0,
+                    d = "mindAndBody")
+            )
+        )
+
+        Log.e(TAG,"setdata= "+request)
+
+        viewModel.RLgetUserFeedCardData(request) { result ->
+            result.onSuccess { response ->
+                 adapter!!.RLremoveLoadingFooter()
+                try {
+                    if (response.type.equals("success")){
+                        Log.d(TAG,"Success= "+response.type)
+                       /* val gson = Gson()
+                        val jsonArray = gson.toJson(response.text)
+                        Log.e(TAG,"Feed_jsonDate:-  $jsonArray")*/
+                        adapter!!.RLaddData(response.text)
+                        isLoading = false
+                        index=index+100
+                        limit=limit+100
+                    }else {
+                        Log.d(TAG,"Fail= "+response.type)
+                        //commonToast(response.type)
+                        isLoading = true
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    Log.d(TAG,"Catch= "+e.message)
+                    isLoading = true
+                }
+            }.onFailure { error ->
+                adapter!!.RLremoveLoadingFooter()
+                isLoading = true
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                Log.d(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    private fun RLapicallYou() {
+        isLoading = true
+        adapter!!.RLaddLoadingFooter()
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
+        val user= listOf<String>(currentUser)
+
+        val request = listOf(
+            RLSetoverview_thumbRequest_you(
+                overview_thumb = RLSetoverview_thumb_you(
+                    timestampfrom = 0,
+                    timestampto = currentTimestamp,
+                    users = user,
+                    limit = limit,
+                    index=index,
+                    goal="all",
+                    current_user = currentUser,
+                    isall = 0,
+                    d = "mindAndBody")
+            )
+        )
+
+        Log.d(TAG,"setdatayou= "+request)
+
+        viewModel.RLgetUserFeedCardDatayou(request) { result ->
+            result.onSuccess { response ->
+                adapter!!.RLremoveLoadingFooter()
+                try {
+                    if (response.type.equals("success")){
+                        Log.d(TAG,"Success= "+response.type)
+                        //main list
+                        adapter!!.RLaddData(response.text)
+                        isLoading = false
+                        index=index+100
+                        limit=limit+100
+                    }else {
+                        Log.d(TAG,"Fail= "+response.type)
+                        isLoading = true
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    Log.d(TAG,"Catch= "+e.message)
+                    isLoading = true
+                }
+            }.onFailure { error ->
+                adapter!!.RLremoveLoadingFooter()
+                isLoading = true
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                Log.d(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    private fun RLgroupAPiCall() {
+        val request = listOf(
+            RLSetGroupRequest(
+                group_data = RLSetGroupData(userid = currentUser, limit = 100, index=0)
+            )
+        )
+        Log.d(TAG,"setGroupdata= "+request)
+
+        viewModel.RLgetGroupData(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        Log.d(TAG,"Success= "+response.type)
+                        RLgroupnamelistdialogopen(response.text)
+                    }else {
+                        Log.d(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){ e.printStackTrace()
+                    Log.d(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                Log.d(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    fun RLgroupnamelistdialogopen(newData: List<RLGroupCardModel>) {
+        val dialog: Dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.rl_dailog_group_name)
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+
+        val recyclerSelectAssign = dialog.findViewById(R.id.listItems) as RecyclerView
+        val btClear: TextView = dialog.findViewById(R.id.txtx_cancle)
+        val linearLayoutManager = LinearLayoutManager(context)
+        recyclerSelectAssign.layoutManager = linearLayoutManager
+        val dialogAdapter = RLFeedGroupNameAdapter(requireActivity(), false)
+        recyclerSelectAssign.adapter = dialogAdapter
+        dialogAdapter.RLaddData(newData)
+        dialogAdapter.seOnClickListners(object : RLFeedGroupNameAdapter.ClickListner {
+            override fun onSelectClick(selectioncName: String, selectionID: String) {
+                fragBinding.txtUsername.setText(selectioncName)
+                dialog.dismiss()
+                if (RLApiClientRetrofit.RLisConnected()) {
+                    //Detail Api
+                    GroupId = selectionID
+                    RLfirsttimeApiCall(selectionID)
+                    RlGroupNameSetTitle(selectioncName, true)
+                }
+            }
+        })
+        btClear.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+    private fun RlGroupNameSetTitle(selectioncName: String, b: Boolean) {
+        if (b){
+            adaptertitle.texttypeset=selectioncName
+        }
+        valueslist.set(1,selectioncName)
+        adaptertitle.notifyItemChanged(1,valueslist)
+    }
+    fun RLfirsttimeApiCall(groupid:String){
+          limit = 100
+         index=0
+        isLoading = false
+        //main list
+        val linearLayoutManager = LinearLayoutManager(activity)
+        fragBinding.rvItemFeed.layoutManager = linearLayoutManager
+        adapter = RLFeedListAdapter(activity,currentUser,currentState)
+        fragBinding.rvItemFeed.adapter = adapter
+        if (RLApiClientRetrofit.RLisConnected()) {
+            //Detail Api
+            RLapicall(groupid)
+        } else {
+            RLshowDialogFullscreen()
+        }
+    }
+    private fun RLapicallChallenges(adapterch: RLFeedListChallengesAdapter) {
+        isLoading=true
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
+        val request = listOf(
+            RLSetgoaled_challenges_request(
+                goaled_challenges = RLSetgoaled_challenges(
+                    id = currentUser,
+                    type = "challenges_feed_thumbs",
+                    today = currentTimestamp)
+            )
+        )
+        Log.d(TAG,"setdataChallenges= "+request)
+        viewModel.RLgoaled_challenges(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        Log.d(TAG,"Success= "+response.type)
+                        /*val gson = Gson()
+                        val jsonArray = gson.toJson(response.text)
+                        Log.e(TAG,"Success= $jsonArray")*/
+                        adapterch.RLaddData(response.text.data)
+                    }else {
+                        Log.d(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    Log.d(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                Log.d(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    override fun onItemClick(position: Int) {
+        when(valueslist[position]){
+            "FRIENDS"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
+                currentState="FRIENDS"
+                fragBinding.relayGroupname.visibility=View.GONE
+                fragBinding.relayListview.visibility=View.VISIBLE
+                clickyou=false
+                RlGroupNameSetTitle("GROUPS",false)
+                RLfirsttimeApiCall(GroupId)
+            }
+            "GROUPS"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
+                currentState="GROUPS"
+                fragBinding.relayGroupname.visibility=View.VISIBLE
+                fragBinding.relayListview.visibility=View.VISIBLE
+                clickyou=false
+                RlGroupNameSetTitle("123",true)
+                fragBinding.relayGroupname.setOnClickListener {
+                    RLgroupAPiCall()
+                }
+                RLgroupAPiCall()
+            }
+            "YOU"-> {
+                fragBinding.inlayFilter.visibility=View.GONE
+                currentState="YOU"
+                fragBinding.relayGroupname.visibility=View.GONE
+                fragBinding.relayListview.visibility=View.VISIBLE
+                clickyou=true
+                RlGroupNameSetTitle("GROUPS",false)
+                if (RLApiClientRetrofit.RLisConnected()) {
+                    //Detail Api
+                    limit = 100
+                    index=0
+                    isLoading = false
+                    val linearLayoutManager = LinearLayoutManager(activity)
+                    fragBinding.rvItemFeed.layoutManager = linearLayoutManager
+                    adapter = RLFeedListAdapter(activity,currentUser,currentState)
+                    fragBinding.rvItemFeed.adapter = adapter
+                    RLapicallYou()
+                } else {
+                    RLshowDialogFullscreen()
+                }
+            }
+            "CHALLENGES"-> {
+                fragBinding.inlayFilter.visibility=View.VISIBLE
+                currentState="CHALLENGES"
+                RlGroupNameSetTitle("GROUPS",false)
+                RLChallengesUISet()
+            }
+        }
+    }
+    private fun RLChallengesUISet(){
+        fragBinding.relayGroupname.visibility=View.GONE
+        fragBinding.relayListview.visibility=View.VISIBLE
+        clickyou=false
+        val linearLayoutManager = LinearLayoutManager(activity)
+        fragBinding.rvItemFeed.layoutManager = linearLayoutManager
+        val adapterch = RLFeedListChallengesAdapter(activity)
+        fragBinding.rvItemFeed.adapter = adapterch
+        RLapicallChallenges(adapterch)
+    }
+    override fun onResume() {
+        super.onResume()
+        RLBottomHideShowSet(true)
+    }
+
+}

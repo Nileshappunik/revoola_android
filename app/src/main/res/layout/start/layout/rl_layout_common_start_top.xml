@@ -83,7 +83,7 @@
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_revoola_logo"/>
 
-            <com.example.myfirstapp.ui.RLNonScrollableRecyclerView
+            <com.revoola.ui.RLNonScrollableRecyclerView
                 android:id="@+id/recyclerTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"

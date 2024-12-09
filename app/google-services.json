@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:657860663217:android:5b46247420e93c63154f90",
         "android_client_info": {
-          "package_name": "com.example.myfirstapp"
+          "package_name": "com.revoola"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "657860663217-ftom55lsr24r5vj94cugb4ooqsaaclef.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.myfirstapp",
+            "package_name": "com.revoola",
             "certificate_hash": "3a4ac68ed311e84ab6ec301720e9ddce492a2088"
           }
         },
@@ -38,6 +38,49 @@
             {
               "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "657860663217-g93ve1fbcpb443mhor9ongf1pcck9r8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.revoolaltd.revoola"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657860663217:android:0f9dc682797d55ca154f90",
+        "android_client_info": {
+          "package_name": "com.revoola"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOwcSM8SrRxnXsIAkqcwx5rSf4AHclUCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "657860663217-g93ve1fbcpb443mhor9ongf1pcck9r8j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.revoolaltd.revoola"
+              }
             }
           ]
         }

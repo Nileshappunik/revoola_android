@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.myfirstapp">
-   <!-- package="com.revoola"> change this package name on Monday-->
+    package="com.revoola">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -34,7 +33,7 @@
         android:required="true" />
 
     <application
-        android:name=".base.MyApp"
+        android:name="com.revoola.base.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -43,7 +42,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.RLSplashFirstActivity"
+            android:name="com.revoola.activity.RLSplashFirstActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,16 +53,16 @@
         </activity>
 
         <activity
-            android:name=".activity.RLSignUpActivityRL"
+            android:name="com.revoola.activity.RLSignUpActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLSignUpNameActivityRL"
+            android:name="com.revoola.activity.RLSignUpNameActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLVerificationCodeActivityRL"
+            android:name="com.revoola.activity.RLVerificationCodeActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLMainActivityRL"
+            android:name="com.revoola.activity.RLMainActivityRL"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask"
             android:exported="true" >
@@ -72,21 +71,26 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="www.revoola.com" />
+                <data android:scheme="https"
+                    android:host="www.revoola.com" />
+                <data android:scheme="com.revoola"
+                    android:host="revoola.app.link" />
+                <data android:scheme="revoola499"
+                    android:host="revoola-alternate.app.link"/>
             </intent-filter>
 
         </activity>
         <activity
-            android:name=".activity.RLForgotPasswordActivityRL"
+            android:name="com.revoola.activity.RLForgotPasswordActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLLoginEmailActivityRL"
+            android:name="com.revoola.activity.RLLoginEmailActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLLoginActivityRL"
+            android:name="com.revoola.activity.RLLoginActivityRL"
             android:exported="false" />
         <activity
-            android:name=".activity.RLSplashActivityRL"
+            android:name="com.revoola.activity.RLSplashActivityRL"
             android:exported="false">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -119,9 +123,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.RLBLEService" />
+        <service android:name="com.revoola.services.RLBLEService" />
         <service
-            android:name=".databasefirebase.RLMyFirebaseMessagingService"
+            android:name="com.revoola.databasefirebase.RLMyFirebaseMessagingService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
