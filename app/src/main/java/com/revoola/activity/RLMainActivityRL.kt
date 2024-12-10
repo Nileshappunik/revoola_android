@@ -29,6 +29,7 @@ import com.revoola.fragment.more.RLFragMore
 import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.revoola.services.RLDeepLinkHandler
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import org.json.JSONObject
@@ -210,38 +211,21 @@ class RLMainActivityRL  : RLBaseActivity() {
       //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: android.content.Intent?) {
         super.onNewIntent(intent)
-
-        // Add "branch_force_new_session" flag to the new intent
-        intent?.apply {
-            putExtra("branch_force_new_session", true)
-        }
-
-        // Clear any stale session data
-        Branch.getInstance().resetUserSession()
-
-        // Reinitialize the Branch session
+        setIntent(intent) // Update the intent
+        //intent?.putExtra("branch_force_new_session", true)
         Branch.sessionBuilder(this)
             .withCallback { referringParams, error ->
                 if (error == null) {
-                    referringParams?.let {
-                        Log.d(TAG, "Branch Link Data: $it")
-
-                        // Example: Access specific parameters
-                        val userId = it["user_id"] as? String
-                        Log.d(TAG, "User ID: $userId")
-                    }
+                    RLHandleBranchData(referringParams)
                 } else {
-                    Log.e(TAG, "Branch Link error: ${error.message}")
+                    Log.e(TAG,"Branch Error: ${error.message}")
                 }
             }
-            .withData(intent?.data) // Pass updated intent data
+            .withData(intent?.data) // Pass the new intent data
             .init()
     }
-
-
-
 
     override fun onStart() {
         super.onStart()
@@ -252,31 +236,36 @@ class RLMainActivityRL  : RLBaseActivity() {
         Branch.sessionBuilder(this).withCallback { referringParams: JSONObject?, error: BranchError? ->
             if (error == null) {
                 // Process the deep link data (if available)
-                referringParams?.let {
-                    val value = it.optString("key")
-                    // Handle the data (e.g., navigate to a specific screen)
-                    Log.d(TAG,"Branch params: $it")
-                }
+                RLHandleBranchData(referringParams)
             } else {
                 Log.e(TAG,"Branch Error: ${error.message}")
             }
-        }.withData(this.intent.data).init()
+        }.withData(intent.data).init()
     }
 
+    private fun RLHandleBranchData(deepLinkData: JSONObject?) {
+        RLDeepLinkHandler().onReceiveBranchIoLink(deepLinkData.toString(), this)
+        Log.d(TAG,"Branch params: $deepLinkData")
+       /* deepLinkData?.let {
+            // Handle the data (e.g., navigate to a specific screen)
+            Log.d(TAG,"Branch params: $it")
 
-/*
-    override fun onBackPressed() {
-        val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
-        if(fragment!!.contains(RLFragStart::class.java.simpleName)){
-            Log.d(TAG, "" + fragment)
-            showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
-        }else{
-            if (fragmentclose.equals(RLFragStart::class.java.simpleName)){
-                showDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
+        }*/
+    }
+
+    /*
+        override fun onBackPressed() {
+            val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
+            if(fragment!!.contains(RLFragStart::class.java.simpleName)){
+                Log.d(TAG, "" + fragment)
+                showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
             }else{
-                super.onBackPressed()
+                if (fragmentclose.equals(RLFragStart::class.java.simpleName)){
+                    showDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
+                }else{
+                    super.onBackPressed()
+                }
             }
-        }
-    }*/
+        }*/
 
 }

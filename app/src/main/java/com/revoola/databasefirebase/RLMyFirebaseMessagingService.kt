@@ -2,6 +2,7 @@ package com.revoola.databasefirebase
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+//import com.moengage.pushbase.PushHelper
 
 class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -28,6 +29,8 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
         }
+
+       // PushHelper.handlePushMessage(applicationContext, remoteMessage)
     }
 
     private fun sendRegistrationToServer(token: String?) {

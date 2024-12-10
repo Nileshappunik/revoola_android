@@ -74,6 +74,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("com.google.android.material:material:1.4.0")
     implementation ("com.google.android.gms:play-services-fido:19.0.1")
+    //implementation("androidx.core:core:1.9.0")
+   // implementation("androidx.lifecycle:lifecycle-process:2.7.0")
 
     //facebook login
     implementation("com.facebook.android:facebook-android-sdk:17.0.0")
@@ -129,10 +131,8 @@ dependencies {
     //Branch.io Use for Share
     implementation("io.branch.sdk.android:library:5.+")
 
-    //moengage SDK for use inapp purchase  ,revenue and pushnotification
-    //implementation ("com.moengage.core:moe-core:10.1.0")
-    //implementation ("com.moengage:push-notification:9.4.3")
-
+    //Moengage SDK for Use InApp purchase, Revenue and PushNotification
+    implementation("com.moengage:moe-android-sdk:12.5.01")
 
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")

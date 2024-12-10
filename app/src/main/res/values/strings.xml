@@ -2,8 +2,17 @@
     <string name="app_name">Revoola</string>
 
     <!--branch key -->
+    <string name="applink_host_alternate">revoola-alternate.app.link</string>
+    <string name="applink_host">revoola.app.link</string>
+    <string name="deeplink_scheme">revoola499</string>
+    <string name="title_activity_main">Revoola</string>
+    <string name="package_name">com.revoola</string>
+    <string name="custom_url_scheme">com.revoola</string>
     <string name="branch_key">key_live_gh0Fkx556QdoRpPPROF06opnzBdxc8bs</string>
     <string name="branch_test_key">key_test_pe7DeB496RoeGbSILMy80mfjzqlub1jg</string>
+    <string name="moengage_app_key">TVL0SDZ0N1L096MAKXGEUBUP</string>
+    <bool name="branch_test_mode">false</bool>
+
 
     <string name="no_conn">No Internet Connection</string>
     <string name="retry">Retry</string>
