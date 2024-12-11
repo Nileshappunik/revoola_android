@@ -125,19 +125,13 @@
         </activity>
 
         <service android:name="com.revoola.services.RLBLEService" />
-        <service
-            android:name="com.revoola.databasefirebase.RLMyFirebaseMessagingService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+
 
        <!-- Start MoEPushService SDK-->
-       <service
-            android:name=".services.RLMyPushService"
+        <service
+            android:name="com.revoola.databasefirebase.RLMyFirebaseMessagingService"
             android:permission="com.google.android.c2dm.permission.SEND"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

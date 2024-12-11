@@ -108,7 +108,7 @@ class RELDynamicLinkManager {
                         dynamicLink.referId = _last.replace("user=", "")
                     }
                 }
-                //redirectToPage()
+              //  redirectToPage()
             }
         }
 
@@ -123,8 +123,6 @@ class RELDynamicLinkManager {
                 getLink().referId
             }
         }
-
-
 
         fun setRedirect(value: Boolean) {
             isRedirectPending = value
@@ -147,7 +145,7 @@ class RELDynamicLinkManager {
         }
 
 
-  fun redirectToPage() {
+ /* fun redirectToPage() {
     val topVc = supportFragmentManager.findFragmentById(R.id.topViewController)
     if (topVc == null || topVc is REVLaunchScreenVC) {
         isRedirectPending = true
@@ -156,6 +154,7 @@ class RELDynamicLinkManager {
 
     val notification = RELDynamicLinkManager().shared().getNotification()
     if (notification != null) {
+
         RELDynamicLinkManager.shared().removeNotification()
     }
 
@@ -372,7 +371,7 @@ class RELDynamicLinkManager {
     }
 }
 
-/* private fun navigateManager(topVc: AppCompatActivity, controller: AppiskipActivitycommunication, isHideNav: Boolean = false) {
+ private fun navigateManager(topVc: AppCompatActivity, controller: AppiskipActivitycommunication, isHideNav: Boolean = false) {
     val nav = topVc.supportFragmentManager.findFragmentById(R.id.navigationController) as? NavController
     if (nav != null) {
         controller.hidesBottomBarWhenPushed = true
@@ -383,8 +382,8 @@ class RELDynamicLinkManager {
             .addToBackStack(null)
             .commit()
     }
-}*/
-
+}
+*/
 fun pendingRedirect(): Boolean {
     return isRedirectPending == true
 }

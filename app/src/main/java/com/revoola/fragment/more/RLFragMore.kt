@@ -16,6 +16,7 @@ import com.revoola.model.RLMoreGroupItemModel
 import com.revoola.utils.RLConstants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.moengage.core.MoECoreHelper
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -129,6 +130,7 @@ class RLFragMore : RLBaseFragment() {
             sucDialog.dismiss()
             if (type.equals(RLConstants.LOGOUT_D)){
                 Firebase.auth.signOut()
+                 MoECoreHelper.logoutUser(requireContext())
                 com.revoola.utils.RLPrefManager.RLsetSomeStringValue(requireContext(), com.revoola.utils.RLPrefManager.current_user,"")
                 activity?.finish()
             }

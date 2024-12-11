@@ -51,6 +51,10 @@ import android.content.Context
 import android.net.NetworkCapabilities
 import com.revoola.model.EffortZoneFeedModel
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+
 
 object RLTools {
 
@@ -65,6 +69,10 @@ object RLTools {
                 }
             }
         })
+    }
+
+     fun ScxhasNotificationPermission(context: Context): Boolean {
+         return  ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
     fun isInternetAvailable(context: Context): Boolean {

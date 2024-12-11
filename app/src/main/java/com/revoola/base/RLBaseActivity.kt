@@ -15,8 +15,12 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.gson.Gson
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerRead
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import org.json.JSONObject
@@ -101,6 +105,26 @@ open class  RLBaseActivity: AppCompatActivity() {
 
         }
 
+    }
+
+    fun RLFirebaseToFetchUserData(callback: (RLRevoolaUsersSettingsModel?) -> Unit) {
+        val authManager = RLAuthManager()
+        val userId = authManager.RlgetCurrentUser()?.uid ?: run {
+            callback(null) // Return null if user is not logged in
+            return
+        }
+
+        // Firebase to fetch user data
+        RLDatabaseManagerRead().RlUserBasicDataRead(userId) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                callback(userData) // Return userData through the callback
+            } else {
+                callback(null) // Return null in case of an error
+            }
+        }
     }
 
 

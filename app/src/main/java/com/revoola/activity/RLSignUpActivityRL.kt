@@ -29,7 +29,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.revoola.BuildConfig
+//import com.revoola.BuildConfig
 import com.revoola.R
 import com.revoola.base.RLBaseActivity
 import com.revoola.databasefirebase.RLAuthManager
@@ -470,7 +470,13 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
        val databaseManager = RLDatabaseManagerWrite()
         val userId =authManager.RlgetCurrentUser()!!.uid
         val myAge=RLTools.RLCalculateAge(DateTime)?:0
-        val versionName:String = BuildConfig.VERSION_NAME?:"0"
+        val versionName: String = try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName ?: "0"
+        } catch (e: Exception) {
+            "0"
+        }
+        //val versionName:String = BuildConfig.VERSION_NAME?:"0"
 
         //RevoolaUsersForSearch ENTRY
         val revoolaUserForSearchMap = hashMapOf(

@@ -7,7 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.revoola.BuildConfig
+//import com.revoola.BuildConfig
 import com.revoola.R
 import com.revoola.api.RLApiClientRet
 import com.revoola.base.RLBaseActivity
@@ -145,7 +145,13 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
     private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         val databaseManager = RLDatabaseManagerWrite()
-        val versionName:String = BuildConfig.VERSION_NAME?:"0"
+        val versionName: String = try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName ?: "0"
+        } catch (e: Exception) {
+            "0"
+        }
+        //val versionName:String = BuildConfig.VERSION_NAME?:"0"
 
         val currentSubscriptionMap = hashMapOf(
             "validDaysMonth" to 0,

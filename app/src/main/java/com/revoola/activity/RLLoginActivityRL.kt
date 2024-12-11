@@ -5,7 +5,7 @@ import android.os.Bundle
 
 import android.util.Log
 import android.widget.Toast
-import com.revoola.BuildConfig
+//import com.revoola.BuildConfig
 import com.revoola.base.RLBaseActivity
 import com.revoola.R
 import com.revoola.databasefirebase.RLDatabaseManagerRead
@@ -203,7 +203,13 @@ class RLLoginActivityRL : RLBaseActivity() {
     private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         val databaseManager = RLDatabaseManagerWrite()
-        val versionName:String = BuildConfig.VERSION_NAME?:"0"
+        val versionName: String = try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName ?: "0"
+        } catch (e: Exception) {
+            "0"
+        }
+       // val versionName:String = BuildConfig.VERSION_NAME?:"0"
 
 
         val currentSubscriptionMap = hashMapOf(

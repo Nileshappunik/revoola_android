@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
@@ -29,6 +30,8 @@ import com.revoola.fragment.more.RLFragMore
 import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.moengage.core.analytics.MoEAnalyticsHelper
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RLDeepLinkHandler
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -97,7 +100,6 @@ class RLMainActivityRL  : RLBaseActivity() {
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
     }
-
 
     private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
         // Iterate over the BottomNavigationView items
@@ -241,6 +243,29 @@ class RLMainActivityRL  : RLBaseActivity() {
                 Log.e(TAG,"Branch Error: ${error.message}")
             }
         }.withData(intent.data).init()
+        setupUsermoengage()
+    }
+
+    private fun setupUsermoengage(){
+
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                val userAuth = RLAuthManager().RlgetCurrentUser()
+                MoEAnalyticsHelper.setUniqueId(this, userAuth!!.uid)
+
+                MoEAnalyticsHelper.setFirstName(this,userData.firstName)
+                MoEAnalyticsHelper.setLastName(this,userData.lastName)
+                MoEAnalyticsHelper.setUserName(this,userData.displayName)
+                MoEAnalyticsHelper.setBirthDate(this,userData.dob)
+                MoEAnalyticsHelper.setEmailId(this,userData.emailId)
+
+            } else {
+                Log.e(TAG, "Error fetching user data")
+            }
+        }
+
+
+
     }
 
     private fun RLHandleBranchData(deepLinkData: JSONObject?) {

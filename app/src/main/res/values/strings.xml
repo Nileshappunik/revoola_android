@@ -10,7 +10,8 @@
     <string name="custom_url_scheme">com.revoola</string>
     <string name="branch_key">key_live_gh0Fkx556QdoRpPPROF06opnzBdxc8bs</string>
     <string name="branch_test_key">key_test_pe7DeB496RoeGbSILMy80mfjzqlub1jg</string>
-    <string name="moengage_app_key">TVL0SDZ0N1L096MAKXGEUBUP</string>
+    <string name="moengage_app_live_key">TVL0SDZ0N1L096MAKXGEUBUP</string>
+    <string name="moengage_app_key">TVL0SDZ0N1L096MAKXGEUBUP_DEBUG</string>
     <bool name="branch_test_mode">false</bool>
 
 

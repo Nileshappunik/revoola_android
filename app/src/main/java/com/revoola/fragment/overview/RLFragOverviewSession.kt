@@ -73,6 +73,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private val binding by lazy {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         RLBottomHideShowSet(true)
@@ -96,6 +97,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         return fragBinding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private  fun  RLuisetup(){
         RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
@@ -187,6 +189,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             RLHandleApiResponse(cardDate!!,valueslist[position])
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun RLAPiCall(valueType:String) {
 
         val offset = Date().timezoneOffset
@@ -512,6 +515,32 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         private val SWIPE_VELOCITY_THRESHOLD = 100 // Minimum velocity to detect swipe
 
         @RequiresApi(Build.VERSION_CODES.O)
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            val diffX = e2.x.minus(e1!!.x) ?: 0.0f
+            val diffY = e2.y.minus(e1.y) ?: 0.0f
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // Detect horizontal swipe
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        // Swipe right
+                        onSwipeRight()
+                    } else {
+                        // Swipe left
+                        onSwipeLeft()
+                    }
+                    return true
+                }
+            }
+            return false
+        }
+
+      /*  @RequiresApi(Build.VERSION_CODES.O)
         override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             val diffX = e2.x.minus(e1.x) ?: 0.0f
             val diffY = e2.y.minus(e1.y) ?: 0.0f
@@ -530,7 +559,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             return false
-        }
+        }*/
 
     }
     // Handle swipe right gesture
