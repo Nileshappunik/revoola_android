@@ -109,8 +109,10 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     val profile=providerData[0]
                     val uid = profile.uid
                     val userEmail = profile.email
-                    com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,uid)
-                    com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,userEmail)
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user,uid)
+                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
+                    startActivity(Intent(this, RLMainActivityRL::class.java))
+                    finish()
                     RLSetUsernameToFirebase(uid)
 
                 } catch (e:Exception){
@@ -121,10 +123,8 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                 when (exception) {
                     is FirebaseAuthInvalidUserException -> {
                         // Handle case where user does not exist
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.login_email,emailID)
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.login_password,password)
-                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
-                        finish()
+                        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_email,emailID)
+                        RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_password,password)
                         Log.e(TAG, "User does not exist: ${exception.message}")
                     }
                     is FirebaseAuthInvalidCredentialsException -> {

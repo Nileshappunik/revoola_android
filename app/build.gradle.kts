@@ -74,55 +74,76 @@ android {
 
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation ("com.google.android.material:material:1.4.0")
-    implementation ("com.google.android.gms:play-services-fido:19.0.1")
+
+    //Moengage SDK for Use InApp purchase and PushNotification
+    // core moengage features
+    implementation(moengage.core)
+    // optionally add this to use the cards feature
+    implementation(moengage.cardsUi)
+    // optionally add this if you are using the core module of cards
+    implementation(moengage.cardsCore)
+    // optionally add this to use the InApp feature
+    implementation(moengage.inapp)
+    // optionally add this to use the Huaewi PushKit feature
+    implementation(moengage.pushKit)
+    // optionally add this to use the Push Templates feature
+    implementation(moengage.richNotification)
+    // optionally add this to use the Device Trigger feature
+    implementation(moengage.deviceTrigger)
+    // optionally add this to use the Push Amp feature
+    implementation(moengage.pushAmp)
+    // optionally add this to use the geofence feature
+    implementation(moengage.geofence)
+    // optionally add this to use the Inbox UI feature
+    implementation(moengage.inboxUi)
+    // optionally add this if you are using the core module of Inbox
+    implementation(moengage.inboxCore)
+
+    implementation("androidx.core:core:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
+
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("com.google.android.gms:play-services-fido:21.1.0")
 
 
     //facebook login
     implementation("com.facebook.android:facebook-android-sdk:17.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
 
     // Fire base
-    implementation ("com.google.firebase:firebase-crashlytics:17.4.0")
-    implementation ("com.google.firebase:firebase-messaging:21.0.1") //OLD
-    implementation ("com.google.firebase:firebase-analytics:18.0.2")
-    implementation ("com.google.firebase:firebase-auth:16.0.5")
-    implementation ("com.google.firebase:firebase-database-ktx:20.0.5")
-    implementation ("com.google.firebase:firebase-firestore-ktx:24.4.0")
-    implementation ("com.google.android.gms:play-services-auth:20.1.0")
-    implementation ("com.google.firebase:firebase-auth-ktx:21.1.0")
-    implementation ("com.google.firebase:firebase-storage:20.1.0")
-    implementation(platform("com.google.firebase:firebase-bom:29.3.0"))
-    implementation ("com.google.firebase:firebase-config-ktx:21.1.1")
-
-   /* implementation ("com.squareup.retrofit2:retrofit:2.5.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.5.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")*/ //OLD
+    implementation ("com.google.firebase:firebase-crashlytics:19.3.0")
+    implementation ("com.google.firebase:firebase-messaging:24.1.0")
+    implementation ("com.google.firebase:firebase-analytics:22.1.2")
+    implementation ("com.google.firebase:firebase-auth:23.1.0")
+    implementation ("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation ("com.google.firebase:firebase-firestore-ktx:25.1.1")
+    implementation ("com.google.android.gms:play-services-auth:21.3.0")
+    implementation ("com.google.firebase:firebase-auth-ktx:23.1.0")
+    implementation ("com.google.firebase:firebase-storage:21.0.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation ("com.google.firebase:firebase-config-ktx:22.0.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-
-    implementation ("io.reactivex.rxjava2:rxjava:2.1.9")
-    implementation ("io.reactivex.rxjava2:rxandroid:2.0.1")
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.19")
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation ("com.squareup.okhttp3:okhttp-urlconnection:3.0.1")
     implementation ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0")
 
-  //  implementation ("com.github.bumptech.glide:glide:4.11.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
-    //implementation ("com.squareup.picasso:picasso:2.71828")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("io.github.ParkSangGwon:tedimagepicker:1.2.7")
+
 
     //google login
     implementation("com.google.android.gms:play-services-auth:19.0.0")
@@ -141,14 +162,67 @@ dependencies {
     //Branch.io Use for Share
     implementation("io.branch.sdk.android:library:5.+")
 
-    //Moengage SDK for Use InApp purchase, Revenue and PushNotification
-    implementation("com.moengage:moe-android-sdk:13.02.00")
-    implementation("androidx.core:core:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
-
-
     //circle Imageview
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.caverock:androidsvg:1.4")
+
+
+
+    // OLD
+
+//    implementation("androidx.appcompat:appcompat:1.6.1")
+//    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+//    implementation ("com.google.android.material:material:1.4.0")
+//    implementation ("com.google.android.gms:play-services-fido:19.0.1")
+
+//    androidTestImplementation("androidx.test:runner:1.5.2")
+//    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+//    implementation ("com.google.firebase:firebase-crashlytics:17.4.0")
+//    implementation ("com.google.firebase:firebase-messaging:21.0.1")
+//    implementation ("com.google.firebase:firebase-analytics:18.0.2")
+//    implementation ("com.google.firebase:firebase-auth:16.0.5")
+//    implementation ("com.google.firebase:firebase-database-ktx:20.0.5")
+//    implementation ("com.google.firebase:firebase-firestore-ktx:24.4.0")
+//    implementation ("com.google.android.gms:play-services-auth:20.1.0")
+//    implementation ("com.google.firebase:firebase-auth-ktx:21.1.0")
+//    implementation ("com.google.firebase:firebase-storage:20.1.0")
+//    implementation(platform("com.google.firebase:firebase-bom:29.3.0"))
+//    implementation ("com.google.firebase:firebase-config-ktx:21.1.1")
+
+//    implementation ("com.squareup.retrofit2:retrofit:2.5.0")
+//    implementation ("com.squareup.retrofit2:converter-gson:2.5.0")
+//    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+//    implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")
+
+//    implementation ("io.reactivex.rxjava2:rxjava:2.1.9")
+//    implementation ("io.reactivex.rxjava2:rxandroid:2.0.1")
+
+//    implementation ("com.github.bumptech.glide:glide:4.11.0")
+//    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
+
+    //google login
+//    implementation("com.google.android.gms:play-services-auth:19.0.0")
+//    implementation ("com.google.android.gms:play-services-maps:18.0.2")
+//    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+
+    //VIDEO PLAY
+//    implementation ("androidx.media3:media3-exoplayer:1.0.0")
+//    implementation ("androidx.media3:media3-ui:1.0.0")
+//    implementation ("androidx.media3:media3-exoplayer-dash:1.0.0")
+
+//    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+//    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
+
+    //Branch.io Use for Share
+//    implementation("io.branch.sdk.android:library:5.+")
+
+    //Moengage SDK for Use InApp purchase, Revenue and PushNotification
+//    implementation("com.moengage:moe-android-sdk:13.02.00")
+//    implementation("androidx.core:core:1.9.0")
+//    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
+
 }
 

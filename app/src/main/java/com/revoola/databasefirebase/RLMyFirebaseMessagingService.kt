@@ -10,7 +10,6 @@ import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
 import com.revoola.R
 
-//import com.moengage.pushbase.PushHelper
 
 class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -45,6 +44,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
             showNotification(it.title ?: "No Title", it.body ?: "No Body")
         }
 
+        //Push Moengage Data
         if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)){
             MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
         }else{

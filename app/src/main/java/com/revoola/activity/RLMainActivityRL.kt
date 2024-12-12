@@ -31,6 +31,7 @@ import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.moengage.core.analytics.MoEAnalyticsHelper
+import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RLDeepLinkHandler
 import io.branch.referral.Branch
@@ -247,7 +248,7 @@ class RLMainActivityRL  : RLBaseActivity() {
     }
 
     private fun setupUsermoengage(){
-
+        MoEInAppHelper.getInstance().showInApp(applicationContext)
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
                 val userAuth = RLAuthManager().RlgetCurrentUser()
