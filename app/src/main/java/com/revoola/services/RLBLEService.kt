@@ -17,6 +17,7 @@ import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import java.lang.StringBuilder
 import java.util.*
 
@@ -69,7 +70,7 @@ class RLBLEService : Service() {
     fun RLstartScan(isRideWay:Boolean) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             // Request necessary permission
-            Log.d(TAG,"Request Necessary Permission")
+            RLTools.RlLogDPrint(TAG,"Request Necessary Permission")
         }
         val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
         val filtersSpeedHeart = listOf(ScanFilter.Builder().setServiceUuid(ParcelUuid(
@@ -104,14 +105,14 @@ class RLBLEService : Service() {
                     UUID_HEART_RATE_SERVICE -> {
                         if (!heartRateDevices.contains(device)) {
                             heartRateDevices.add(device)
-                            Log.d(TAG, "Heart Rate Device: ${device.name}, ${device.address}")
+                            RLTools.RlLogDPrint(TAG, "Heart Rate Device: ${device.name}, ${device.address}")
                             RLbroadcastDeviceFoundHeart(device.name,device.address,"HEARTRATESENSOR")
                         }
                     }
                     UUID_SPEED_SERVICE -> {
                         if (!speedDevices.contains(device)) {
                             speedDevices.add(device)
-                            Log.d(TAG, "Speed Device: ${device.name}, ${device.address}")
+                            RLTools.RlLogDPrint(TAG, "Speed Device: ${device.name}, ${device.address}")
                             RLbroadcastDeviceFoundSpeed(device.name,device.address,"SPEEDSENSOR")
                         }
                     }
@@ -121,7 +122,7 @@ class RLBLEService : Service() {
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
-            Log.e(TAG, "Scan failed with error: $errorCode")
+           RLTools.RlLogEPrint(TAG, "Scan failed with error: $errorCode")
         }
     }
 
@@ -137,7 +138,7 @@ class RLBLEService : Service() {
                     if (!foundDevicesArray.contains(device)){
                         foundDevicesArray.add(device)
                         RLconnectToDevicelist(device)
-                        //Log.d(TAG,"Device Name"+device.name)
+                        //RLTools.RlLogDPrint(TAG,"Device Name"+device.name)
                     }
                 }
             }
@@ -160,7 +161,7 @@ class RLBLEService : Service() {
         }
 
         override fun onScanFailed(errorCode: Int) {
-            Log.e(TAG, "Scan failed with error: $errorCode")
+           RLTools.RlLogEPrint(TAG, "Scan failed with error: $errorCode")
         }
     }
     fun RLconnectToDevicelist(device: BluetoothDevice) {
@@ -173,13 +174,13 @@ class RLBLEService : Service() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-               // Log.d(TAG, "Connected to GATT server.")
+               // RLTools.RlLogDPrint(TAG, "Connected to GATT server.")
                 if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // Request necessary permission
                 }
                 gatt?.discoverServices()
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-               // Log.d(TAG, "Disconnected from GATT server.")
+               // RLTools.RlLogDPrint(TAG, "Disconnected from GATT server.")
                 bluetoothGatt?.close()
                 bluetoothGatt = null
             }
@@ -194,16 +195,16 @@ class RLBLEService : Service() {
                 val hasHeartRateService = gatt.services.any { it.uuid == UUID_HEART_RATE_SERVICE }
                 val hasSpeedService = gatt.services.any { it.uuid == UUID_SPEED_SERVICE }
                 if (hasHeartRateService) {
-                    Log.d(TAG,"Device Found HeartRate:- "+gatt.device.name)
+                    RLTools.RlLogDPrint(TAG,"Device Found HeartRate:- "+gatt.device.name)
                     RLbroadcastDeviceFoundHeart(gatt.device.name,gatt.device.address,"HEARTRATESENSOR")
                 }else if (hasSpeedService){
-                    Log.d(TAG,"Device Found Speed:- "+gatt.device.name)
+                    RLTools.RlLogDPrint(TAG,"Device Found Speed:- "+gatt.device.name)
                     RLbroadcastDeviceFoundSpeed(gatt.device.name,gatt.device.address,"SPEEDSENSOR")
                   //  RLbroadcastDeviceFoundSpeed(gatt.device.name,gatt.device.address,"CADENCESENSOR")
 
                 }
             } else {
-                Log.d(TAG, "GATT_SUCCESS FAIL")
+                RLTools.RlLogDPrint(TAG, "GATT_SUCCESS FAIL")
             }
             gatt.close()
         }
@@ -223,14 +224,14 @@ class RLBLEService : Service() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             super.onConnectionStateChange(gatt, status, newState)
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.d(TAG, "Connected to GATT server.")
+                RLTools.RlLogDPrint(TAG, "Connected to GATT server.")
                 if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // Request necessary permission
                 }
                 gatt?.discoverServices()
                 RLbroadcastConnectionState(gatt?.device?.name ?: "Unknown Device", true)
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.d(TAG, "Disconnected from GATT server.")
+                RLTools.RlLogDPrint(TAG, "Disconnected from GATT server.")
                 bluetoothGatt?.close()
                 bluetoothGatt = null
                 RLbroadcastConnectionState(gatt?.device?.name ?: "Unknown Device", false)
@@ -253,28 +254,28 @@ class RLBLEService : Service() {
                     RLspeedAndCadenceServicesDiscovered(gatt)
                 }
             } else {
-                Log.d(TAG, "GATT_SUCCESS FAIL")
+                RLTools.RlLogDPrint(TAG, "GATT_SUCCESS FAIL")
             }
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray, status: Int) {
             super.onCharacteristicRead(gatt, characteristic, value, status)
-            Log.d(TAG,"Received data: Start")
+            RLTools.RlLogDPrint(TAG,"Received data: Start")
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 val data = characteristic.value
                 // Handle received data
-                Log.d(TAG,"Received data: ${data}")
+                RLTools.RlLogDPrint(TAG,"Received data: ${data}")
             }else{
-                Log.d(TAG,"Received data: Fail")
+                RLTools.RlLogDPrint(TAG,"Received data: Fail")
             }
         }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             super.onDescriptorWrite(gatt, descriptor, status)
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.d(TAG, "Descriptor write success")
+                RLTools.RlLogDPrint(TAG, "Descriptor write success")
             } else {
-                Log.e(TAG, "Descriptor write fail, status: $status")
+               RLTools.RlLogEPrint(TAG, "Descriptor write fail, status: $status")
             }
         }
 
@@ -287,7 +288,7 @@ class RLBLEService : Service() {
                 //speedAndCadenceGettoDevice(data,characteristic)
                 RLparseSpeedCadenceData(data)
             } else {
-                Log.d(TAG,"Received data: Fail")
+                RLTools.RlLogDPrint(TAG,"Received data: Fail")
             }
         }
     }
@@ -298,7 +299,7 @@ class RLBLEService : Service() {
         val service = gatt.getService(UUID_HEART_RATE_SERVICE)
         val heartRateCharacteristic = service?.getCharacteristic(UUID_HEART_RATE_CHARACTERISTIC)
         heartRateCharacteristic?.let {
-            Log.d(TAG, "Start Reading... ")
+            RLTools.RlLogDPrint(TAG, "Start Reading... ")
             notificationCharacteristic = heartRateCharacteristic
             gatt.setCharacteristicNotification(it,true)
             val descriptor = heartRateCharacteristic.getDescriptor(UUID_CLIENT_CHARACTERISTIC_CONFIG)
@@ -306,14 +307,14 @@ class RLBLEService : Service() {
                 descriptor?.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                 gatt.writeDescriptor(descriptor)
             }else{
-                Log.e(TAG, "Descriptor does not support")
+               RLTools.RlLogEPrint(TAG, "Descriptor does not support")
             }
 
             if ((it.properties and BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                Log.d(TAG, "Characteristic supports read")
+                RLTools.RlLogDPrint(TAG, "Characteristic supports read")
                 gatt.readCharacteristic(it)
             } else {
-                Log.e(TAG, "Characteristic does not support read")
+               RLTools.RlLogEPrint(TAG, "Characteristic does not support read")
             }
 
         }
@@ -325,7 +326,7 @@ class RLBLEService : Service() {
         val service = gatt.getService(UUID_SPEED_SERVICE)
         val SppedCharacteristic = service?.getCharacteristic(UUID_SPEED_CHARACTERISTIC)
         SppedCharacteristic?.let {
-            Log.d(TAG, "Start Reading... ")
+            RLTools.RlLogDPrint(TAG, "Start Reading... ")
             notificationCharacteristic = SppedCharacteristic
             gatt.setCharacteristicNotification(it,true)
             val descriptor = SppedCharacteristic.getDescriptor(UUID_CLIENT_CHARACTERISTIC_CONFIG)
@@ -333,14 +334,14 @@ class RLBLEService : Service() {
                 descriptor?.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                 gatt.writeDescriptor(descriptor)
             }else{
-                Log.e(TAG, "Descriptor does not support")
+               RLTools.RlLogEPrint(TAG, "Descriptor does not support")
             }
 
             if ((it.properties and BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                Log.d(TAG, "Characteristic supports read")
+                RLTools.RlLogDPrint(TAG, "Characteristic supports read")
                 gatt.readCharacteristic(it)
             } else {
-                Log.e(TAG, "Characteristic does not support read")
+               RLTools.RlLogEPrint(TAG, "Characteristic does not support read")
             }
 
         }
@@ -356,7 +357,7 @@ class RLBLEService : Service() {
             val heartRate = characteristic.getIntValue(format, 1).toInt()
             RLbroadcastDataRetrieved(heartRate.toString())
         } else {
-            Log.d(TAG, "Characteristic value is null or empty")
+            RLTools.RlLogDPrint(TAG, "Characteristic value is null or empty")
         }
     }
 
@@ -390,13 +391,13 @@ class RLBLEService : Service() {
 
     //Broadcast Data From Ble Device
     private fun RLbroadcastDataRetrieved(data: String) {
-        Log.d(TAG, "Received heart rate: $data")
+        RLTools.RlLogDPrint(TAG, "Received heart rate: $data")
         val intent = Intent("ACTION_DATA_RETRIEVED_HEART")
         intent.putExtra("EXTRA_DATA", data)
         sendBroadcast(intent)
     }
     private fun RLbroadcastSpeedDataRetrieved(data: String, speed:String, avgspeed:String, distance:String, cadence:String,calories:String) {
-        Log.d(TAG,data)
+        RLTools.RlLogDPrint(TAG,data)
         val intent = Intent("ACTION_DATA_RETRIEVED")
         intent.putExtra("EXTRA_DATA", data)
         intent.putExtra("SPEED",speed)
@@ -459,7 +460,7 @@ class RLBLEService : Service() {
                         val formattedNumber = String.format("%.2f", speedkm)
                         // Use the speed value as needed
                          SPEED=formattedNumber
-                        Log.d(TAG, "Speed: $formattedNumber km/h")
+                        RLTools.RlLogDPrint(TAG, "Speed: $formattedNumber km/h")
                         speedcadence.append("Speed: $formattedNumber km/h  ")
                     }
                     // Update total distance and time
@@ -467,7 +468,7 @@ class RLBLEService : Service() {
                     val distancemeter = wheelRevolutionDiff * wheelCircumference
                     if (distancemeter>0){
                         val formatteddistancemeter = String.format("%.2f", distancemeter)
-                        Log.d(TAG, "Distance: $formatteddistancemeter meter")
+                        RLTools.RlLogDPrint(TAG, "Distance: $formatteddistancemeter meter")
                         speedcadence.append("Distance: $formatteddistancemeter meter  ")
                          DISTANCE=formatteddistancemeter// +" meter"
                     }
@@ -477,7 +478,7 @@ class RLBLEService : Service() {
                     val averageSpeed = totalDistance / totalTime
                     if (averageSpeed>0){
                         val formattedAvgSpeed = String.format("%.2f", averageSpeed)
-                        Log.d(TAG, "AvgSpeed: $formattedAvgSpeed km/h")
+                        RLTools.RlLogDPrint(TAG, "AvgSpeed: $formattedAvgSpeed km/h")
                         speedcadence.append("AvgSpeed: $formattedAvgSpeed km/h  ")
                          AvgSPEED=formattedAvgSpeed//+" km/h"
                     }
@@ -485,7 +486,7 @@ class RLBLEService : Service() {
                    val calories=  RlcalculateCaloriesBasedOnSpeed(speedkm.toFloat(),startTime)
                     if (calories>0){
                         val formattedcalories = String.format("%.2f", calories)
-                        Log.d(TAG, "CaloriesBurned: $formattedcalories")
+                        RLTools.RlLogDPrint(TAG, "CaloriesBurned: $formattedcalories")
                         CALORIES=formattedcalories
                     }
 
@@ -513,7 +514,7 @@ class RLBLEService : Service() {
                     val cadence = (crankRevolutionDiff / crankEventTimeDiff) * 60 // Convert to RPM
                     val formattedNumber = String.format("%.2f", cadence)
                     // Use the cadence value as needed
-                    Log.d(TAG, "Cadence: $formattedNumber RPM")
+                    RLTools.RlLogDPrint(TAG, "Cadence: $formattedNumber RPM")
                     speedcadence.append(" Cadence: $formattedNumber RPM")
                     CADENCE=formattedNumber
                 }
@@ -536,7 +537,7 @@ class RLBLEService : Service() {
             it.close()
             bluetoothGatt = null
         }
-        Log.d(TAG, "Service destroyed and BLE connection closed")
+        RLTools.RlLogDPrint(TAG, "Service destroyed and BLE connection closed")
     }
     override fun onDestroy() {
         super.onDestroy()

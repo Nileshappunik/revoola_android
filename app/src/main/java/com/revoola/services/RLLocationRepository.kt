@@ -76,13 +76,13 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                     lastLocation = location
                     startTime = System.currentTimeMillis()
                     val newLocation = locationResult.locations.last()
-                   // Log.d("RLFragSensorProgress", "Speed: ${location.speed} m/s")
-                  //  Log.d("RLFragSensorProgress", "Elevation: ${location.altitude} m")
-                  //  Log.d("RLFragSensorProgress", "Distance: ${location.distanceTo(lastLocation!!)} m")
-                  //  Log.d("RLFragSensorProgress", "Cadence: ${calculateCadence(location.speed)}")
+                   // RLTools.RlLogDPrint("RLFragSensorProgress", "Speed: ${location.speed} m/s")
+                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Elevation: ${location.altitude} m")
+                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Distance: ${location.distanceTo(lastLocation!!)} m")
+                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Cadence: ${calculateCadence(location.speed)}")
                     // Convert speed to km/h
                     val speedKmh = location.speed * 3.6
-                 //   Log.d("RLFragSensorProgress", "Speed (km/h): $speedKmh")
+                 //   RLTools.RlLogDPrint("RLFragSensorProgress", "Speed (km/h): $speedKmh")
 
 
                     _speedData.postValue(speedKmh.toFloat())
@@ -95,7 +95,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                         newLocation.latitude,
                         newLocation.longitude,
                         "K")
-                   // Log.d("RLFragSensorProgress", "Distance: ${distanceInKm} Km")
+                   // RLTools.RlLogDPrint("RLFragSensorProgress", "Distance: ${distanceInKm} Km")
                     _distanceData.postValue(distanceInKm.toDouble())
                     _locationData.postValue(location)
 
@@ -108,7 +108,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                     if (currentTime - startTime >= 60000) { // 1 minute
                         val cadence = stepCount / ((currentTime - startTime) / 60000.0)
                         _cadenceData.postValue(cadence.toDouble())
-                      //  Log.d("RLFragSensorProgress", "Cadence: $cadence steps/minute")
+                      //  RLTools.RlLogDPrint("RLFragSensorProgress", "Cadence: $cadence steps/minute")
                         stepCount = 0
                         startTime = currentTime
                     }

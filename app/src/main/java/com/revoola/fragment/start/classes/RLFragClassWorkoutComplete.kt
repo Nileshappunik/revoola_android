@@ -73,7 +73,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 displayImage =userData.displayImage
                 displayName =userData.displayName
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -654,10 +654,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
         databaseRefGhostLast.child(videoID).setValue(sessionGhostForClassLastForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "revoola_GhostData LastForClass Entry saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData LastForClass Entry saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "revoola_GhostData LastForClass Entry Failed to save", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_GhostData LastForClass Entry Failed to save:- ${task.exception}")
                 }
             }
 
@@ -665,10 +665,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
         databaseRefGhostBest.child(videoID).setValue(sessionGhostForClassBestForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "revoola_GhostData BestForClass Entry saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData BestForClass Entry saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "revoola_GhostData BestForClass Entry Failed to save", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_GhostData BestForClass Entry Failed to save :- ${task.exception}")
                 }
             }
 
@@ -679,10 +679,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
 
                     } else {
-                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save :- ${task.exception}")
                     }
                 }
         }
@@ -694,9 +694,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(sessionUserSessionSummaryGraphData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry saved successfully!")
                     } else {
-                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry Failed to save", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry Failed to save :- ${task.exception}")
                     }
                 }
         }
@@ -706,9 +706,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
                 } else {
-                    Log.e("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
                 }
             }
 
@@ -719,12 +719,12 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }
@@ -844,10 +844,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
 
                     } else {
-                        Log.e("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }
@@ -857,9 +857,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
                 } else {
-                    Log.e("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
                 }
             }
 
@@ -870,12 +870,12 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }

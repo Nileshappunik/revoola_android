@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourFriendBinding
 import com.revoola.model.RLuserData
+import com.revoola.utils.RLTools
 
 class RLChallengeForFriendListAdapter(
     val context: FragmentActivity?,
@@ -67,7 +68,7 @@ class RLChallengeForFriendListAdapter(
                     // Notify item changed instead of whole dataset
                     notifyItemChanged(adapterPosition)
                 }catch (e:Exception){
-                    Log.e(TAG,"EXCEPTION:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"EXCEPTION:- ${e.message}")
                 }
             }
         }

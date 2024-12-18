@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourGroupBinding
 import com.revoola.model.RLyourGroupDataModel
+import com.revoola.utils.RLTools
 
 class RLChallengeForGroupListAdapter(
     val context: FragmentActivity?,
@@ -65,7 +66,7 @@ class RLChallengeForGroupListAdapter(
                     // Notify item changed instead of whole dataset
                     notifyItemChanged(adapterPosition)
                 }catch (e:Exception){
-                    Log.e(TAG,"EXCEPTION:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"EXCEPTION:- ${e.message}")
                 }
             }
         }

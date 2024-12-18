@@ -36,6 +36,7 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.*
+import com.revoola.utils.RLTools
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -96,7 +97,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                     fragBinding.radioGroup.check(R.id.radioButtonmetric)
                 }
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
         fragBinding.layFirstname.txtusertitle.setText(R.string.firstname)
@@ -279,9 +280,9 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
         myYear = year
         myMonth = month + 1
-        Log.d("myMonth", "" + myMonth)
+        RLTools.RlLogDPrint("myMonth", "" + myMonth)
         myDay = day
-        Log.d("myDay", "" + myDay)
+        RLTools.RlLogDPrint("myDay", "" + myDay)
 
         Month = if (myMonth < 10) {
             "0$myMonth"
@@ -687,7 +688,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             return imageFile
         } catch (e: IOException) {
             e.printStackTrace()
-            Log.e("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
+           RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
             return null
         }
     }

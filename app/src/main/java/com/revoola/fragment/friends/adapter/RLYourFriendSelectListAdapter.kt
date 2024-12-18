@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourFriendBinding
 import com.revoola.model.RLuserData
+import com.revoola.utils.RLTools
 
 class RLYourFriendSelectListAdapter(
     val context: FragmentActivity?,
@@ -58,7 +59,7 @@ class RLYourFriendSelectListAdapter(
             layoutBinding.viewFriend.visibility=View.GONE
 
             layoutBinding.checkboxFriend.setOnCheckedChangeListener { buttonView, isChecked ->
-                Log.e(TAG,"totalselect First:- $totalselect")
+               RLTools.RlLogEPrint(TAG,"totalselect First:- $totalselect")
                 try {
                     cardData.isSelected=isChecked
                     notifyItemChanged(position)
@@ -76,9 +77,9 @@ class RLYourFriendSelectListAdapter(
                             tvCreateClick.visibility=View.GONE
                         }
                     }
-                    Log.e(TAG,"totalselect Last:- $totalselect")
+                   RLTools.RlLogEPrint(TAG,"totalselect Last:- $totalselect")
                 }catch (e:Exception){
-                    Log.e(TAG,"EXCEPTION:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"EXCEPTION:- ${e.message}")
                 }
             }
         }

@@ -176,7 +176,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 RestingHR=userData.restingHr
                 appUnit=userData.appUnit
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -223,7 +223,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                }
 
            }catch (e:Exception){
-               Log.e(TAG,"Exception:- "+e.message)
+              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
            }
         }
         fragBinding.layResume.setOnClickListener {
@@ -239,7 +239,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                    rlLocationViewModel.RLstartLocationUpdates()
                }
            }catch (e:Exception){
-               Log.e(TAG,"Exception:- "+e.message)
+              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
            }
         }
         fragBinding.layStop.setOnClickListener {
@@ -252,7 +252,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                    rlLocationViewModel.RLstopLocationUpdates()
                }
            }catch (e:Exception){
-               Log.e(TAG,"Exception:- "+e.message)
+              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
            }
 
             val bundle: Bundle = Bundle()
@@ -449,7 +449,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 // Request necessary permissions
             }
-            Log.d(TAG,"onServiceConnected")
+            RLTools.RlLogDPrint(TAG,"onServiceConnected")
             val binder = service as RLBLEService.RLLocalBinder
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
@@ -460,7 +460,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceBound = false
-            Log.d(TAG,"onServiceDisconnected")
+            RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
         }
     }
    private fun RLhandleDeviceFound(deviceAddress: String) {
@@ -756,7 +756,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         //rlLocationViewModel =RLLocationViewModel(requireActivity().application)
         rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
             speed?.let {
-                Log.d(TAG,"Speed: ${it} m/s")
+                RLTools.RlLogDPrint(TAG,"Speed: ${it} m/s")
                 val speedSetValue=RlGetValueDouble(it.toString())
                 speedNumber=speedSetValue
                 speedList.add("%.2f".format(it).toDouble())
@@ -775,7 +775,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
             elevation?.let {
-                Log.d(TAG,"elevation: ${it} m")
+                RLTools.RlLogDPrint(TAG,"elevation: ${it} m")
                 val elevation=RlGetValueDouble(it.toString())
                 elevationMeter=elevation
             }
@@ -784,7 +784,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
             location?.let {
                 RLtrackTimePerKilometer(it)
-                Log.d(TAG,"location: ${it}")
+                RLTools.RlLogDPrint(TAG,"location: ${it}")
                 latitude=it.latitude
                 longitude=it.longitude
             }
@@ -792,7 +792,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
             cadence?.let {
-                Log.d(TAG,"cadenceData: ${it} ")
+                RLTools.RlLogDPrint(TAG,"cadenceData: ${it} ")
                 val _cadenceData=RlGetValueDouble(it.toString())
                 cadenceData=_cadenceData
                 maxCadence=RLmax(maxCadence,cadenceData.roundToInt())
@@ -801,7 +801,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
             stepCount?.let {
-                Log.d(TAG,"Steps: $stepCount")
+                RLTools.RlLogDPrint(TAG,"Steps: $stepCount")
                 val stepSetValue=RlGetValueInt(stepCount.toString())
                 stepsNumber=stepSetValue
                 if (stepSetValue>0){
@@ -815,7 +815,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         rlLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
             distance?.let {
                 val totalDistance=it //round(it * 100) / 100
-                Log.d(TAG,"Distance: $totalDistance km")
+                RLTools.RlLogDPrint(TAG,"Distance: $totalDistance km")
                 val totalDistanceValue=RlGetValueDouble(totalDistance.toString())
                 this.distance =totalDistanceValue
                 //distanceList.add(totalDistanceValue)
@@ -828,7 +828,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
             pace?.let {
                 val totalspace=round(it * 100) / 100
-                Log.d(TAG, "Pace: $totalspace min/km")
+                RLTools.RlLogDPrint(TAG, "Pace: $totalspace min/km")
                 val totalspaceValue=RlGetValueInt(totalspace.toString())
                 paceNumber=totalspaceValue
                 paceList.add(totalspaceValue)
@@ -920,7 +920,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             }
             requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
         }catch (e:Exception){
-            Log.e(TAG,"Exception:- "+e.message)
+           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
 

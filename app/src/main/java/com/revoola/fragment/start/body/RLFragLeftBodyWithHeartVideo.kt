@@ -12,6 +12,7 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databinding.RlFragLeftBodyHeartVideoBinding
 import com.revoola.utils.RLPrefManager
+import com.revoola.utils.RLTools
 
 
 class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
@@ -86,7 +87,7 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         }catch (e:Exception){
-            Log.e(TAG,"Exception:- "+e.message)
+           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
 

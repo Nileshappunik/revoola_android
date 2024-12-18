@@ -29,6 +29,7 @@ import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
+import com.revoola.utils.RLTools
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -257,7 +258,7 @@ class RLClassesSchedule : RLBaseFragment() {
             }
 
         }catch (e:Exception){
-            Log.e(TAG,"EXCEPTION DATE:- ${e.message}")
+           RLTools.RlLogEPrint(TAG,"EXCEPTION DATE:- ${e.message}")
         }
     }
     private fun RLParseDateString(dateString: String): Calendar {
@@ -297,7 +298,7 @@ class RLClassesSchedule : RLBaseFragment() {
                 do {
                     val calendarId = it.getLong(idIndex)
                     val displayName = it.getString(nameIndex)
-                   // Log.e(TAG, "Calendar ID: $calendarId, Name: $displayName")
+                   //RLTools.RlLogEPrint(TAG, "Calendar ID: $calendarId, Name: $displayName")
                     // You can choose the desired calendar based on the display name or just return the first one.
                     return calendarId
                 } while (it.moveToNext())
@@ -334,7 +335,7 @@ class RLClassesSchedule : RLBaseFragment() {
 
                     // Check if the calendar is writable
                     if (accessLevel >= CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR) {
-                       // Log.e(TAG, "Writable Calendar ID: $calendarId, Name: $calendarName")
+                       //RLTools.RlLogEPrint(TAG, "Writable Calendar ID: $calendarId, Name: $calendarName")
                         return calendarId
                     }
                 } while (it.moveToNext())

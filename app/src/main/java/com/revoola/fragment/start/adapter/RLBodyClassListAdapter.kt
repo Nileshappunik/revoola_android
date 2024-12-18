@@ -17,6 +17,7 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlLayoutMindClassesListBinding
 import com.revoola.fragment.start.body.RLFragBodyClassesView
 import com.revoola.model.RLVideoModel
+import com.revoola.utils.RLTools
 
 class RLBodyClassListAdapter(
     private val dataList: List<RLVideoModel>,
@@ -73,7 +74,7 @@ class RLBodyClassListAdapter(
                 layoutBinding.imgMind.layoutParams =layoutParamsImage
 
             }catch (e:Exception){
-                Log.e(TAG,"Exception:- ${e.message}")
+               RLTools.RlLogEPrint(TAG,"Exception:- ${e.message}")
             }
         }
         private fun RLshowSubscribeDialog() {

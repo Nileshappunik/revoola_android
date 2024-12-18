@@ -22,6 +22,7 @@ import com.revoola.model.RLSetsearch_user
 import com.revoola.model.RLSetsearch_userrequest
 import com.revoola.model.RLuserData
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -96,23 +97,23 @@ class RLFragYourFriends : RLBaseFragment() {
     }
     private fun RLyouFollowApiCall() {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
-        Log.d(TAG,"setyouFollowdata= "+request)
+        RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
 
         viewModel.RLfriendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLresponsehandle(response.text.user,true)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -122,23 +123,23 @@ class RLFragYourFriends : RLBaseFragment() {
             search_user = RLSetget_followers(get_followers = currentUser,limit = 100, index=0)
             )
         )
-        Log.d(TAG,"setfollowingYoudata= "+request)
+        RLTools.RlLogDPrint(TAG,"setfollowingYoudata= "+request)
 
         viewModel.RLfriendsFollowingYou(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLresponsehandle(response.text.user,false)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }

@@ -211,28 +211,28 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val gson = Gson()
         val jsonRequest = gson.toJson(request)
 
-        Log.d(TAG,"request Overview:- $jsonRequest")
+        RLTools.RlLogDPrint(TAG,"request Overview:- $jsonRequest")
 
         viewModel.RLgetOverviewGraph(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         cardDate=response.text[0].overviewGraph[0]
                         val gson = Gson()
                         val jsonArray = gson.toJson(response)
-                        Log.e(TAG,"Overview_jsonDate:-  $jsonArray")
+                       RLTools.RlLogEPrint(TAG,"Overview_jsonDate:-  $jsonArray")
                         RLHandleApiResponse(response.text[0].overviewGraph[0],valueType)
 
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -422,7 +422,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
         //val imageUrl="${RLConstants.BASE_URL}getResponse_v2.php?q=overviewGraphChartHTML&user=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type=$type"
         val imageUrl=RLConstants.BASE_URL+"getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
-       // Log.e(TAG,"$type CHART URL:- $imageUrl")
+       //RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
         fragBinding.webView.loadUrl(imageUrl)
     }
     private fun RLallactivitydialogopen() {
@@ -442,7 +442,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val adapter = RLAllDialogListAdapter(requireContext(), namelist) { clickdata ->
             // Handle selection
             if (clickdata.equals(getString(R.string.selectbodyactivity))){
-                dialog.dismiss()
+              dialog.dismiss()
                 RLSelectBodyActivityDialogOpen()
             }
         }

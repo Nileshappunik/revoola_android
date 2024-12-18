@@ -31,9 +31,11 @@ import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.moengage.core.analytics.MoEAnalyticsHelper
+import com.moengage.core.internal.utils.isNullOrBlank
 import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
-import com.revoola.services.RLDeepLinkHandler
+import com.revoola.services.RELDynamicLinkManager
+import com.revoola.utils.RLTools
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import org.json.JSONObject
@@ -185,6 +187,10 @@ class RLMainActivityRL  : RLBaseActivity() {
         activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
     }
 
+    fun RLSelectionbottombar(selectedID:Int){
+        activityMainBinding.bottomNav.selectedItemId=selectedID
+    }
+
     fun RLloadFrag(fragment: Fragment?, tagName: String?, isBackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
@@ -221,9 +227,11 @@ class RLMainActivityRL  : RLBaseActivity() {
         Branch.sessionBuilder(this)
             .withCallback { referringParams, error ->
                 if (error == null) {
-                    RLHandleBranchData(referringParams)
+                    if(referringParams!=null){
+                        RLHandleBranchData(referringParams)
+                    }
                 } else {
-                    Log.e(TAG,"Branch Error: ${error.message}")
+                   RLTools.RlLogEPrint(TAG,"Branch Error onNewIntent: ${error.message}")
                 }
             }
             .withData(intent?.data) // Pass the new intent data
@@ -234,14 +242,15 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onStart()
         // Force a new Branch session by adding the extra
         intent.putExtra("branch_force_new_session", true)
-
         // Branch init
         Branch.sessionBuilder(this).withCallback { referringParams: JSONObject?, error: BranchError? ->
             if (error == null) {
-                // Process the deep link data (if available)
-                RLHandleBranchData(referringParams)
+               if(referringParams!=null){
+                   RLHandleBranchData(referringParams)
+               }
+
             } else {
-                Log.e(TAG,"Branch Error: ${error.message}")
+               RLTools.RlLogEPrint(TAG,"Branch Error onStart: ${error.message}")
             }
         }.withData(intent.data).init()
         setupUsermoengage()
@@ -261,29 +270,30 @@ class RLMainActivityRL  : RLBaseActivity() {
                 MoEAnalyticsHelper.setEmailId(this,userData.emailId)
 
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
-
-
     }
 
-    private fun RLHandleBranchData(deepLinkData: JSONObject?) {
-        RLDeepLinkHandler().onReceiveBranchIoLink(deepLinkData.toString(), this)
-        Log.d(TAG,"Branch params: $deepLinkData")
-       /* deepLinkData?.let {
-            // Handle the data (e.g., navigate to a specific screen)
-            Log.d(TAG,"Branch params: $it")
+    private fun RLHandleBranchData(jsonObject: JSONObject) {
+        RLTools.RlLogDPrint(TAG,"Branch params: $jsonObject")
+        val deeplinkPath: String? = if (jsonObject.has("\$deeplink_path")) {
+            jsonObject.optString("\$deeplink_path", null)
+        } else {
+            null
+        }
+        if (!deeplinkPath.isNullOrEmpty()){
+            RELDynamicLinkManager.getInstance().RLCheckLink(deeplinkPath,this)
 
-        }*/
+        }
     }
 
     /*
         override fun onBackPressed() {
             val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
             if(fragment!!.contains(RLFragStart::class.java.simpleName)){
-                Log.d(TAG, "" + fragment)
+                RLTools.RlLogDPrint(TAG, "" + fragment)
                 showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
             }else{
                 if (fragmentclose.equals(RLFragStart::class.java.simpleName)){

@@ -169,7 +169,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 }
             } catch (e: Exception) {
-                Log.d(TAG, "exceptionAdaptermsg= " + e.message)
+                RLTools.RlLogDPrint(TAG, "exceptionAdaptermsg= " + e.message)
             }
 
 
@@ -244,7 +244,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
                     RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
             } catch (e: Exception) {
-            Log.d(TAG, "exceptionAdaptermsg= " + e.message)
+            RLTools.RlLogDPrint(TAG, "exceptionAdaptermsg= " + e.message)
             }
         }
     }*/

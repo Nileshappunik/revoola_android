@@ -17,6 +17,7 @@ import com.revoola.utils.RLConstants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.moengage.core.MoECoreHelper
+import com.revoola.utils.RLTools
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -75,7 +76,7 @@ class RLFragMore : RLBaseFragment() {
 
         fragBinding.expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
             // Handle child click if needed
-            Log.e(TAG,"CHILDNAME:- ${groupList[groupPosition].childItems[childPosition].toString()}")
+           RLTools.RlLogEPrint(TAG,"CHILDNAME:- ${groupList[groupPosition].childItems[childPosition].toString()}")
             when(groupList[groupPosition].childItems[childPosition].toString())
             {
                 "CHANGE YOUR APP SETTINGS"->{
@@ -123,7 +124,7 @@ class RLFragMore : RLBaseFragment() {
         tvSubTitle.setText(message)
 
         tvNo.setOnClickListener(View.OnClickListener {
-            sucDialog.dismiss()
+           sucDialog.dismiss()
         })
 
         tvYes.setOnClickListener(View.OnClickListener {

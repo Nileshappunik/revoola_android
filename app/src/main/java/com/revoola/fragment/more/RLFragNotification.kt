@@ -15,6 +15,7 @@ import com.revoola.adapter.RLNotificationListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragNotificationBinding
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -81,7 +82,7 @@ class RLFragNotification : RLBaseFragment() {
                         RLAPiCall()
                     }
                 }catch (e:Exception){
-                    Log.d(TAG,"Catch="+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch="+e.message)
                 }
 
             }
@@ -95,25 +96,25 @@ class RLFragNotification : RLBaseFragment() {
                 adapter!!.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         adapter!!.RLsetList(response.text)
                         isLoading = false
                         index=index+10
                         limit=limit+10
                     }else {
                         isLoading = true
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
                     isLoading = true
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }

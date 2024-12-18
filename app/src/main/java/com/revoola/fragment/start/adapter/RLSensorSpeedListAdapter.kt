@@ -16,6 +16,7 @@ import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.google.gson.JsonParser
+import com.revoola.utils.RLTools
 
 class RLSensorSpeedListAdapter(val context: FragmentActivity?, private val itemClickListener: RLItemClickListenerAdapter) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLSensorSpeedListAdapter"
@@ -99,7 +100,7 @@ class RLSensorSpeedListAdapter(val context: FragmentActivity?, private val itemC
                 }
 
             } catch (e: Exception) {
-            Log.e(TAG, "exception= " + e.message)
+           RLTools.RlLogEPrint(TAG, "exception= " + e.message)
             }
         }
     }

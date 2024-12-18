@@ -89,7 +89,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 displayImage =userData.displayImage
                 displayName =userData.displayName
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -566,9 +566,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         logLargeArray(TAG,"entryGraph:-",json.toJson(entrySessionSummaryGraphData))
         logLargeArray(TAG,"entrysummery:-",json.toJson(entryWorkoutSessionSummary))
         logLargeArray(TAG,"entryGhost:-",json.toJson(ghostDataEntry))
-        Log.e(TAG,"deviceRecordedData:- $deviceRecordedDataMap")
-        Log.e(TAG,"elevationData:- $elevationDataMap")
-        Log.e(TAG,"locationData:- $locationDataMap")
+       RLTools.RlLogEPrint(TAG,"deviceRecordedData:- $deviceRecordedDataMap")
+       RLTools.RlLogEPrint(TAG,"elevationData:- $elevationDataMap")
+       RLTools.RlLogEPrint(TAG,"locationData:- $locationDataMap")
 
 
         RLHeartRateSensorUserSessionDetailData(entryWorkoutSessionDetails,entrySessionSummaryGraphData,entryWorkoutSessionSummary,
@@ -1015,7 +1015,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         var start = 0
         while (start < jsonString.length) {
             val end = minOf(start + maxLogSize, jsonString.length)
-            Log.e(tag, "$message  ${jsonString.substring(start, end)}")
+           RLTools.RlLogEPrint(tag, "$message  ${jsonString.substring(start, end)}")
             start = end
         }
     }
@@ -1037,62 +1037,62 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting connectivity Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting connectivity Entry:- $error")
             }
         }*/
 
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful deviceRecordedData Entry")
+                RLTools.RlLogDPrint(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful elevation Entry")
+                RLTools.RlLogDPrint(TAG,"Successful elevation Entry")
             }else {
-                Log.e(TAG,"Error elevation Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error elevation Entry:- $error")
             }
         }
         databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful  location Entry")
+                RLTools.RlLogDPrint(TAG,"Successful  location Entry")
             }else {
-                Log.e(TAG,"Error  location Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error  location Entry:- $error")
             }
         }
 
@@ -1103,10 +1103,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1115,10 +1115,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1129,10 +1129,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                     }
                 }
         }
@@ -1144,9 +1144,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                     }
                 }
         }
@@ -1156,17 +1156,17 @@ class RLFragSessionComplete : RLBaseFragment(){
         // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
         val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
-        Log.e(TAG,"print when call sessionDetail api ${Gson().toJson(entry)}")
+       RLTools.RlLogEPrint(TAG,"print when call sessionDetail api ${Gson().toJson(entry)}")
         entryId.let {
             databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
                 }
         }
@@ -1188,62 +1188,62 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting connectivity Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting connectivity Entry:- $error")
             }
         }*/
 
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful deviceRecordedData Entry")
+                RLTools.RlLogDPrint(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful elevation Entry")
+                RLTools.RlLogDPrint(TAG,"Successful elevation Entry")
             }else {
-                Log.e(TAG,"Error elevation Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error elevation Entry:- $error")
             }
         }
         databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful  location Entry")
+                RLTools.RlLogDPrint(TAG,"Successful  location Entry")
             }else {
-                Log.e(TAG,"Error  location Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error  location Entry:- $error")
             }
         }
 
@@ -1254,10 +1254,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1266,10 +1266,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1280,10 +1280,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                     }
                 }
         }
@@ -1295,9 +1295,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                     }
                 }
         }
@@ -1309,12 +1309,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
                 }
         }
@@ -1338,62 +1338,62 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         /* databaseManager.RlWriteData(connectivityDataPath,connectivityDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting connectivity Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting connectivity Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting connectivity Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting connectivity Entry:- $error")
             }
         }*/
 
         databaseManager.RlWriteData(deviceRecordedDataPath,deviceRecordedData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful deviceRecordedData Entry")
+                RLTools.RlLogDPrint(TAG,"Successful deviceRecordedData Entry")
             }else {
-                Log.e(TAG,"Error deviceRecordedData Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error deviceRecordedData Entry:- $error")
             }
         }
         databaseManager.RlWriteData(elevationDataPath,elevationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful elevation Entry")
+                RLTools.RlLogDPrint(TAG,"Successful elevation Entry")
             }else {
-                Log.e(TAG,"Error elevation Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error elevation Entry:- $error")
             }
         }
         databaseManager.RlWriteData(gpxDataPath,gpxDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_TDataPath,gpx_TDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_ServerDataPath,gpx_T_ServerDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
             }
         }
 
         databaseManager.RlWriteData(gpx_T_Server_NDataPath,gpx_T_Server_NDataMap) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
+                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
             }else {
-                Log.e(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
             }
         }
         databaseManager.RlWriteData(locationDataPath,locationData) { success, error ->
             if (success) {
-                Log.d(TAG,"Successful  location Entry")
+                RLTools.RlLogDPrint(TAG,"Successful  location Entry")
             }else {
-                Log.e(TAG,"Error  location Entry:- $error")
+               RLTools.RlLogEPrint(TAG,"Error  location Entry:- $error")
             }
         }
         val justRide_=yourWayType+"_justRide_"
@@ -1403,10 +1403,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostLast.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData LastForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1415,10 +1415,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostBest.child(justRide_).setValue(entryGhost.toMap())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
 
                 } else {
-                    Log.e("FirebaseDatabase", "Failed  GhostData bestForClass to save entry", task.exception)
+                   RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -1429,10 +1429,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(entrysummery.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryData!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryData!")
 
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                     }
                 }
         }
@@ -1444,9 +1444,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(entryGraph)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryGraphData!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionSummaryGraphData!")
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                     }
                 }
         }
@@ -1458,12 +1458,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry.toMap())
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
                 }
         }
@@ -1566,7 +1566,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("FirebaseStorage", "Image upload failed", e)
+               RLTools.RlLogEPrint("FirebaseStorage", "Image upload failed:- $e")
             }
     }
     private fun RLRevoolaUserSessionSummaryData(entry: RLWorkoutSessionSummaryModel) {
@@ -1576,12 +1576,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry :- ${ task.exception}")
                     }
                 }
         }
@@ -1593,12 +1593,12 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(entry)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("FirebaseDatabase", "Entry saved successfully!")
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully!")
                         RLBottomHideShowSet(true)
                         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                         (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     } else {
-                        Log.e("FirebaseDatabase", "Failed to save entry", task.exception)
+                       RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry :- ${ task.exception}")
                     }
                 }
         }

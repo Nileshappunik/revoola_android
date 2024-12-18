@@ -204,7 +204,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         }
     }
     private fun RLanalysisEffortUISetup(){
-        Log.d(TAG,"NU")
+        RLTools.RlLogDPrint(TAG,"NU")
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.EffortScore to RLMetricData("0"),
             RLTypeOfMetrics.EffortZone to RLMetricData("CALM"),

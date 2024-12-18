@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
+import com.revoola.utils.RLTools
 
 class RLLoginActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginActivityRL::class.java.simpleName
@@ -70,16 +71,16 @@ class RLLoginActivityRL : RLBaseActivity() {
                 md.update(signature.toByteArray())
 
                val st= if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                   Log.e("KeyHash:", Base64.getEncoder().encodeToString(md.digest()))
+                  RLTools.RlLogEPrint("KeyHash:", Base64.getEncoder().encodeToString(md.digest()))
 
                } else {
-                   Log.e("KeyHash:", "error")
+                  RLTools.RlLogEPrint("KeyHash:", "error")
                }
             }
         } catch (e: PackageManager.NameNotFoundException) {
-            Log.e("KeyHash:", "error1= "+e.message)
+           RLTools.RlLogEPrint("KeyHash:", "error1= "+e.message)
         } catch (e: NoSuchAlgorithmException) {
-            Log.e("KeyHash:", "error2= "+e.message)
+           RLTools.RlLogEPrint("KeyHash:", "error2= "+e.message)
         }*/
 
         activityBinding.txtEmailaccount.setOnClickListener {
@@ -115,11 +116,11 @@ class RLLoginActivityRL : RLBaseActivity() {
             }
 
             override fun onCancel() {
-                Log.e(TAG,"FacebookLogin cancelled.")
+               RLTools.RlLogEPrint(TAG,"FacebookLogin cancelled.")
             }
 
             override fun onError(error: FacebookException) {
-                Log.e(TAG,"FacebookLogin Error: ${error.message}")
+               RLTools.RlLogEPrint(TAG,"FacebookLogin Error: ${error.message}")
             }
         })
     }
@@ -158,23 +159,23 @@ class RLLoginActivityRL : RLBaseActivity() {
         try {
             val account = completedTask.getResult(ApiException::class.java)!!
             // Signed in successfully, show authenticated UI.
-            Log.d(TAG, "signInResult= " + account.email)
+            RLTools.RlLogDPrint(TAG, "signInResult= " + account.email)
             RLfirebaseAuthWithGoogle(account)
         } catch (e: ApiException) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.e(TAG, "Google sign in failed Message:-  " + e.localizedMessage)
+           RLTools.RlLogEPrint(TAG, "Google sign in failed Message:-  " + e.localizedMessage)
         }
     }
     private fun RLfirebaseAuthWithGoogle(account: GoogleSignInAccount) {
         try {
-            Log.d(TAG, "signInResult idToken:-  " + account.idToken)
+            RLTools.RlLogDPrint(TAG, "signInResult idToken:-  " + account.idToken)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
             auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
-                        Log.d(TAG, "signInWithCredential:success ID:- "+user)
+                        RLTools.RlLogDPrint(TAG, "signInWithCredential:success ID:- "+user)
                         RLupdateUI(user)
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -183,7 +184,7 @@ class RLLoginActivityRL : RLBaseActivity() {
                     }
                 }
         }catch (e:Exception){
-            Log.e(TAG,"EXCEPTION:- "+e.message)
+           RLTools.RlLogEPrint(TAG,"EXCEPTION:- "+e.message)
         }
     }
     private fun RLupdateUI(user: FirebaseUser?) {

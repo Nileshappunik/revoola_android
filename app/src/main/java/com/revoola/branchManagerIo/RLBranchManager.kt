@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
+import com.revoola.utils.RLTools
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.LinkProperties
 import java.io.File
@@ -54,10 +55,10 @@ class RLBranchManager (val context: Context) {
         branchUniversalObject.generateShortUrl(context, linkProperties) { url, error ->
             if (error == null) {
                 shareUrl=url.toString()
-                Log.e(TAG,"Generated Branch Link: $url")
+               RLTools.RlLogEPrint(TAG,"Generated Branch Link: $url")
                 RLShareUrl(shareUrl)
             } else {
-                Log.e(TAG,"Branch Error: ${error.message}")
+               RLTools.RlLogEPrint(TAG,"Branch Error: ${error.message}")
             }
         }
          return shareUrl
@@ -85,11 +86,11 @@ class RLBranchManager (val context: Context) {
         branchUniversalObject.generateShortUrl(context, linkProperties) { url, error ->
             if (error == null) {
                 shareUrl = url.toString() // Get the generated short URL
-                Log.e(TAG, "Generated Branch Link: $url")
+               RLTools.RlLogEPrint(TAG, "Generated Branch Link: $url")
                // RLShareUrl(shareUrl) // You can call a function to handle the generated URL
                 shareContent(className,instructor,shareUrl)
             } else {
-                Log.e(TAG, "Branch Error: ${error.message}")
+               RLTools.RlLogEPrint(TAG, "Branch Error: ${error.message}")
             }
         }
 
@@ -188,7 +189,7 @@ class RLBranchManager (val context: Context) {
             fileOutputStream.close()
             Uri.fromFile(file)
         } catch (e: IOException) {
-            Log.e(TAG, "Error saving image: ${e.message}", e)
+           RLTools.RlLogEPrint(TAG, "Error saving image: ${e.message}")
             null
         }
     }
@@ -202,7 +203,7 @@ class RLBranchManager (val context: Context) {
             }
             context.startActivity(Intent.createChooser(shareIntent, "Share Image"))
         } catch (e: Exception) {
-            Log.e("PhotoShot", "Error sharing image: ${e.message}", e)
+           RLTools.RlLogEPrint("PhotoShot", "Error sharing image: ${e.message}")
         }
     }
 
@@ -225,7 +226,7 @@ class RLBranchManager (val context: Context) {
                 param.contains("utp=") -> inviteUserType = param.replace("utp=", "")
                 param.contains("usm=") -> inviteUserSubsModel = param.replace("usm=", "")
                 param.contains("com=") -> commisionFlag = param.replace("com=", "")
-                else -> Log.d("BranchService", "Unknown deep link parameter: $param")
+                else -> RLTools.RlLogDPrint("BranchService", "Unknown deep link parameter: $param")
             }
         }
     }
@@ -253,11 +254,11 @@ class RLBranchManager (val context: Context) {
         // Generate the Branch URL
         branchUniversalObject.generateShortUrl(context, linkProperties) { url, error ->
             if (error == null) {
-                Log.d("Branch", "Generated Branch Link: $url")
+                RLTools.RlLogDPrint("Branch", "Generated Branch Link: $url")
                 // You can share the URL or use it in your app
                 shareLink(url.toString())
             } else {
-                Log.e("Branch", "Error generating Branch URL: ${error.message}")
+               RLTools.RlLogEPrint("Branch", "Error generating Branch URL: ${error.message}")
             }
         }
     }

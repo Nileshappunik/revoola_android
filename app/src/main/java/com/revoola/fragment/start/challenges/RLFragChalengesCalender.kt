@@ -28,6 +28,7 @@ import com.revoola.fragment.start.challenges.model.RLDateInfoModel
 import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
+import com.revoola.utils.RLTools
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -351,29 +352,29 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val date = dateIterator.time
         when(dateIterator.get(Calendar.DAY_OF_WEEK)){
             Calendar.MONDAY->{
-                Log.d(TAG,"MONDAY")}
+                RLTools.RlLogDPrint(TAG,"MONDAY")}
             Calendar.TUESDAY->{
-                Log.d(TAG,"TUESDAY")
+                RLTools.RlLogDPrint(TAG,"TUESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.WEDNESDAY->{ Log.d(TAG,"WEDNESDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.THURSDAY->{  Log.d(TAG,"THURSDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.WEDNESDAY->{ RLTools.RlLogDPrint(TAG,"WEDNESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.FRIDAY->{  Log.d(TAG,"FRIDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.THURSDAY->{  RLTools.RlLogDPrint(TAG,"THURSDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SATURDAY->{ Log.d(TAG,"SATURDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.FRIDAY->{  RLTools.RlLogDPrint(TAG,"FRIDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SUNDAY->{ Log.d(TAG,"SUNDAY")
+            Calendar.SATURDAY->{ RLTools.RlLogDPrint(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ RLTools.RlLogDPrint(TAG,"SUNDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
@@ -383,34 +384,34 @@ class RLFragChalengesCalender : RLBaseFragment() {
 
         }
        /* if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-            Log.d(TAG,"MONDAY")
+            RLTools.RlLogDPrint(TAG,"MONDAY")
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY){
-            Log.d(TAG,"TUESDAY")
+            RLTools.RlLogDPrint(TAG,"TUESDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY){
-            Log.d(TAG,"WEDNESDAY")
+            RLTools.RlLogDPrint(TAG,"WEDNESDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY){
-            Log.d(TAG,"THURSDAY")
+            RLTools.RlLogDPrint(TAG,"THURSDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
-            Log.d(TAG,"FRIDAY")
+            RLTools.RlLogDPrint(TAG,"FRIDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
-            Log.d(TAG,"SATURDAY")
+            RLTools.RlLogDPrint(TAG,"SATURDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
-            Log.d(TAG,"SUNDAY")
+            RLTools.RlLogDPrint(TAG,"SUNDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
@@ -452,29 +453,29 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val date = dateIterator.time
         when(dateIterator.get(Calendar.DAY_OF_WEEK)){
             Calendar.MONDAY->{
-                Log.d(TAG,"MONDAY")}
+                RLTools.RlLogDPrint(TAG,"MONDAY")}
             Calendar.TUESDAY->{
-                Log.d(TAG,"TUESDAY")
+                RLTools.RlLogDPrint(TAG,"TUESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.WEDNESDAY->{ Log.d(TAG,"WEDNESDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.THURSDAY->{  Log.d(TAG,"THURSDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.WEDNESDAY->{ RLTools.RlLogDPrint(TAG,"WEDNESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.FRIDAY->{  Log.d(TAG,"FRIDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.THURSDAY->{  RLTools.RlLogDPrint(TAG,"THURSDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SATURDAY->{ Log.d(TAG,"SATURDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.FRIDAY->{  RLTools.RlLogDPrint(TAG,"FRIDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SUNDAY->{ Log.d(TAG,"SUNDAY")
+            Calendar.SATURDAY->{ RLTools.RlLogDPrint(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ RLTools.RlLogDPrint(TAG,"SUNDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
@@ -484,34 +485,34 @@ class RLFragChalengesCalender : RLBaseFragment() {
 
         }
       /*  if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-            Log.d(TAG,"MONDAY")
+            RLTools.RlLogDPrint(TAG,"MONDAY")
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY){
-            Log.d(TAG,"TUESDAY")
+            RLTools.RlLogDPrint(TAG,"TUESDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY){
-            Log.d(TAG,"WEDNESDAY")
+            RLTools.RlLogDPrint(TAG,"WEDNESDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY){
-            Log.d(TAG,"THURSDAY")
+            RLTools.RlLogDPrint(TAG,"THURSDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY){
-            Log.d(TAG,"FRIDAY")
+            RLTools.RlLogDPrint(TAG,"FRIDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
-            Log.d(TAG,"SATURDAY")
+            RLTools.RlLogDPrint(TAG,"SATURDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
         }else if (dateIterator.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
-            Log.d(TAG,"SUNDAY")
+            RLTools.RlLogDPrint(TAG,"SUNDAY")
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))
             days.add(RLDateInfoModel(date, RLDateType.BLANK))

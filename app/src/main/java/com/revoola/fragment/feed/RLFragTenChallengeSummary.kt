@@ -213,13 +213,13 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                     id = challengeid,type = "historic_challenges")
             )
         )
-        Log.d(TAG,"setgoaled_challenges_single= "+request)
+        RLTools.RlLogDPrint(TAG,"setgoaled_challenges_single= "+request)
         viewModel.RLgoaled_challenges_Single(request) { result ->
             result.onSuccess { response ->
                 try {
                     var selfUserData=""
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         var rank=0
                         for ( i in 0 until response.text.data.size){
                             val jsonObject=JSONObject()
@@ -230,7 +230,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                             jsonObject.put("image",response.text.data[i].avatar)
                             jsonObject.put("userid",response.text.data[i].userid)
                             jasonArray.put(jsonObject)
-                           // Log.d(TAG,"jsonObject= $jsonObject")
+                           // RLTools.RlLogDPrint(TAG,"jsonObject= $jsonObject")
                             rank=response.text.data[i].length_of_challenge
                             if(response.text.data[i].userid == cardData.userid) {
                                 selfUserData = cardData.userid
@@ -243,22 +243,22 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                         fragBinding.layStepssofar.txtTimeNumber.setText("${rank.toString()} Days")
                         RLRankingMapSet(jasonArray,selfUserData)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
 
     }
     private fun RLRankingMapSet(jasonArray: JSONArray,selfUserData:String){
         val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,selfUserData)
-       // Log.d(TAG,"htmltext:-   $htmltext ")
+       // RLTools.RlLogDPrint(TAG,"htmltext:-   $htmltext ")
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
             htmltext, "text/html", "UTF-8", null)
     }
@@ -266,11 +266,11 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         val stepsSoFar:Int = if (myChallengeData.totalmetric != null && myChallengeData.totalmetric > 0) myChallengeData.totalmetric else 0
         val targetSteps = if (myChallengeData.goalvalue != null && myChallengeData.goalvalue > 0) myChallengeData.goalvalue else 0
 
-        Log.e(TAG,"stepsSoFar:- $stepsSoFar ")
-        Log.e(TAG,"targetSteps:- $targetSteps ")
+       RLTools.RlLogEPrint(TAG,"stepsSoFar:- $stepsSoFar ")
+       RLTools.RlLogEPrint(TAG,"targetSteps:- $targetSteps ")
 
         val htmltext=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
-        // Log.d(TAG,"htmltext:-   $htmltext ")
+        // RLTools.RlLogDPrint(TAG,"htmltext:-   $htmltext ")
         fragBinding.webViewChart.loadDataWithBaseURL(null,
             htmltext , "text/html", "UTF-8", null)
 

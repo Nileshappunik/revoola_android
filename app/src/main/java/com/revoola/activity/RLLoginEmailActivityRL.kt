@@ -116,7 +116,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     RLSetUsernameToFirebase(uid)
 
                 } catch (e:Exception){
-                    Log.e(TAG,"Exception:- "+e.message)
+                   RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
                 }
             } else {
                 // Sign-in failed
@@ -125,17 +125,17 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                         // Handle case where user does not exist
                         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_email,emailID)
                         RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.login_password,password)
-                        Log.e(TAG, "User does not exist: ${exception.message}")
+                       RLTools.RlLogEPrint(TAG, "User does not exist: ${exception.message}")
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         // Handle case where password is incorrect
                         RLshowDialog("The password is invalid or the user does not have a password.")
-                        Log.e(TAG, "Invalid credentials: ${exception.message}")
+                       RLTools.RlLogEPrint(TAG, "Invalid credentials: ${exception.message}")
                     }
                     else -> {
                         // Handle other exceptions
                         RLopentoast("Sign-in failed")
-                        Log.e(TAG, "Sign-in failed: ${exception!!.message}")
+                       RLTools.RlLogEPrint(TAG, "Sign-in failed: ${exception!!.message}")
                     }
                 }
             }

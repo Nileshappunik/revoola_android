@@ -9,13 +9,14 @@ import com.google.firebase.messaging.RemoteMessage
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
 import com.revoola.R
+import com.revoola.utils.RLTools
 
 
 class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "Refreshed token: $token")
+        RLTools.RlLogDPrint(TAG, "Refreshed token: $token")
 
         // Send the token to your server or save it for later use
         sendRegistrationToServer(token)
@@ -27,11 +28,11 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         // Handle FCM messages here
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        RLTools.RlLogDPrint(TAG, "From: ${remoteMessage.from}")
 
         // Check if message contains a data payload.
         remoteMessage.data.isNotEmpty().let {
-            Log.d(TAG, "Message data payload: " + remoteMessage.data)
+            RLTools.RlLogDPrint(TAG, "Message data payload: " + remoteMessage.data)
             val title = remoteMessage.notification?.title ?: "Default Title"
             val body = remoteMessage.notification?.body ?: "Default Body"
             // Show custom notification
@@ -40,7 +41,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
+            RLTools.RlLogDPrint(TAG, "Message Notification Body: ${it.body}")
             showNotification(it.title ?: "No Title", it.body ?: "No Body")
         }
 
@@ -50,7 +51,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
         }else{
             // your app's business logic to show notification
             remoteMessage.notification?.let {
-                Log.d(TAG, "Message Notification Body: ${it.body}")
+                RLTools.RlLogDPrint(TAG, "Message Notification Body: ${it.body}")
                 showNotification(it.title ?: "No Title", it.body ?: "No Body")
             }
         }

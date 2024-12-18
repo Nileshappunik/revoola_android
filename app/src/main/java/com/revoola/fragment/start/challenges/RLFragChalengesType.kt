@@ -23,6 +23,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.utils.RLTools
 
 class RLFragChalengesType : RLBaseFragment() {
     val TAG: String = RLFragChalengesType::class.java.simpleName
@@ -47,7 +48,7 @@ class RLFragChalengesType : RLBaseFragment() {
             override fun onGlobalLayout() {
                 fragBinding.rvChallenges.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val height =  fragBinding.rvChallenges.height
-                Log.d(TAG,"RelativeLayout total height: $height pixels")
+                RLTools.RlLogDPrint(TAG,"RelativeLayout total height: $height pixels")
                 RLChallengesList(height)
             }
         })
@@ -76,10 +77,10 @@ class RLFragChalengesType : RLBaseFragment() {
                     fragBinding.rvChallenges.adapter=adapter
 
                 }catch (e:Exception){
-                    Log.e(TAG,"Catch:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
                 }
             }else{
-                Log.e(TAG,"Null Data:- $data")
+               RLTools.RlLogEPrint(TAG,"Null Data:- $data")
             }
         }
     }

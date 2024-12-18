@@ -98,7 +98,7 @@ class RLDatabaseManagerRead {
 private fun readData(path: String) {
     databaseManager.readData(path) { data, error ->
         if (data != null) {
-            Log.d("MainActivity", "Data read: $data")
+            RLTools.RlLogDPrint("MainActivity", "Data read: $data")
             Toast.makeText(this, "Data read: $data", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Read failed: ${error?.message}", Toast.LENGTH_SHORT).show()

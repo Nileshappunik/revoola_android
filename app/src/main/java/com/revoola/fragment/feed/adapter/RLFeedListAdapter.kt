@@ -114,7 +114,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
 
             } catch (e: Exception) {
-            Log.d(TAG, "exception= " + e.message)
+            RLTools.RlLogDPrint(TAG, "exception= " + e.message)
                 val temptext="pos:- ${position.toString()} , ctype:- $classType , third:- ${dataList[position].from_third_party_source.toString()} , bmo:- ${dataList[position].bmo.toString()}, HR:- ${dataList[position].hrm.toString()}"
                 layoutBinding.temptext.setText("exception:- ${e.message.toString()} :- $temptext")
             }
@@ -247,11 +247,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
            // val pathUri =RLBranchManager(context!!).RLSaveBitmapToInternalStorage(bitmap,"Capture")
             val imgUri = RLBranchManager(context!!).RLBitmapToUri(bitmap)
 
-            Log.e(TAG,"catch image  Uri:- $imgUri")
+           RLTools.RlLogEPrint(TAG,"catch image  Uri:- $imgUri")
             if (imgUri != null) {
                 RLBranchManager(context!!).RLShareImage(imgUri)
             }else{
-                Log.e(TAG,"Test Uri:- $imgUri")
+               RLTools.RlLogEPrint(TAG,"Test Uri:- $imgUri")
             }
 
         }

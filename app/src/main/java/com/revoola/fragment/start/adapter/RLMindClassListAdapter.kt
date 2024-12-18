@@ -17,6 +17,7 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlLayoutMindClassesListBinding
 import com.revoola.fragment.start.mind.RLFragMindClassesView
 import com.revoola.model.RLVideoModel
+import com.revoola.utils.RLTools
 
 class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
                              val context: FragmentActivity?,
@@ -82,7 +83,7 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
 
 
             }catch (e:Exception){
-                Log.e(TAG,"Exception:- ${e.message}")
+               RLTools.RlLogEPrint(TAG,"Exception:- ${e.message}")
             }
         }
 

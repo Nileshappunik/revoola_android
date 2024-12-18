@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.utils.RLTools
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -83,12 +84,12 @@ class RLFragStart : RLBaseFragment() {
                 try {
                     val gson = Gson()
                     val jsonArray = gson.toJson(data)
-                    Log.d(TAG,"Response:- $jsonArray")
+                    RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                     RLUiSetUP(dataList)
                 }catch (e:Exception){
-                    Log.e(TAG,"Catch:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
                 }
             }
         }
@@ -101,18 +102,18 @@ class RLFragStart : RLBaseFragment() {
                     try {
                         val gson = Gson()
                         val jsonArray = gson.toJson(snapshot.value)
-                        Log.d(TAG, "Response:- $jsonArray")
+                        RLTools.RlLogDPrint(TAG, "Response:- $jsonArray")
                         val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                         val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                         RLUiSetUP(dataList)
                     } catch (e: Exception) {
-                        Log.e(TAG, "Catch:- ${e.message}")
+                       RLTools.RlLogEPrint(TAG, "Catch:- ${e.message}")
                     }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Firebase Error: ${error.message}")
+               RLTools.RlLogEPrint(TAG, "Firebase Error: ${error.message}")
             }
         })
     }

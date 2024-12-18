@@ -18,6 +18,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.utils.RLTools
 
 class RLFragYourWay : RLBaseFragment() {
     val TAG: String = RLFragYourWay::class.java.simpleName
@@ -40,7 +41,7 @@ class RLFragYourWay : RLBaseFragment() {
             override fun onGlobalLayout() {
                 fragBinding.rvYourway.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val height =  fragBinding.rvYourway.height
-                Log.d(TAG,"RelativeLayout total height: $height pixels")
+                RLTools.RlLogDPrint(TAG,"RelativeLayout total height: $height pixels")
                 RLYourwayList(height)
             }
         })
@@ -58,7 +59,7 @@ class RLFragYourWay : RLBaseFragment() {
                  try {
                      val gson = Gson()
                      val jsonArray = gson.toJson(data)
-                     Log.d(TAG,"Response:- $jsonArray")
+                     RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
                      val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                      val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                     //Recyclerview Set
@@ -67,7 +68,7 @@ class RLFragYourWay : RLBaseFragment() {
                      val adapter = RLYourWayListAdapter(activity,dataList,height)
                      fragBinding.rvYourway.adapter=adapter
                  }catch (e:Exception){
-                     Log.e(TAG,"Catch:- ${e.message}")
+                    RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
                  }
              }
          }

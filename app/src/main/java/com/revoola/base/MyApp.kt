@@ -26,7 +26,6 @@ import com.revoola.moengage.push.RLCustomPushMessageListener
 import com.revoola.moengage.push.RLGeofenceHitListener
 import com.revoola.utils.RLTools
 
-
 class MyApp : Application() {
 
     override fun onCreate() {
@@ -74,8 +73,7 @@ class MyApp : Application() {
     }
 
     private fun RLMoEngageInit(){
-        val moEngage =
-            MoEngage.Builder(this,getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1)
+        val moEngage = MoEngage.Builder(this,getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1)
                 .configureNotificationMetaData(
                     NotificationConfig(
                         smallIcon = R.drawable.ic_notifications,
@@ -83,9 +81,7 @@ class MyApp : Application() {
                         notificationColor = R.color.AppMainColor,
                         isMultipleNotificationInDrawerEnabled = true,
                         isBuildingBackStackEnabled = true,
-                        isLargeIconDisplayEnabled = true
-                    )
-                )
+                        isLargeIconDisplayEnabled = true))
                 .configureFcm(FcmConfig(true))
                 .configurePushKit(PushKitConfig(true))
                 .build()
@@ -120,7 +116,7 @@ class MyApp : Application() {
         MoEPushHelper.getInstance().registerMessageListener(RLCustomPushMessageListener())
         // Callback for Firebase Token
         MoEFireBaseHelper.getInstance().addTokenListener { token ->
-            Log.e("setupPushCallbacks","fcm token: ${token.pushToken}")
+           RLTools.RlLogEPrint("setupPushCallbacks","fcm token: ${token.pushToken}")
             MoEFireBaseHelper.getInstance().passPushToken(applicationContext,token.pushToken)
         }
 

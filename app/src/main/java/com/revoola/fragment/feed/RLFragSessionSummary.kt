@@ -218,7 +218,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         }
     }
     private fun RLanalysisEffortUISetup(){
-        Log.d(TAG,"NU")
+        RLTools.RlLogDPrint(TAG,"NU")
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.EffortScore to RLMetricData(cardData.totalREV.roundToInt().toString()),
             RLTypeOfMetrics.EffortZone to RLMetricData("CALM"),

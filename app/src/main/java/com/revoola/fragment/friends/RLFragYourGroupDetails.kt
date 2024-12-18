@@ -21,6 +21,7 @@ import com.revoola.model.RLSetGroupMemberData
 import com.revoola.model.RLSetGroupMemberRequest
 import com.revoola.model.RLuserData
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -82,23 +83,23 @@ class RLFragYourGroupDetails : RLBaseFragment() {
     }
     private fun RLGroupDataApiCall(groupID:String) {
         val request = listOf(RLSetGroupMemberRequest(group_data = RLSetGroupMemberData(groupid = groupID,current_userid = currentUser,limit = 100, index=0)))
-        Log.d(TAG,"group_data= "+request)
+        RLTools.RlLogDPrint(TAG,"group_data= "+request)
 
         viewModel.RLGroupMembers(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLresponsehandle(response.text)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }

@@ -162,7 +162,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
                 RestingHR=userData.restingHr
                 appUnit=userData.appUnit
             } else {
-                Log.e(TAG, "Error fetching user data")
+               RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
         // Initialize the GestureDetector
@@ -693,7 +693,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 // Request necessary permissions
             }
-            Log.d(TAG,"onServiceConnected")
+            RLTools.RlLogDPrint(TAG,"onServiceConnected")
             val binder = service as RLBLEService.RLLocalBinder
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
@@ -704,7 +704,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceBound = false
-            Log.d(TAG,"onServiceDisconnected")
+            RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
         }
     }
     private fun RLhandleDeviceFound(deviceAddress: String) {
@@ -757,7 +757,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         }catch (e:Exception){
-            Log.e(TAG,"Exception:- "+e.message)
+           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
 

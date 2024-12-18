@@ -71,6 +71,14 @@ object RLTools {
         })
     }
 
+    fun RlLogDPrint(tag_log:String,message_log:String){
+       Log.d(tag_log,message_log)
+    }
+
+    fun RlLogEPrint(tag_log:String,message_log:String){
+       Log.e(tag_log,message_log)
+    }
+
      fun ScxhasNotificationPermission(context: Context): Boolean {
          return  ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
@@ -842,7 +850,7 @@ object RLTools {
         try {
             activity.startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
-            Log.d("pp", "no browser found" + ex.message)
+            RLTools.RlLogDPrint("pp", "no browser found" + ex.message)
         }
     }
 
@@ -991,7 +999,7 @@ object RLTools {
 
             val secondsInADay = 86400
             val differentInADay = different/secondsInADay
-            Log.e("TAG","different:- $different  ,differentInADay:- $differentInADay")
+           RLTools.RlLogEPrint("TAG","different:- $different  ,differentInADay:- $differentInADay")
             val final=totalDays.toInt() - differentInADay.toDouble().toInt()
             // Calculate the difference in days between the current date and the given date
             return final.toString()
@@ -1013,7 +1021,7 @@ object RLTools {
 
             val secondsInADay = 86400
             val differentInADay = different/secondsInADay
-            Log.e("TAG","different:- $different  ,differentInADay:- $differentInADay")
+           RLTools.RlLogEPrint("TAG","different:- $different  ,differentInADay:- $differentInADay")
             val final=totalDays.toInt() - differentInADay.toDouble().toInt()
             // Calculate the difference in days between the current date and the given date
             return final.toString()
@@ -1053,7 +1061,7 @@ object RLTools {
         try {
             activity.startActivity(whatsappIntent)
         } catch (ex: ActivityNotFoundException) {
-//            Log.d("Activity", "Whatsapp have not been installed.");
+//            RLTools.RlLogDPrint("Activity", "Whatsapp have not been installed.");
             activity.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -1095,11 +1103,11 @@ object RLTools {
         val activeNetwork = cm.activeNetworkInfo
         if (activeNetwork != null) { // connected to the internet
             if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) {
-//                Log.d(TAG, "Internet Active: " + activeNetwork.getTypeName());
+//                RLTools.RlLogDPrint(TAG, "Internet Active: " + activeNetwork.getTypeName());
                 return true
             } else if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) {
                 // connected to the mobile provider's data plan
-//                Log.d(TAG, "Internet Active: " + activeNetwork.getTypeName());
+//                RLTools.RlLogDPrint(TAG, "Internet Active: " + activeNetwork.getTypeName());
                 return true
             }
         }

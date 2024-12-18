@@ -25,6 +25,7 @@ import com.revoola.model.RLsetgroup_data
 import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -100,23 +101,23 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                 search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)
             )
         )
-        Log.d(TAG,"setyouFollowdata= "+request)
+        RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
 
         viewModel.RLfriendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLresponsehandlefriendsApi(response.text.user)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -157,23 +158,23 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                 group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)
             )
         )
-        Log.d(TAG,"setgroupdata= "+request)
+        RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
 
         viewModel.RLyourGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLresponsehandleGroupsApi(response.text)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }

@@ -123,7 +123,7 @@ class RLFragOverview : RLBaseFragment() {
                     timestampto = timestampTo)
             )
         )
-        Log.d(TAG,"request:- $request")
+        RLTools.RlLogDPrint(TAG,"request:- $request")
         viewModel.RLgetUserAggregatedData(request) { result ->
             result.onSuccess { response ->
                 try {
@@ -157,11 +157,11 @@ class RLFragOverview : RLBaseFragment() {
                         RLcommonToast(response.type)
                     }
                 }catch (e:Exception){
-                    Log.d(TAG,"exception= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"exception= "+e.message)
                 }
             }.onFailure { error ->
                 // Handle failure
-                Log.d(TAG,"error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"error= "+error.message)
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
             }
         }

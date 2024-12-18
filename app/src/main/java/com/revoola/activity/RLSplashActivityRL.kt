@@ -17,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import android.content.pm.Signature
 import android.util.Base64
+import com.revoola.utils.RLTools
 import java.security.MessageDigest
 
 
@@ -80,7 +81,7 @@ class RLSplashActivityRL : RLBaseActivity() {
                     RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
                     RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
                 } else {
-                    Log.e(TAG, "Fetch failed")
+                   RLTools.RlLogEPrint(TAG, "Fetch failed")
                 }
             })
     }

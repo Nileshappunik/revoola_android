@@ -170,7 +170,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 // Get new FCM registration token
                 tokenFCM = task.result
                 // Log and toast
-                Log.d(TAG, "FCM Token: $tokenFCM")
+                RLTools.RlLogDPrint(TAG, "FCM Token: $tokenFCM")
                 // Send token to your server or use it as needed
             }
         }
@@ -489,7 +489,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "userId" to userId)
         databaseManager.REVOOLAUSERFORSEARCHWrite(userId,revoolaUserForSearchMap) { success, error ->
             if (success) {
-               Log.d(TAG,"RevoolaUsersForSearch Successful Entry")
+               RLTools.RlLogDPrint(TAG,"RevoolaUsersForSearch Successful Entry")
             }
         }
 
@@ -627,7 +627,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 leaderboardref.downloadUrl.addOnSuccessListener { uri ->
                     chooseimagefile = uri.toString()
                     RLvalidation()
-                    Log.d(TAG,"imageUrl leaderboardPath:- $chooseimagefile")
+                    RLTools.RlLogDPrint(TAG,"imageUrl leaderboardPath:- $chooseimagefile")
                 }
             }.addOnFailureListener {
                RLopentoast("Failed to upload image")
@@ -637,7 +637,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             val uploadmainPath= mainPathref.putFile(filePath)
             uploadmainPath.addOnSuccessListener {
                 mainPathref.downloadUrl.addOnSuccessListener { uri ->
-                    Log.d(TAG,"imageUrl mainPath:- $chooseimagefile")
+                    RLTools.RlLogDPrint(TAG,"imageUrl mainPath:- $chooseimagefile")
                 }
             }.addOnFailureListener {
                 RLopentoast("Failed to upload image")

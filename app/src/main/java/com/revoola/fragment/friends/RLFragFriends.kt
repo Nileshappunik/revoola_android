@@ -17,6 +17,7 @@ import com.revoola.fragment.friends.adapter.RLFriendListAdapter
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.utils.RLTools
 
 class RLFragFriends : RLBaseFragment() {
     val TAG: String = RLFragFriends::class.java.simpleName
@@ -62,12 +63,12 @@ class RLFragFriends : RLBaseFragment() {
                 try {
                     val gson = Gson()
                     val jsonArray = gson.toJson(data)
-                    Log.d(TAG,"Response:- $jsonArray")
+                    RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                     RLuisetupNew(dataList)
                 }catch (e:Exception){
-                    Log.e(TAG,"Catch:- ${e.message}")
+                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
                 }
             }
         }

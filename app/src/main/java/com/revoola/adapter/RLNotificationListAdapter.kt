@@ -100,7 +100,7 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
                     .into(layoutBinding.imgNotification)
 
             }catch (e:Exception){
-                Log.d(TAG,"EXCEPTION= "+e.message)
+                RLTools.RlLogDPrint(TAG,"EXCEPTION= "+e.message)
             }
 
         }

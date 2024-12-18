@@ -36,6 +36,7 @@ import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetoverview_thumb_you
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLTools
 import com.revoola.utils.loadSvg
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -120,7 +121,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                         }
                     }
                 }catch (e:Exception){
-                    Log.d(TAG,"Catch="+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch="+e.message)
                 }
             }
         })
@@ -156,36 +157,36 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             )
         )
 
-        Log.e(TAG,"setdata= "+request)
+       RLTools.RlLogEPrint(TAG,"setdata= $request")
 
         viewModel.RLgetUserFeedCardData(request) { result ->
             result.onSuccess { response ->
                  adapter!!.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                        /* val gson = Gson()
                         val jsonArray = gson.toJson(response.text)
-                        Log.e(TAG,"Feed_jsonDate:-  $jsonArray")*/
+                       RLTools.RlLogEPrint(TAG,"Feed_jsonDate:-  $jsonArray")*/
                         adapter!!.RLaddData(response.text)
                         isLoading = false
                         index=index+100
                         limit=limit+100
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                         //commonToast(response.type)
                         isLoading = true
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                     isLoading = true
                 }
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -210,33 +211,33 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             )
         )
 
-        Log.d(TAG,"setdatayou= "+request)
+        RLTools.RlLogDPrint(TAG,"setdatayou= "+request)
 
         viewModel.RLgetUserFeedCardDatayou(request) { result ->
             result.onSuccess { response ->
                 adapter!!.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         //main list
                         adapter!!.RLaddData(response.text)
                         isLoading = false
                         index=index+100
                         limit=limit+100
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                         isLoading = true
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                     isLoading = true
                 }
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -246,23 +247,23 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 group_data = RLSetGroupData(userid = currentUser, limit = 100, index=0)
             )
         )
-        Log.d(TAG,"setGroupdata= "+request)
+        RLTools.RlLogDPrint(TAG,"setGroupdata= "+request)
 
         viewModel.RLgetGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         RLgroupnamelistdialogopen(response.text)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -332,26 +333,26 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                     today = currentTimestamp)
             )
         )
-        Log.d(TAG,"setdataChallenges= "+request)
+        RLTools.RlLogDPrint(TAG,"setdataChallenges= "+request)
         viewModel.RLgoaled_challenges(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         /*val gson = Gson()
                         val jsonArray = gson.toJson(response.text)
-                        Log.e(TAG,"Success= $jsonArray")*/
+                       RLTools.RlLogEPrint(TAG,"Success= $jsonArray")*/
                         adapterch.RLaddData(response.text.data)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }

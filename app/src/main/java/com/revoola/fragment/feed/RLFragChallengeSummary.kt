@@ -132,7 +132,6 @@ class RLFragChallengeSummary : RLBaseFragment() {
         val jasonArray=JSONArray()
         val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,htmltext, "text/html", "UTF-8", null)
-
         RLRankingDataGetApi(cardData.challengeid)
         RLStepDataGetApi(cardData.challengeid,cardData.userid)
     }
@@ -144,12 +143,12 @@ class RLFragChallengeSummary : RLBaseFragment() {
                     id = challengeid,type = "users_steps", today = currentTimestamp)
             )
         )
-        Log.d(TAG,"setgoaled_challenges= "+request)
+        RLTools.RlLogDPrint(TAG,"setgoaled_challenges= "+request)
         viewModel.RLgoaled_challenges(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         var rank=0
                         for ( i in 0 until response.text.data.size){
                             val jsonObject=JSONObject()
@@ -167,15 +166,15 @@ class RLFragChallengeSummary : RLBaseFragment() {
                         RLRankingMapSet(jasonArray)
                         fragBinding.layRank.txtTimeNumber.setText("${rank.toString()} OF ${jasonArray.length()}")
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
 
@@ -187,12 +186,12 @@ class RLFragChallengeSummary : RLBaseFragment() {
                 userid = userid,challengeid =challengeid )
             )
         )
-        Log.d(TAG,"SetMetricChartByDay= "+request)
+        RLTools.RlLogDPrint(TAG,"SetMetricChartByDay= "+request)
         viewModel.RLMetricChartByDay(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        Log.d(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         for ( i in 0 until response.text.data.size){
                             val jsonObject=JSONObject()
                             val outputFormatter = SimpleDateFormat("dd/MM/yyyy")
@@ -206,15 +205,15 @@ class RLFragChallengeSummary : RLBaseFragment() {
                         }
                         RLStepMapSet(jasonArray)
                     }else {
-                        Log.d(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    Log.d(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
                 RLcommonToast(RLConstants.SERVER_PROBLEM)
-                Log.d(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
     }
@@ -222,7 +221,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         if (jasonArray.length()>0){
             fragBinding.webViewRankingChart.visibility=View.VISIBLE
             val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
-            //Log.d(TAG,"MAp:- $htmltext")
+            //RLTools.RlLogDPrint(TAG,"MAp:- $htmltext")
             fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
                 htmltext, "text/html", "UTF-8", null)
         }else{

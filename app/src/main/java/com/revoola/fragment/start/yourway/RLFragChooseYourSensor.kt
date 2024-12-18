@@ -47,6 +47,7 @@ import com.revoola.fragment.start.mind.RLFragMindClassesNormalVideoStart
 import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.services.RLBLEService
 import com.revoola.utils.RLPrefManager
+import com.revoola.utils.RLTools
 import java.util.UUID
 
 class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
@@ -258,7 +259,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 // Request necessary permissions
             }
-            Log.d(TAG,"onServiceConnected")
+            RLTools.RlLogDPrint(TAG,"onServiceConnected")
             val binder = service as RLBLEService.RLLocalBinder
             rlbleService = binder.getService()
             // Check if devices are not connected then scan
@@ -281,7 +282,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceBound = false
-            Log.d(TAG,"onServiceDisconnected")
+            RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
         }
     }
     override fun onStart() {
@@ -298,7 +299,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
             }
             requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
         }catch (e:Exception){
-         Log.e(TAG,"Exception:- "+e.message)
+        RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
 
     }
@@ -411,14 +412,14 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
         adapter!!.notifyDataSetChanged()
         if (isconnection){
             connecetedDeviceType=deviceType
-            Log.d(TAG, "BLE connection isconnection:-  $connecetedDeviceType")
+            RLTools.RlLogDPrint(TAG, "BLE connection isconnection:-  $connecetedDeviceType")
             RLhandleDeviceFound(deviceAddress)
             com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, deviceAddress)
         }else{
             if (deviceType.equals(connecetedDeviceType)){
                 connecetedDeviceType=""
             }
-            Log.d(TAG, "BLE connection disconnection:- $connecetedDeviceType")
+            RLTools.RlLogDPrint(TAG, "BLE connection disconnection:- $connecetedDeviceType")
             rlbleService!!.RLdisconnectFromDevice()
         }
 

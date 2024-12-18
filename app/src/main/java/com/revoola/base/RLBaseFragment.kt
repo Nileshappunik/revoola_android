@@ -25,6 +25,7 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLTools.RLnextFinishAllActivity
 import com.google.gson.Gson
+import com.revoola.utils.RLTools
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -128,7 +129,7 @@ open class RLBaseFragment : Fragment() {
                 }
             }
         }catch (e:Exception){
-            Log.e(TAG1,"TOAST EXCEPTION:- ${e.message}")
+           RLTools.RlLogEPrint(TAG1,"TOAST EXCEPTION:- ${e.message}")
         }
 
     }
