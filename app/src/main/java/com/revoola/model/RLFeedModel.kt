@@ -90,6 +90,9 @@ data class RLSetgoaled_challenges_request_single(var goaled_challenges: RLSetgoa
 data class RLSetgoaled_challenges(var id:String, var type:String, var today:String)
 data class RLSetgoaled_challengesSingle(var id:String, var type:String)
 
+data class RLrequest_goaled_challenges(var goaled_challenges:RLrequest_challenges_feed_thumbs)
+data class RLrequest_challenges_feed_thumbs(var id:String, var type:String, var today:String,var challengeid:Int)
+
 data class RLFeedChallengesModel(var type: String, var text: RLFeedChallengesModelListData)
 data class RLFeedChallengesModelListData(var data:List<RLFeedChallengesModelData>)
 data class RLFeedChallengesModelData(var actualtotal:Double, var metric:String, var challenge_name:String,

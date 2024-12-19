@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
+import com.revoola.adapter.RLNotificationListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragFeedCardLikeCommentViewBinding
 import com.revoola.databinding.RlLayoutFeedListBinding
@@ -30,7 +31,8 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var classType:String=""
-    lateinit var cardData: RLTextOverview
+
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragFeedCardLikeCommentView()
         fragment.arguments = bundle
@@ -50,15 +52,12 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
     }
+
     private fun RLuisetup() {
         fragBinding.ivBack.setOnClickListener {
             RLcloseFragment()
@@ -68,27 +67,16 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         }
         fragBinding.inlayMain.viewBottom.visibility=View.GONE
         fragBinding.inlayMainThumb.viewBottom.visibility=View.GONE
-        cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
-        val  clickType = requireArguments().getString(RLConstants.TYPE)
-        if (clickType.equals("Comment")){
-            fragBinding.relativeComment.visibility=View.VISIBLE
-            fragBinding.relativeThumb.visibility=View.GONE
-            RLTools.RLheightsetimageview(fragBinding.inlayMain.imgMain)
-            RLCommentThumbUiSet(cardData,fragBinding.inlayMain)
-        }else if (clickType.equals("Thumb")){
-            fragBinding.relativeComment.visibility=View.GONE
-            fragBinding.relativeThumb.visibility=View.VISIBLE
-            RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgMain)
-            RLCommentThumbUiSet(cardData,fragBinding.inlayMainThumb)
-        }
-        fragBinding.btnSend.setOnClickListener {
-            //Do Something
-        }
+
+        val cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
+        RLDataSet(cardData)
+
         val dataList = listOf<String>()
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvCommentList.layoutManager = linearLayoutManager
         val adapter = RLFeedCommentListAdapter(dataList,activity)
         fragBinding.rvCommentList.adapter = adapter
+
     }
     private fun RLCommentThumbUiSet(cardData: RLTextOverview, inlayMain: RlLayoutFeedListBinding) {
         RLcommonDataSet(cardData, inlayMain)
@@ -153,41 +141,46 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calendar_today)
         layoutBinding.layTime.txtTime.setText(R.string.challengesfor)
-        layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.duration.toInt()))
+        if (cardData.duration.isNullOrEmpty()){
+            layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(0))
+        }else{
+            layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget((cardData.duration?:"0").toInt()?:0))
+        }
+
         layoutBinding.layTime.relativeCard.visibility=View.GONE
 
         if (classType.toLowerCase().equals("challenge-effort")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targeteffort)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()?:0.0).toString())
 
         }else if (classType.toLowerCase().equals("challenge-steps")){
 
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetsteps)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_steps_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()?:0.0).toString())
 
         }else if (classType!!.toLowerCase().equals("challenge-calories")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetcalories)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()?:0.0))
 
         }else if (classType!!.toLowerCase().equals("challenge-distance")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetdistance)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
@@ -196,20 +189,20 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         }else if (classType!!.toLowerCase().equals("challenge-climbed")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targetclimbed)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_climb)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.distance)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()?:0.0))
 
         }else if (classType!!.toLowerCase().equals("challenge-duration")){
             layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layCalories.txtTime.setText(R.string.targettotalduration)
-            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+            layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()?:0.0).toString())
 
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_active_time_green)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.youachived)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()?:0.0).toString())
 
         }
 
@@ -352,6 +345,46 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
 
+    }
+
+    private fun RLAPiCall(overviewid:String) {
+        viewModel.RLgetCommentsData("commentsNew",overviewid,10,0) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        if (response.text.size>0){
+                            RLDataSet(response.text[0])
+                        }
+                    }else {
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+            }
+        }
+    }
+
+    private fun RLDataSet(cardData:RLTextOverview){
+        val  clickType = requireArguments().getString(RLConstants.TYPE)
+        if (clickType.equals("Comment")){
+            fragBinding.relativeComment.visibility=View.VISIBLE
+            fragBinding.relativeThumb.visibility=View.GONE
+            RLTools.RLheightsetimageview(fragBinding.inlayMain.imgMain)
+            RLCommentThumbUiSet(cardData,fragBinding.inlayMain)
+        }else if (clickType.equals("Thumb")){
+            fragBinding.relativeComment.visibility=View.GONE
+            fragBinding.relativeThumb.visibility=View.VISIBLE
+            RLTools.RLheightsetimageview(fragBinding.inlayMainThumb.imgMain)
+            RLCommentThumbUiSet(cardData,fragBinding.inlayMainThumb)
+        }
+        fragBinding.btnSend.setOnClickListener {
+            //Do Something
+        }
     }
 
 }

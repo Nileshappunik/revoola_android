@@ -22,6 +22,7 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlLayoutFeedListBinding
 import com.revoola.fragment.feed.RLFragBodySessionSummary
+import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.feed.RLFragTenChallengeSummary
@@ -113,7 +114,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
 
 
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
             RLTools.RlLogDPrint(TAG, "exception= " + e.message)
                 val temptext="pos:- ${position.toString()} , ctype:- $classType , third:- ${dataList[position].from_third_party_source.toString()} , bmo:- ${dataList[position].bmo.toString()}, HR:- ${dataList[position].hrm.toString()}"
                 layoutBinding.temptext.setText("exception:- ${e.message.toString()} :- $temptext")
@@ -255,6 +257,25 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             }
 
         }
+
+        /*layoutBinding.imgComment.setOnClickListener {
+            var passstring="Comment"
+            if (passstring.isNotEmpty()){
+                val bundle = Bundle()
+                bundle.putSerializable(RLConstants.CardData, cardData)
+                bundle.putString(RLConstants.TYPE, passstring)
+                (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+            }
+        }
+        layoutBinding.imgThum.setOnClickListener {
+            var passstring="Thumb"
+            if (passstring.isNotEmpty()){
+                val bundle = Bundle()
+                bundle.putSerializable(RLConstants.CardData, cardData)
+                bundle.putString(RLConstants.TYPE, passstring)
+                (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+            }
+        }*/
     }
     private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, pos:Int){
         layoutBinding.txtOrganizer.visibility=View.VISIBLE

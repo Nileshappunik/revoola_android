@@ -1,38 +1,76 @@
 package com.revoola.services
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
-import android.widget.Switch
-import androidx.fragment.app.Fragment
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.api.RLApiClientRet
+import com.revoola.databasefirebase.RLDatabaseManagerWrite
+import com.revoola.databinding.RlDialogHelpStartBinding
+import com.revoola.databinding.RlFragFeedBinding
+import com.revoola.databinding.RlLayoutFeedListBinding
+import com.revoola.fragment.feed.RLFragBodySessionSummary
 import com.revoola.fragment.feed.RLFragChallengeSummary
 import com.revoola.fragment.feed.RLFragFeed
 import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
+import com.revoola.fragment.feed.RLFragMindSessionSummary
+import com.revoola.fragment.feed.RLFragSessionSummary
+import com.revoola.fragment.feed.RLFragTenChallengeSummary
+import com.revoola.fragment.feed.adapter.RLFeedListAdapter
 import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragFriends
-import com.revoola.fragment.friends.RLFragInviteFriends
 import com.revoola.fragment.friends.RLFragYourFriends
 import com.revoola.fragment.friends.RLFragYourGroup
 import com.revoola.fragment.more.RLFragChangePassword
 import com.revoola.fragment.more.RLFragNotification
-import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
+import com.revoola.fragment.start.RLStartHelpModel
+import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.body.RLFragBodyClasses
 import com.revoola.fragment.start.body.RLFragBodyClassesView
 import com.revoola.fragment.start.mind.RLFragMindClasses
 import com.revoola.fragment.start.mind.RLFragMindClassesView
 import com.revoola.fragment.start.yourway.RLFragYourWay
+import com.revoola.model.RLRequestDetail_dataset
+import com.revoola.model.RLSetgoaled_challenges
+import com.revoola.model.RLSetgoaled_challenges_request
+import com.revoola.model.RLTextOverview
+import com.revoola.model.RLoverview_thumb_from_id
+import com.revoola.model.RLrequest_challenges_feed_thumbs
+import com.revoola.model.RLrequest_goaled_challenges
+import com.revoola.model.RLrequestgroup_dataset
+import com.revoola.model.RLsetgroup_data
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLPrefManager
 import com.revoola.utils.RLTools
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
+import org.json.JSONArray
+import org.json.JSONObject
+import kotlin.math.roundToInt
 
 class RELDynamicLinkManager private   constructor() {
     private val dynamicLink: RELDynamicLink = RELDynamicLink.getInstance()
     val TAG = "RELDynamicLinkManager"
     lateinit var context: Context
+    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
 
-    fun RLCheckLink(link: String,context_t: Context) {
+    fun RLCheckLink(link: String, context_t: Context, rlMainActivityRL: RLMainActivityRL) {
         context = context_t
          dynamicLink.link = link
 
@@ -86,7 +124,7 @@ class RELDynamicLinkManager private   constructor() {
         val deepLinkPage = RlGetDeepLinkPage()
         RLTools.RlLogDPrint(TAG,"deepLinkPage:- $deepLinkPage")
         if (!deepLinkPage.isNullOrEmpty()){
-            RlRedirectToPage(deepLinkPage)
+            RlRedirectToPage(deepLinkPage,rlMainActivityRL)
         }
 
     }
@@ -98,16 +136,19 @@ class RELDynamicLinkManager private   constructor() {
         return dynamicLink
     }
 
-    private fun RlRedirectToPage(deepLinkPage:String) {
-        if(deepLinkPage.equals("m") || deepLinkPage.equals("b") || deepLinkPage.equals("o")) {
-            /*  RELFirebase.shared().getMainDatabase()
-                                .child(RevoolaKeys.ProposedStructure)
-                                .child(RevoolaKeys.RevoolaUserSettings)
-                                .child(RELAccountManager.shared().getUser().globalUid)
-                                .child(RevoolaKeys.BasicData)
-                                .child("link")
-                                .setValue("")*/
+    private fun RlRedirectToPage(deepLinkPage: String, rlMainActivityRL: RLMainActivityRL) {
+        // Api call
+        RLApiClientRetrofit = RLApiClientRet(context)
+        val apiService = RLApiClientRetrofit.RLNetworkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(rlMainActivityRL, RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
+
+
+        if(deepLinkPage.equals("m") || deepLinkPage.equals("b") || deepLinkPage.equals("o")) {
+            val databaseManager = RLDatabaseManagerWrite()
+            val currentUser=  RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.current_user, "")
+            databaseManager.REVOOLADEEPLINKWrite(currentUser)
             when (deepLinkPage) {
                 "m" -> {
                     dynamicLink.deepLinkPage = ""
@@ -151,7 +192,7 @@ class RELDynamicLinkManager private   constructor() {
             dynamicLink.deepLinkPage = ""
         }
         else if(deepLinkPage.equals( "convert-guest") || deepLinkPage.equals("convert-guest2")){
-            //RELConnectGuestVC (guest valu page ave ama more ma try valu avse
+            //TODO RELConnectGuestVC (guest valu page ave ama more ma try valu avse)
             val isAuthTrial = dynamicLink.deepLinkPage == "convert-guest2"
             dynamicLink.deepLinkPage = ""
         }
@@ -167,32 +208,16 @@ class RELDynamicLinkManager private   constructor() {
             dynamicLink.metric = ""
         }
         else if (deepLinkPage.equals("share-card") && dynamicLink.id != 0) {
-            //RELSingleFeedVC
+            //TODO RELSingleFeedVC (fEED-FRIEND-LIST ONLY ONE CARD SHOW) TESTING PENDING
             dynamicLink.deepLinkPage = ""
+            RLApiCallCardDetail(dynamicLink.id,false,"share-card")
         }
         else if (deepLinkPage.equals("card-detail") && dynamicLink.id != 0) {
+            //TODO API CALL RELResultContainerVC:- FEED-FRIEND-LIST ITEM VIEW (YOUWAY,BODY) (FIRST API CALL AFTER REDIRECPAGE) TESTING PENDING
+            //TODO API CALL RELNEWMindResultPageVC:- FEED-FRIEND-LIST ITEM VIEW (MIND) (FIRST API CALL AFTER REDIRECPAGE) TESTING PENDING
             dynamicLink.deepLinkPage = ""
-            /*RELWebRequest.shared().getOverviewDataV3(dynamicLink.id) {
-                (result, error) in
-                DispatchQueue.main.async {
-                    topVc.hideLoader()
-                    if val _result = result, _result.fromThirdPartySource == 0 {
-                    when (_result.resultFor) {
-                            .Body &&.Open -> {
-                                val controller = RELResultContainerVC(nibName: "RELResultContainerVC", bundle: nil)
-                                controller.isResults = false
-                                controller.resultListData = _result
-                                navigateManager(topVc: topVc, controller: controller)
-                            }
-                            .Mind-> {
-                            val controller = RELNEWMindResultPageVC(nibName: "RELNEWMindResultPageVC", bundle: nil)
-                            controller.isResults = false
-                            controller.resultListData = _result
-                            navigateManager(topVc: topVc, controller: controller)
-                            }
-                    }
-                } }
-            }*/
+            RLApiCallCardDetail(dynamicLink.id,false,"")
+
         }
         else if (dynamicLink.classId.isNotEmpty()) {
             val classId = dynamicLink.classId
@@ -200,45 +225,37 @@ class RELDynamicLinkManager private   constructor() {
             if (dynamicLink.classType == "0"){
                 //RELBodyClassDetailsVC
                 val bundle = Bundle()
-                //bundle.putString("VIDEODATA",cardData.key)
-                // bundle.putBoolean("Ride",ride)
+                bundle.putString("VIDEODATA",classId)
+                 bundle.putBoolean("Ride",false)
                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
 
             }
             else{
                 //RELMindClassDetailsVC
                 val bundle = Bundle()
-                //bundle.putString("AUDIOVIDEOTYPE", cardData.classtype)
-                //bundle.putString("VIDEODATA",cardData.key)
+                bundle.putString("AUDIOVIDEOTYPE", "Video")
+                bundle.putString("VIDEODATA",classId)
                 (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, null, true)
 
             }
         }
         else if (dynamicLink.challengeId.isNotEmpty()) {
-            //RELGoaledChallengeResultVC
+            //TODO RELGoaledChallengeResultVC (FEED-CHALLENGES-LIST ITEM VIEW) TESTING PENDING
             val challengeId = dynamicLink.challengeId
             dynamicLink.challengeId = ""
-            val bundle = Bundle()
-           // bundle.putSerializable(RLConstants.CardData, cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
+            RLChallengeDataGetApi(challengeId.toInt())
         }
         else if (deepLinkPage.equals("kudos")){
-            //RELKudosVC
+            //TODO RELKudosVC (FEED kUDO PAGE) TESTING PENDING
             dynamicLink.deepLinkPage = ""
             var passstring="Thumb"
-            val bundle = Bundle()
-            //bundle.putSerializable(RLConstants.CardData, cardData)
-            bundle.putString(RLConstants.TYPE, passstring)
-            (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+            RLApiCallCardDetail(dynamicLink.id,true,passstring)
         }
         else if (deepLinkPage.equals("comments") ){
-            //REVResultCommentsVC
+            //TODO REVResultCommentsVC (FEED COMMENT PAGE) TESTING PENDING
             dynamicLink.deepLinkPage = ""
             var passstring="Comment"
-            val bundle = Bundle()
-            //bundle.putSerializable(RLConstants.CardData, cardData)
-            bundle.putString(RLConstants.TYPE, passstring)
-            (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+            RLApiCallCardDetail(dynamicLink.id,true,passstring)
         }
         else if (deepLinkPage.equals("challenge")) {
             //REVMyChallengesVC (SKIP NOW)
@@ -249,8 +266,11 @@ class RELDynamicLinkManager private   constructor() {
             dynamicLink.deepLinkPage = ""
         }
         else if (deepLinkPage.equals("fri-request") ){
-            //REVFriendsRequestListVC
+            //TODO REVFriendsRequestListVC (FRIEND-POPOPEN-YES-REDIRECFRIENDPAGE) TESTING PENDING
             dynamicLink.deepLinkPage = ""
+            val bundle =Bundle ()
+            bundle.putBoolean("reDirecDeepLinkPage",true)
+            (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, false)
         }
         else if (deepLinkPage.equals("fri-detail")){
             if (RELDynamicLinkManager.getInstance().RlGetLink().pageType.equals("find") ){
@@ -259,6 +279,8 @@ class RELDynamicLinkManager private   constructor() {
             }
             else if (RELDynamicLinkManager.getInstance().RlGetLink().pageType.equals("friends")) {
                 //REVYourFriendsVC
+                val bundle =Bundle ()
+                bundle.putBoolean("reDirecDeepLinkPage",false)
                 (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, false)
             }
             else if (RELDynamicLinkManager.getInstance().RlGetLink().pageType.equals("groups")) {
@@ -282,6 +304,115 @@ class RELDynamicLinkManager private   constructor() {
                 instance ?: RELDynamicLinkManager().also { instance = it }
             }
         }
+    }
+
+    private fun RLApiCallCardDetail(id:Int,commentPageOpen:Boolean,passstring:String) {
+         if (RLApiClientRetrofit.RLisConnected()) {
+            val request = listOf(RLRequestDetail_dataset(overview_thumb_from_id = RLoverview_thumb_from_id(id =id)))
+            RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
+            //Detail Api
+            viewModel.RLgetOverviewThumbFromIdData(request) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLTools.RlLogDPrint(TAG, "Success= " + response.type)
+                            if (response.text.size > 0) {
+                                val cardData = response.text[0]
+                                if (commentPageOpen){
+                                    val bundle = Bundle()
+                                    bundle.putSerializable(RLConstants.CardData, cardData)
+                                    bundle.putString(RLConstants.TYPE, passstring)
+                                    (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+                                }else{
+                                    if (passstring.equals("share-card")){
+                                      //Open Challenge Card And Share This Card ScreenShot like FeedList Adapter
+                                    }else{
+                                        RLClickEventProcess(cardData)
+                                    }
+
+                                }
+
+                            }
+                        } else {
+                            RLTools.RlLogDPrint(TAG, "Fail= " + response.type)
+
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        RLTools.RlLogDPrint(TAG, "Catch= " + e.message)
+
+                    }
+                }.onFailure { error ->
+                    RLTools.RlLogDPrint(TAG, "Error= " + error.message)
+                }
+            }
+        }
+
+    }
+
+    private fun RLClickEventProcess(cardData: RLTextOverview) {
+        var selectTag="FRIENDS"
+        if (cardData.from_third_party_source == 0){
+            when (cardData.bmo){
+                0->{
+                    //BODY
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
+                }
+                1->{
+                    //MIND
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, true)
+                }
+                2->{
+                    //OTHER
+                    val bundle = Bundle()
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
+                }
+
+            }
+        }
+    }
+
+    private fun RLChallengeDataGetApi(challengeid:Int){
+        val currentUser=  RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.current_user, "")
+        val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
+        //var id:Int, var type:String, var today:String,var challengeid:Int
+        val request = listOf(
+            RLrequest_goaled_challenges(goaled_challenges = RLrequest_challenges_feed_thumbs(
+                id = currentUser,type = "challenges_feed_thumbs", today = currentTimestamp.toString(),challengeid)
+            )
+        )
+        RLTools.RlLogDPrint(TAG,"setgoaled_challenges= "+request)
+        viewModel.RLgoaled_challenges_view(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        if (response.text.data.size>0){
+                            val bundle = Bundle()
+                            bundle.putSerializable(RLConstants.CardData, response.text.data[0])
+                            (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
+                        }
+
+                    }else {
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+            }
+        }
+
     }
 
 }

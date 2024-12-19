@@ -50,14 +50,14 @@ class RLFragBodyClassesView : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragBodyClassesView" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesView" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
         val videoID=  requireArguments().getString("VIDEODATA","")
-        val ride=  requireArguments().getBoolean("Ride")
+        var ride=  requireArguments().getBoolean("Ride")
         fragBinding.layWorklog.visibility=View.VISIBLE
         fragBinding.viewTimevideo.visibility=View.VISIBLE
 
@@ -85,6 +85,11 @@ class RLFragBodyClassesView : RLBaseFragment() {
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLBodyUiSetup(VideoData)
                 RLClickToSechedule(jsonObject,RLConstants.BODY,"")
+                if ( VideoData.classType.toLowerCase().equals("ride")){
+                    ride=true
+                }else{
+                    ride=false
+                }
                 fragBinding.inlayButton.commonButton.setOnClickListener {
                     var bundle: Bundle = Bundle()
                     if (ride){

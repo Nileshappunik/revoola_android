@@ -3,6 +3,7 @@ package com.revoola.databasefirebase
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.revoola.utils.RLTools
 
 class RLDatabaseManagerWrite {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -46,6 +47,19 @@ class RLDatabaseManagerWrite {
                 }
             }
     }
+
+    fun REVOOLADEEPLINKWrite(userId:String) {
+        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAUSERSETTINGS)
+            .child(userId).child(RLConstants.BASICDATA).child("link").setValue("")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    //success
+                } else {
+                    //fail
+                }
+            }
+    }
+
     fun RlWriteData(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {

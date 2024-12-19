@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
@@ -16,10 +17,13 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.friends.adapter.RLYourFriendListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.*
+import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
 import com.revoola.model.RLSetget_followers
 import com.revoola.model.RLSetget_followersrequest
 import com.revoola.model.RLSetsearch_user
 import com.revoola.model.RLSetsearch_userrequest
+import com.revoola.model.RLsearch_user_request
+import com.revoola.model.RLsearch_userrequest
 import com.revoola.model.RLuserData
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTools
@@ -33,6 +37,12 @@ class RLFragYourFriends : RLBaseFragment() {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
+
+    fun newInstance(bundle: Bundle?): Fragment {
+        val fragment = RLFragYourFriends()
+        fragment.arguments = bundle
+        return fragment
+    }
 
     private val binding by lazy {
         RlFragYourFriendsBinding.inflate(layoutInflater)
@@ -89,11 +99,22 @@ class RLFragYourFriends : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
         }
 
-        if (RLApiClientRetrofit.RLisConnected()) {
-            RLyouFollowApiCall()
-        } else {
-            RLshowDialogFullscreen()
+        val reDirecDeepLinkPage=requireArguments().getBoolean("reDirecDeepLinkPage")
+        if (reDirecDeepLinkPage){
+            if (RLApiClientRetrofit.RLisConnected()) {
+                RLSearchFollowApiCall()
+            } else {
+                RLshowDialogFullscreen()
+            }
+        }else{
+            if (RLApiClientRetrofit.RLisConnected()) {
+                RLyouFollowApiCall()
+            } else {
+                RLshowDialogFullscreen()
+            }
         }
+
+
     }
     private fun RLyouFollowApiCall() {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
@@ -117,6 +138,31 @@ class RLFragYourFriends : RLBaseFragment() {
             }
         }
     }
+
+    private fun RLSearchFollowApiCall() {
+        //var myid: String,var contact_status:Int, var limit: Int, var index:Int
+        val request = listOf(RLsearch_userrequest(search_user = RLsearch_user_request(myid = currentUser,contact_status=2,limit = 100, index=0)))
+        RLTools.RlLogDPrint(TAG,"setSearchFollowdata= "+request)
+
+        viewModel.RLsearch_user_Data_DeepLink(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLresponsehandle(response.text.user,true)
+                    }else {
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){ e.printStackTrace()
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+            }
+        }
+    }
+
     private fun RLfollowingYouApiCall() {
         val request = listOf(
             RLSetget_followersrequest(

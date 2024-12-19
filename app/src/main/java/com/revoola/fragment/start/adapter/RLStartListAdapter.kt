@@ -89,8 +89,9 @@ class RLStartListAdapter(
                     (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
-                    
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends(), TAG, true,null, false)
+                    val bundle =Bundle ()
+                    bundle.putBoolean("reDirecDeepLinkPage",false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
                     

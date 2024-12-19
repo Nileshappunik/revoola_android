@@ -10,6 +10,7 @@ import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverviewGraphResponse
+import com.revoola.model.RLRequestDetail_dataset
 import com.revoola.model.RLSetGroupMemberRequest
 import com.revoola.model.RLSetGroupRequest
 import com.revoola.model.RLSetMetricChartByDay
@@ -19,9 +20,12 @@ import com.revoola.model.RLSetgoaled_challenges_request_single
 import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetsearch_userrequest
+import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
+import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
+import com.revoola.model.RLsearch_userrequest
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -140,6 +144,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun RLgoaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.RLgoaled_challenges_view(request).enqueue(object : Callback<RLFeedChallengesModel> {
+            override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedChallengesModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
         apiService.RLgoaled_challenges_Single(request).enqueue(object : Callback<RLFeedChallengesModel> {
             override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
@@ -187,6 +207,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun RLsearch_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        apiService.RLsearch_user_Data_DeepLink(request).enqueue(object : Callback<RLYourFriendsModel> {
+            override fun onResponse(call: Call<RLYourFriendsModel>, response: Response<RLYourFriendsModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLYourFriendsModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     fun RLfriendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
         apiService.RLfriendsFollowingYou(request).enqueue(object : Callback<RLYourFriendsModel> {
             override fun onResponse(call: Call<RLYourFriendsModel>, response: Response<RLYourFriendsModel>) {
@@ -219,6 +255,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun RLgetOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.RLgetOverviewThumbFromIdData(request).enqueue(object : Callback<RLFeedModel> {
+            override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     fun RLgetNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
         apiService.RLgetNotificationData(q,user,limit,index).enqueue(object : Callback<RLNotificationModel> {
             override fun onResponse(call: Call<RLNotificationModel>, response: Response<RLNotificationModel>) {
@@ -229,6 +281,21 @@ class RLMainRepository(private val apiService: RLNetworkService) {
                 }
             }
             override fun onFailure(call: Call<RLNotificationModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLgetCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.RLgetCommentsData(q,overviewid,limit,index).enqueue(object : Callback<RLFeedModel> {
+            override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLFeedModel>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

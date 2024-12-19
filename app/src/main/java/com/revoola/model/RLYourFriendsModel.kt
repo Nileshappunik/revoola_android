@@ -11,3 +11,7 @@ data class RLSetsearch_userrequest(var search_user: RLSetsearch_user)
 data class RLSetsearch_user(var get_friends: String, var limit: Int, var index:Int)
 data class RLSetget_followersrequest(var search_user: RLSetget_followers)
 data class RLSetget_followers(var get_followers: String, var limit: Int, var index:Int)
+
+data class RLsearch_userrequest(var search_user: RLsearch_user_request)
+data class RLsearch_user_request(var myid: String,var contact_status:Int, var limit: Int, var index:Int)
+

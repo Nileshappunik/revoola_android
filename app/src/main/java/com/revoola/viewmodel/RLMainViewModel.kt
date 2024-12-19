@@ -10,6 +10,7 @@ import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverviewGraphResponse
+import com.revoola.model.RLRequestDetail_dataset
 import com.revoola.model.RLSetGroupMemberRequest
 import com.revoola.model.RLSetGroupRequest
 import com.revoola.model.RLSetMetricChartByDay
@@ -19,9 +20,12 @@ import com.revoola.model.RLSetgoaled_challenges_request_single
 import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetsearch_userrequest
+import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
+import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
+import com.revoola.model.RLsearch_userrequest
 
 class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLgetUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
@@ -50,6 +54,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.RLgoaled_challenges(request, callback)
     }
 
+    fun RLgoaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        mainRepository.RLgoaled_challenges_view(request, callback)
+    }
+
     fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
         mainRepository.RLgoaled_challenges_Single(request, callback)
     }
@@ -62,6 +70,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.RLfriendsYouFollow(request, callback)
     }
 
+    fun RLsearch_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        mainRepository.RLsearch_user_Data_DeepLink(request, callback)
+    }
+
     fun RLfriendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
         mainRepository.RLfriendsFollowingYou(request, callback)
     }
@@ -70,8 +82,17 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.RLyourGroupData(request, callback)
     }
 
+    fun RLgetOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.RLgetOverviewThumbFromIdData(request, callback)
+    }
+
     fun RLgetNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
         mainRepository.RLgetNotificationData(q,user,limit,index, callback)
     }
+
+    fun RLgetCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.RLgetCommentsData(q,overviewid,limit,index, callback)
+    }
+
 
 }
