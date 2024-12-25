@@ -4,8 +4,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
         <LinearLayout
+            android:id="@+id/layout_card_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -18,22 +23,13 @@
             <TextView
                 android:id="@+id/txt_card_title"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="10dp"
+                android:padding="10dp"
                 android:textAllCaps="true"
                 android:text="18instructor"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="16sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_Fileter_Item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="10dp"/>
 
         </LinearLayout>
 

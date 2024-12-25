@@ -24,6 +24,9 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.model.RLVideoModel
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
+import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
+import com.revoola.model.RLMindBodyFilterGroupItemModel
+
 class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragBodyClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
@@ -107,10 +110,17 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         lp.width = WindowManager.LayoutParams.MATCH_PARENT
         lp.height = WindowManager.LayoutParams.MATCH_PARENT
         window.attributes = lp
-        dialogMainBinding.cardInstructor.txtCardTitle.setText(R.string.instructor)
-        dialogMainBinding.cardDuration.txtCardTitle.setText(R.string.duration)
-        dialogMainBinding.cardTakenbyme.txtCardTitle.setText(R.string.takenbyme)
-        dialogMainBinding.cardClasstype.txtCardTitle.setText(R.string.classtype)
+        // Prepare the data
+        val groupList = listOf(
+            RLMindBodyFilterGroupItemModel( getString(R.string.instructor), emptyList()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.duration),emptyList()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.takenbyme), listOf("CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")),
+            RLMindBodyFilterGroupItemModel(getString(R.string.classtype), emptyList())
+        )
+
+        // Set up the adapter
+        val adapter = RlMindBodyFilterExpandableListAdapter(requireContext(), groupList)
+        dialogMainBinding.expandableListViewFilter.setAdapter(adapter)
 
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
