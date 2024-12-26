@@ -57,8 +57,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private lateinit var handler: Handler
     private lateinit var bluetoothAdapter: BluetoothAdapter
 
-
-
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
     var ride:Boolean=false
@@ -99,7 +97,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private var arrRevPercentage:MutableList<Double> = mutableListOf()
     private var arrRevSecond:MutableList<Double> = mutableListOf()
     private var arrMaxRevPercentage:MutableList<Double> = mutableListOf()
-
 
 
     private var avgRevPercentage=0.0
@@ -368,7 +365,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
     }
 
-
     //Animation set left Right Swipe
     private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
         private val SWIPE_THRESHOLD = 100
@@ -466,13 +462,15 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         fragBinding.frameRight.startAnimation(anim)
     }
 
-
     private fun  RlDataFillAllArray(){
         val currentCalories=calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble())
         if (heartRateNumber>0){
             heartRate=heartRateNumber
         }
         val REVPer=calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
+        if (leftFragment!=null){
+            leftFragment?.RLUpdateHRPersentage(REVPer.roundToInt())
+        }
         arrRevPercentage.add(noNanValueDouble(REVPer))
         avgRevPercentage = avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
@@ -739,7 +737,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         // timerManager.resume()
         RLcheckAndRequestPermissions()
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

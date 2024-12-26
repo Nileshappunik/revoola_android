@@ -2,6 +2,7 @@ package com.revoola.fragment.start.mind
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,14 +25,22 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.model.RLVideoModel
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
-import com.revoola.fragment.more.adapter.RlMoreExpandableListAdapter
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
-import com.revoola.model.RLMoreGroupItemModel
+import com.revoola.services.RELDynamicLink
+import com.revoola.services.RELDynamicLinkManager
+import com.revoola.services.RLClassFilterService
+import com.revoola.utils.RLTools
+import java.util.Locale
 
 class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragMindClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
+
+    var instructorList:MutableList<String> = mutableListOf()
+    var classTypeList:MutableList<String> = mutableListOf()
+    var durationList:MutableList<String> = mutableListOf()
+    var videoList_Filter:MutableList<RLVideoModel> = mutableListOf()
 
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
@@ -94,10 +103,21 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 val videoType = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoType)
                 val videoList = videoMap.values.toList()
-
+                 videoList_Filter = videoList.toMutableList()
                 val height =  fragBinding.rvItemMindClass.height
                 val adapter = RLMindClassListAdapter(videoList,activity,height)
                 fragBinding.rvItemMindClass.adapter = adapter
+
+                instructorList = emptyList<String>().toMutableList()
+                durationList = emptyList<String>().toMutableList()
+                classTypeList = emptyList<String>().toMutableList()
+
+                // Remove null or empty values from the lists
+                durationList = videoList.mapNotNull { it.duration }.distinct().toMutableList()
+                instructorList = videoList.mapNotNull { it.instructor }.filter { it.isNotEmpty() }.distinct().toMutableList()
+                classTypeList = videoList.mapNotNull { it.classtype }.filter { it.isNotEmpty() }.distinct().toMutableList()
+
+
                 /*val adapter = RLMindClassListAdapter(videoList,activity)
                 fragBinding.rvItemmindclass.adapter = adapter*/
 
@@ -105,12 +125,8 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         }
     }
 
-    fun updateSelectionView(selectedItems: String) {
-        //Selected item get
-    }
-
     //rl_dailog_class_filter
-    fun RLfilterdialogopen() {
+   private fun RLfilterdialogopen() {
         val  dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         val dialogMainBinding: RlDailogClassFilterBinding = RlDailogClassFilterBinding.inflate(getLayoutInflater())
@@ -126,14 +142,33 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
 
         // Prepare the data
         val groupList = listOf(
-            RLMindBodyFilterGroupItemModel( getString(R.string.instructor), emptyList()),
-            RLMindBodyFilterGroupItemModel(getString(R.string.duration),emptyList()),
-            RLMindBodyFilterGroupItemModel(getString(R.string.takenbyme), listOf("CHANGE", "YOUR", "RESTORE","REQUEST")),
-            RLMindBodyFilterGroupItemModel(getString(R.string.classtype), emptyList()))
+            RLMindBodyFilterGroupItemModel( getString(R.string.instructor), instructorList.distinct()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.duration),durationList.distinct()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.takenbyme), listOf("ALL", "TAKEN BY ME")),
+            RLMindBodyFilterGroupItemModel(getString(R.string.classtype), classTypeList.distinct()))
 
-        // Set up the adapter
-        val adapter = RlMindBodyFilterExpandableListAdapter(requireContext(), groupList)
+        val adapter = RlMindBodyFilterExpandableListAdapter(requireContext(), groupList.distinct()) { selectedItems ->
+            // This is your callback function where you handle the selected items
+            if (selectedItems.isNullOrEmpty()){
+                dialogMainBinding.txtShowAllClasses.setText("Show All Classes")
+            }else{
+                val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+                dialogMainBinding.txtShowAllClasses.setText("Show ${filterVideoList.size} Classes")
+            }
+        }
+
+
         dialogMainBinding.expandableListViewFilter.setAdapter(adapter)
+
+        dialogMainBinding.txtShowAllClasses.setOnClickListener {
+            // Get multi-child selection from adapter
+            val selectedItems: List<RLMindBodyFilterGroupItemModel> = adapter.RLGetSelectedItems()
+            val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+            val height =  fragBinding.rvItemMindClass.height
+            val adapter = RLMindClassListAdapter(filterVideoList,activity,height)
+            fragBinding.rvItemMindClass.adapter = adapter
+            dialog.dismiss()
+        }
 
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
@@ -142,6 +177,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         //dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
 
     }
+
     override fun onItemClick(position: Int) {
         RLMoveToCenter(position)
         val selectiontitle= valueslistMind[position]
@@ -180,4 +216,5 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
                 })
         }
     }
+
 }

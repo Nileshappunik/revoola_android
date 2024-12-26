@@ -19,7 +19,6 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     val TAG: String = RLFragLeftBodyWithHeartVideo::class.java.simpleName
     lateinit var fragBinding: RlFragLeftBodyHeartVideoBinding
 
-
     private val binding by lazy {
         RlFragLeftBodyHeartVideoBinding.inflate(layoutInflater)
     }
@@ -40,7 +39,8 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        fragBinding.circularProgressBar.RLsetProgress(77)
+        fragBinding.circularProgressBar.RLsetProgress(0)
+        fragBinding.progresstext.setText("0%")
         fragBinding.circularProgressBar.RLsetMaxProgress(100)
         fragBinding.circularProgressBar.RLsetProgressColor(resources.getColor(R.color.AppZone5Color))
         fragBinding.circularProgressBar.setBackgroundColor(Color.LTGRAY)
@@ -67,6 +67,7 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         fragBinding.inlayTime.progressView2.visibility=View.GONE
 
     }
+
     fun RLUpdateVideoTime(rLformatTime: String) {
          fragBinding.inlayTime.txtNumber.setText(rLformatTime)
     }
@@ -75,6 +76,17 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         fragBinding?.inlayHeartrate?.txtNumber?.setText(Heartrate)
         fragBinding?.inlayEffort?.txtNumber?.setText(Heartrate)
         fragBinding?.inlayCalories?.txtNumber?.setText(calories)
+    }
+
+    fun RLUpdateHRPersentage(REVPer : Int) {
+        if (REVPer>=100){
+            fragBinding.progresstext.setText("100%")
+        }else if(REVPer>=0){
+            fragBinding.progresstext.setText("$REVPer%")
+        }else{
+            fragBinding.progresstext.setText("--%")
+        }
+        fragBinding.circularProgressBar.RLsetProgress(REVPer)
     }
 
     override fun onDestroy() {
@@ -90,8 +102,5 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
-
-
-
 
 }

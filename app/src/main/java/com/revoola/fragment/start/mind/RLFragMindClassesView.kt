@@ -63,14 +63,19 @@ class RLFragMindClassesView : RLBaseFragment() {
 
         fragBinding.inlaySchdual.txtTitle.setText(R.string.schedule)
         fragBinding.inlaySchdual.imgIcon.setImageResource(R.drawable.ic_calendar_today)
+
+
         fragBinding.inlayDownload.txtTitle.setText(R.string.download)
         fragBinding.inlayDownload.imgIcon.setImageResource(R.drawable.ic_download)
+
         fragBinding.inlayFavourite.txtTitle.setText(R.string.favourite)
         fragBinding.inlayFavourite.imgIcon.setImageResource(R.drawable.ic_saved)
-        fragBinding.linearLayout.weightSum = 3f
+        fragBinding.inlayFavourite.relativeCommon.visibility=View.GONE
+
         fragBinding.inlayShare.txtTitle.setText(R.string.share)
         fragBinding.inlayShare.imgIcon.setImageResource(R.drawable.ic_share)
-        fragBinding.inlayShare.relativeCommon.visibility=View.GONE
+        fragBinding.linearLayout.weightSum = 3f
+
 
         fragBinding.txtVideo.setText(audioVideoType)
         if (audioVideoType.equals("Video")){

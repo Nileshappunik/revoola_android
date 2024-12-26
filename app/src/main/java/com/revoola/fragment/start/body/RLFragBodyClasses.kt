@@ -2,6 +2,7 @@ package com.revoola.fragment.start.body
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,10 +27,19 @@ import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
+import com.revoola.services.RLClassFilterService
+import com.revoola.utils.RLTools
+import java.util.Locale
 
 class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragBodyClasses::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesBinding
+
+    var instructorList:MutableList<String> = mutableListOf()
+    var difficultyList:MutableList<String> = mutableListOf()
+    var durationList:MutableList<String> = mutableListOf()
+    var videoList_Filter:MutableList<RLVideoModel> = mutableListOf()
+
     //var heightScreen=1177
     private val binding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
@@ -89,15 +99,27 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 val videoTypeObject = object : TypeToken<Map<String, RLVideoModel>>() {}.type
                 val videoMap: Map<String, RLVideoModel> = gson.fromJson(jsonObject, videoTypeObject)
                 val videoList = videoMap.values.toList()
+                videoList_Filter = videoList.toMutableList()
                 val height =  fragBinding.rvItemMindClass.height
                 val adapter = RLBodyClassListAdapter(videoList,activity,ride,height)
                 fragBinding.rvItemMindClass.adapter = adapter
+
+                instructorList = emptyList<String>().toMutableList()
+                durationList = emptyList<String>().toMutableList()
+                difficultyList = emptyList<String>().toMutableList()
+
+                // Remove null or empty values from the lists
+                durationList = videoList.mapNotNull { it.duration }.distinct().toMutableList()
+                instructorList = videoList.mapNotNull { it.instructor }.filter { it.isNotEmpty() }.distinct().toMutableList()
+                difficultyList = videoList.mapNotNull { it.difficulty }.filter { it.isNotEmpty() }.distinct().toMutableList()
             }
         }
     }
 
+
+
     //rl_dailog_class_filter
-    fun RLfilterdialogopen() {
+    private fun RLfilterdialogopen() {
         val  dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         val dialogMainBinding: RlDailogClassFilterBinding = RlDailogClassFilterBinding.inflate(getLayoutInflater())
@@ -110,17 +132,36 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         lp.width = WindowManager.LayoutParams.MATCH_PARENT
         lp.height = WindowManager.LayoutParams.MATCH_PARENT
         window.attributes = lp
+
         // Prepare the data
         val groupList = listOf(
-            RLMindBodyFilterGroupItemModel( getString(R.string.instructor), emptyList()),
-            RLMindBodyFilterGroupItemModel(getString(R.string.duration),emptyList()),
-            RLMindBodyFilterGroupItemModel(getString(R.string.takenbyme), listOf("CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")),
-            RLMindBodyFilterGroupItemModel(getString(R.string.classtype), emptyList())
-        )
+            RLMindBodyFilterGroupItemModel( getString(R.string.instructor), instructorList.distinct()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.difficulty), difficultyList.distinct()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.duration),durationList.distinct()),
+            RLMindBodyFilterGroupItemModel(getString(R.string.takenbyme), listOf("ALL", "TAKEN BY ME"))
+            )
 
         // Set up the adapter
-        val adapter = RlMindBodyFilterExpandableListAdapter(requireContext(), groupList)
+        val adapter = RlMindBodyFilterExpandableListAdapter(requireContext(), groupList.distinct()){ selectedItems ->
+            if (selectedItems.isNullOrEmpty()){
+                dialogMainBinding.txtShowAllClasses.setText("Show All Classes")
+            }else{
+                val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+                dialogMainBinding.txtShowAllClasses.setText("Show ${filterVideoList.size} Classes")
+            }
+        }
         dialogMainBinding.expandableListViewFilter.setAdapter(adapter)
+
+        dialogMainBinding.txtShowAllClasses.setOnClickListener {
+            // Get multi-child selection from adapter
+            val selectedChildData: List<RLMindBodyFilterGroupItemModel> = adapter.RLGetSelectedItems()
+            val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedChildData,videoList_Filter)
+            val height =  fragBinding.rvItemMindClass.height
+            val adapter = RLBodyClassListAdapter(filterVideoList,activity,false,height)
+            fragBinding.rvItemMindClass.adapter = adapter
+
+            dialog.dismiss()
+        }
 
         dialogMainBinding.txtxCancle.setOnClickListener {
             dialog.dismiss()
@@ -129,6 +170,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         //dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
 
     }
+
     override fun onItemClick(position: Int) {
         RLMoveToCenter(position)
         val selectiontitle= valueslistBody[position]
@@ -180,4 +222,6 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
                 })
         }
     }
+
+
 }

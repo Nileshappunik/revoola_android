@@ -35,6 +35,7 @@
     <string name="durationt">Duration</string>
     <string name="takenbyme">Taken By Me</string>
     <string name="classtype">Class Type</string>
+    <string name="difficulty">DIFFICULTY</string>
     <string name="unitofmeasure">Unit of Measure</string>
     <string name="privacy">Privacy</string>
     <string name="privacycaps">PRIVACY</string>

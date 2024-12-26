@@ -1,25 +1,41 @@
 package com.revoola.fragment.start.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.revoola.R
 import com.revoola.fragment.start.mind.RLFragMindClasses
 import com.revoola.model.RLMindBodyFilterGroupItemModel
+import com.revoola.model.RLMindBodyFilterGroupSelectItemModel
 
 
+class RlMindBodyFilterExpandableListAdapter(private val context: Context,
+                                            private val groupList: List<RLMindBodyFilterGroupItemModel>,
+                                            private val onSelected: (MutableList<RLMindBodyFilterGroupItemModel>) -> Unit ) : BaseExpandableListAdapter() {
 
-class RlMindBodyFilterExpandableListAdapter(private val context: Context, private val groupList: List<RLMindBodyFilterGroupItemModel>) : BaseExpandableListAdapter() {
+    private val selectedLeftItems: MutableSet<Pair<Int, Int>> = mutableSetOf() // For left TextView
+    private val selectedRightItems: MutableSet<Pair<Int, Int>> = mutableSetOf() // For right TextView
 
-    private val selectedChildItems = mutableSetOf<Pair<Int, Int>>()
+    private val selectedItemsMap: MutableList<RLMindBodyFilterGroupSelectItemModel> = mutableListOf()
 
     override fun getGroupCount(): Int = groupList.size
 
-    override fun getChildrenCount(groupPosition: Int): Int = groupList[groupPosition].childItems.size
+    override fun getChildrenCount(groupPosition: Int): Int {
+        val childItems = groupList[groupPosition].childItems
+        val isEven = childItems.size % 2 == 0
+        if (isEven){
+           return  childItems.size/2
+
+        }else{
+            return (childItems.size/ 2)+1
+
+        }
+    }
 
     override fun getGroup(groupPosition: Int): Any = groupList[groupPosition]
 
@@ -39,67 +55,89 @@ class RlMindBodyFilterExpandableListAdapter(private val context: Context, privat
         return view
     }
 
-    private fun RlChangeRightIcon(groupTitle: String, isExpanded: Boolean, imgRight: ImageView){
-        if (isExpanded){
-            if (groupTitle.equals(context.getString(R.string.edit_your_account_data))){
-                imgRight.setImageResource(R.drawable.ic_arrow_up_outline)
-            }
-        }else{
-            if (groupTitle.equals(context.getString(R.string.edit_your_account_data))){
-                imgRight.setImageResource(R.drawable.ic_chevron_right)
-            }
-        }
-
-    }
-
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.rl_mind_body_chield_item, parent, false)
-        val key = groupList[groupPosition]
-        val childData = key.childItems ?: listOf()
+        val groupNamekey = groupList[groupPosition]
+        val childData = groupNamekey.childItems ?: listOf<String>().distinct()
 
         val tvChildLeft = view.findViewById<TextView>(R.id.txt_card_title_left)
         val tvChildRight = view.findViewById<TextView>(R.id.txt_card_title_right)
 
         val index = childPosition * 2
-
         tvChildLeft.text = childData.getOrNull(index) ?: ""
         tvChildRight.text = childData.getOrNull(index + 1) ?: ""
 
+        if (childData.getOrNull(index + 1).isNullOrEmpty()){
+            tvChildRight.visibility=View.GONE
+        }else{
+            tvChildRight.visibility=View.VISIBLE
+        }
 
-        // Check if this child is selected and apply the background
-        val isSelected = selectedChildItems.contains(Pair(groupPosition, childPosition))
-        if (isSelected) {
-           // view.setBackgroundColor(context.resources.getColor(R.color.selected_item_background, null)) // Change to selected background color
+        // Update background and text color for left TextView
+        if (selectedLeftItems.contains(Pair(groupPosition, childPosition))) {
+            tvChildLeft.setBackgroundResource(R.drawable.mind_body_filter_border_green)
+            tvChildLeft.setTextColor(ContextCompat.getColor(context, R.color.AppMainColor))
         } else {
-           // view.setBackgroundColor(context.resources.getColor(R.color.default_item_background, null)) // Default background color
+            tvChildLeft.setBackgroundResource(R.drawable.mind_body_filter_border_gray)
+            tvChildLeft.setTextColor(ContextCompat.getColor(context, R.color.AppTextGrayColor))
         }
 
-        // Handle child click to toggle selection
-        view.setOnClickListener {
-            if (isSelected) {
-                selectedChildItems.remove(Pair(groupPosition, childPosition))
+        // Update background and text color for right TextView
+        if (selectedRightItems.contains(Pair(groupPosition, childPosition))) {
+            tvChildRight.setBackgroundResource(R.drawable.mind_body_filter_border_green)
+            tvChildRight.setTextColor(ContextCompat.getColor(context, R.color.AppMainColor))
+        } else {
+            tvChildRight.setBackgroundResource(R.drawable.mind_body_filter_border_gray)
+            tvChildRight.setTextColor(ContextCompat.getColor(context, R.color.AppTextGrayColor))
+        }
+
+        // Handle click for left TextView
+        tvChildLeft.setOnClickListener {
+            val item = Pair(groupPosition, childPosition)
+            if (selectedLeftItems.contains(item)) {
+                selectedLeftItems.remove(item) // Deselect if already selected
+                val selecteditem=RLMindBodyFilterGroupSelectItemModel(groupNamekey.title.toString(), tvChildLeft.text.toString())
+                selectedItemsMap.remove(selecteditem)
             } else {
-                selectedChildItems.add(Pair(groupPosition, childPosition))
+                selectedLeftItems.add(item) // Select this item
+                val selecteditem=RLMindBodyFilterGroupSelectItemModel(groupNamekey.title.toString(), tvChildLeft.text.toString())
+                selectedItemsMap.add(selecteditem)
             }
-            notifyDataSetChanged()  // Refresh the list view
-            updateMainViewWithSelectedItems()  // Update the main view (outside the adapter)
+            notifyDataSetChanged() // Refresh the list
+            onSelected(RLGetSelectedItems().toMutableList())
         }
 
-
-
+        // Handle click for right TextView
+        tvChildRight.setOnClickListener {
+            val item = Pair(groupPosition, childPosition)
+            if (selectedRightItems.contains(item)) {
+                selectedRightItems.remove(item) // Deselect if already selected
+                val selecteditem=RLMindBodyFilterGroupSelectItemModel(groupNamekey.title.toString(), tvChildRight.text.toString())
+                selectedItemsMap.remove(selecteditem)
+            } else {
+                selectedRightItems.add(item) // Select this item
+                val selecteditem=RLMindBodyFilterGroupSelectItemModel(groupNamekey.title.toString(), tvChildRight.text.toString())
+                selectedItemsMap.add(selecteditem)
+            }
+            notifyDataSetChanged() // Refresh the list
+            onSelected(RLGetSelectedItems().toMutableList())
+        }
         return view
     }
 
-    private fun updateMainViewWithSelectedItems() {
-        // You can pass selectedChildItems to your main activity or fragment.
-        // Example:
-        val selectedItems = selectedChildItems.map { (groupPosition, childPosition) ->
-            "${groupList[groupPosition].title} - ${groupList[groupPosition].childItems[childPosition]}"
-        }.joinToString(", ")
-        // Here, update the main view (e.g., a TextView or other view) to show the selected items
-        // Example:
-        (context as? RLFragMindClasses)?.updateSelectionView(selectedItems)
+    override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean = true
+
+    fun RLGetSelectedItems(): List<RLMindBodyFilterGroupItemModel> {
+        val selectedItems = mutableListOf<RLMindBodyFilterGroupItemModel>()
+        val groupedItems = selectedItemsMap
+            .groupBy { it.title } // Group by title
+            .map { (title, items) ->
+                // For each group, create an RLMindBodyFilterGroupItemModel
+                RLMindBodyFilterGroupItemModel(title, items.map { it.childItems }.distinct())
+            }
+        // Add the grouped items to the selectedItems list
+        selectedItems.addAll(groupedItems)
+        return selectedItems
     }
 
-    override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean = true
 }

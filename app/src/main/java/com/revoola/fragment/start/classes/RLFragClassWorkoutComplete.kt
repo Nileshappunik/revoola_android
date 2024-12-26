@@ -82,7 +82,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         fragBinding.edtSessionName.setText(VideoCardData.rideTitle)
         fragBinding.txtMainTitle.setText("ACTIVITY COMPLETE!")
-
+        RLShareMapHide(false)
         fragBinding.layPrivacy.setOnClickListener {
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
             when(titleTxt){
@@ -100,7 +100,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
                     fragBinding.tvShareTitle.setText(R.string.friendstx)
                     fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-                    RLShareMapHide(true)
+                    RLShareMapHide(false)
                 }
                 "PRIVATE"->{
                     visibilityflagforthatsession=1
@@ -108,7 +108,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
                     fragBinding.tvShareTitle.setText(R.string.everyone)
                     fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-                    RLShareMapHide(true)
+                    RLShareMapHide(false)
                 }
             }
 
@@ -152,6 +152,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding.txtAddPhoto.setOnClickListener {
             RLchooseFromGallery()
         }
+
 
     }
     private fun RLShareMapHide(isVisible:Boolean){
