@@ -22,8 +22,7 @@ import com.revoola.databinding.RlDialogHelpStartBinding
 import com.revoola.databinding.RlFragSetYourGoalBinding
 import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
-import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
 import java.text.NumberFormat
 import java.util.Locale

@@ -11,7 +11,7 @@ import com.revoola.R
 import com.revoola.base.RLBaseActivity
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlActivityForgotPasswordBinding
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLForgotPasswordActivityRL : RLBaseActivity() {
     val TAG: String = RLForgotPasswordActivityRL::class.java.simpleName

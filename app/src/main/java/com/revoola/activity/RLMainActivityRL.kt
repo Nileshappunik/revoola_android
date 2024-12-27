@@ -31,7 +31,7 @@ import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RELDynamicLinkManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import org.json.JSONObject

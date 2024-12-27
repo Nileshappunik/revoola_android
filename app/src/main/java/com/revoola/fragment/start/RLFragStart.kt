@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,14 +20,13 @@ import com.revoola.enumclass.RLStartAllMenuModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.adapter.RLStartListAdapter
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName

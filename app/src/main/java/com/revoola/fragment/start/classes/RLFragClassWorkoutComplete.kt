@@ -3,7 +3,6 @@ package com.revoola.fragment.start.classes
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.adapter.RLSelectedImagesAdapter
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import gun0912.tedimagepicker.builder.TedImagePicker

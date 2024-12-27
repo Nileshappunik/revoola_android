@@ -3,7 +3,6 @@ package com.revoola.fragment.more
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
@@ -17,7 +16,7 @@ import com.revoola.utils.RLConstants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.moengage.core.MoECoreHelper
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName

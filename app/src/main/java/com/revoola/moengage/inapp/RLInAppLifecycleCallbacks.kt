@@ -1,9 +1,8 @@
 package com.revoola.moengage.inapp
 
-import android.util.Log
 import com.moengage.inapp.listeners.InAppLifeCycleListener
 import com.moengage.inapp.model.InAppData
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLInAppLifecycleCallbacks: InAppLifeCycleListener {
 

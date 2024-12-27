@@ -1,7 +1,6 @@
 package com.revoola.fragment.feed
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,9 @@ import com.revoola.model.RLSetMetricChartByDay
 import com.revoola.model.RLSetMetricChartByDayData
 import com.revoola.model.RLSetgoaled_challenges
 import com.revoola.model.RLSetgoaled_challenges_request
+import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -117,7 +117,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewChart.webViewClient = WebViewClient()
         fragBinding.webViewChart.loadDataWithBaseURL(null,
-            RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
 
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
         webRankingSettings.javaScriptEnabled = true
@@ -130,7 +130,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewRankingChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewRankingChart.webViewClient = WebViewClient()
         val jasonArray=JSONArray()
-        val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
+        val htmltext=RLAllHTMLChart.RLgetRankingChartHtml(jasonArray,currentUser)
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,htmltext, "text/html", "UTF-8", null)
         RLRankingDataGetApi(cardData.challengeid)
         RLStepDataGetApi(cardData.challengeid,cardData.userid)
@@ -220,7 +220,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
     private fun RLRankingMapSet(jasonArray: JSONArray){
         if (jasonArray.length()>0){
             fragBinding.webViewRankingChart.visibility=View.VISIBLE
-            val htmltext=RLTools.RLgetRankingChartHtml(jasonArray,currentUser)
+            val htmltext=RLAllHTMLChart.RLgetRankingChartHtml(jasonArray,currentUser)
             //RLTools.RlLogDPrint(TAG,"MAp:- $htmltext")
             fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
                 htmltext, "text/html", "UTF-8", null)
@@ -242,7 +242,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewStepChart.isHorizontalScrollBarEnabled = false
         fragBinding.webViewStepChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewStepChart.webViewClient = WebViewClient()
-        val htmlText=RLTools.RLgetIndividualStepsChartHtml(jasonArray)
+        val htmlText=RLAllHTMLChart.RLgetIndividualStepsChartHtml(jasonArray)
         fragBinding.webViewStepChart.loadDataWithBaseURL(null,
             htmlText, "text/html", "UTF-8", null)
 

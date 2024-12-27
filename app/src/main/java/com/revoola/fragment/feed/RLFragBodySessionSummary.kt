@@ -1,7 +1,6 @@
 package com.revoola.fragment.feed
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +24,9 @@ import com.revoola.enumclass.RLYourWayName
 import com.revoola.fragment.feed.adapter.RLFeedSessionEffortListAdapter
 import com.revoola.fragment.feed.adapter.RLImagePagerAdapter
 import com.revoola.model.RLTextOverview
+import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -158,7 +158,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         webSettings.loadWithOverviewMode = true
 
         fragBinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
-            RLTools.RLGetNewZoneChartHtml(), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLGetNewZoneChartHtml(), "text/html", "UTF-8", null)
 
 
         //Main list set
@@ -624,7 +624,7 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.GONE
         //var imagelink=RLTools.RLgetImage(classType)
-        val imagelink=RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
+        val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
        /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
             imagelink=cardData.imageLinkSmall
         }else if (!cardData.map_image.isNullOrEmpty()){
@@ -752,19 +752,19 @@ class RLFragBodySessionSummary : RLBaseFragment() {
                 jsonObject.put("effort", effort[i])
                 jsonArray.put(jsonObject)
             }
-          fragBinding.includeEffort.webViewAnalysis.loadDataWithBaseURL(null, RLTools.RLgetEffortChartHtml(jsonArray.toString()), "text/html", "UTF-8", null)
+          fragBinding.includeEffort.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetEffortChartHtml(jsonArray.toString()), "text/html", "UTF-8", null)
         }else if(maptype.equals(RLConstants.ELEVATION)) {
             val cumDistance = listOf(0.005296782793065954, 0.17643476423982488, 0.32406591625405773, 0.4900312010503477, 0.6886913564745826, 0.8554970494682735, 0.9942858127871057, 1.1225646445024045, 1.2667188760567833, 1.4243537519381972)
             val elevation = listOf(62.0, 68.2, 77.6, 74.8, 69.1, 68.3, 71.2, 71.2, 70.9, 68.7)
-            fragBinding.includeElevation.webViewAnalysis.loadDataWithBaseURL(null, RLTools.RLgetElevationHtml( cumDistance.toString(),elevation.toString()), "text/html", "UTF-8", null)
+            fragBinding.includeElevation.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetElevationHtml( cumDistance.toString(),elevation.toString()), "text/html", "UTF-8", null)
         }else if(maptype.equals(RLConstants.SPEED)) {
             val cumDistance = listOf(0.005296782793065954, 0.17643476423982488, 0.32406591625405773, 0.4900312010503477, 0.6886913564745826, 0.8554970494682735, 0.9942858127871057, 1.1225646445024045, 1.2667188760567833, 1.4243537519381972)
             val elevation = listOf(62.0, 68.2, 77.6, 74.8, 69.1, 68.3, 71.2, 71.2, 70.9, 68.7)
             val speed = listOf(1.1917761284398396, 13.271195141645485, 16.3731288772218, 25.100697267202097, 30.414623993580445, 23.07914084016237, 19.85637565717453, 22.02540041430026, 21.509108339338717, 22.04665020256577)
-            fragBinding.includeSpeed.webViewAnalysis.loadDataWithBaseURL(null, RLTools.RLgetSpeedHtml( cumDistance.toString(),elevation.toString(),speed.toString()), "text/html", "UTF-8", null)
+            fragBinding.includeSpeed.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetSpeedHtml( cumDistance.toString(),elevation.toString(),speed.toString()), "text/html", "UTF-8", null)
         }else if(maptype.equals(RLConstants.PACE)) {
             val timeData = listOf(225, 165, 135, 132, 124, 131)
-            fragBinding.includePace.webViewAnalysis.loadDataWithBaseURL(null, RLTools.RLgetPaceChartHtml( timeData.toString()), "text/html", "UTF-8", null)
+            fragBinding.includePace.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetPaceChartHtml( timeData.toString()), "text/html", "UTF-8", null)
 
         }
     }

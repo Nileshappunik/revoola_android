@@ -11,14 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.adapter.RLNotificationListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragFeedCardLikeCommentViewBinding
 import com.revoola.databinding.RlLayoutFeedListBinding
 import com.revoola.fragment.feed.adapter.RLFeedCommentListAdapter
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory

@@ -3,7 +3,6 @@ package com.revoola.fragment.feed.adapter
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,13 +21,13 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlLayoutFeedListBinding
 import com.revoola.fragment.feed.RLFragBodySessionSummary
-import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.feed.RLFragTenChallengeSummary
 import com.revoola.model.RLTextOverview
+import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import kotlin.math.roundToInt
 
 class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val selectTag:String) :
@@ -315,7 +314,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         val totalTime = if (totalDays ?: 0 > 0) totalDays ?: 0 else 0
 
 
-        val htmlText= RLTools.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime)
+        val htmlText= RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime)
 
         //val htmlText=RLTools.RLgetChallengeSessionChartHtml(stepsSoFar,targetSteps)
         layoutBinding.webViewChart.loadDataWithBaseURL(null,
@@ -462,7 +461,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
         }else{
 
-            val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+            val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
@@ -507,7 +506,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()?:0.0))
 
         }else{
-            val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+            val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
@@ -539,7 +538,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.layCalories.txtTimeNumber.setText("0")
         }
 
-        val ZoneTextData=RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+        val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
         layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
         layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)

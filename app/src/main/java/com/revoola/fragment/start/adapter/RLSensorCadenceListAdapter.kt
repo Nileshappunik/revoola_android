@@ -1,7 +1,6 @@
 package com.revoola.fragment.start.adapter
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +13,8 @@ import com.revoola.databinding.RlCommonSensorListBinding
 import com.revoola.fragment.start.yourway.RLFragEditYourSensor
 import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.gson.JsonParser
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLSensorCadenceListAdapter(val context: FragmentActivity?, private val itemClickListener: RLItemClickListenerAdapter) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
      val TAG = "RLSensorCadenceListAdapter"

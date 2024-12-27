@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,7 @@ import com.revoola.fragment.more.RLFragNotification
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -67,7 +66,7 @@ class RLFragOverview : RLBaseFragment() {
     }
 
     private fun RLuisetup() {
-        val currentmonth=RLTools.RLgetCalculatedMonths()
+        val currentmonth= RLTools.RLgetCalculatedMonths()
         fragBinding.txtMonth.setText(currentmonth)
         (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
         fragBinding.inlaySession.cardOverview.setOnClickListener {
@@ -129,17 +128,19 @@ class RLFragOverview : RLBaseFragment() {
                 try {
                     if (response.type.equals("success")){
 
-                        val effort=RLTools.RLformatCommas(response.text[0].aggregated[0].rev.toDouble())
-                        val relaxation=RLTools.RLformatTime(response.text[0].aggregated[0].rmm, false)
+                        val effort= RLTools.RLformatCommas(response.text[0].aggregated[0].rev.toDouble())
+                        val relaxation=
+                            RLTools.RLformatTime(response.text[0].aggregated[0].rmm, false)
 
                         val session=response.text[0].aggregated[0].session.toString()
-                        val activetime=RLTools.RLformatTime(response.text[0].aggregated[0].totalTime,false)
+                        val activetime=
+                            RLTools.RLformatTime(response.text[0].aggregated[0].totalTime,false)
 
-                        val totalcalories=RLTools.RLformatCommas(response.text[0].aggregated[0].calorie.toDouble())
-                        val activecalories=RLTools.RLformatCommas(response.text[0].aggregated[0].power.toDouble())
+                        val totalcalories= RLTools.RLformatCommas(response.text[0].aggregated[0].calorie.toDouble())
+                        val activecalories= RLTools.RLformatCommas(response.text[0].aggregated[0].power.toDouble())
 
-                        val distance=RLTools.RLformatCommas(response.text[0].aggregated[0].distance.toDouble())
-                        val steps=RLTools.RLformatCommas(response.text[0].aggregated[0].steps.toDouble())
+                        val distance= RLTools.RLformatCommas(response.text[0].aggregated[0].distance.toDouble())
+                        val steps= RLTools.RLformatCommas(response.text[0].aggregated[0].steps.toDouble())
 
                         fragBinding.inlayEffort.txtNumberLeft.setText(effort)
                         fragBinding.inlayEffort.txtNumberRight.setText(relaxation)

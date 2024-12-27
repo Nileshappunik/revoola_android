@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +26,8 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragClassesScheduleBinding
 import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

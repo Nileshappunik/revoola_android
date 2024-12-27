@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +24,8 @@ import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLCalenderListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLMonthlyCalenderListAdapter
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
-import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
-import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar

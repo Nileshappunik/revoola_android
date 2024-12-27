@@ -1,8 +1,16 @@
 package com.revoola.databasefirebase
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.revoola.commonobject.RLTools
+import com.revoola.firebaseModel.RLChallengeRiderBody
 
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -92,7 +100,37 @@ class RLDatabaseManagerRead {
             }
         }
     }
+
+    fun RLClassLeaderBoardDataRead(viedoId: String,callback: (Any?, String?) -> Unit){
+        val leaderboardMap = mutableMapOf<String, RLChallengeRiderBody>()
+        val path ="/proposedstructure/revoolaClassLeaderBoards/$viedoId"
+        database.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Log.e("FirebaseError", "Fetch snapshot: ${snapshot}")
+                for (childSnapshot in snapshot.children) {
+                    val key = childSnapshot.key
+                    val leaderboardResponse = childSnapshot.getValue(RLChallengeRiderBody::class.java)
+                    if (key != null && leaderboardResponse != null) {
+                        // Add to the map
+                        leaderboardMap[key] = leaderboardResponse
+                    }
+                }
+                callback(leaderboardMap, null)
+               /* leaderboardMap.forEach { (key, value) ->
+                    Log.e("FirebaseError", "Fetch:-  Key: $key, Display Name: ${value.displayName}, Location: ${value.location}")
+                }*/
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(null, error.message)
+            }
+        })
+
+    }
+
 }
+
 
 /*
 private fun readData(path: String) {

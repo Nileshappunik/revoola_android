@@ -17,7 +17,6 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -40,10 +39,9 @@ import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.services.RLBLEService
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 

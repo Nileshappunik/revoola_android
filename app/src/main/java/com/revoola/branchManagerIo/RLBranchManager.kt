@@ -10,10 +10,9 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.LinkProperties
 import java.io.File

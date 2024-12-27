@@ -12,7 +12,6 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databinding.RlActivityLoginBinding
 import com.revoola.model.RLRevoolaUsersSettingsModel
-import com.revoola.utils.RLPrefManager
 import com.facebook.*
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.login.LoginManager
@@ -29,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLLoginActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginActivityRL::class.java.simpleName

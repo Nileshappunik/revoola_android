@@ -1,9 +1,8 @@
 package com.revoola.moengage.push
 
-import android.util.Log
 import com.moengage.geofence.listener.OnGeofenceHitListener
 import com.moengage.geofence.model.GeofenceData
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLGeofenceHitListener: OnGeofenceHitListener {
     override fun geofenceHit(geofenceData: GeofenceData): Boolean {

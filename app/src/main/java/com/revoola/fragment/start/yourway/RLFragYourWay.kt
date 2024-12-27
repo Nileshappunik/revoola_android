@@ -1,7 +1,6 @@
 package com.revoola.fragment.start.yourway
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +14,9 @@ import com.revoola.fragment.start.adapter.RLYourWayListAdapter
 import com.revoola.databinding.RlFragYoueWayBinding
 import com.revoola.enumclass.RLStartAllMenuModel
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFragYourWay : RLBaseFragment() {
     val TAG: String = RLFragYourWay::class.java.simpleName

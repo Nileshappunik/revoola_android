@@ -3,9 +3,8 @@ package com.revoola.moengage.push
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import com.moengage.pushbase.push.PushMessageListener
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 
 class RLCustomPushMessageListener: PushMessageListener() {

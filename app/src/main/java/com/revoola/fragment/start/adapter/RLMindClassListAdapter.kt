@@ -2,7 +2,6 @@ package com.revoola.fragment.start.adapter
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlLayoutMindClassesListBinding
 import com.revoola.fragment.start.mind.RLFragMindClassesView
 import com.revoola.model.RLVideoModel
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
                              val context: FragmentActivity?,

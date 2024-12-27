@@ -1,7 +1,6 @@
 package com.revoola.fragment.friends
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.revoola.fragment.friends.adapter.RLFriendListAdapter
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFragFriends : RLBaseFragment() {
     val TAG: String = RLFragFriends::class.java.simpleName

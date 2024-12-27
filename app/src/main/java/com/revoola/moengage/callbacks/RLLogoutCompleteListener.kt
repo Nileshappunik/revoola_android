@@ -1,9 +1,8 @@
 package com.revoola.moengage.callbacks
 
-import android.util.Log
 import com.moengage.core.listeners.OnLogoutCompleteListener
 import com.moengage.core.model.LogoutData
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 
 class RLLogoutCompleteListener: OnLogoutCompleteListener {

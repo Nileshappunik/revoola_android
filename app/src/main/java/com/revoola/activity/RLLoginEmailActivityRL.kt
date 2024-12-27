@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -18,7 +17,7 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlActivityLoginEmailBinding
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.gson.Gson

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -23,9 +22,9 @@ import com.revoola.firebaseModel.RLAssumedRev
 import com.revoola.fragment.common.RLFragNoInternet
 import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.model.RLRevoolaUsersSettingsModel
-import com.revoola.utils.RLTools.RLnextFinishAllActivity
+import com.revoola.commonobject.RLTools.RLnextFinishAllActivity
 import com.google.gson.Gson
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 

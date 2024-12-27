@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +19,9 @@ import com.revoola.databinding.RlFragChalengesTypeBinding
 import com.revoola.enumclass.RLStartAllMenuModel
 import com.revoola.fragment.start.challenges.adapter.RLChallengesListAdapter
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFragChalengesType : RLBaseFragment() {
     val TAG: String = RLFragChalengesType::class.java.simpleName

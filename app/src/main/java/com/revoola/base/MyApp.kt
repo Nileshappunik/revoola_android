@@ -1,11 +1,9 @@
 package com.revoola.base
 
 import android.app.Application
-import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.moengage.core.DataCenter
-import com.moengage.core.LogLevel
 import com.moengage.core.MoECoreHelper
 import com.moengage.core.MoEngage
 import com.moengage.core.config.FcmConfig
@@ -24,7 +22,7 @@ import com.revoola.moengage.inapp.RLClickActionCallback
 import com.revoola.moengage.inapp.RLInAppLifecycleCallbacks
 import com.revoola.moengage.push.RLCustomPushMessageListener
 import com.revoola.moengage.push.RLGeofenceHitListener
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class MyApp : Application() {
 

@@ -1,25 +1,17 @@
 package com.revoola.fragment.feed
 
 import android.app.Dialog
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -27,9 +19,7 @@ import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.revoola.api.RLApiClientRet
-import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlFragFeedBinding
-import com.revoola.databinding.RlLayoutFeedListBinding
 import com.revoola.fragment.feed.adapter.RLFeedGroupNameAdapter
 import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragYourGroup
@@ -44,15 +34,12 @@ import com.revoola.model.RLSetoverview_thumb
 import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetoverview_thumb_you
-import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.utils.loadSvg
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
-import kotlin.math.roundToInt
 
 class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragFeed::class.java.simpleName

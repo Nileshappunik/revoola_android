@@ -16,7 +16,7 @@ import com.revoola.enumclass.RLTypeOfMetrics
 import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 
 class RLFeedSessionSummryListAdapter(

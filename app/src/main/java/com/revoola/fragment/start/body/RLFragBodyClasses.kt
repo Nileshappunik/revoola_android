@@ -2,7 +2,6 @@ package com.revoola.fragment.start.body
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +27,7 @@ import com.google.gson.Gson
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
 import com.revoola.services.RLClassFilterService
-import com.revoola.utils.RLTools
-import java.util.Locale
+import com.revoola.utils.RLPrefManager
 
 class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragBodyClasses::class.java.simpleName
@@ -55,18 +53,20 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
         "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM",
         "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragBodyClasses" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
         RLuisetup()
         return fragBinding.root
     }
+
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.toolbar.ivBack)
-        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp,RLPrefManager.start_help_content)
         fragBinding.toolbar.ivTitle.setText(R.string.bodyclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectabodyclass)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
@@ -115,8 +115,6 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
             }
         }
     }
-
-
 
     //rl_dailog_class_filter
     private fun RLfilterdialogopen() {

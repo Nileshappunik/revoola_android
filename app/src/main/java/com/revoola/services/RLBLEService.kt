@@ -14,10 +14,9 @@ import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.IBinder
 import android.os.ParcelUuid
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.lang.StringBuilder
 import java.util.*
 

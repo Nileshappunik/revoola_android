@@ -18,7 +18,7 @@ import com.revoola.enumclass.RLMetricData
 import com.revoola.enumclass.RLTypeOfMetrics
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory

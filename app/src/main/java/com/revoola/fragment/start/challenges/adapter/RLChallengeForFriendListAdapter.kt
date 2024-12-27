@@ -3,7 +3,6 @@ package com.revoola.fragment.start.challenges.adapter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourFriendBinding
 import com.revoola.model.RLuserData
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLChallengeForFriendListAdapter(
     val context: FragmentActivity?,

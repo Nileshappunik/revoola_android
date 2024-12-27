@@ -1,9 +1,8 @@
 package com.revoola.moengage.inapp
 
-import android.util.Log
 import com.moengage.inapp.listeners.OnClickActionListener
 import com.moengage.inapp.model.ClickData
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 
 class RLClickActionCallback: OnClickActionListener {

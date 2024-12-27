@@ -2,14 +2,13 @@ package com.revoola.databasefirebase
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
 import com.revoola.R
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 
 class RLMyFirebaseMessagingService : FirebaseMessagingService() {

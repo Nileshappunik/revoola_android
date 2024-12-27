@@ -1,7 +1,6 @@
 package com.revoola.fragment.more
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.revoola.adapter.RLNotificationListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragNotificationBinding
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory

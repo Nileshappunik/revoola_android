@@ -21,7 +21,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,8 +45,7 @@ import com.revoola.fragment.start.mind.RLFragMindClassesHeartVideoStart
 import com.revoola.fragment.start.mind.RLFragMindClassesNormalVideoStart
 import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.services.RLBLEService
-import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.util.UUID
 
 class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {

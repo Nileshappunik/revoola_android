@@ -2,7 +2,6 @@ package com.revoola.fragment.start.mind
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,11 +26,7 @@ import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
-import com.revoola.services.RELDynamicLink
-import com.revoola.services.RELDynamicLinkManager
 import com.revoola.services.RLClassFilterService
-import com.revoola.utils.RLTools
-import java.util.Locale
 
 class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragMindClasses::class.java.simpleName

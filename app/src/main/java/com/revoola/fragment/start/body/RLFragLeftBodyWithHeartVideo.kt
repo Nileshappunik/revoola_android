@@ -2,7 +2,6 @@ package com.revoola.fragment.start.body
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +10,8 @@ import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databinding.RlFragLeftBodyHeartVideoBinding
-import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
-
+import com.revoola.commonobject.RLTools
+import kotlin.math.roundToInt
 
 class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     val TAG: String = RLFragLeftBodyWithHeartVideo::class.java.simpleName
@@ -69,24 +67,32 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     }
 
     fun RLUpdateVideoTime(rLformatTime: String) {
-         fragBinding.inlayTime.txtNumber.setText(rLformatTime)
+        if (!rLformatTime.equals("00:00")){
+            fragBinding.inlayTime.txtNumber.setText(rLformatTime)
+        }
+
     }
 
-    fun RLUpdateHRTime(Heartrate: String,calories:String) {
+    fun RLUpdateHRTime(Heartrate: String,calories:String,totalRev:Double) {
         fragBinding?.inlayHeartrate?.txtNumber?.setText(Heartrate)
-        fragBinding?.inlayEffort?.txtNumber?.setText(Heartrate)
+        fragBinding?.inlayEffort?.txtNumber?.setText(totalRev.roundToInt().toString())
         fragBinding?.inlayCalories?.txtNumber?.setText(calories)
     }
 
     fun RLUpdateHRPersentage(REVPer : Int) {
         if (REVPer>=100){
             fragBinding.progresstext.setText("100%")
+            fragBinding.circularProgressBar.RLsetProgress(100)
         }else if(REVPer>=0){
             fragBinding.progresstext.setText("$REVPer%")
+            fragBinding.circularProgressBar.RLsetProgress(REVPer)
         }else{
             fragBinding.progresstext.setText("--%")
+            fragBinding.circularProgressBar.RLsetProgress(0)
         }
-        fragBinding.circularProgressBar.RLsetProgress(REVPer)
+        val progresscolor = RLTools.RLCalculateCircularGraph(REVPer)
+        fragBinding.progresstext.setTextColor(Color.parseColor(progresscolor))
+        fragBinding.circularProgressBar.RLsetProgressColor(Color.parseColor(progresscolor))
     }
 
     override fun onDestroy() {

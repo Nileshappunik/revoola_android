@@ -1,7 +1,6 @@
 package com.revoola.fragment.feed.adapter
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
-import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlLayoutFeedListBinding
 import com.revoola.fragment.feed.RLFragChallengeSummary
 import com.revoola.model.RLFeedChallengesModelData
+import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 
 class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -161,7 +160,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
                 layoutBinding.webViewChart.webViewClient = WebViewClient()
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
-                    RLTools.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+                    RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
 
                 layoutBinding.imgShare.setOnClickListener {
                  // RLBranchManager(context!!).RLGenerateBranchLink(cardData.challenge_name, cardData.adminfullname,cardData.avatar)

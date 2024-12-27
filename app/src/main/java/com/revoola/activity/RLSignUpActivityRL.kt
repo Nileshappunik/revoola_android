@@ -37,9 +37,7 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databinding.RlActivitySignUpBinding
 import com.revoola.databinding.RlDialogHelpSigninBinding
-import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
@@ -469,7 +467,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
        val databaseManager = RLDatabaseManagerWrite()
         val userId =authManager.RlgetCurrentUser()!!.uid
-        val myAge=RLTools.RLCalculateAge(DateTime)?:0
+        val myAge= RLTools.RLCalculateAge(DateTime)?:0
         val versionName: String = try {
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             packageInfo.versionName ?: "0"

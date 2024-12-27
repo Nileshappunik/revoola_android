@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -15,10 +14,7 @@ import com.revoola.utils.RLPrefManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import android.content.pm.Signature
-import android.util.Base64
-import com.revoola.utils.RLTools
-import java.security.MessageDigest
+import com.revoola.commonobject.RLTools
 
 
 class RLSplashActivityRL : RLBaseActivity() {

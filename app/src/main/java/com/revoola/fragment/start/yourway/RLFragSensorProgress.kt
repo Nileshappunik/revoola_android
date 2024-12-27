@@ -24,11 +24,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragSensorProgressBinding
-import com.revoola.utils.RLPrefManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -41,7 +39,7 @@ import com.revoola.services.RLBLEService
 import com.revoola.services.RLLocationViewModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import java.lang.Math.round
 import kotlin.math.roundToInt
 

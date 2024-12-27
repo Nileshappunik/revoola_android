@@ -3,7 +3,6 @@ package com.revoola.fragment.start.yourway
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,7 @@ import com.revoola.firebaseModel.RLSpeedSensorWorkoutSessionDetailsModel
 import com.revoola.firebaseModel.RLWorkoutSessionSummaryModel
 import com.revoola.utils.RLConstants
 
-import com.revoola.utils.RLTools
+import com.revoola.commonobject.RLTools
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage

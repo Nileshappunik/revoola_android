@@ -12,7 +12,8 @@ import androidx.viewpager.widget.PagerAdapter
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlItemPageBinding
-import com.revoola.utils.RLTools
+import com.revoola.services.RLAllHTMLChart
+import com.revoola.commonobject.RLTools
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -57,7 +58,7 @@ class RLImagePagerAdapter(val context: FragmentActivity?, private val imageList:
 
         val jsonArray = createJsonArray()
         layoutbinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
-            RLTools.RLGetNewZoneChartHtml1(jsonArray), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLGetNewZoneChartHtml1(jsonArray), "text/html", "UTF-8", null)
 
         container.addView(layoutbinding.root)
         return layoutbinding.root
