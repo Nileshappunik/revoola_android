@@ -82,6 +82,8 @@ package com.revoola.utils
 
         const val friendsFab: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"
 
+        const val flagsImageUrl: String="https://video.revoola.com/flags/"
+
         const val PILATESIMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
         const val RIDEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
         const val RUNIMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"

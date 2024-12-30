@@ -49,6 +49,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     val TAG: String = RLFragBodyClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlFragBodyClassesHeartVideoStartBinding
     var leftFragment: RLFragLeftBodyWithHeartVideo? =null
+    var rightFragment: RLFragRightBodyWithHeartVideo? =null
 
     private var rlbleService: RLBLEService? = null
     private var isServiceBound = false
@@ -200,6 +201,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
        // val firstFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
         // firstFragment?.RLUpdateVideoTime(time)
         leftFragment = parentFragmentManager.findFragmentById(R.id.frame_left) as? RLFragLeftBodyWithHeartVideo
+        rightFragment = parentFragmentManager.findFragmentById(R.id.frame_right) as? RLFragRightBodyWithHeartVideo
         leftFragment?.RLUpdateVideoTime(time)
     }
     private fun RLVideoUISet(VideoCardData: RLFulllVideoModel, data: String, videoID:String){
@@ -471,6 +473,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         if (leftFragment!=null){
             leftFragment?.RLUpdateHRPersentage(REVPer.roundToInt())
         }
+
+
         arrRevPercentage.add(noNanValueDouble(REVPer))
         avgRevPercentage = avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
@@ -478,6 +482,11 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         totalRev = totalRev+ REVSec
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
         minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
+
+        if (rightFragment!=null){
+            rightFragment?.RLUpdateSecond(totalTime.toInt(),heartRateNumber,REVSec,totalRev,REVPer,maxRevPercentage,avgRevPercentage)
+        }
+
         burntCalories=burntCalories+currentCalories
 
         maxBurntCalories=RLmax(maxBurntCalories,burntCalories.toInt())
@@ -507,6 +516,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     }
 
     //////////////////////// calculate All Value Start //////////////////////////
+
 
     private fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String): Double {
 

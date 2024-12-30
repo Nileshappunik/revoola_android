@@ -13,6 +13,7 @@ import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlLayoutStartClassAttendListBinding
 import com.revoola.firebaseModel.RLChallengeRiderBody
 import com.revoola.interfaceall.RLItemClickListener
+import com.revoola.utils.RLConstants
 import kotlin.math.roundToInt
 
 class RLStartClassAttendListAdapter( val dataList: MutableList<RLChallengeRiderBody>,val context: Context, private val RLItemClickListener: RLItemClickListener) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -40,7 +41,7 @@ class RLStartClassAttendListAdapter( val dataList: MutableList<RLChallengeRiderB
 
             layoutBinding.txtFriendName.setText(cardData.displayName)
             Glide.with(context).load(cardData.displayImage).into(layoutBinding.imgFriend)
-            Glide.with(context).load(cardData.flagImage).into(layoutBinding.imgCountryFlag)
+            Glide.with(context).load(RLConstants.flagsImageUrl+cardData.flagImage).into(layoutBinding.imgCountryFlag)
 
             val totalRev : Double =( cardData.totalRev?:0.00).toString().toDouble()
             val zoneColor=RLTools.RLGetZoneColor(RLTools.RLGetZoneNo(totalRev.roundToInt()))

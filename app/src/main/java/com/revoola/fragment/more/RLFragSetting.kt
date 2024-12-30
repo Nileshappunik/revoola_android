@@ -36,6 +36,7 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.*
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -68,7 +69,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_setting, container) as RlFragSettingBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragSetting" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
         RLuisetup()
         return fragBinding.root
     }
