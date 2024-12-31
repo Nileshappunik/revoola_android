@@ -12,6 +12,7 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -51,7 +52,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private lateinit var handler: Handler
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var rlLocationViewModel: RLLocationViewModel
-    var  yourWayType:String=""
+    private var  yourWayType:String=""
 
     private var arrBurntCalories:MutableList<Double> = mutableListOf()
     private var arrCadence:MutableList<Double> = mutableListOf()
@@ -77,7 +78,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var speedList:MutableList<Double> = mutableListOf()
     private var paceList:MutableList<Int> = mutableListOf()
 
-
     private var arrSpeedForOneKm:MutableList<Double> = mutableListOf()
     private var arrSpeedForOneMile:MutableList<Double> = mutableListOf()
 
@@ -98,8 +98,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var avgRevPercentage=0.0
     private var revPercentage=0.0
     private var totalElevation=0.0
-    var lastGeoElevation: Int = 0
-    var totalGeoElevation: Int = 0
+    private var lastGeoElevation: Int = 0
+    private var totalGeoElevation: Int = 0
 
     private var wsWeight="60"
     private var wsHeight="167"
@@ -108,19 +108,20 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit=""
-    var burntCalories =0.0
-    var totalRev  =0.0
-    var lastrevPercentage=0.0
-    var maxRevPercentage =0.0
-    var minRevPercentage =0.0
-    var maxSpeed =0
-    var maxCadence =0
-    var maxBurntCalories =0
-    var maxHeartrate =0
-    var minHeartrate =0
-    var CumDistance =0.0
-    var CumSpeed =0.0
-    var cadenceData =0.0
+    private var burntCalories =0.0
+    private var totalRev  =0.0
+    private var lastrevPercentage=0.0
+    private var maxRevPercentage =0.0
+    private var minRevPercentage =0.0
+    private var maxEffort =0
+    private var maxSpeed =0
+    private var maxCadence =0
+    private var maxBurntCalories =0
+    private var maxHeartrate =0
+    private var minHeartrate =0
+    private var CumDistance =0.0
+    private var CumSpeed =0.0
+    private var cadenceData =0.0
     private var maxPace =0
 
     private var arrDataLocation:MutableList<RLElevationPoint> = mutableListOf()
@@ -133,7 +134,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private var lastLocation: Location? = null
     private var totalDistance = 0.0
 
-    val gpxStringBuilder = StringBuilder()
+    private val gpxStringBuilder = StringBuilder()
 
     companion object {
         private val REQUEST_CODE_BLE_PERMISSIONS = 1
@@ -461,7 +462,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
         }
     }
-   private fun RLhandleDeviceFound(deviceAddress: String) {
+    private fun RLhandleDeviceFound(deviceAddress: String) {
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
         if (device != null) {
             rlbleService!!.RLconnectToDevice(device)
@@ -477,7 +478,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                     var heartRateSetValue=RlGetValueInt(data.toString())
                     if (heartRateSetValue > 0){
                         arrHRRecordedSecond.add(totalTime.toInt()?:0)
-                        fragBinding.txtEffortNumber.setText(data)
                         fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
                         maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
                         minHeartrate=RLmin(minHeartrate,heartRateNumber)
@@ -537,6 +537,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             heartRate=heartRateNumber
         }
         val REVPer=calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
+        RLUpdateHRPersentage(REVPer.roundToInt())
         arrRevPercentage.add(noNanValueDouble(REVPer))
         avgRevPercentage = avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
@@ -545,6 +546,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         lastrevPercentage=REVPer
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
         minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
+        maxEffort=RLmax(maxEffort,totalRev.roundToInt())
         burntCalories=burntCalories+currentCalories
 
         maxBurntCalories=RLmax(maxBurntCalories,burntCalories.toInt())
@@ -607,6 +609,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         }
 
+
+
         val isodate=RLgetCurrentDateTimeIsoFormatted()
         gpxStringBuilder.append(
             """
@@ -619,7 +623,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         arrConnection.add(true)
     }
-
     private fun noNanValueDouble(value:Double):Double{
         if (value.isNaN()){
             return 0.00
@@ -648,6 +651,28 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     // check the valid value or not return 0
     private fun isValidValue(value: Any?): Boolean {
         return value!= null && value!= "" &&!value.toString().matches(Regex("\\d+"))
+    }
+
+    private fun RLUpdateHRPersentage(REVPer : Int) {
+        if (REVPer>=100){
+            fragBinding.progresstext.setText("100%")
+            fragBinding.circularProgressBar.RLsetProgress(100)
+        }else if(REVPer>=0){
+            fragBinding.progresstext.setText("$REVPer%")
+            fragBinding.circularProgressBar.RLsetProgress(REVPer)
+        }else{
+            fragBinding.progresstext.setText("--%")
+            fragBinding.circularProgressBar.RLsetProgress(0)
+        }
+        val progresscolor = RLTools.RLCalculateCircularGraph(REVPer)
+        fragBinding.progresstext.setTextColor(Color.parseColor(progresscolor))
+        fragBinding.circularProgressBar.RLsetProgressColor(Color.parseColor(progresscolor))
+        val tintColor =Color.parseColor(progresscolor)
+        fragBinding.imgEffort.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+        fragBinding.txtEffortNumber.setText(totalRev.roundToInt().toString())
+        fragBinding.txtEffortNumber.setText(totalRev.roundToInt().toString())
+        fragBinding.maxEffortNumber.setText(maxEffort.toString())
+        fragBinding.txtCurrentZone.setText("Zone${RLzoneDiff(REVPer)}")
     }
 
     //////////////////////// calculate All Value Start //////////////////////////
@@ -749,7 +774,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         val hours = (elapsedTime / (1000 * 60 * 60)) % 24
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
-    //GPS VALU GET
+    //GPS VALUE GET
     private fun RLstepGetToGPS() {
         //rlLocationViewModel =RLLocationViewModel(requireActivity().application)
         rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
@@ -846,6 +871,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         rlLocationViewModel.RLstartLocationUpdates()
     }
+
     private fun RlGetValueInt(value:String):Int{
         if (value.isNullOrEmpty()){
             return 0
@@ -855,6 +881,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             return value.toDouble().toInt()
         }
     }
+
     private fun RlGetValueDouble(value:String):Double{
         if (value.isNullOrEmpty()){
             return 0.0
@@ -909,6 +936,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
        // timerManager.resume()
         RLcheckAndRequestPermissions()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
@@ -921,5 +949,4 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
-
 }

@@ -12,7 +12,9 @@ import com.revoola.R
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragRightBodyHeartVideoBinding
+import com.revoola.firebaseModel.RLLeaderBoardUser
 import com.revoola.firebaseModel.RLChallengeRiderBody
+import com.revoola.firebaseModel.RLRanking
 import com.revoola.fragment.start.adapter.RLStartClassAttendListAdapter
 import com.revoola.interfaceall.RLItemClickListener
 import com.revoola.model.RLRevoolaUsersSettingsModel
@@ -22,9 +24,13 @@ import kotlin.math.roundToInt
 class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
     val TAG: String = RLFragRightBodyWithHeartVideo::class.java.simpleName
     lateinit var fragBinding: RlFragRightBodyHeartVideoBinding
+    var adapter : RLStartClassAttendListAdapter? = null
     var userBasicdata: RLRevoolaUsersSettingsModel? = null
-    private  var rankList = mutableListOf<RLChallengeRiderBody>()
     private var currentUserID=""
+
+    private var leaderBoardUserList = mutableListOf<RLLeaderBoardUser>()
+    private var leaderBoardRankObject = mutableMapOf<String, Int>()
+    private var isRankObjectInitialized = true
 
     private val binding by lazy {
         RlFragRightBodyHeartVideoBinding.inflate(layoutInflater)
@@ -66,7 +72,7 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
     }
 
     private fun RLfetchLeaderBoardData(videoId:String) {
-        val sessionList = mutableListOf<RLChallengeRiderBody>()
+        val sessionList = mutableListOf<RLRanking>()
         RLDatabaseManagerRead().RLClassLeaderBoardDataRead(videoId) { result, error ->
             if (error != null) {
                 // Handle the error case
@@ -75,26 +81,43 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
                 // Handle the successful result
                 for ((key, value) in result) {
                     if (key is String && value is RLChallengeRiderBody) {
-                        sessionList.add(value)
-                        rankList.add(value)
+
+                        val objectleaterBoard= RLLeaderBoardUser(
+                            key=key.toString(),
+                            displayName=value.displayName,
+                            displayImage=value.displayImage,
+                            flagName=value.flagName,
+                            flagImage=value.flagImage,
+                            arrRevSecond=value.arrRevSecond,
+                            arrRevPercentage=value.arrRevPercentage,
+                            arrMaxRevPercentage=value.arrMaxRevPercentage,
+                            arrAvgRevPercentage=value.arrAvgRevPercentage,
+                            arrHr=value.arrHr,
+                            location=value.location)
+                        leaderBoardUserList.add(objectleaterBoard)
+
+                      val rankindBoard=  RLRanking(
+                            revSec = value.totalRev.toString().toDouble().roundToInt(),
+                            displayName = value.displayName?:"",
+                            displayImage =value.displayImage?:"",
+                            flagName = value.flagName,
+                            flagImage = value.flagImage?:"",
+                            totalRev = value.totalRev.toString().toDouble().roundToInt(),
+                            revPercentage = 0,
+                            maxRevPercentage =0,
+                            avgRevPercentage = 0,
+                            hr =0,
+                            userId = key,
+                            status = 1,
+                            location = value.location,
+                            isGhost = false)
+                        sessionList.add(rankindBoard)
                     }
                 }
-                 val adapter = RLStartClassAttendListAdapter(sessionList,requireContext(),this)
+                adapter = RLStartClassAttendListAdapter(sessionList,requireContext(),this)
                  fragBinding.recyclerList.adapter = adapter
             }
         }
-    }
-
-    fun RLUpdateSecond(
-        sec: Int,
-        heartRateNumber: Int,
-        REVSec: Double,
-        totalRev: Double,
-        REVPer: Double,
-        maxRevPercentage: Double,
-        avgRevPercentage: Double
-    ){
-        rankingByRevSec(sec,heartRateNumber,REVSec,totalRev,REVPer,maxRevPercentage,avgRevPercentage)
     }
 
     override fun onItemClick(position: Int) {
@@ -103,105 +126,98 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
         fragBinding.rightsideview.visibility=View.GONE
     }
 
-    fun rankingByRevSec(sec: Int,
-                        heartRateNumber: Int,
-                        REVSec: Double,
-                        totalRev: Double,
-                        REVPer: Double,
-                        maxRevPercentage: Double,
-                        avgRevPercentage: Double): List<Map<String, Any>>
-    {
-
-        val rankbyindex = mutableListOf<Map<String, Any>>()
-        /*for (list in leaderBoardUserList) {
-            val obj = mutableMapOf<String, Any>(
-                "revSec" to revSecAt(list.arrRevSecond, sec),
-                "displayName" to list.displayName,
-                "displayImage" to list.displayImage,
-                "flagName" to list.flagName,
-                "flagImage" to list.flagImage,
-                "totalRev" to sumAtN(list.arrRevSecond, sec),
-                "revPercentage" to revSecAt(list.arrRevPercentage, sec),
-                "maxRevPercentage" to revSecAt(list.arrMaxRevPercentage, sec),
-                "avgRevPercentage" to revSecAt(list.arrAvgRevPercentage, sec),
-                "hr" to revSecAt(list.arrHr, sec),
-                "userId" to if (list.key == currentUserID)
-                    "${currentUserID}_ghost"
-                else list.key,
-                "status" to 1,
-                "location" to list.location,
-                "isGhost" to true
+    fun RLRankingByRevSec(sec: Int,revSec:Int,totalRev:Int,revPercentage:Int,maxRevPercentage:Int,avgRevPercentage:Int,hrNumber:Int) {
+         var rankingList = mutableListOf<RLRanking>()
+        if (leaderBoardUserList.isNotEmpty()) {
+        val rankByIndex = leaderBoardUserList.map { user ->
+            val isCurrentUser = user.key == currentUserID
+            RLRanking(
+                revSec = RLRevSecAt(user.arrRevSecond, sec),
+                displayName = user.displayName,
+                displayImage = user.displayImage,
+                flagName = user.flagName,
+                flagImage = user.flagImage,
+                totalRev = RLSumAtN(listOf(user.arrRevSecond), sec),
+                revPercentage = RLRevSecAt(user.arrRevPercentage, sec),
+                maxRevPercentage = RLRevSecAt(user.arrMaxRevPercentage, sec),
+                avgRevPercentage = RLRevSecAt(user.arrAvgRevPercentage, sec),
+                hr = RLRevSecAtt(user.arrHr!!, sec),
+                userId = if (isCurrentUser) "${currentUserID}_ghost" else user.key,
+                status = 1,
+                location = user.location,
+                isGhost = isCurrentUser
             )
+        }.toMutableList()
 
-            rankbyindex.add(obj)
-        }*/
-
-        val obj = mutableMapOf<String, Any>(
-            "revSec" to REVSec,
-            "displayName" to (userBasicdata?.displayName?:""),
-            "displayImage" to (userBasicdata?.displayImage?:""),
-            "flagName" to "",
-            "flagImage" to (userBasicdata?.flagImage?:""),
-            "location" to "",
-            "totalRev" to totalRev,
-            "revPercentage" to REVPer,
-            "maxRevPercentage" to maxRevPercentage,
-            "avgRevPercentage" to avgRevPercentage,
-            "userId" to currentUserID,
-            "status" to 1,
-            "isGhost" to false
+        rankByIndex.add(
+            RLRanking(
+                revSec = revSec,
+                displayName = userBasicdata?.displayName ?: "",
+                displayImage = userBasicdata?.displayImage ?: "",
+                flagName = "",
+                flagImage = userBasicdata?.flagImage ?: "",
+                totalRev = totalRev,
+                revPercentage = revPercentage,
+                maxRevPercentage = maxRevPercentage,
+                avgRevPercentage = avgRevPercentage,
+                hr = hrNumber,
+                userId = currentUserID,
+                status = 1,
+                location = "",
+                isGhost = false
+            )
         )
-        rankbyindex.add(obj)
 
-        val sortedRankByIndex = rankbyindex
-            .sortedByDescending { it["totalRev"].toString().toDouble().roundToInt()}
-            .mapIndexed { index, value ->
-                value.toMutableMap().apply {
-                    put("rank", index + 1)
-                }
+        rankByIndex.sortByDescending { it.totalRev }
+        rankByIndex.forEachIndexed { index, ranking ->
+            ranking.rank = index + 1
+            val previousRank = leaderBoardRankObject[ranking.userId]
+            ranking.status = when {
+                previousRank == null -> 1
+                previousRank == ranking.rank -> 0
+                previousRank < ranking.rank -> 1
+                else -> 2
             }
-
-        /*for (x in sortedRankByIndex) {
-            leaderBoardRankObject[x["userId"]]?.let { previousRank ->
-                x["status"] = when {
-                    previousRank == x["rank"] -> 0 // same
-                    previousRank < x["rank"] -> 1  // down
-                    else -> 2                      // up
-                }
+            if (isRankObjectInitialized) {
+                leaderBoardRankObject[ranking.userId] = ranking.rank
             }
         }
+        isRankObjectInitialized = false
 
-        if (isRObj) {
-            isRObj = false
-            for (x in sortedRankByIndex) {
-                leaderBoardRankObject[x["userId"]] = x["rank"] as Int
-            }
+        rankingList = rankByIndex
+        if (adapter != null) {
+            adapter!!.RLSetList(rankingList)
         }
-
-        rankingList = sortedRankByIndex*/
-        println("--------rankingByRevSec-------01 $sortedRankByIndex")
-
-        return sortedRankByIndex
+    }
     }
 
-    private fun revSecAt(array: List<Number>?, n: Int): Number {
+    private fun RLRevSecAt(array: List<Any?>, n: Int): Int {
         return when {
-            array == null -> 0
-            array.size - 1 > n -> array[n]
+            array != null && array.size - 1 > n -> array[n].toString().toDouble().roundToInt()
             else -> 0
         }
     }
 
-    private fun sumAtN(array: List<Number>?, n: Int): Number {
-        var sum = 0.0
+    private fun RLRevSecAtt(array: List<Int?>, n: Int): Int {
+        return when {
+            array != null && array.size - 1 > n -> array[n].toString().toDouble().roundToInt()
+            else -> 0
+        }
+    }
+
+    private fun RLSumAtN(array: List<Any>, n: Int): Int {
+        var sum = 0
         if (array != null) {
-            val limit = minOf(if (array.size - 1 > n) n else array.size, array.size)
-            for (i in 0 until limit) {
-                sum += array[i].toDouble()
+            if (array.size - 1 > n) {
+                for (i in 0 until n) {
+                    sum += array[i].toString().toDouble().roundToInt()
+                }
+            } else {
+                for (i in array.indices) {
+                    sum += array[i].toString().toDouble().roundToInt()
+                }
             }
         }
         return sum
     }
-
-
 }

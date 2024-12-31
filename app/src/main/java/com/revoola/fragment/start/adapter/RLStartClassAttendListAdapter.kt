@@ -11,12 +11,12 @@ import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlLayoutStartClassAttendListBinding
-import com.revoola.firebaseModel.RLChallengeRiderBody
+import com.revoola.firebaseModel.RLRanking
 import com.revoola.interfaceall.RLItemClickListener
 import com.revoola.utils.RLConstants
 import kotlin.math.roundToInt
 
-class RLStartClassAttendListAdapter( val dataList: MutableList<RLChallengeRiderBody>,val context: Context, private val RLItemClickListener: RLItemClickListener) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLStartClassAttendListAdapter(var dataList: MutableList<RLRanking>, val context: Context, private val RLItemClickListener: RLItemClickListener) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLStartClassAttendListAdapter"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutbinding: RlLayoutStartClassAttendListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_start_class_attend_list , parent, false)
@@ -33,10 +33,15 @@ class RLStartClassAttendListAdapter( val dataList: MutableList<RLChallengeRiderB
         return dataList.size
     }
 
+    fun RLSetList(newList:MutableList<RLRanking>){
+        dataList=newList
+        notifyDataSetChanged()
+    }
+
     inner class MyViewHolder(layoutBinding: RlLayoutStartClassAttendListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding:RlLayoutStartClassAttendListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
-            val cardData:RLChallengeRiderBody= dataList[position]
+            val cardData:RLRanking= dataList[position]
             layoutBinding.txtSrno.setText((position+1).toString())
 
             layoutBinding.txtFriendName.setText(cardData.displayName)

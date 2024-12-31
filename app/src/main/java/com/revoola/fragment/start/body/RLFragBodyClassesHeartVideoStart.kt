@@ -482,9 +482,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         totalRev = totalRev+ REVSec
         maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
         minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
-
         if (rightFragment!=null){
-            rightFragment?.RLUpdateSecond(totalTime.toInt(),heartRateNumber,REVSec,totalRev,REVPer,maxRevPercentage,avgRevPercentage)
+            rightFragment?.RLRankingByRevSec(totalTime.toInt(),REVSec.roundToInt(),totalRev.roundToInt(),REVPer.roundToInt(),maxRevPercentage.roundToInt(),avgRevPercentage.roundToInt(),heartRateNumber)
         }
 
         burntCalories=burntCalories+currentCalories
