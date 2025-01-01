@@ -1,5 +1,6 @@
 package com.revoola.fragment.start.body
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,6 +72,7 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun RLfetchLeaderBoardData(videoId:String) {
         val sessionList = mutableListOf<RLRanking>()
         RLDatabaseManagerRead().RLClassLeaderBoardDataRead(videoId) { result, error ->

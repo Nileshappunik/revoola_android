@@ -41,6 +41,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
+import com.revoola.utils.RLPrefManager
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -140,7 +141,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_heart_video_start, container) as RlFragBodyClassesHeartVideoStartBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragStart" )
+        RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragStart" )
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)

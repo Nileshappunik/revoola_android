@@ -43,23 +43,21 @@ class RLFragMore : RLBaseFragment() {
         fragBinding.cardSchdualedclasses.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
-
-        // Prepare the data
-        val groupList = listOf(
-            RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
+        val editAccountChildDataList = listOf("CURRENT SUBSCRIPTION","CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")
+        // Prepare the Data
+        val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_sensors_g,resources.getString(R.string.syncwatchdata),emptyList()),
-            RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.edit_your_account_data), listOf("CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")),
-            RLMoreGroupItemModel(R.drawable.ic_sign_out_g,resources.getString(R.string.signout), emptyList())
-        )
+            RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.edit_your_account_data),editAccountChildDataList),
+            RLMoreGroupItemModel(R.drawable.ic_sign_out_g,resources.getString(R.string.signout), emptyList()))
 
-        // Set up the adapter
-        val adapter = RlMoreExpandableListAdapter(requireContext(), groupList)
+        // Set up the Adapter
+        val adapter = RlMoreExpandableListAdapter(requireContext(), groupDataList)
         fragBinding.expandableListView.setAdapter(adapter)
 
         // Optionally: Set listeners for group and child clicks
         fragBinding.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
             // Handle group click if needed
-            when(groupList[groupPosition].title){
+            when(groupDataList[groupPosition].title){
                 resources.getString(R.string.helpvideotutorials)->{
                     (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
                 }
@@ -75,11 +73,14 @@ class RLFragMore : RLBaseFragment() {
 
         fragBinding.expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
             // Handle child click if needed
-           RLTools.RlLogEPrint(TAG,"CHILDNAME:- ${groupList[groupPosition].childItems[childPosition].toString()}")
-            when(groupList[groupPosition].childItems[childPosition].toString())
+            when(groupDataList[groupPosition].childItems[childPosition].toString())
             {
+                "CURRENT SUBSCRIPTION"->{
+                    (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+                }
                 "CHANGE YOUR APP SETTINGS"->{
                     (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
+
                 }
                 "RESTORE YOUR PURCHASES"->{
                     RLshowDialogAlert(getString(R.string.youhavesuccessfullyrestored))

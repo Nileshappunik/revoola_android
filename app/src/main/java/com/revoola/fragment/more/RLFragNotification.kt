@@ -45,11 +45,7 @@ class RLFragNotification : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
@@ -66,7 +62,7 @@ class RLFragNotification : RLBaseFragment() {
              adapter = RLNotificationListAdapter(activity)
             fragBinding.rvNotification.adapter = adapter
             //Detail Api
-            RLAPiCall()
+            RLNotificationAPiCall()
         } else {
             RLshowDialogFullscreen()
         }
@@ -78,7 +74,7 @@ class RLFragNotification : RLBaseFragment() {
                 try {
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     if (!isLoading && layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.itemCount - 1) {
-                        RLAPiCall()
+                        RLNotificationAPiCall()
                     }
                 }catch (e:Exception){
                     RLTools.RlLogDPrint(TAG,"Catch="+e.message)
@@ -87,7 +83,7 @@ class RLFragNotification : RLBaseFragment() {
             }
         })
     }
-    private fun RLAPiCall() {
+    private fun RLNotificationAPiCall() {
         isLoading = true
         adapter!!.RLaddLoadingFooter()
         viewModel.RLgetNotificationData("getNotifications",currentUser,limit,index) { result ->

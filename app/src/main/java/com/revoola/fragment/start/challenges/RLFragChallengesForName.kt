@@ -117,6 +117,4 @@ class RLFragChallengesForName : RLBaseFragment() {
 
         dialog.show()
     }
-
-
 }

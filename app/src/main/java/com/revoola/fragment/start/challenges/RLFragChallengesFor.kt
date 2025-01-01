@@ -182,76 +182,6 @@ class RLFragChallengesFor : RLBaseFragment() {
         dialog.show()
 
     }
-    private fun RLgroupApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,isGroupVGroup:Boolean, dialog: Dialog ) {
-        val request = listOf(
-            RLrequestgroup_dataset(
-            group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)
-            )
-        )
-        RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
-
-        viewModel.RLyourGroupData(request) { result ->
-            result.onSuccess { response ->
-                try {
-                    if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandleGroupsApi(response.text,dialogMainBinding,isGroupVGroup,dialog)
-                    }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
-                    }
-                }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
-                }
-            }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
-            }
-        }
-    }
-    private fun RLresponsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>, dialogMainBinding: RlDialogFriendChallengesBinding, isGroupVGroup:Boolean, dialog: Dialog ) {
-        var selectGroupdata: List<RLyourGroupDataModel> = mutableListOf()
-        val linearLayoutManager = LinearLayoutManager(activity)
-        dialogMainBinding.recyclerFriend.layoutManager = linearLayoutManager
-        val adaptergroup = RLChallengeForGroupListAdapter(activity,groupdata){ cardData ->
-            // Handle selection
-            if (cardData.isSelected){
-                selectGroupdata += listOf(cardData)
-            }else{
-                selectGroupdata -= listOf(cardData)
-            }
-
-        }
-        dialogMainBinding.recyclerFriend.adapter = adaptergroup
-
-        dialogMainBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adaptergroup.RLfilter(s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-        dialogMainBinding.tvSelect.setOnClickListener {
-            if (isGroupVGroup){
-                if (selectGroupdata.size>1){
-                    RLNextFragmentOpen(true)
-                  dialog.dismiss()
-                }else{
-                    dialog.dismiss()
-                    RLshowAlertDialog("Please Select Multi Groups")
-                }
-            }else  if ( selectGroupdata.size>0){
-                RLNextFragmentOpen(true)
-                dialog.dismiss()
-            }else{
-                dialog.dismiss()
-                RLshowAlertDialog("Please Select One Group")
-            }
-
-
-        }
-    }
     private fun RLshowFriend() {
         val dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -271,6 +201,58 @@ class RLFragChallengesFor : RLBaseFragment() {
         dialog.show()
 
     }
+    private fun RLNextFragmentOpen(isGroup:Boolean){
+        val bundle: Bundle = Bundle()
+        bundle.putString("ChallengeType",challengeType)
+        //bundle.putString("CalenderType",calenderType)
+        bundle.putBoolean("IsGroup",isGroup)
+        (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
+
+    }
+    private fun RLshowAlertDialog(message:String) {
+        val sucDialog:Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
+        sucDialog.setCancelable(false)
+        val iv_ok: TextView = sucDialog.findViewById(R.id.iv_ok)
+        val iv_title: TextView = sucDialog.findViewById(R.id.iv_title)
+        val iv_description: TextView = sucDialog.findViewById(R.id.iv_description)
+        val view_v: View = sucDialog.findViewById(R.id.view_v)
+
+        iv_title.visibility=View.GONE
+        view_v.visibility=View.VISIBLE
+        iv_description.setText(message)
+        iv_ok.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    //All Api Call
+    private fun RLgroupApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,isGroupVGroup:Boolean, dialog: Dialog ) {
+        val request = listOf(RLrequestgroup_dataset(group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)))
+        RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
+
+        viewModel.RLyourGroupData(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLresponsehandleGroupsApi(response.text,dialogMainBinding,isGroupVGroup,dialog)
+                    }else {
+                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception) {
+                    e.printStackTrace()
+                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+            }
+        }
+    }
     private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
@@ -284,7 +266,8 @@ class RLFragChallengesFor : RLBaseFragment() {
                     }else {
                         RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
-                }catch (e:Exception){ e.printStackTrace()
+                }catch (e:Exception){
+                    e.printStackTrace()
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
@@ -319,43 +302,61 @@ class RLFragChallengesFor : RLBaseFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
         dialogMainBinding.tvSelect.setOnClickListener {
-           if (selectUserdata.size>0){
-               RLNextFragmentOpen(false)
-               dialog.dismiss()
-           }else{
-              RLshowAlertDialog("Please Select friends")
-               dialog.dismiss()
-           }
+            if (selectUserdata.size>0){
+                RLNextFragmentOpen(false)
+                dialog.dismiss()
+            }else{
+                RLshowAlertDialog("Please Select friends")
+                dialog.dismiss()
+            }
 
         }
 
     }
-    private fun RLNextFragmentOpen(isGroup:Boolean){
-        val bundle: Bundle = Bundle()
-        bundle.putString("ChallengeType",challengeType)
-        //bundle.putString("CalenderType",calenderType)
-        bundle.putBoolean("IsGroup",isGroup)
-        (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
+    private fun RLresponsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>, dialogMainBinding: RlDialogFriendChallengesBinding, isGroupVGroup:Boolean, dialog: Dialog ) {
+        var selectGroupdata: List<RLyourGroupDataModel> = mutableListOf()
+        val linearLayoutManager = LinearLayoutManager(activity)
+        dialogMainBinding.recyclerFriend.layoutManager = linearLayoutManager
+        val adaptergroup = RLChallengeForGroupListAdapter(activity,groupdata){ cardData ->
+            // Handle selection
+            if (cardData.isSelected){
+                selectGroupdata += listOf(cardData)
+            }else{
+                selectGroupdata -= listOf(cardData)
+            }
 
-    }
-    private fun RLshowAlertDialog(message:String) {
-        val sucDialog:Dialog = Dialog(requireContext())
-        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
-        sucDialog.setCancelable(false)
-        val iv_ok: TextView = sucDialog.findViewById(R.id.iv_ok)
-        val iv_title: TextView = sucDialog.findViewById(R.id.iv_title)
-        val iv_description: TextView = sucDialog.findViewById(R.id.iv_description)
-        val view_v: View = sucDialog.findViewById(R.id.view_v)
+        }
+        dialogMainBinding.recyclerFriend.adapter = adaptergroup
 
-        iv_title.visibility=View.GONE
-        view_v.visibility=View.VISIBLE
-        iv_description.setText(message)
-        iv_ok.setOnClickListener(View.OnClickListener {
-            sucDialog.dismiss()
+        dialogMainBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                adaptergroup.RLfilter(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
         })
-        sucDialog.show()
-        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+        dialogMainBinding.tvSelect.setOnClickListener {
+            if (isGroupVGroup){
+                if (selectGroupdata.size>1){
+                    RLNextFragmentOpen(true)
+                    dialog.dismiss()
+                }else{
+                    dialog.dismiss()
+                    RLshowAlertDialog("Please Select Multi Groups")
+                }
+            }else  if ( selectGroupdata.size>0){
+                RLNextFragmentOpen(true)
+                dialog.dismiss()
+            }else{
+                dialog.dismiss()
+                RLshowAlertDialog("Please Select One Group")
+            }
+
+
+        }
     }
+
 
 }
