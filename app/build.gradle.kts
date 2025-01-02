@@ -41,6 +41,8 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+
 }
 
 /*kotlin {
@@ -98,6 +100,10 @@ dependencies {
     implementation(moengage.inboxUi)
     // optionally add this if you are using the core module of Inbox
     implementation(moengage.inboxCore)
+    //RevenueCat
+    implementation ("com.revenuecat.purchases:purchases:7.0.0")
+    implementation ("com.revenuecat.purchases:purchases-store-amazon:7.0.0")
+
 
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.lifecycle:lifecycle-process:2.7.0")

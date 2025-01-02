@@ -23,6 +23,9 @@ import com.revoola.moengage.inapp.RLInAppLifecycleCallbacks
 import com.revoola.moengage.push.RLCustomPushMessageListener
 import com.revoola.moengage.push.RLGeofenceHitListener
 import com.revoola.commonobject.RLTools
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
+import com.revoola.utils.RLConstants
 
 class MyApp : Application() {
 
@@ -43,6 +46,12 @@ class MyApp : Application() {
         Branch.getAutoInstance(this)
         // Configure MoEngage
         RLMoEngageInit()
+
+
+        // Initialize RevenueCat using Purchases.Builder
+        val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.revenuecat_api_key).build()
+        // Initialize RevenueCat with your API key
+        Purchases.configure(configurationRevenueCat) // Replace with your RevenueCat API key
     }
 
     private fun scxConfigureMoEngage() {

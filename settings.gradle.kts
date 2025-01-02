@@ -12,6 +12,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Add RevenueCat's repository
+       // maven { url = uri("https://github.com/RevenueCat/purchases-android/releases" )}
+        maven { url = uri("https://jitpack.io" )}
     }
     versionCatalogs {
         create("moengage"){

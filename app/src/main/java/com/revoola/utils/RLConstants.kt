@@ -75,10 +75,13 @@ package com.revoola.utils
 
 //      TODO: API
 
+        const val revenuecat_api_key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"
+
         const val BASE_URL: String = "https://video.revoola.com/_stuff/"
         const val URL_V3: String = "getResponse_v3.php"
         const val URL_V2: String = "getResponse_v2.php"
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
+
 
         const val friendsFab: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"
 
