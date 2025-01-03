@@ -47,7 +47,6 @@ class MyApp : Application() {
         // Configure MoEngage
         RLMoEngageInit()
 
-
         // Initialize RevenueCat using Purchases.Builder
         val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.revenuecat_api_key).build()
         // Initialize RevenueCat with your API key

@@ -517,7 +517,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
 
     //////////////////////// calculate All Value Start //////////////////////////
 
-
     private fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String): Double {
 
         val currentDI = 1.0

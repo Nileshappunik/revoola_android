@@ -209,15 +209,16 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
 
     private fun RLSumAtN(array: List<Any>, n: Int): Int {
         var sum = 0
-        if (array != null) {
-            if (array.size - 1 > n) {
-                for (i in 0 until n) {
-                    sum += array[i].toString().toDouble().roundToInt()
+        if (array.isNotEmpty()) { // Check if array is not empty
+            val limit = if (n < array.size) n else array.size
+            for (i in 0 until limit) {
+                val element = array[i]
+                val value = when (element) {
+                    is Number -> element.toDouble() // If it's a number, convert to Double
+                    is String -> element.toDoubleOrNull() ?: 0.0 // Try parsing as Double, default to 0.0 if invalid
+                    else -> 0.0 // Default to 0.0 for unsupported types
                 }
-            } else {
-                for (i in array.indices) {
-                    sum += array[i].toString().toDouble().roundToInt()
-                }
+                sum += value.roundToInt() // Add rounded value to sum
             }
         }
         return sum

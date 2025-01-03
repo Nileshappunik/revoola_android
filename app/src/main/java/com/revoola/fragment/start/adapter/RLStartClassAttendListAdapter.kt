@@ -51,6 +51,7 @@ class RLStartClassAttendListAdapter(var dataList: MutableList<RLRanking>, val co
             val totalRev : Double =( cardData.totalRev?:0.00).toString().toDouble()
             val zoneColor=RLTools.RLGetZoneColor(RLTools.RLGetZoneNo(totalRev.roundToInt()))
             layoutBinding.txtCount.setTextColor(Color.parseColor(zoneColor))
+            layoutBinding.imgDot.setBackgroundColor(Color.parseColor(zoneColor))
             layoutBinding.txtCount.setText(cardData.totalRev.toString())
 
             layoutBinding.relayAttendlist.setOnClickListener {

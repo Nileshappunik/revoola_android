@@ -10,14 +10,6 @@
         android:background="@color/AppWhiteColor"
         android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/paywall_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:background="#000000"/>
-
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,6 +50,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="25dp"
                     android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/paywall_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:background="#000000"/>
 
                     <include
                         android:id="@+id/inlayPremiumUser"
@@ -256,8 +255,6 @@
             </RelativeLayout>
 
         </ScrollView>
-
-
 
     </LinearLayout>
 </layout>

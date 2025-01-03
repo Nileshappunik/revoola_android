@@ -104,7 +104,6 @@ dependencies {
     implementation ("com.revenuecat.purchases:purchases:7.0.0")
     implementation ("com.revenuecat.purchases:purchases-store-amazon:7.0.0")
 
-
     implementation("androidx.core:core:1.9.0")
     implementation("androidx.lifecycle:lifecycle-process:2.7.0")
 

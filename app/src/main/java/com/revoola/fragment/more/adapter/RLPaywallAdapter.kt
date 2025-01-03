@@ -4,6 +4,7 @@ import com.revoola.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -12,16 +13,9 @@ import com.revenuecat.purchases.models.Period
 import com.revenuecat.purchases.models.StoreProduct
 import com.revenuecat.purchases.models.SubscriptionOption
 
+class RLPaywallAdapter(var offering: Offering?, var didChoosePaywallItem: (PaywallItem) -> Unit) : RecyclerView.Adapter<RLPaywallAdapter.PackageViewHolder>() {
 
-class PaywallAdapter(
-    var offering: Offering?,
-    var didChoosePaywallItem: (PaywallItem) -> Unit,
-) : RecyclerView.Adapter<PaywallAdapter.PackageViewHolder>() {
-
-    class PackageViewHolder(
-        val view: View,
-        val didChoosePaywallItem: (PaywallItem) -> Unit,
-    ) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    class PackageViewHolder(val view: View, val didChoosePaywallItem: (PaywallItem) -> Unit) : RecyclerView.ViewHolder(view), View.OnClickListener {
         var item: PaywallItem? = null
 
         init {
@@ -36,8 +30,7 @@ class PaywallAdapter(
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): PackageViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.rl_paywall_item, viewGroup, false)
+        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.rl_paywall_item, viewGroup, false)
 
         return PackageViewHolder(view, didChoosePaywallItem)
     }
@@ -51,11 +44,11 @@ class PaywallAdapter(
                 is PaywallItem.Title -> {
                     viewHolder.view.findViewById<TextView>(R.id.paywall_item_options_title).visibility = View.VISIBLE
                     viewHolder.view.findViewById<TextView>(R.id.paywall_item_options_title).text = it.title
-                    viewHolder.view.findViewById<ConstraintLayout>(R.id.purchasableLayout).visibility = View.GONE
+                    viewHolder.view.findViewById<LinearLayout>(R.id.purchasableLayout).visibility = View.GONE
                 }
                 is PaywallItem.Product -> {
                     viewHolder.view.findViewById<TextView>(R.id.paywall_item_options_title).visibility = View.GONE
-                    viewHolder.view.findViewById<ConstraintLayout>(R.id.purchasableLayout).visibility = View.VISIBLE
+                    viewHolder.view.findViewById<LinearLayout>(R.id.purchasableLayout).visibility = View.VISIBLE
 
                     val product = it.storeProduct
                     val price = product.price.formatted
@@ -65,7 +58,7 @@ class PaywallAdapter(
                 }
                 is PaywallItem.Option -> {
                     viewHolder.view.findViewById<TextView>(R.id.paywall_item_options_title).visibility = View.GONE
-                    viewHolder.view.findViewById<ConstraintLayout>(R.id.purchasableLayout).visibility = View.VISIBLE
+                    viewHolder.view.findViewById<LinearLayout>(R.id.purchasableLayout).visibility = View.VISIBLE
 
                     val option = it.subscriptionOption
                     val price = option.pricingPhases.joinToString(separator = " -> ") { phase ->
@@ -82,8 +75,7 @@ class PaywallAdapter(
 
     override fun getItemCount() = theItems.size ?: 0
 
-    private val theItems: List<PaywallItem>
-        get() = offering?.availablePackages?.flatMap {
+    private val theItems: List<PaywallItem>get() = offering?.availablePackages?.flatMap {
             val product = it.product
 
             it.product.subscriptionOptions?.let { options ->
@@ -102,22 +94,14 @@ class PaywallAdapter(
 }
 
 sealed class PaywallItem {
-    data class Title(
-        val title: String,
-    ) : PaywallItem()
+    data class Title(val title: String, ) : PaywallItem()
 
-    data class Product(
-        val storeProduct: StoreProduct,
-    ) : PaywallItem()
+    data class Product(val storeProduct: StoreProduct, ) : PaywallItem()
 
-    data class Option(
-        val subscriptionOption: SubscriptionOption,
-        val defaultOffer: Boolean,
-    ) : PaywallItem()
+    data class Option(val subscriptionOption: SubscriptionOption, val defaultOffer: Boolean, ) : PaywallItem()
 }
 
-val Period.toTitle: String?
-    get() = when (unit) {
+val Period.toTitle: String? get() = when (unit) {
         Period.Unit.DAY -> if (value == 1) "Daily" else "Every $value days"
         Period.Unit.WEEK -> if (value == 1) "Weekly" else "Every $value weeks"
         Period.Unit.MONTH -> if (value == 1) "Monthly" else "Every $value months"
@@ -125,8 +109,7 @@ val Period.toTitle: String?
         Period.Unit.UNKNOWN -> "Unknown"
     }
 
-val Period.toDescription: String?
-    get() = when (unit) {
+val Period.toDescription: String? get() = when (unit) {
         Period.Unit.DAY -> if (value == 1) "$value day" else "$value days"
         Period.Unit.WEEK -> if (value == 1) "$value week" else "$value weeks"
         Period.Unit.MONTH -> if (value == 1) "$value month" else "$value months"

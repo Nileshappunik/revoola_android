@@ -672,7 +672,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragBinding.txtEffortNumber.setText(totalRev.roundToInt().toString())
         fragBinding.txtEffortNumber.setText(totalRev.roundToInt().toString())
         fragBinding.maxEffortNumber.setText(maxEffort.toString())
-        fragBinding.txtCurrentZone.setText("Zone${RLzoneDiff(REVPer)}")
+
+        val ZoneTextData= RLTools.RlVerifyFeedZoneName(REVPer.toDouble()?:0.0)
+        fragBinding.txtCurrentZone.setText(ZoneTextData.efforZoneText)
+        fragBinding.txtCurrentZone.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+
     }
 
     //////////////////////// calculate All Value Start //////////////////////////
