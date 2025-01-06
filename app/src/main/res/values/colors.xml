@@ -67,6 +67,6 @@
     <color name="AppScheduleWinColor">#FFEB5757</color>
     <color name="AppScheduleLoseColor">#FFEB5757</color>
     <color name="AppSignOutBGColor">#1924BA35</color>
-
+    <color name="AppjoinChallengeColor">#3339B54A</color>
 
 </resources>

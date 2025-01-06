@@ -1,8 +1,11 @@
 package com.revoola.fragment.feed.adapter
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
+import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlLayoutFeedListBinding
@@ -28,9 +32,12 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges
+import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
+import com.revoola.viewmodel.RLMainViewModel
 import kotlin.math.roundToInt
 
-class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val selectTag:String) :
+class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val selectTag:String,private val onItemClicked: (RLTextOverview) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLFeedListAdapter"
     private var isLoadingAdded = false
@@ -83,6 +90,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             try {
                 val cardData: RLTextOverview = dataList[position]
                 RLcommonDataSet(cardData, layoutBinding,position+1)
+                layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
+                layoutBinding.bigChallengesLayout.visibility=View.GONE
                 when(cardData.from_third_party_source){
                     0->{
                         when(cardData.bmo){
@@ -106,13 +115,17 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                     2->{ // Metric Card
                         RLthirdPartyTwoBodySet(cardData, layoutBinding)
                     }
+                    101->{
+                        //Big Challenges Join Session
+                        layoutBinding.mainLayoutFeed.visibility=View.GONE
+                        layoutBinding.bigChallengesLayout.visibility=View.VISIBLE
+                        RLBigChallengesJoinBodySet(cardData, layoutBinding)
+                    }
                      else -> {// >10 Challenges
                         RLthirdPartyTenBodySet(cardData, layoutBinding,position+1)
+
                     }
                 }
-
-
-
             }
             catch (e: Exception) {
             RLTools.RlLogDPrint(TAG, "exception= " + e.message)
@@ -123,6 +136,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
     }
     private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
         RLTools.RLheightsetimageview(layoutBinding.imgMain)
+        //RLTools.RLheightsetimageview(layoutBinding.imgMainBigChallenges)
         RLTools.RLheightsetRelative(layoutBinding.relayChart)
         if (cardData.classType.isNullOrEmpty()){
             classType=""
@@ -225,6 +239,9 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                     }
 
                 }
+            }
+            else if(cardData.from_third_party_source == 101){
+                //BIG Challenge
             }
             else if(cardData.from_third_party_source > 10){
                 //Challenge design
@@ -606,6 +623,15 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         }
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+    @SuppressLint("NewApi")
+    private fun RLBigChallengesJoinBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+        Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMainBigChallenges)
+        layoutBinding.bigChallengesTitle.setText(cardData.mainTitle)
+        layoutBinding.bigChallengesDescription.text = Html.fromHtml(cardData.className, Html.FROM_HTML_MODE_LEGACY)
+        layoutBinding.ButtonJoinChallenge.setOnClickListener {
+            onItemClicked(cardData)
+        }
     }
 
 }

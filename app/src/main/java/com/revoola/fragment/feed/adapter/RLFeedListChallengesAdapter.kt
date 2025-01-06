@@ -19,6 +19,7 @@ import com.revoola.model.RLFeedChallengesModelData
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import kotlin.math.roundToInt
 
 class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -81,8 +82,9 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val cardData = dataList[position]
+                layoutBinding.bigChallengesLayout.visibility=View.GONE
+                layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
                 RLTools.RLheightsetRelative(layoutBinding.relayChart)
-
                 layoutBinding.txtOrganizer.visibility=View.VISIBLE
                 layoutBinding.txtOrganizerName.visibility=View.VISIBLE
                 layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
@@ -134,7 +136,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
                 layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
-                layoutBinding.laySteps.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.length_of_challenge}")
+                layoutBinding.laySteps.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.length_of_challenge.toString().toDouble().roundToInt()}")
 
                 layoutBinding.cardChalengis.setOnClickListener {
                     val bundle = Bundle()

@@ -26,6 +26,7 @@ import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
+import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
 import com.revoola.utils.RLConstants
 import retrofit2.Call
 import retrofit2.http.*
@@ -42,6 +43,9 @@ interface RLNetworkService {
 
     @POST(RLConstants.URL_V3)
     fun RLgetUserFeedCardDatayou(@Body request: List<RLSetoverview_thumbRequest_you>): Call<RLFeedModel>
+
+   @POST(RLConstants.URL_V3)
+    fun RLJoinBigChallengeFeed(@Body request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>): Call<String>
 
     @POST(RLConstants.URL_V3)
     fun RLgetGroupData(@Body request: List<RLSetGroupRequest>): Call<RLGroupModel>

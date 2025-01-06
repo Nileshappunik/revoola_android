@@ -26,6 +26,7 @@ import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
+import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
 
 class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLgetUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
@@ -38,6 +39,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLgetUserFeedCardDatayou(request: List<RLSetoverview_thumbRequest_you>, callback: (Result<RLFeedModel>) -> Unit) {
         mainRepository.RLgetUserFeedCardDatayou(request, callback)
     }
+    fun RLJoinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
+        mainRepository.RLJoinBigChallengeFeed(request, callback)
+    }
+
 
     fun RLgetGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
         mainRepository.RLgetGroupData(request, callback)

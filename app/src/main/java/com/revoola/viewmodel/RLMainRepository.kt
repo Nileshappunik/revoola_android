@@ -26,6 +26,7 @@ import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
+import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -80,6 +81,24 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
+
+    fun RLJoinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
+        apiService.RLJoinBigChallengeFeed(request).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body() ?: "No response"
+                    callback(Result.success(responseBody))
+                } else {
+                    callback(Result.failure(Throwable(response.message())))
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+    }
+
 
     fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
         apiService.RLGroupMembers(request).enqueue(object : Callback<RLGetGroupMemberModel> {

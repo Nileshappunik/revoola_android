@@ -87,43 +87,16 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/AppWhiteColor"
                 android:background="@drawable/full_round_green" />
+
+            <include
+                android:id="@+id/inlayNoData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                layout="@layout/rl_no_challenges_layput_"/>
         </RelativeLayout>
 
     </LinearLayout>
 </layout>
 
-<!--
-<RelativeLayout
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:visibility="gone"
-android:layout_marginTop="0dp">
-<TextView
-    android:id="@+id/txt_name"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:text="@string/feedsmall"
-    android:textAllCaps="true"
-    android:textColor="@color/AppBlackColor"
-    android:textSize="30sp"
-    android:layout_toStartOf="@+id/img_plus"
-    android:fontFamily="@font/omnes_semibold_regular" />
 
-<ImageView
-    android:id="@+id/img_plus"
-    android:layout_width="30dp"
-    android:layout_height="30dp"
-    android:layout_marginRight="10dp"
-    android:layout_alignParentRight="true"
-    android:visibility="gone"
-    android:src="@drawable/ic_plus"/>
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recycle_session_title"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop= "0dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_below="@+id/txt_name"/>
-</RelativeLayout>-->

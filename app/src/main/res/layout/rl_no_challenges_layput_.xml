@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/noDataLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp">
+
+        <TextView
+            android:id="@+id/noDataMessage_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/feed_challenges_empty_message_1"
+            android:fontFamily="@font/aptos_bold"
+            android:textAlignment="center"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/noDataMessage_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/noDataMessage_1"
+            android:layout_marginTop="30dp"
+            android:text="@string/feed_challenges_empty_message_2"
+            android:fontFamily="@font/aptos_regular"
+            android:textAlignment="center"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/noDataMessage_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/noDataMessage_2"
+            android:layout_marginTop="20dp"
+            android:text="@string/feed_challenges_empty_message_3"
+            android:fontFamily="@font/aptos_regular"
+            android:textAlignment="center"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"/>
+
+
+
+    </RelativeLayout>
+</layout>

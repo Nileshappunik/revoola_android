@@ -231,7 +231,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
                             jsonObject.put("userid",response.text.data[i].userid)
                             jasonArray.put(jsonObject)
                            // RLTools.RlLogDPrint(TAG,"jsonObject= $jsonObject")
-                            rank=response.text.data[i].length_of_challenge
+                            rank=response.text.data[i].length_of_challenge.toString().toDouble().roundToInt()
                             if(response.text.data[i].userid == cardData.userid) {
                                 selfUserData = cardData.userid
                             }

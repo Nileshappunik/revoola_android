@@ -100,7 +100,7 @@ data class RLFeedChallengesModelData(var actualtotal:Double, var metric:String, 
                                      var username:String, var avatar:String, var first_name:String, var last_name:String, var full_name:String,
                                      var challengeadmin:String, var adminusername:String, var adminavatar:String, var adminfirstname:String,
                                      var adminlastname:String, var adminfullname:String, var number_of_members:String, var challengeid:String,
-                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Int, var days_remaining:Int,var ranking_by_challenge:Int,
+                                     var scenario:String, var percentage_of_goal:Double, var length_of_challenge:Any, var days_remaining:Int,var ranking_by_challenge:Int,
                                      var percentage_of_time_elapsed:Double,val targettype:String,var totalmetric:Int,var percentage_of_goal_display:String,var goalvalue:Int): Serializable
 
 data class RLSetMetricChartByDay(var metric_chart_by_day: RLSetMetricChartByDayData)
@@ -112,4 +112,7 @@ data class RLFeedChallengesModelMapListData(var data:List<RLFeedChallengesModelM
 data class RLFeedChallengesModelMapData(var datefield:String, var metric:Int)
 
 data class RlMetric(val icon:Int,val title: String, val value: Int, val uom: String, val isTime: Boolean)
+
+data class RLtrigger_inapp_referrer_goaled_challenges_Request(var trigger_inapp_referrer_goaled_challenges: RLtrigger_inapp_referrer_goaled_challenges)
+data class RLtrigger_inapp_referrer_goaled_challenges(var userid: String,var inapp_referrer:String, var challengeid:String)
 

@@ -78,7 +78,7 @@ class RLFragAccount : RLBaseFragment() {
         val linearLayoutManager = LinearLayoutManager(requireContext())
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         fragBinding.paywallList.layoutManager = linearLayoutManager
-        val adapter = RLPaywallAdapter(null, didChoosePaywallItem = { item: PaywallItem ->
+        val adapter = RLPaywallAdapter(null,didChoosePaywallItem = { item: PaywallItem ->
             when (item) {
                 is PaywallItem.Product -> {
                     purchaseProduct(item.storeProduct)

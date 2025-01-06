@@ -156,6 +156,13 @@
     <string name="sessionsummerys">Session summary</string>
     <string name="withouthrmessage">Please connect a compatible  HR Sensor to see analysis</string>
 
+    <!--feed empty list message -->
+    <string name="feed_challenges_empty_message_1">Currently you have no update on any challenges.</string>
+    <string name="feed_challenges_empty_message_2">This may be because you have just joined.If you wish to create a challenge of your own, click on the green + button on the bottom right to go directly to our challenge creation page.</string>
+    <string name="feed_challenges_empty_message_3">You could also click the “FRIENDS” icon in the main menu at the bottom of your screen and see how you can easily invite new friends or even create entire groups that you may want to challenge.</string>
+
+
+
     <!--friends-->
     <string name="findonrevoola">Find on Revoola</string>
     <string name="yourfriends">Your Friends</string>
@@ -479,6 +486,7 @@
     <string name="activity">ACTIVITY</string>
     <string name="multi">MULTI</string>
     <string name="showresults">SHOW RESULTS</string>
+    <string name="joinchallenge">join Challenge</string>
 
 
 </resources>
