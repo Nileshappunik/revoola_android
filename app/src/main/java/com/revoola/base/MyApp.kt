@@ -1,8 +1,12 @@
 package com.revoola.base
 
 import android.app.Application
+import android.os.Bundle
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.inappmessaging.model.MessageType
 import com.moengage.core.DataCenter
 import com.moengage.core.MoECoreHelper
 import com.moengage.core.MoEngage
@@ -44,13 +48,22 @@ class MyApp : Application() {
 
         // Initialize Branch SDK
         Branch.getAutoInstance(this)
-        // Configure MoEngage
+
+
+        // Initialize MoEngage SDK
         RLMoEngageInit()
 
         // Initialize RevenueCat using Purchases.Builder
         val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.revenuecat_api_key).build()
         // Initialize RevenueCat with your API key
         Purchases.configure(configurationRevenueCat) // Replace with your RevenueCat API key
+
+        FirebaseInAppMessaging.getInstance().addClickListener { inAppMessage, _ ->
+            // Handle the message
+            if (inAppMessage.messageType == MessageType.MODAL) {
+                RLTools.RlLogEPrint("FirebaseMessage","Firebase Message:- $inAppMessage")
+            }
+        }
     }
 
     private fun scxConfigureMoEngage() {
@@ -79,6 +92,7 @@ class MyApp : Application() {
     }
 
     private fun RLMoEngageInit(){
+        // Initialize MoEngage SDK
         val moEngage = MoEngage.Builder(this,getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1)
                 .configureNotificationMetaData(
                     NotificationConfig(
@@ -115,6 +129,7 @@ class MyApp : Application() {
             MoEPushHelper.getInstance().requestPushPermission(this)
             MoEPushHelper.getInstance().navigateToSettings(this)
         }
+
     }
 
     private fun setupPushCallbacks() {
@@ -135,6 +150,15 @@ class MyApp : Application() {
         MoEInAppHelper.getInstance().addInAppLifeCycleListener(RLInAppLifecycleCallbacks())
         // callback for self handled campaigns that are triggered based on events.
         MoEInAppHelper.getInstance().setSelfHandledListener(RLSelfHandledCallback())
+        //Display InApp
+        MoEInAppHelper.getInstance().showInApp(this)
+        //Display Nudges
+         MoEInAppHelper.getInstance().showNudge(this)
+        //Reset Context
+        // MoEInAppHelper.getInstance().resetInAppContext()
+        //Handling Configuration change
+        // MoEInAppHelper.getInstance().onConfigurationChanged()
+
     }
 }
 

@@ -18,6 +18,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
+import android.view.Window
+import android.widget.Button
+import android.widget.TextView
 import com.revoola.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
 import com.revoola.databinding.RlActivityMainBinding
@@ -50,7 +53,8 @@ class RLMainActivityRL  : RLBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityMainBinding = RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
+        activityMainBinding =
+            RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
         RLshowbottombarcolorwhite()
         RLloadFrag(RLFragStart(), TAG, true, null, false)
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
@@ -65,29 +69,34 @@ class RLMainActivityRL  : RLBaseActivity() {
                     RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
                     true
                 }
+
                 R.id.feed -> {
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragFeed(), TAG, false, null, false)
                     true
                 }
+
                 R.id.start -> {
                     RLshowbottombarcolorwhite()
-                   RLloadFrag(RLFragStart(), TAG, false, null, false)
+                    RLloadFrag(RLFragStart(), TAG, false, null, false)
 
                     true
                 }
+
                 R.id.friends -> {
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragFriends(), TAG, false, null, false)
                     true
                 }
+
                 R.id.more -> {
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragMore(), TAG, false, null, false)
                     true
                 }
+
                 else -> {
-                   // loadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
+                    // loadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
                     false
                 }
             }
@@ -102,11 +111,11 @@ class RLMainActivityRL  : RLBaseActivity() {
 
     private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
         // Iterate over the BottomNavigationView items
-        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.feed),null)
-        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.overview),null)
-        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.start),null)
-        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.friends),null)
-        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.more),null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.feed), null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.overview), null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.start), null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.friends), null)
+        TooltipCompat.setTooltipText(bottomNavigationView.findViewById<View>(R.id.more), null)
         bottomNavigationView.findViewById<View>(R.id.feed).setOnLongClickListener {
             // add any code which you want to execute on long click
             true
@@ -136,19 +145,32 @@ class RLMainActivityRL  : RLBaseActivity() {
         return BitmapDrawable(resources, bitmap)
     }
 
-    fun RLchepermissionphysicalActivity(){
+    fun RLchepermissionphysicalActivity() {
         // Check if the permission is granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
 
             // Permission is not granted, request it
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE
+            )
         } else {
             // Permission is already granted
             RLonActivityRecognitionPermissionGranted()
         }
     }
+
     // Handle the permission result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -160,34 +182,43 @@ class RLMainActivityRL  : RLBaseActivity() {
             }
         }
     }
+
     private fun RLonActivityRecognitionPermissionGranted() {
         //Toast.makeText(this, "Activity Recognition Permission Granted", Toast.LENGTH_SHORT).show()
         // Start using physical activity recognition features
     }
+
     private fun RLonActivityRecognitionPermissionDenied() {
         Toast.makeText(this, "Activity Recognition Permission Denied", Toast.LENGTH_SHORT).show()
         // Handle the denial appropriately, such as notifying the RLuser about limited functionality
     }
 
-    fun RLbottombarcolorDarkBlue(){
+    fun RLbottombarcolorDarkBlue() {
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.overview)
         item.setChecked(true)
         activityMainBinding.bottomNav.setBackgroundResource(R.color.AppNEWBGColor)
     }
 
-    fun RLhidebottombarcolorwhite(){
-        activityMainBinding.bottomNav.visibility=View.GONE
+    fun RLhidebottombarcolorwhite() {
+        activityMainBinding.bottomNav.visibility = View.GONE
     }
-    fun RLshowbottombarcolorwhite(){
-        activityMainBinding.bottomNav.visibility=View.VISIBLE
+
+    fun RLshowbottombarcolorwhite() {
+        activityMainBinding.bottomNav.visibility = View.VISIBLE
         activityMainBinding.bottomNav.setBackgroundResource(R.color.AppWhiteColor)
     }
 
-    fun RLSelectionbottombar(selectedID:Int){
-        activityMainBinding.bottomNav.selectedItemId=selectedID
+    fun RLSelectionbottombar(selectedID: Int) {
+        activityMainBinding.bottomNav.selectedItemId = selectedID
     }
 
-    fun RLloadFrag(fragment: Fragment?, tagName: String?, isBackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
+    fun RLloadFrag(
+        fragment: Fragment?,
+        tagName: String?,
+        isBackStack: Boolean,
+        fragmentName: String?,
+        type: Boolean
+    ): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
@@ -211,9 +242,10 @@ class RLMainActivityRL  : RLBaseActivity() {
         super.onBackPressed()
         //RLshowbottombarcolorwhite()
     }
+
     override fun onDestroy() {
         super.onDestroy()
-      //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
+        //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
     }
 
     override fun onNewIntent(intent: android.content.Intent?) {
@@ -223,11 +255,11 @@ class RLMainActivityRL  : RLBaseActivity() {
         Branch.sessionBuilder(this)
             .withCallback { referringParams, error ->
                 if (error == null) {
-                    if(referringParams!=null){
+                    if (referringParams != null) {
                         RLHandleBranchData(referringParams)
                     }
                 } else {
-                   RLTools.RlLogEPrint(TAG,"Branch Error onNewIntent: ${error.message}")
+                    RLTools.RlLogEPrint(TAG, "Branch Error onNewIntent: ${error.message}")
                 }
             }
             .withData(intent?.data) // Pass the new intent data
@@ -239,65 +271,94 @@ class RLMainActivityRL  : RLBaseActivity() {
         // Force a new Branch session by adding the extra
         intent.putExtra("branch_force_new_session", true)
         // Branch init
-        Branch.sessionBuilder(this).withCallback { referringParams: JSONObject?, error: BranchError? ->
-            if (error == null) {
-               if(referringParams!=null){
-                   RLHandleBranchData(referringParams)
-               }
+        Branch.sessionBuilder(this)
+            .withCallback { referringParams: JSONObject?, error: BranchError? ->
+                if (error == null) {
+                    if (referringParams != null) {
+                        RLHandleBranchData(referringParams)
+                    }
 
-            } else {
-               RLTools.RlLogEPrint(TAG,"Branch Error onStart: ${error.message}")
-            }
-        }.withData(intent.data).init()
+                } else {
+                    RLTools.RlLogEPrint(TAG, "Branch Error onStart: ${error.message}")
+                }
+            }.withData(intent.data).init()
         setupUsermoengage()
     }
 
-    private fun setupUsermoengage(){
+    private fun setupUsermoengage() {
         MoEInAppHelper.getInstance().showInApp(applicationContext)
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
                 val userAuth = RLAuthManager().RlgetCurrentUser()
                 MoEAnalyticsHelper.setUniqueId(this, userAuth!!.uid)
 
-                MoEAnalyticsHelper.setFirstName(this,userData.firstName)
-                MoEAnalyticsHelper.setLastName(this,userData.lastName)
-                MoEAnalyticsHelper.setUserName(this,userData.displayName)
-                MoEAnalyticsHelper.setBirthDate(this,userData.dob)
-                MoEAnalyticsHelper.setEmailId(this,userData.emailId)
+                MoEAnalyticsHelper.setFirstName(this, userData.firstName)
+                MoEAnalyticsHelper.setLastName(this, userData.lastName)
+                MoEAnalyticsHelper.setUserName(this, userData.displayName)
+                MoEAnalyticsHelper.setBirthDate(this, userData.dob)
+                MoEAnalyticsHelper.setEmailId(this, userData.emailId)
 
             } else {
-               RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
     }
 
     private fun RLHandleBranchData(jsonObject: JSONObject) {
-        RLTools.RlLogDPrint(TAG,"Branch params: $jsonObject")
+        RLTools.RlLogDPrint(TAG, "Branch params: $jsonObject")
         val deeplinkPath: String? = if (jsonObject.has("\$deeplink_path")) {
             jsonObject.optString("\$deeplink_path", null)
         } else {
             null
         }
-        if (!deeplinkPath.isNullOrEmpty()){
-            RELDynamicLinkManager.getInstance().RLCheckLink(deeplinkPath,this,this@RLMainActivityRL)
+        if (!deeplinkPath.isNullOrEmpty()) {
+            RELDynamicLinkManager.getInstance()
+                .RLCheckLink(deeplinkPath, this, this@RLMainActivityRL)
 
         }
     }
 
-    /*
-        override fun onBackPressed() {
-            val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
-            if(fragment!!.contains(RLFragStart::class.java.simpleName)){
-                RLTools.RlLogDPrint(TAG, "" + fragment)
-                showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
-            }else{
-                if (fragmentclose.equals(RLFragStart::class.java.simpleName)){
-                    showDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
-                }else{
-                    super.onBackPressed()
-                }
-            }
-        }*/
+
+
+/* private fun RLShowInAppMessageDialog() {
+  val dialog = Dialog(this)
+  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+  dialog.setContentView(R.layout.rl_custom_inapp_message_dialog)
+
+  val titleTextView: TextView = dialog.findViewById(R.id.message_title)
+  val bodyTextView: TextView = dialog.findViewById(R.id.message_body)
+  val actionButton: Button = dialog.findViewById(R.id.action_button)
+  val closeButton: Button = dialog.findViewById(R.id.close_button)
+
+  titleTextView.text = message.title
+  bodyTextView.text = message.body
+
+  message.actionUrl?.let {
+      actionButton.visibility = View.VISIBLE
+      actionButton.setOnClickListener {
+          // Handle action (e.g., open a URL)
+          dialog.dismiss()
+      }
+  }
+
+  closeButton.setOnClickListener { dialog.dismiss() }
+  dialog.show()
+}
+
+
+  override fun onBackPressed() {
+      val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
+      if(fragment!!.contains(RLFragStart::class.java.simpleName)){
+          RLTools.RlLogDPrint(TAG, "" + fragment)
+          showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
+      }else{
+          if (fragmentclose.equals(RLFragStart::class.java.simpleName)){
+              showDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
+          }else{
+              super.onBackPressed()
+          }
+      }
+  }*/
 
 }

@@ -100,6 +100,8 @@ dependencies {
     implementation(moengage.inboxUi)
     // optionally add this if you are using the core module of Inbox
     implementation(moengage.inboxCore)
+
+
     //RevenueCat
     implementation ("com.revenuecat.purchases:purchases:7.0.0")
     implementation ("com.revenuecat.purchases:purchases-store-amazon:7.0.0")
@@ -116,11 +118,15 @@ dependencies {
     //facebook login
     implementation("com.facebook.android:facebook-android-sdk:17.0.0")
 
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
+    //inappMessage Firebase
+    implementation("com.google.firebase:firebase-inappmessaging-ktx:21.0.1")
+    implementation("com.google.firebase:firebase-inappmessaging-display:21.0.1")
 
     // Fire base
     implementation ("com.google.firebase:firebase-crashlytics:19.3.0")
