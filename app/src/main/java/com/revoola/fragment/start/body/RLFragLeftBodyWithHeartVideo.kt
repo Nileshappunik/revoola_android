@@ -80,6 +80,7 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     }
 
     fun RLUpdateHRPersentage(REVPer : Int) {
+        try {
         if (REVPer>=100){
             fragBinding.progresstext.setText("100%")
             fragBinding.circularProgressBar.RLsetProgress(100)
@@ -93,6 +94,9 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         val progresscolor = RLTools.RLCalculateCircularGraph(REVPer)
         fragBinding.progresstext.setTextColor(Color.parseColor(progresscolor))
         fragBinding.circularProgressBar.RLsetProgressColor(Color.parseColor(progresscolor))
+        }catch (e:Exception){
+            RLTools.RlLogEPrint(TAG,"Exception: ${e.message}")
+        }
     }
 
     override fun onDestroy() {

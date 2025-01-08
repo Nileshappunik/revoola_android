@@ -1,22 +1,13 @@
 package com.revoola.fragment.start.mind
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -26,8 +17,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
@@ -37,21 +26,18 @@ import com.revoola.databinding.RlFragMindClassesHeartVideoStartBinding
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.services.RLBLEService
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
+import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.services.RLBLEManagerHeartRate
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     val TAG: String = RLFragMindClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesHeartVideoStartBinding
-
-    private var rlbleService: RLBLEService? = null
-    private var isServiceBound = false
-    private lateinit var bluetoothAdapter: BluetoothAdapter
 
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
@@ -67,12 +53,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     var minHeartrate=0
     var avgHr=0
 
-    companion object {
-        private val REQUEST_CODE_BLE_PERMISSIONS = 1
-        private const val REQUEST_ENABLE_BT = 1
-        private const val REQUEST_PERMISSIONS = 2
-    }
-
+    private val bleManager by lazy { RLBLEManagerHeartRate(requireContext()) }
     private val binding by lazy {
         RlFragMindClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
@@ -150,9 +131,10 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
-            if (isServiceBound) {
+            /*if (isServiceBound) {
                 rlbleService!!.RLstopNotifications()
-            }
+            }*/
+            bleManager.lrstopgetData()
             val videoID=  requireArguments().getString("videoID","")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -175,17 +157,19 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
                 pauseVideo=false
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
-                if (isServiceBound) {
+                /*if (isServiceBound) {
                     rlbleService!!.RLpauseNotifications()
-                }
+                }*/
+                bleManager.rlpausegetData()
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
-                if (isServiceBound) {
+                /*if (isServiceBound) {
                     rlbleService!!.RLresumeNotifications()
-                }
+                }*/
+                bleManager.rlresumegetData()
             }
         }
 
@@ -240,15 +224,6 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
     }
 
-    private fun RlGetValueInt(value:String):Int{
-        if (value.isNullOrEmpty()){
-            return 0
-        }else if(value.toDouble() < 0) {
-            return 0
-        }else{
-            return value.toDouble().toInt()
-        }
-    }
     private fun  RlDataFillAllArray(){
         arrHr.add(heartRateNumber)
         avgHr = arrHr.average().roundToInt()?:0
@@ -326,140 +301,46 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         fragBinding.animatedview.startAnimation(anim)
     }
 
-    //BLE DEVICE CODE START
-    private fun RLcheckAndRequestPermissions() {
-        val permissions = mutableListOf<String>()
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-            }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-            }
-        }
-
-        if (permissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(), REQUEST_CODE_BLE_PERMISSIONS)
-        } else {
-            RLsetupBlutooth()
-        }
-    }
-    private fun RLsetupBlutooth() {
-        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothAdapter = bluetoothManager.adapter
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN),
-               REQUEST_PERMISSIONS
-            )
-        } else {
-            if (!bluetoothAdapter.isEnabled) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent,
-                    REQUEST_ENABLE_BT
-                )
-            } else {
-                RLstartBLEService()
-            }
-        }
-
-    }
-    private fun RLstartBLEService() {
-
-        val intent = Intent(requireContext(), RLBLEService::class.java)
-        requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
-
-        val filter = IntentFilter().apply {
-            addAction("ACTION_DATA_RETRIEVED_HEART")
-        }
-        requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
-
-    }
-    private val RLserviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // Request necessary permissions
-            }
-            RLTools.RlLogDPrint(TAG,"onServiceConnected")
-            val binder = service as RLBLEService.RLLocalBinder
-            rlbleService = binder.getService()
-            // Check if devices are not connected then scan
-            isServiceBound = true
-            val lastConnectDeviceAddress = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
-            RLhandleDeviceFound(lastConnectDeviceAddress)
-
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceBound = false
-            RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
-        }
-    }
-    private fun RLhandleDeviceFound(deviceAddress: String) {
-        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-        if (device != null) {
-            rlbleService!!.RLconnectToDevice(device)
-        }
-    }
-    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                "ACTION_DATA_RETRIEVED_HEART" -> {
-                    val data = intent.getStringExtra("EXTRA_DATA")
-                    heartRateNumber=RlGetValueInt(data.toString())
-                    var heartRateSetValue=RlGetValueInt(data.toString())
-                    if (heartRateSetValue > 0){
-                        maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
-                        minHeartrate=RLmin(minHeartrate,heartRateNumber)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun RLmax(previous: Int, next: Int): Int {
-        return when {
-            previous > next -> previous
-            else ->next
-        }
-    }
-
-    private fun RLmin(previous: Int, next: Int): Int {
-        return when {
-            next == 0 -> previous
-            previous == 0 -> next
-            else -> next
-        }
-    }
-
-    //BLE DEVICE CODE CLOSE
-
     override fun onStart() {
         super.onStart()
         // timerManager.resume()
-        RLcheckAndRequestPermissions()
+        if (bleManager.checkAndRequestPermissions(requireActivity())) {
+            bleManager.setupBluetooth {
+                bleManager.startBLEService()
+            }
+        }
+
+        bleManager.setCallback(object : RLBLEManagerHeartRate.BLECallback {
+            override fun onHeartRateDataReceived(data: String) {
+                Log.d("BLE", "Heart Rate: $data")
+                heartRateNumber=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                var heartRateSetValue=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                if (heartRateSetValue > 0){
+                    maxHeartrate=RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                    minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                }
+            }
+
+            @SuppressLint("MissingPermission")
+            override fun onDeviceConnected(device: BluetoothDevice) {
+                Log.d("BLE", "Connected to device: ${device.name}")
+            }
+
+            override fun onDeviceDisconnected() {
+                Log.d("BLE", "Device disconnected")
+            }
+
+            override fun onError(errorMessage: String) {
+                Log.e("BLE", "Error: $errorMessage")
+            }
+        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
         fragBinding.videoView.stopPlayback()
         try {
-            if (isServiceBound) {
-                requireActivity().unbindService(RLserviceConnection)
-                isServiceBound = false
-            }
-            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
+            bleManager.cleanup()
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -470,8 +351,5 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
-
-
-
 
 }

@@ -1,32 +1,17 @@
 package com.revoola.fragment.start.body
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
-import android.view.GestureDetector
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
@@ -36,11 +21,13 @@ import com.revoola.databinding.RlFragBodyClassesHeartVideoStartBinding
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.services.RLBLEService
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
+import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.services.RLBLEManagerHeartRate
+import com.revoola.services.RLSwipeGestureDetector
 import com.revoola.utils.RLPrefManager
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -51,11 +38,6 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     lateinit var fragBinding: RlFragBodyClassesHeartVideoStartBinding
     var leftFragment: RLFragLeftBodyWithHeartVideo? =null
     var rightFragment: RLFragRightBodyWithHeartVideo? =null
-
-    private var rlbleService: RLBLEService? = null
-    private var isServiceBound = false
-    private lateinit var handler: Handler
-    private lateinit var bluetoothAdapter: BluetoothAdapter
 
     var pauseVideo:Boolean=true
     var pauseStopVideoView:Boolean=true
@@ -120,15 +102,10 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private var maxSpeedForOneMile:Double=0.0
     var minHeartrate =0
 
-    companion object {
-        private val REQUEST_CODE_BLE_PERMISSIONS = 1
-        private const val REQUEST_ENABLE_BT = 1
-        private const val REQUEST_PERMISSIONS = 2
-    }
-
     private val binding by lazy {
-            RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
+        RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
+    private val bleManager by lazy { RLBLEManagerHeartRate(requireContext()) }
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragBodyClassesHeartVideoStart()
@@ -163,8 +140,9 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             }
         }
         // Initialize the GestureDetector
-        gestureDetectorleft = GestureDetectorCompat(requireContext(), SwipeGestureListenerLeft())
-        gestureDetectorright = GestureDetectorCompat(requireContext(), SwipeGestureListenerRight())
+        val swipeGestureDetector=RLSwipeGestureDetector(requireContext(),fragBinding.frameLeft,fragBinding.frameRight)
+        gestureDetectorleft = GestureDetectorCompat(requireContext(), swipeGestureDetector.SwipeGestureListenerLeft())
+        gestureDetectorright = GestureDetectorCompat(requireContext(), swipeGestureDetector.SwipeGestureListenerRight())
 
         // Set touch listener to the  view
         fragBinding.viewLeft.setOnTouchListener { _, event ->
@@ -177,6 +155,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
             gestureDetectorright.onTouchEvent(event)
             true
         }
+
+
         val data=  requireArguments().getString("VIDEODATA","")
         val videoID=  requireArguments().getString("videoID","")
 
@@ -225,9 +205,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
-            if (isServiceBound) {
-                rlbleService!!.RLstopNotifications()
-            }
+            bleManager.lrstopgetData()
             RLCompleteSessionFragmentOpen(data,videoID)
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
@@ -236,17 +214,13 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
                 pauseVideo=false
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
-                if (isServiceBound) {
-                    rlbleService!!.RLpauseNotifications()
-                }
+                bleManager.rlpausegetData()
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
-                if (isServiceBound) {
-                    rlbleService!!.RLresumeNotifications()
-                }
+                bleManager.rlresumegetData()
             }
         }
         fragBinding.viewCenter.setOnClickListener {
@@ -269,13 +243,13 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         bundle.putString("videoID",videoID)
 
         bundle.putString("totalTime",(totalTime?:"0"))
-        bundle.putDouble("avgRevPercentage",noNanValueDouble(avgRevPercentage?:0.00))
-        bundle.putDouble("burntCalories",noNanValueDouble(burntCalories?:0.00))
-        bundle.putDouble("distance",noNanValueDouble(distance?:0.00))
-        bundle.putDouble("maxRevPercentage",noNanValueDouble(maxRevPercentage?:0.00))
-        bundle.putDouble("minRevPercentage",noNanValueDouble(minRevPercentage?:0.00))
-        bundle.putDouble("revPercentage",noNanValueDouble(revPercentage?:0.00))
-        bundle.putDouble("totalRev",noNanValueDouble(totalRev?:0.00))
+        bundle.putDouble("avgRevPercentage",RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00))
+        bundle.putDouble("burntCalories",RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00))
+        bundle.putDouble("distance",RLYourWayCalvulation.noNanValueDouble(distance?:0.00))
+        bundle.putDouble("maxRevPercentage",RLYourWayCalvulation.noNanValueDouble(maxRevPercentage?:0.00))
+        bundle.putDouble("minRevPercentage",RLYourWayCalvulation.noNanValueDouble(minRevPercentage?:0.00))
+        bundle.putDouble("revPercentage",RLYourWayCalvulation.noNanValueDouble(revPercentage?:0.00))
+        bundle.putDouble("totalRev",RLYourWayCalvulation.noNanValueDouble(totalRev?:0.00))
         bundle.putInt("maxSpeed",maxSpeed?:0)
         bundle.putInt("maxHeartRate",maxHeartrate?:0)
         bundle.putInt("maxCadence",maxCadence?:0)
@@ -287,10 +261,10 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         bundle.putInt("avgHr",avgHr?:0)
         bundle.putDouble("avgSpeed",avgSpeed?:0.0)
 
-        bundle.putDouble("maxSpeedForOneKm",noNanValueDouble(maxSpeedForOneKm?:0.00))
-        bundle.putDouble("maxSpeedForOneMile",noNanValueDouble(maxSpeedForOneMile?:0.00))
-        bundle.putDouble("avgSpeedForOneKm",noNanValueDouble(avgSpeedForOneKm?:0.00))
-        bundle.putDouble("avgSpeedForOneMile",noNanValueDouble(avgSpeedForOneMile?:0.00))
+        bundle.putDouble("maxSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00))
+        bundle.putDouble("maxSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00))
+        bundle.putDouble("avgSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneKm?:0.00))
+        bundle.putDouble("avgSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneMile?:0.00))
 
 
 
@@ -368,394 +342,98 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
     }
 
-    //Animation set left Right Swipe
-    private inner class SwipeGestureListenerLeft : GestureDetector.SimpleOnGestureListener() {
-        private val SWIPE_THRESHOLD = 100
-        private val SWIPE_VELOCITY_THRESHOLD = 100
-
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            if (e1 == null || e2 == null) return false
-            val diffX = e2.x - e1.x
-            val diffY = e2.y - e1.y
-            return if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeRight(true)
-                    } else {
-                        onSwipeLeft(true)
-                    }
-                    return   true
-                } else {
-                    return  false
-                }
-            } else {
-                return  false
-            }
-            return super.onFling(e1, e2, velocityX, velocityY)
-        }
-
-    }
-    private inner class SwipeGestureListenerRight : GestureDetector.SimpleOnGestureListener() {
-        private val SWIPE_THRESHOLD = 100
-        private val SWIPE_VELOCITY_THRESHOLD = 100
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-            if (e1 == null || e2 == null) return false
-            val diffX = e2.x - e1.x
-            val diffY = e2.y - e1.y
-            return if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeRight(false)
-                    } else {
-                        onSwipeLeft(false)
-                    }
-                    return   true
-                } else {
-                    return  false
-                }
-            } else {
-                return  false
-            }
-            return super.onFling(e1, e2, velocityX, velocityY)
-        }
-
-    }
-    private fun onSwipeRight(isLeftSideClick:Boolean) {
-        if (isLeftSideClick){
-            toggleVisibilityleft(true)
-        }else{
-            toggleVisibilityright(false)
-        }
-    }
-    private fun onSwipeLeft(isLeftSideClick:Boolean) {
-        if (isLeftSideClick){
-            toggleVisibilityleft(false)
-        }else{
-            toggleVisibilityright(true)
-        }
-    }
-    private fun toggleVisibilityleft(visible: Boolean) {
-        val anim: Animation = if (visible) {
-            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
-        } else {
-            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left)
-        }
-        anim.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                fragBinding.frameLeft.visibility = if (visible) View.VISIBLE else View.GONE
-            }
-            override fun onAnimationRepeat(animation: Animation) {}
-        })
-        fragBinding.frameLeft.startAnimation(anim)
-    }
-    private fun toggleVisibilityright(visible: Boolean) {
-        val anim: Animation = if (visible) {
-            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right)
-        } else {
-            AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_right)
-        }
-        anim.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
-            override fun onAnimationEnd(animation: Animation) {
-                fragBinding.frameRight.visibility = if (visible) View.VISIBLE else View.GONE
-            }
-            override fun onAnimationRepeat(animation: Animation) {}
-        })
-        fragBinding.frameRight.startAnimation(anim)
-    }
-
     private fun  RlDataFillAllArray(){
-        val currentCalories=calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble())
+        val currentCalories=RLYourWayCalvulation.calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble(),RestingHR,RFMHR)
         if (heartRateNumber>0){
             heartRate=heartRateNumber
         }
-        val REVPer=calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender) //only REV
+        val REVPer=RLYourWayCalvulation.calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender,RestingHR,RFMHR) //only REV
         if (leftFragment!=null){
             leftFragment?.RLUpdateHRPersentage(REVPer.roundToInt())
         }
 
 
-        arrRevPercentage.add(noNanValueDouble(REVPer))
-        avgRevPercentage = avgOfArray(arrRevPercentage)
+        arrRevPercentage.add(RLYourWayCalvulation.noNanValueDouble(REVPer))
+        avgRevPercentage = RLYourWayCalvulation.avgOfArray(arrRevPercentage)
         val REVSec = REVPer / 360//each second REV PERSENTAGE
-        arrRevSecond.add(noNanValueDouble(REVSec))
+        arrRevSecond.add(RLYourWayCalvulation.noNanValueDouble(REVSec))
         totalRev = totalRev+ REVSec
-        maxRevPercentage=RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
-        minRevPercentage=RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
+        maxRevPercentage=RLYourWayCalvulation.RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
+        minRevPercentage=RLYourWayCalvulation.RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
         if (rightFragment!=null){
             rightFragment?.RLRankingByRevSec(totalTime.toInt(),REVSec.roundToInt(),totalRev.roundToInt(),REVPer.roundToInt(),maxRevPercentage.roundToInt(),avgRevPercentage.roundToInt(),heartRateNumber)
         }
 
         burntCalories=burntCalories+currentCalories
 
-        maxBurntCalories=RLmax(maxBurntCalories,burntCalories.toInt())
+        maxBurntCalories=RLYourWayCalvulation.RLmax(maxBurntCalories,burntCalories.toInt())
 
         revPercentage=REVPer
 
-        arrBurntCalories.add( noNanValueDouble(currentCalories))
-        arrCadence.add(noNanValueDouble(cadenceData))
-        arrDistance.add( noNanValueDouble(distance))
+        arrBurntCalories.add( RLYourWayCalvulation.noNanValueDouble(currentCalories))
+        arrCadence.add(RLYourWayCalvulation.noNanValueDouble(cadenceData))
+        arrDistance.add( RLYourWayCalvulation.noNanValueDouble(distance))
         arrHr.add(heartRateNumber)
-        arrSpeed.add(noNanValueDouble(speedNumber))
+        arrSpeed.add(RLYourWayCalvulation.noNanValueDouble(speedNumber))
 
         avgHr = arrHr.average().roundToInt()?:0
         avgBurntCalories =  arrBurntCalories.average()?:0.0
 
         CumSpeed=CumSpeed+speedNumber
         CumDistance=CumDistance+distance
-        arrCumDistance.add(noNanValueDouble(CumDistance))
-        arrCumSpeed.add(noNanValueDouble(CumSpeed))
+        arrCumDistance.add(RLYourWayCalvulation.noNanValueDouble(CumDistance))
+        arrCumSpeed.add(RLYourWayCalvulation.noNanValueDouble(CumSpeed))
         distance=CumDistance
 
         arrAvgRevPercentage.add(avgRevPercentage.roundToInt())
-        arrMaxRevPercentage.add(noNanValueDouble(maxRevPercentage))
+        arrMaxRevPercentage.add(RLYourWayCalvulation.noNanValueDouble(maxRevPercentage))
         arrPower.add(0)
         arrPowerFromDevice.add(0)
 
     }
 
-    //////////////////////// calculate All Value Start //////////////////////////
-
-    private fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String): Double {
-
-        val currentDI = 1.0
-        val RH = RestingHR.toInt()
-
-        val BPM = heartRate
-        val BMI = (weight / (height * height)) * 10000
-        val BMV = when {
-            BMI > 39.99 -> BMI * 0.05
-            BMI > 24.99 -> (BMI - 24.99) / 3
-            BMI < 18.51 -> (18.51 - BMI) / 3
-            else -> 0.0
-        }
-
-        val RI = 1.0
-
-        val TMHRM = RFMHR
-        val TMHRF = RFMHR
-
-        val RITMHRM = TMHRM * RI
-        val RITMHRF = TMHRF * RI
-
-        val REVPer = if (gender.uppercase() == "MALE") {
-            val DIACTTMHRM = RITMHRM * currentDI
-            val DIACTHRR = DIACTTMHRM - RH
-            val per = ((BPM - RH) / DIACTHRR) * 100
-            per * (1 + BMV / 100)
-        } else {
-            val DIACTTMHRF = RITMHRF * currentDI
-            val DIACTHRR = DIACTTMHRF - RH
-            val per = ((BPM - RH) / DIACTHRR) * 100
-            per * (1 + BMV / 100)
-        }
-
-        return REVPer
-    }
-
-    private fun RLmax(previous: Int, next: Int): Int {
-        return when {
-            previous > next -> previous
-            else ->next
-        }
-    }
-
-    private fun RLmin(previous: Int, next: Int): Int {
-        return when {
-            next == 0 -> previous
-            previous == 0 -> next
-            else -> next
-        }
-    }
-
-    private fun avgOfArray(array: List<Double>): Double {
-        val sum = array?.sumOf { if (!it.isNaN() && it.isFinite()) it else 0.0 } ?: 0.0
-        return if (array?.size ?: 0 <= 1) 0.0 else sum / (array.size - 1)
-    }
-
-    private fun calculateCurrentCalories(gender: String, age: Int, weight: Double, heartRate: Double): Double {
-        if (heartRate != 0.0) {
-            val total = when (gender.toLowerCase()) {
-                "male" -> {
-                    val maxHrVal = 0.6309 * RFMHR
-                    val weightVal = weight * 0.1988
-                    val ageVal = age * 0.2017
-                    (-55.0969 + maxHrVal + weightVal + ageVal) / 4.184
-                }
-                else -> {
-                    val maxHrVal = 0.4472 * RFMHR
-                    val weightVal = weight * 0.1263
-                    val ageVal = age * 0.074
-                    (-20.4022 + maxHrVal + weightVal + ageVal) / 4.184
-                }
-            }
-
-            val maxCaloriesHour = total * 36
-            val maxCaloriesMin = maxCaloriesHour / 60
-            val maxCaloriesSec = maxCaloriesMin / 60
-
-            val rh = RestingHR.toInt()
-
-            val hrRange = heartRate - rh
-            val hrRangeMax = RFMHR - rh
-            val revPer = hrRange / hrRangeMax
-
-            return maxCaloriesSec * revPer
-        }
-        return 0.0
-    }
-
-    private fun noNanValueDouble(value:Double):Double{
-        if (value.isNaN()){
-            return 0.00
-        }else{
-            return  value
-        }
-    }
-
-    private fun RlGetValueInt(value:String):Int{
-        if (value.isNullOrEmpty()){
-            return 0
-        }else if(value.toDouble() < 0) {
-            return 0
-        }else{
-            return value.toDouble().toInt()
-        }
-    }
-
-    private fun RlGetValueDouble(value:String):Double{
-        if (value.isNullOrEmpty()){
-            return 0.0
-        } else if(value.toDouble() < 0) {
-            return 0.0
-        }else{
-            return value.toDouble()
-        }
-    }
-    ///////////////////////////// calculate All Value End ////////////////////////
-
-    //BLE DEVICE CODE START
-    private fun RLcheckAndRequestPermissions() {
-        val permissions = mutableListOf<String>()
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.BLUETOOTH_ADMIN)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_SCAN)
-            }
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
-            }
-        }
-
-        if (permissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(requireActivity(),permissions.toTypedArray(), REQUEST_CODE_BLE_PERMISSIONS)
-        } else {
-            RLsetupBlutooth()
-        }
-    }
-    private fun RLsetupBlutooth() {
-        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothAdapter = bluetoothManager.adapter
-        handler = Handler(Looper.getMainLooper())
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED||
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN),
-                REQUEST_PERMISSIONS
-            )
-        } else {
-            if (!bluetoothAdapter.isEnabled) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            } else {
-                RLstartBLEService()
-            }
-        }
-
-    }
-    private fun RLstartBLEService() {
-
-        val intent = Intent(requireContext(), RLBLEService::class.java)
-        requireActivity().bindService(intent, RLserviceConnection, Context.BIND_AUTO_CREATE)
-
-        val filter = IntentFilter().apply {
-            addAction("ACTION_DATA_RETRIEVED_HEART")
-        }
-        requireActivity().registerReceiver(RLbleBroadcastReceiver, filter)
-
-    }
-    private val RLserviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // Request necessary permissions
-            }
-            RLTools.RlLogDPrint(TAG,"onServiceConnected")
-            val binder = service as RLBLEService.RLLocalBinder
-            rlbleService = binder.getService()
-            // Check if devices are not connected then scan
-            isServiceBound = true
-            val lastConnectDeviceAddress = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
-            RLhandleDeviceFound(lastConnectDeviceAddress)
-
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isServiceBound = false
-            RLTools.RlLogDPrint(TAG,"onServiceDisconnected")
-        }
-    }
-    private fun RLhandleDeviceFound(deviceAddress: String) {
-        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-        if (device != null) {
-            rlbleService!!.RLconnectToDevice(device)
-        }
-    }
-    private val RLbleBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                "ACTION_DATA_RETRIEVED_HEART" -> {
-                    val data = intent.getStringExtra("EXTRA_DATA")
-                    heartRateNumber=RlGetValueInt(data.toString())
-                    // heartRateList.add(RlGetValueInt(data.toString()))
-                    var heartRateSetValue=RlGetValueInt(data.toString())
-                    if (heartRateSetValue > 0){
-                        if (leftFragment!=null){
-                            leftFragment?.RLUpdateHRTime(data.toString(),burntCalories.roundToInt().toString()?:"0",totalRev?:0.00)
-                        }
-                        maxHeartrate=RLmax(maxHeartrate,heartRateNumber)
-                        minHeartrate=RLmin(minHeartrate,heartRateNumber)
-                    }
-                }
-            }
-        }
-    }
-    //BLE DEVICE CODE CLOSE
-
     override fun onStart() {
         super.onStart()
         // timerManager.resume()
-        RLcheckAndRequestPermissions()
+        if (bleManager.checkAndRequestPermissions(requireActivity())) {
+            bleManager.setupBluetooth {
+                bleManager.startBLEService()
+            }
+        }
+        bleManager.setCallback(object : RLBLEManagerHeartRate.BLECallback {
+            override fun onHeartRateDataReceived(data: String) {
+                Log.d("BLE", "Heart Rate: $heartRate")
+                heartRateNumber=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                val heartRateSetValue=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                if (heartRateSetValue > 0){
+                    if (leftFragment!=null){
+                        leftFragment?.RLUpdateHRTime(data.toString(),burntCalories.roundToInt().toString()?:"0",totalRev?:0.00)
+                    }
+                    maxHeartrate=RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                    minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                }
+            }
+
+            @SuppressLint("MissingPermission")
+            override fun onDeviceConnected(device: BluetoothDevice) {
+                Log.d("BLE", "Connected to device: ${device.name}")
+            }
+
+            override fun onDeviceDisconnected() {
+                Log.d("BLE", "Device disconnected")
+            }
+
+            override fun onError(errorMessage: String) {
+                Log.e("BLE", "Error: $errorMessage")
+            }
+        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        bleManager.cleanup()
         fragBinding.videoView.stopPlayback()
         try {
-            if (isServiceBound) {
-                requireActivity().unbindService(RLserviceConnection)
-                isServiceBound = false
-            }
-            requireActivity().unregisterReceiver(RLbleBroadcastReceiver)
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE

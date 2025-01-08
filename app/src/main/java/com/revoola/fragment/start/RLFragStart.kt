@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -40,7 +41,7 @@ class RLFragStart : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragStart" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         RLStartList()
         return fragBinding.root
     }
@@ -72,8 +73,7 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
-        RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp,
-            com.revoola.utils.RLPrefManager.start_help_content)
+        RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
     }
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()
@@ -127,7 +127,7 @@ class RLFragStart : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.start_help_content,"")
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

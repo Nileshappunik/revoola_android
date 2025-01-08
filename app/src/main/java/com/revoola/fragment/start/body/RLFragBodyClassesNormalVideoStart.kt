@@ -281,9 +281,9 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
             return if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
-                        onSwipeRight()
+                        toggleVisibilityonSimple(true)
                     } else {
-                        onSwipeLeft()
+                        toggleVisibilityonSimple(false)
                     }
                     return   true
                 } else {
@@ -297,17 +297,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
 
     }
 
-    private fun onSwipeRight() {
-        //fragBinding.inlayTime.relaySensorProgress.visibility=View.VISIBLE
-        toggleVisibility(true)
-    }
-
-    private fun onSwipeLeft() {
-        //fragBinding.inlayTime.relaySensorProgress.visibility=View.GONE
-        toggleVisibility(false)
-    }
-
-    private fun toggleVisibility(visible: Boolean) {
+    private fun toggleVisibilityonSimple(visible: Boolean) {
         val anim: Animation = if (visible) {
             AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_left)
         } else {
