@@ -252,9 +252,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             else{
                 RLshowAlertDialog()
             }
-
         }
-
         layoutBinding.imgThreedot.setOnClickListener {
             RLshowEditDeleteDialog(cardData)
         }

@@ -64,7 +64,6 @@ class RLFragSetYourGoal : RLBaseFragment() {
 
     }
     private fun RLUIBottom() {
-
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         if (challengeType.equals("Steps")){
             fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
@@ -108,25 +107,19 @@ class RLFragSetYourGoal : RLBaseFragment() {
         fragBinding.relayCustom.imgType.setImageResource(R.drawable.calendar_custom)
         fragBinding.relayCustom.txtTypeTitle.setText(R.string.custom)
 
-
         fragBinding.relayDaily.cardChalengesst.setOnClickListener {
            RLnextFragmentOpen("Daily",challengeType)
-
         }
         fragBinding.relayWeekly.cardChalengesst.setOnClickListener {
             RLnextFragmentOpen("Weekly",challengeType)
-
         }
         fragBinding.relayMonthly.cardChalengesst.setOnClickListener {
             RLnextFragmentOpen("Monthly",challengeType)
-
         }
         fragBinding.relayCustom.cardChalengesst.setOnClickListener {
             RLnextFragmentOpen("Custom",challengeType)
-
         }
         RLAddCommaFormatting(fragBinding.edtStepCount)
-
     }
 
     private fun RLnextFragmentOpen(CalenderType:String,challengeType:String) {
