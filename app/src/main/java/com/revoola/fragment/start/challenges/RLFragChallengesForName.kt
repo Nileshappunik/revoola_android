@@ -21,13 +21,14 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
+import com.revoola.activity.RLMainActivityRL
 
 class RLFragChallengesForName : RLBaseFragment() {
-    val TAG: String = com.revoola.fragment.start.challenges.RLFragChallengesForName::class.java.simpleName
+    val TAG: String = RLFragChallengesForName::class.java.simpleName
     lateinit var fragBinding: RlFragChallengesForNameBinding
 
     fun newInstance(bundle: Bundle?): Fragment {
-        val fragment = com.revoola.fragment.start.challenges.RLFragChallengesForName()
+        val fragment = RLFragChallengesForName()
         fragment.arguments = bundle
         return fragment
     }
@@ -39,13 +40,13 @@ class RLFragChallengesForName : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChallengesForName" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
 
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.challenge_selectName)
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectName)
         val challengeType = requireArguments().getString("ChallengeType").toString().trim()
         val calenderType = requireArguments().getString("CalenderType").toString().trim()
         fragBinding.inlayTop.ivBack.setOnClickListener {
@@ -91,6 +92,12 @@ class RLFragChallengesForName : RLBaseFragment() {
                 fragBinding.txtHeader.setText(s.toString())
             }
         })
+
+        fragBinding.btnNext.setOnClickListener{
+            val bundle: Bundle = Bundle()
+            bundle.putString("challengeType",challengeType)
+            (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+        }
 
     }
     private fun RLshowHelpDialog() {

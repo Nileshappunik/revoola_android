@@ -120,7 +120,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         fragBinding.relayYou.cardChalengesst.setOnClickListener {
             var bundle: Bundle = Bundle()
             bundle.putString("ChallengeType",challengeType )
-           // bundle.putString("CalenderType",calenderType )
+           // bundle.putString("ChallengeFor","You" )
             //OLD CODE
             //(context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
             //NEW CODE

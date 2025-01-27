@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include
+            android:id="@+id/inlayTop"
+            layout="@layout/rl_layout_common_start_top"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerviewEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_Invite_Contacts"
+            android:layout_below="@+id/inlayTop"/>
+
+        <Button
+            android:id="@+id/btn_Invite_Contacts"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="@color/AppWhiteColor"
+            android:backgroundTint="@color/AppZone4Color"
+            android:text="@string/invite_contacts"
+            android:layout_above="@+id/btn_Done"
+            android:background="@drawable/round_border_black"/>
+
+        <Button
+            android:id="@+id/btn_Done"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/AppWhiteColor"
+            android:backgroundTint="@color/AppMainColor"
+            android:text="@string/done"
+            android:background="@drawable/round_border_black"/>
+
+    </RelativeLayout>
+</layout>

@@ -104,7 +104,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
               // (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
                //NEW CODE
                (context as RLMainActivityRL).RLloadFrag(
-                   com.revoola.fragment.start.challenges.RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+                   RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
            }else{
                RLshowAlertDialog("Please select Valid details")
            }

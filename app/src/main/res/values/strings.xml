@@ -431,6 +431,7 @@
     <string name="weeklychallenge">WEEKLY CHALLENGE</string>
     <string name="monthlychallenge">MONTHLY CHALLENGE</string>
     <string name="customchallenge">CUSTOM CHALLENGE</string>
+    <string name="challenge_summary">CHALLENGE SUMMARY</string>
     <string name="from">FROM</string>
     <string name="to">TO</string>
     <string name="filters">FILTERS</string>
@@ -464,6 +465,7 @@
     <string name="giveyourchallengename">Give Your Challenge a Name</string>
     <string name="nameyourchallenge">Name Your Challenge</string>
     <string name="setchallenge">Set Challenge</string>
+    <string name="invite_contacts">Invite Contacts</string>
     <string name="selectfriends">Select friends</string>
     <string name="select">Select</string>
     <string name="enternamehere">Enter name here</string>
@@ -487,6 +489,7 @@
     <string name="multi">MULTI</string>
     <string name="showresults">SHOW RESULTS</string>
     <string name="joinchallenge">join Challenge</string>
+    <string name="done">Done</string>
 
 
 </resources>
