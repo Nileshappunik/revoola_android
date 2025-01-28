@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
@@ -16,7 +17,9 @@ import com.revoola.fragment.friends.adapter.RLFriendListAdapter
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.RLFragStart
 
 class RLFragFriends : RLBaseFragment() {
     val TAG: String = RLFragFriends::class.java.simpleName
@@ -31,6 +34,13 @@ class RLFragFriends : RLBaseFragment() {
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_friends, container) as RlFragFriendsBinding
         com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragFriends" )
         RLFriendsList()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom logic here
+                // For example, show a confirmation dialog or navigate back
+                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+            }
+        })
         return fragBinding.root
     }
     private fun RLuisetupNew(dataList: List<RLStartAllMenuModel>) {

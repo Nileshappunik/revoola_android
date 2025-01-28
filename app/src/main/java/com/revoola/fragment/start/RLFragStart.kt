@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -43,6 +44,13 @@ class RLFragStart : RLBaseFragment() {
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         RLStartList()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom logic here
+                // For example, show a confirmation dialog or navigate back
+                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+            }
+        })
         return fragBinding.root
     }
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {

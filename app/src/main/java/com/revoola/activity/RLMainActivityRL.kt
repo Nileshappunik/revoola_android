@@ -79,7 +79,6 @@ class RLMainActivityRL  : RLBaseActivity() {
                 R.id.start -> {
                     RLshowbottombarcolorwhite()
                     RLloadFrag(RLFragStart(), TAG, false, null, false)
-
                     true
                 }
 

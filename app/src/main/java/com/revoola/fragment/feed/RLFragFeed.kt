@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +40,7 @@ import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetoverview_thumb_you
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
@@ -86,7 +88,13 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 userRepository
             )
         ).get(RLMainViewModel::class.java)
-
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom logic here
+                // For example, show a confirmation dialog or navigate back
+                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }

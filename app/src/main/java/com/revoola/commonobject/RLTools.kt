@@ -51,9 +51,17 @@ import android.net.NetworkCapabilities
 import com.revoola.model.EffortZoneFeedModel
 
 import android.Manifest
+import android.app.Dialog
 import android.content.pm.PackageManager
+import android.view.Window
+import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import com.revoola.activity.RLMainActivityRL
+import com.revoola.fragment.start.RLFragStart
 import com.revoola.utils.RLConstants
+import java.time.ZonedDateTime
+import java.time.temporal.TemporalAdjusters
 
 
 object RLTools {
@@ -77,6 +85,136 @@ object RLTools {
 
     fun RlLogEPrint(tag_log:String,message_log:String){
        Log.e(tag_log,message_log)
+    }
+
+    fun RLChallengeIcon(challengeType:String):Int{
+          when (challengeType.toLowerCase()){
+            "steps"-> return R.drawable.fd_steps_green
+            "effort"-> return R.drawable.ic_heart
+            "calories"-> return R.drawable.fd_calories_green
+            "distance"-> return R.drawable.ic_distance
+            "climbed"-> return R.drawable.ic_climb
+            "duration"-> return R.drawable.fd_active_time_green
+            else -> return R.drawable.fd_steps_green
+        }
+    }
+    fun RLChallengeTargetIcon(TargetType:String):Int{
+          when (TargetType.toLowerCase()){
+            "individualtarget"-> return R.drawable.ic_goal
+            "sharedtarget"-> return R.drawable.goal_shared
+            else -> return R.drawable.ic_goal
+        }
+    }
+    fun RLChallengeForIcon(challengeForType:String):Int{
+        when (challengeForType.toLowerCase()){
+            "you"-> return R.drawable.ic_you
+            "friends"-> return R.drawable.fr_friends_green
+            "group"-> return R.drawable.ic_groups
+            "groupvgroup"-> return R.drawable.ic_group_v_group
+            else -> return R.drawable.ic_you
+        }
+    }
+    fun RLCalendetIcon(calenderType:String):Int{
+        when (calenderType.toLowerCase()){
+            "daily"-> return R.drawable.calendar_daily
+            "weekly"-> return R.drawable.calendar_weekly
+            "monthly"-> return R.drawable.calendar_monthly
+            "custom"-> return R.drawable.calendar_custom
+            else -> return R.drawable.calendar_monthly
+        }
+    }
+
+
+    fun RLMonthNameTogetFirstDate(inputDate: String): String {
+        return try {
+            // Define the input date format
+            val inputFormat = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
+
+            // Define the output date format
+            val outputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+
+            // Parse the input date string to a Date object
+            val date: Date = inputFormat.parse(inputDate)
+
+            // Format the Date object to the desired output format
+            outputFormat.format(date)
+        } catch (e: Exception) {
+            // If parsing fails, return the original string
+            inputDate
+        }
+    }
+
+
+    fun RLMonthNameTogetLastDate(dateString: String): String {
+        // Define the input format
+        val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DateTimeFormatter.ofPattern("MMM yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
+        } else {
+            TODO("VERSION.SDK_INT < O not supported")
+        }
+
+        // Parse the input string to a LocalDate
+        val parsedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val normalizedDate = dateString.lowercase().replaceFirstChar { it.uppercase() }
+            LocalDate.parse("$normalizedDate 01", DateTimeFormatter.ofPattern("MMM yyyy dd").withLocale(java.util.Locale.ENGLISH))
+        } else {
+            TODO("VERSION.SDK_INT < O not supported")
+        }
+
+        // Get the last day of the month
+        val lastDateOfMonth = parsedDate.with(TemporalAdjusters.lastDayOfMonth())
+
+        // Convert LocalDate to legacy Date for formatting
+        val legacyDate = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+        // Format the output in the desired format
+        val outputFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", java.util.Locale.ENGLISH)
+        return outputFormatter.format(legacyDate)
+    }
+
+
+
+    fun RLConvertDate(inputDate: String): String {
+        return try {
+            // Define the input date format
+            val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+
+            // Define the output date format
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+
+            // Parse the input date string to a Date object
+            val date: Date = inputFormat.parse(inputDate)
+
+            // Format the Date object to the desired output format
+            outputFormat.format(date)
+        } catch (e: Exception) {
+            // If parsing fails, return the original string
+            inputDate
+        }
+    }
+
+     fun RLshowAlertDialog(context: Context,activity: Activity) {
+        val sucDialog: Dialog = Dialog(context)
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_dialog_subscribe)
+        sucDialog.setCancelable(false)
+        val iv_ok: TextView = sucDialog.findViewById(R.id.tvSubscribe)
+        val iv_Cancle: TextView = sucDialog.findViewById(R.id.tvCancel)
+        val tvMainMessage: TextView = sucDialog.findViewById(R.id.tvMainMessage)
+
+        tvMainMessage.setText("After clicking OK, the app will close.")
+        iv_ok.setText("OK")
+        iv_Cancle.setText("CANCEL")
+
+        iv_ok.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+           activity.finish()
+        })
+        iv_Cancle.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
      fun ScxhasNotificationPermission(context: Context): Boolean {

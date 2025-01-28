@@ -37,6 +37,11 @@ open class RLBaseFragment : Fragment() {
         o.setOnClickListener { v: View? -> super.requireActivity().onBackPressed() }
     }
 
+    open fun onBackPressedHandler() {
+        // Call activity's onBackPressed
+        requireActivity().onBackPressed() // This will trigger the default back behavior
+    }
+
     open fun RLonDirectBackPresAct(o: ImageView) {
         super.requireActivity()!!.onBackPressed()
     }

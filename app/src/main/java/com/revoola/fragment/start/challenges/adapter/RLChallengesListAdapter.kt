@@ -13,6 +13,7 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlLayoutStartMenuBinding
 import com.revoola.enumclass.RLStartAllMenuModel
 import com.revoola.fragment.start.challenges.RLFragChallengesFor
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 import com.revoola.utils.loadSvg
 
 class RLChallengesListAdapter(val context: FragmentActivity?,
@@ -71,10 +72,9 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
         }
         private fun RLNextViewOpen(challengeType:String){
             val bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType",challengeType)
-            //Old Code
-            //(context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true, null, false)
-            //New Code
+            val cardData = RLEditChallengeAllData()
+            cardData.ChallengeType=challengeType
+            bundle.putSerializable("cardData",cardData)
             (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
         }
     }

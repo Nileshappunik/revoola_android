@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,10 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
+import com.moengage.core.internal.logger.LOG_LEVEL_TO_TYPE_MAPPING
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 
 class RLFragChallengesForName : RLBaseFragment() {
     val TAG: String = RLFragChallengesForName::class.java.simpleName
@@ -41,38 +45,59 @@ class RLFragChallengesForName : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
-
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom action here
+                // For example, show a confirmation dialog or navigate
+                RLcloseFragment()
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
         RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectName)
-        val challengeType = requireArguments().getString("ChallengeType").toString().trim()
-        val calenderType = requireArguments().getString("CalenderType").toString().trim()
+
+        val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
+
+        if (cardData.isEditClass){
+            fragBinding.edtStepCount.setText(cardData.ChallengeGivenName)
+            fragBinding.txtHeader.setText(cardData.ChallengeGivenName)
+            RLTools.RlLogEPrint(TAG,"cardData: ${cardData.selectedDate}")
+
+        }
+
         fragBinding.inlayTop.ivBack.setOnClickListener {
             RLcloseFragment()
         }
-        fragBinding.inlayTop.ivTitle.setText(challengeType+" Challenge")
+        fragBinding.inlayTop.ivTitle.setText(cardData.ChallengeType+" Challenge")
         fragBinding.inlayTop.ivDescription.setText(R.string.giveyourchallengename)
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
-        RLUIBottom(challengeType.toString().trim())
+        RLUIBottom(cardData)
     }
-    private fun RLUIBottom(challengeType:String) {
+    private fun RLUIBottom(cardData:RLEditChallengeAllData) {
         fragBinding.txtHeader.setText("")
-        if (challengeType.equals("Steps")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
-        }else if (challengeType.equals("Effort")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
-        }else if (challengeType.equals("Calories")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
-        }else if (challengeType.equals("Distance")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
-        }else if (challengeType.equals("Climbed")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
-        }else if (challengeType.equals("Duration")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
+        when(cardData.challengeForType){
+            "Steps"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
+            }
+            "Effort"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
+            }
+            "Calories"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
+            }
+            "Distance"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
+            }
+            "Climbed"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
+            }
+            "Duration"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
+            }
         }
 
         fragBinding.edtStepCount.addTextChangedListener(object : TextWatcher {
@@ -94,8 +119,10 @@ class RLFragChallengesForName : RLBaseFragment() {
         })
 
         fragBinding.btnNext.setOnClickListener{
+            val ChallengeGivenName=  fragBinding.edtStepCount.text.toString()
+            cardData.ChallengeGivenName=ChallengeGivenName
             val bundle: Bundle = Bundle()
-            bundle.putString("challengeType",challengeType)
+            bundle.putSerializable("cardData",cardData)
             (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
         }
 
@@ -112,7 +139,7 @@ class RLFragChallengesForName : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectName,"")
+        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

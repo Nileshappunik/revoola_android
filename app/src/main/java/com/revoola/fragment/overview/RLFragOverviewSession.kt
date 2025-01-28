@@ -14,6 +14,7 @@ import android.view.Window
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
@@ -46,6 +47,7 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.fragment.start.RLFragStart
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Date
@@ -93,6 +95,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         // Initialize GestureDetector
         gestureDetector = GestureDetector(requireContext(), RlSwipeGestureListener())
         RLuisetup()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom logic here
+                // For example, show a confirmation dialog or navigate back
+                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+            }
+        })
         return fragBinding.root
     }
 

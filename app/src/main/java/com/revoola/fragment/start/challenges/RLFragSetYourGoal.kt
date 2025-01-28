@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,13 +25,14 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
+import com.revoola.utils.RLPrefManager
 import java.text.NumberFormat
 import java.util.Locale
 
 class RLFragSetYourGoal : RLBaseFragment() {
     val TAG: String = RLFragSetYourGoal::class.java.simpleName
     lateinit var fragBinding: RlFragSetYourGoalBinding
-
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSetYourGoal()
         fragment.arguments = bundle
@@ -44,8 +46,15 @@ class RLFragSetYourGoal : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_set_your_goal, container) as RlFragSetYourGoalBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragSetYourGoal" )
-
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetYourGoal" )
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom action here
+                // For example, show a confirmation dialog or navigate
+                RLBottomHideShowSet(true)
+                RLcloseFragment()
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }
@@ -64,30 +73,42 @@ class RLFragSetYourGoal : RLBaseFragment() {
 
     }
     private fun RLUIBottom() {
-        val challengeType = requireArguments().getString("ChallengeType").toString().trim()
-        if (challengeType.equals("Steps")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
-            fragBinding.txtHeader.setText(R.string.stepsmall)
-        }else if (challengeType.equals("Effort")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
-            //fragBinding.txtHeader.setText(R.string.revoolaeffortscore)
-            fragBinding.txtHeader.setText(R.string.effort)
-        }else if (challengeType.equals("Calories")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
-           // fragBinding.txtHeader.setText(R.string.caloriessmallkcal)
-            fragBinding.txtHeader.setText(R.string.calories)
-        }else if (challengeType.equals("Distance")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
-           // fragBinding.txtHeader.setText(R.string.distancesmallkm)
-            fragBinding.txtHeader.setText(R.string.distance)
-        }else if (challengeType.equals("Climbed")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
-           // fragBinding.txtHeader.setText(R.string.climbedm)
-            fragBinding.txtHeader.setText(R.string.climbed)
-        }else if (challengeType.equals("Duration")){
-            fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
-           // fragBinding.txtHeader.setText(R.string.durationh)
-            fragBinding.txtHeader.setText(R.string.duration)
+        val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
+
+        if (cardData.isEditClass){
+            fragBinding.edtStepCount.setText(cardData.stepCount)
+        }
+
+        when(cardData.ChallengeType){
+            "Steps"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
+                fragBinding.txtHeader.setText(R.string.stepsmall)
+            }
+            "Effort"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_heart)
+                //fragBinding.txtHeader.setText(R.string.revoolaeffortscore)
+                fragBinding.txtHeader.setText(R.string.effort)
+            }
+            "Calories"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_calories_green)
+                // fragBinding.txtHeader.setText(R.string.caloriessmallkcal)
+                fragBinding.txtHeader.setText(R.string.calories)
+            }
+            "Distance"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_distance)
+                // fragBinding.txtHeader.setText(R.string.distancesmallkm)
+                fragBinding.txtHeader.setText(R.string.distance)
+            }
+            "Climbed"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.ic_climb)
+                // fragBinding.txtHeader.setText(R.string.climbedm)
+                fragBinding.txtHeader.setText(R.string.climbed)
+            }
+            "Duration"->{
+                fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_active_time_green)
+                // fragBinding.txtHeader.setText(R.string.durationh)
+                fragBinding.txtHeader.setText(R.string.duration)
+            }
         }
 
         RLTools.RLheightsetstartimage(fragBinding.relayDaily.cardChalengesst,requireActivity())
@@ -108,30 +129,32 @@ class RLFragSetYourGoal : RLBaseFragment() {
         fragBinding.relayCustom.txtTypeTitle.setText(R.string.custom)
 
         fragBinding.relayDaily.cardChalengesst.setOnClickListener {
-           RLnextFragmentOpen("Daily",challengeType)
+           RLnextFragmentOpen("Daily",cardData)
         }
         fragBinding.relayWeekly.cardChalengesst.setOnClickListener {
-            RLnextFragmentOpen("Weekly",challengeType)
+            RLnextFragmentOpen("Weekly",cardData)
         }
         fragBinding.relayMonthly.cardChalengesst.setOnClickListener {
-            RLnextFragmentOpen("Monthly",challengeType)
+            RLnextFragmentOpen("Monthly",cardData)
         }
         fragBinding.relayCustom.cardChalengesst.setOnClickListener {
-            RLnextFragmentOpen("Custom",challengeType)
+            RLnextFragmentOpen("Custom",cardData)
         }
         RLAddCommaFormatting(fragBinding.edtStepCount)
     }
 
-    private fun RLnextFragmentOpen(CalenderType:String,challengeType:String) {
+    private fun RLnextFragmentOpen(CalenderType:String, cardData:RLEditChallengeAllData) {
         val textWithoutCommas =fragBinding.edtStepCount.text.toString()
         val stepCount = textWithoutCommas.replace(",", "")
         if (stepCount.isEmpty()){
             RLshowAlertDialog()
         }else if (stepCount.toDouble()>=1){
+            cardData.CalenderType=CalenderType
+            cardData.stepCount=stepCount
             val bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType",challengeType)
-            bundle.putString("CalenderType",CalenderType)
-           (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
+            bundle.putSerializable("cardData",cardData)
+            (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
+
         } else{
             RLshowAlertDialog()
         }

@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -17,6 +18,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.moengage.core.MoECoreHelper
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.RLFragStart
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -33,6 +35,13 @@ class RLFragMore : RLBaseFragment() {
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_more, container) as RlFragMoreBinding
         com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMore" )
         RLsetupuiList()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom logic here
+                // For example, show a confirmation dialog or navigate back
+                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+            }
+        })
         return fragBinding.root
     }
 

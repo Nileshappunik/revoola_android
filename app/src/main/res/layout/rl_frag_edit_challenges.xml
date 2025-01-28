@@ -6,9 +6,50 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include
+
+        <RelativeLayout
             android:id="@+id/inlayTop"
-            layout="@layout/rl_layout_common_start_top"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_centerVertical="true"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/ic_arrow_back_ios"/>
+
+            <TextView
+                android:id="@+id/iv_Title"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_toStartOf="@+id/ivhelp"
+                android:layout_toEndOf="@+id/ivBack"
+                android:fontFamily="@font/omnes_semibold_regular"
+                android:layout_marginEnd="10dp"
+                android:textAllCaps="true"
+                android:layout_centerVertical="true"
+                android:textAlignment="center"
+                android:text="@string/challenge_summary"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="24sp"/>
+
+            <ImageView
+                android:id="@+id/ivhelp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_info"/>
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerviewEdit"

@@ -3,12 +3,15 @@ package com.revoola.fragment.start.challenges
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,8 +29,12 @@ import com.revoola.fragment.start.challenges.adapter.RLMonthlyCalenderListAdapte
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
+import com.revoola.utils.RLPrefManager
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -57,23 +64,33 @@ class RLFragChalengesCalender : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_calender, container) as RlFragChalengesCalenderBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChalengesCalender" )
+       RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
         RLuisetup()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom action here
+                // For example, show a confirmation dialog or navigate
+                RLcloseFragment()
+            }
+        })
         return fragBinding.root
     }
     private fun RLuisetup(){
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivBack.setOnClickListener {
+            RLcloseFragment()
+        }
+       // RLonBackPresAct(fragBinding.inlayTop.ivBack)
         RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
-        val challengeType = requireArguments().getString("ChallengeType").toString().trim()
-        val calenderType = requireArguments().getString("CalenderType").toString().trim()
+
+        val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
 
         calendarFrom = Calendar.getInstance()
         calendarTo = Calendar.getInstance()
 
-        when(challengeType){
+        when(cardData.ChallengeType){
             "Steps"->{fragBinding.inlayTop.ivTitle.setText(R.string.stepchallenge)}
             "Effort"->{fragBinding.inlayTop.ivTitle.setText(R.string.effortchallenge)}
             "Calories"->{fragBinding.inlayTop.ivTitle.setText(R.string.calorieschallenge)}
@@ -81,7 +98,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             "Climbed"->{fragBinding.inlayTop.ivTitle.setText(R.string.climbedchallenge)}
             "Duration"->{fragBinding.inlayTop.ivTitle.setText(R.string.durationchallenge)}
         }
-        when(calenderType){
+        when(cardData.CalenderType){
             "Daily"->{
                 RLDailyCalenderShow()
                 fragBinding.inlayTop.ivDescription.setText(R.string.dailychallenge)}
@@ -97,14 +114,21 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
         fragBinding.btnNext.setOnClickListener {
            if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
+               val todate=RLTools.RLConvertDate(toDate)
+               val fromdate=RLTools.RLConvertDate(fromDate)
+               val joinDate = "STARTS:$fromdate ENDS:$todate"
+
+               cardData.selectedDate=joinDate
+               cardData.toDate=toDate
+               cardData.fromDate=fromDate
+
                val bundle: Bundle = Bundle()
-               bundle.putString("ChallengeType",challengeType)
-               bundle.putString("CalenderType",calenderType)
-               //OLD CODE
-              // (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, false)
-               //NEW CODE
-               (context as RLMainActivityRL).RLloadFrag(
-                   RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+               bundle.putSerializable("cardData",cardData)
+               if (cardData.isEditClass){
+                   (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+               }else {
+                   (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true, null, false)
+               }
            }else{
                RLshowAlertDialog("Please select Valid details")
            }
@@ -296,14 +320,16 @@ class RLFragChalengesCalender : RLBaseFragment() {
         fragBinding.calendarRecyclerViewFrom.adapter = adapter
         RLupdateMonthYearTextView(fragBinding.monthYearTextViewFrom,calendarFrom)
     }
+
     private fun RLsetupCalendarMonthlyFrom(currentYearFrom: Int) {
         // Generate dates for the current month
         val dates = RlGenerateYearlyCalendar(currentYearFrom)
 
         val adapter = RLMonthlyCalenderListAdapter(requireContext(),dates) { date ->
             // Handle date selection
-            println("Selected date: $date")
-            fromDate=date.toString()
+
+            fromDate=RLTools.RLMonthNameTogetFirstDate("01 $date ${currentYearFrom}")
+            println("Selected fromDate: $fromDate")
             if (toDate.isNotEmpty()){
                 fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
                 fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
@@ -313,14 +339,15 @@ class RLFragChalengesCalender : RLBaseFragment() {
         fragBinding.calendarRecyclerViewFrom.adapter = adapter
         fragBinding.monthYearTextViewFrom.setText(currentYearFrom.toString())
     }
+
     private fun RLsetupCalendarMonthlyTO(currentYearFrom: Int) {
         // Generate dates for the current month
         val dates = RlGenerateYearlyCalendar(currentYearFrom)
 
         val adapter = RLMonthlyCalenderListAdapter(requireContext(), dates) { date ->
             // Handle date selection
-            println("Selected date: $date")
-            toDate=date.toString()
+            toDate=RLTools.RLMonthNameTogetLastDate("$date ${currentYearFrom}")
+            println("Selected toDate: $toDate")
             if (fromDate.isNotEmpty()){
                 fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
                 fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))

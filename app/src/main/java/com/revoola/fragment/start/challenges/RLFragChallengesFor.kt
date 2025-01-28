@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +39,8 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
+import com.revoola.utils.RLPrefManager
 
 class RLFragChallengesFor : RLBaseFragment() {
     val TAG: String = RLFragChallengesFor::class.java.simpleName
@@ -45,8 +48,6 @@ class RLFragChallengesFor : RLBaseFragment() {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
-    var challengeType=""
-    //var calenderType=""
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragChallengesFor()
@@ -61,18 +62,21 @@ class RLFragChallengesFor : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for, container) as RlFragChallengesForBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChallengesFor" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesFor" )
+        currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Perform your custom action here
+                // For example, show a confirmation dialog or navigate
+                RLcloseFragment()
+            }
+        })
         return fragBinding.root
     }
     private fun RLuisetup() {
@@ -88,10 +92,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         RLUIBottom()
     }
     private fun RLUIBottom() {
-
-         challengeType = requireArguments().getString("ChallengeType").toString().trim()
-       //  calenderType = requireArguments().getString("CalenderType").toString().trim()
-
+        val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
         RLTools.RLheightsetstartimage(fragBinding.relayYou.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayFriends.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayGroup.cardChalengesst,requireActivity())
@@ -118,13 +119,17 @@ class RLFragChallengesFor : RLBaseFragment() {
         fragBinding.relayGroupVGroup.txtTypeTitle.setText(R.string.groupvgroup)
 
         fragBinding.relayYou.cardChalengesst.setOnClickListener {
-            var bundle: Bundle = Bundle()
-            bundle.putString("ChallengeType",challengeType )
-           // bundle.putString("ChallengeFor","You" )
-            //OLD CODE
-            //(context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
-            //NEW CODE
-             (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+            cardData.challengeForType="You"
+            cardData.TargetType="IndividualTarget"
+
+            val bundle: Bundle = Bundle()
+            bundle.putSerializable("cardData",cardData)
+
+            if (cardData.isEditClass){
+                (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+            }else{
+                (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+            }
 
         }
         fragBinding.relayFriends.cardChalengesst.setOnClickListener {
@@ -201,11 +206,18 @@ class RLFragChallengesFor : RLBaseFragment() {
         dialog.show()
 
     }
-    private fun RLNextFragmentOpen(isGroup:Boolean){
+    private fun RLNextFragmentOpen(isGroup:Boolean,challengeForType:String,selectUserdata: List<RLuserData>,selectGroupdata: List<RLyourGroupDataModel> ){
+        val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
+        cardData.challengeForType=challengeForType
+        cardData.IsGroup=isGroup
+        if (isGroup){
+            cardData.selectGroupList= selectGroupdata
+        }else{
+            cardData.selectFriendList = selectUserdata
+        }
+
         val bundle: Bundle = Bundle()
-        bundle.putString("ChallengeType",challengeType)
-        //bundle.putString("CalenderType",calenderType)
-        bundle.putBoolean("IsGroup",isGroup)
+        bundle.putSerializable("cardData",cardData)
         (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 
     }
@@ -231,6 +243,7 @@ class RLFragChallengesFor : RLBaseFragment() {
 
     //All Api Call
     private fun RLgroupApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,isGroupVGroup:Boolean, dialog: Dialog ) {
+        currentUser="w2p8SQCvE3emjEEDo66f02eF6fG2"
         val request = listOf(RLrequestgroup_dataset(group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
 
@@ -254,6 +267,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         }
     }
     private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
+        currentUser="w2p8SQCvE3emjEEDo66f02eF6fG2"
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
 
@@ -303,7 +317,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         })
         dialogMainBinding.tvSelect.setOnClickListener {
             if (selectUserdata.size>0){
-                RLNextFragmentOpen(false)
+                RLNextFragmentOpen(false,"Friends",selectUserdata, emptyList())
                 dialog.dismiss()
             }else{
                 RLshowAlertDialog("Please Select friends")
@@ -340,14 +354,14 @@ class RLFragChallengesFor : RLBaseFragment() {
         dialogMainBinding.tvSelect.setOnClickListener {
             if (isGroupVGroup){
                 if (selectGroupdata.size>1){
-                    RLNextFragmentOpen(true)
+                    RLNextFragmentOpen(true,"GroupVGroup", emptyList(),selectGroupdata)
                     dialog.dismiss()
                 }else{
                     dialog.dismiss()
                     RLshowAlertDialog("Please Select Multi Groups")
                 }
             }else  if ( selectGroupdata.size>0){
-                RLNextFragmentOpen(true)
+                RLNextFragmentOpen(true,"Group",emptyList(),selectGroupdata)
                 dialog.dismiss()
             }else{
                 dialog.dismiss()

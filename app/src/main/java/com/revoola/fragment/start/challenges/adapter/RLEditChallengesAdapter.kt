@@ -51,8 +51,14 @@ class RLEditChallengesAdapter(val context: FragmentActivity?,
                 layoutBinding.textSubTitle.setText(cardData.subTitle)
             }
 
+            if (cardData.isTagetEditable){
+                layoutBinding.icEditIcon.visibility=View.VISIBLE
+            }else{
+                layoutBinding.icEditIcon.visibility=View.GONE
+            }
+
             layoutBinding.icEditIcon.setOnClickListener {
-                onEditChallengeSelected(cardData.title)
+                onEditChallengeSelected(cardData.fragmentName)
             }
 
         }
