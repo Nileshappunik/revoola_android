@@ -5,8 +5,7 @@ import com.revoola.model.RLyourGroupDataModel
 import java.io.Serializable
 
 class RLEditChallengeAllData : Serializable {
-     var selectFriendList: List<RLuserData> = mutableListOf()
-     var selectGroupList: List<RLyourGroupDataModel> = mutableListOf()
+     var selectGroupList: List<String> = mutableListOf()
      var ChallengeType:String = ""
      var CalenderType:String = ""
      var challengeForType:String = ""

@@ -1,5 +1,6 @@
 package com.revoola.fragment.start.challenges
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -31,6 +32,7 @@ import com.revoola.fragment.start.challenges.adapter.RLCalenderListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLEditChallengesAdapter
 import com.revoola.fragment.start.challenges.model.RLEditChallenge
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
 import java.text.NumberFormat
 import java.util.Locale
@@ -127,13 +129,56 @@ class RLFragEditChallenges : RLBaseFragment() {
         fragBinding.recyclerviewEdit.adapter=adapter
 
         fragBinding.btnDone.setOnClickListener {
+            val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+            val userData= RLGetUserDetails(requireContext())
             val challengePayload=RLChallengePayload()
+
+            when (cardData.challengeForType.toLowerCase()){
+                "you"-> {
+                    challengePayload.groupongroup = "false"
+                    challengePayload.group = "false"
+                }
+                "friends"-> {
+                    challengePayload.groupongroup = "false"
+                    challengePayload.group = "false"
+                }
+                "group"-> {
+                    when (cardData.TargetType.toLowerCase()){
+                        "individualtarget"->  challengePayload.groupongroup = "false"
+                        "sharedtarget"->  challengePayload.groupongroup = "true"
+                    }
+                    challengePayload.group = "true"
+                }
+                "groupvgroup"-> {
+                    challengePayload.groupongroup = "true"
+                    challengePayload.group = "true"
+                }
+            }
+
+            challengePayload.groupid_userid = cardData.selectGroupList
+            challengePayload.metric =cardData.ChallengeType
+            challengePayload.creationdate = currentTimestamp
+            challengePayload.startdate = RLTools.RlconvertDateToTimestamp(cardData.fromDate)
+            challengePayload.enddate = RLTools.RlconvertDateToTimestamp(cardData.toDate)
+            challengePayload.goalvalue = cardData.stepCount
+            challengePayload.max = "false"
+            challengePayload.challenger = "${userData?.firstName ?: ""} ${userData?.lastName ?: ""}"
+            challengePayload.displayImage = userData?.displayImage?:""
+            challengePayload.typeOfSelect =cardData.challengeForType // chekc friend ,you group ,and
+            challengePayload.targetType = RLTools.RLChallengeTargetName(cardData.TargetType)
+            challengePayload.challenge_name = cardData.ChallengeGivenName
+            challengePayload.day_type = cardData.CalenderType
+            challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
-            RLTools.RlLogEPrint(TAG,"Payload: $payLoad")
+            if (payLoad!=null){
+                RLTools.RlLogEPrint(TAG,"Payload: $payLoad")
+                //TODO API CAll CODE HERE START
+                // Show AlertDialog
+                RLCommonAlert(payLoad.toString(),requireContext())
+            }
         }
 
     }
-
 
     private fun RLshowHelpDialog() {
         val dialog: Dialog = Dialog(requireContext())
@@ -185,9 +230,7 @@ class RLFragEditChallenges : RLBaseFragment() {
     }
 
     private fun createGoaledChallenges(cardData:RLEditChallengeAllData,challengePayload: RLChallengePayload): Any? {
-        println("=====challengeData=====payload: $cardData")
         val body: List<Map<String, Any>>?
-
         when (cardData.CalenderType.toLowerCase()) {
             "daily" -> {
                 body = listOf(mapOf(
@@ -196,13 +239,13 @@ class RLFragEditChallenges : RLBaseFragment() {
                         "groupid_userid" to challengePayload.groupid_userid,
                         "groupongroup" to challengePayload.groupongroup,
                         "group" to challengePayload.group,
-                        "metric" to cardData.stepCount,
+                        "metric" to challengePayload.metric,
                         "creationdate" to challengePayload.creationdate,
-                        "startdate" to cardData.fromDate,
-                        "enddate" to (cardData.toDate as Int + 86400),
+                        "startdate" to challengePayload.startdate,
+                        "enddate" to (challengePayload.enddate),
                         "goalvalue" to challengePayload.goalvalue,
                         "max" to challengePayload.max,
-                        "challenge_name" to cardData.ChallengeGivenName,
+                        "challenge_name" to challengePayload.challenge_name,
                         "challenger" to challengePayload.challenger,
                         "challenger_avatar" to challengePayload.displayImage,
                         "scenario" to 1,
@@ -222,7 +265,7 @@ class RLFragEditChallenges : RLBaseFragment() {
                         "metric" to challengePayload.metric,
                         "creationdate" to challengePayload.creationdate,
                         "startdate" to challengePayload.startdate,
-                        "enddate" to (challengePayload.enddate as Int + 604800),
+                        "enddate" to (challengePayload.enddate),
                         "goalvalue" to challengePayload.goalvalue,
                         "max" to challengePayload.max,
                         "challenge_name" to challengePayload.challenge_name,
@@ -283,33 +326,29 @@ class RLFragEditChallenges : RLBaseFragment() {
                 body = null
             }
         }
-
-        println("=====body=====payload: $body")
-
         if (body == null) {
             return null
         }
-
         return body
     }
 
     data class RLChallengePayload(
-        val groupid_userid: List<String> = emptyList(), // Represents an array of strings
-        val groupongroup: String = "", // String property
-        val group: String = "", // String property
-        val metric: String = "", // String property
-        val creationdate: String = "", // String property (date)
-        val startdate: String = "", // String property (date)
-        val enddate: String = "", // String property (date)
-        val goalvalue: String = "", // String property
-        val max: String = "", // String property
-        val challenger: String = "", // String property
-        val displayImage: String = "", // String property
-        val typeOfSelect: String = "", // String property
-        val targetType: String = "", // String property
-        val challenge_name: String = "", // String property
-        val day_type: String = "", // String property
-        val isChallengeEdit: Boolean = false // Boolean property
+        var groupid_userid: List<String> = emptyList(), // Represents an array of strings
+        var groupongroup: String = "", // String property
+        var group: String = "", // String property
+        var metric: String = "", // String property
+        var creationdate: String = "", // String property (date)
+        var startdate: String = "", // String property (date)
+        var enddate: String = "", // String property (date)
+        var goalvalue: String = "", // String property
+        var max: String = "", // String property
+        var challenger: String = "", // String property
+        var displayImage: String = "", // String property
+        var typeOfSelect: String = "", // String property
+        var targetType: String = "", // String property
+        var challenge_name: String = "", // String property
+        var day_type: String = "", // String property
+        var isChallengeEdit: Boolean = false // Boolean property
     )
 
 }

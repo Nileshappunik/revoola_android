@@ -54,7 +54,7 @@ class RLFragStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
-
+        RLfetchUserDetails()
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
@@ -83,6 +83,19 @@ class RLFragStart : RLBaseFragment() {
         }
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
     }
+
+    private fun RLfetchUserDetails() {
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                val gson = Gson()
+                val json = gson.toJson(userData)
+                RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.user_model_data,json)
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
+    }
+
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLALLMENULISTRead(RLConstants.MAIN){ data, error ->

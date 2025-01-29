@@ -48,6 +48,7 @@ class RLFragChallengesFor : RLBaseFragment() {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
+    var selectDataID: List<String> = mutableListOf()
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragChallengesFor()
@@ -97,6 +98,8 @@ class RLFragChallengesFor : RLBaseFragment() {
         RLTools.RLheightsetstartimage(fragBinding.relayFriends.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayGroup.cardChalengesst,requireActivity())
         RLTools.RLheightsetstartimage(fragBinding.relayGroupVGroup.cardChalengesst,requireActivity())
+
+        selectDataID = cardData.selectGroupList
 
         fragBinding.relayYou.imgTypeFull.setImageResource(R.drawable.you)
         fragBinding.relayYou.txtTypeTitle.setText(R.string.you)
@@ -211,11 +214,12 @@ class RLFragChallengesFor : RLBaseFragment() {
         cardData.challengeForType=challengeForType
         cardData.IsGroup=isGroup
         if (isGroup){
-            cardData.selectGroupList= selectGroupdata
+            val selectGroupIDList: List<String> = selectGroupdata.map { it.group_id }
+            cardData.selectGroupList= selectGroupIDList
         }else{
-            cardData.selectFriendList = selectUserdata
+            val selectUserIDList: List<String> = selectUserdata.map { it.userid }
+            cardData.selectGroupList = selectUserIDList
         }
-
         val bundle: Bundle = Bundle()
         bundle.putSerializable("cardData",cardData)
         (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
@@ -296,6 +300,14 @@ class RLFragChallengesFor : RLBaseFragment() {
         val linearLayoutManager = LinearLayoutManager(activity)
         dialogMainBinding.recyclerFriend.layoutManager = linearLayoutManager
 
+        userdata.forEach { user ->
+            if (selectDataID.contains(user.userid)) {
+                user.isSelected = true
+            }else{
+                user.isSelected = false
+            }
+        }
+
         val adapter = RLChallengeForFriendListAdapter(activity, userdata) { cardData ->
             // Handle selection
             if (cardData.isSelected){
@@ -331,6 +343,15 @@ class RLFragChallengesFor : RLBaseFragment() {
         var selectGroupdata: List<RLyourGroupDataModel> = mutableListOf()
         val linearLayoutManager = LinearLayoutManager(activity)
         dialogMainBinding.recyclerFriend.layoutManager = linearLayoutManager
+
+        groupdata.forEach { user ->
+            if (selectDataID.contains(user.group_id)) {
+                user.isSelected = true
+            }else{
+                user.isSelected = false
+            }
+        }
+
         val adaptergroup = RLChallengeForGroupListAdapter(activity,groupdata){ cardData ->
             // Handle selection
             if (cardData.isSelected){

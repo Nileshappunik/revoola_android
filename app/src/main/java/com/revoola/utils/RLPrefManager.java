@@ -13,6 +13,8 @@ public class RLPrefManager {
     private static final String APP_LANGUAGE = "appLanguage";
     public static String current_fragment = "Currentfragment";
 
+    public static String user_model_data = "usermodeldata";
+
     public static String selected_schedule_date = "selectedscheduledate";
 
     public static String last_device_connect = "LastDeviceConnect";

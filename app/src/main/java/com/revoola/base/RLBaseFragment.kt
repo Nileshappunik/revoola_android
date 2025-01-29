@@ -1,5 +1,6 @@
 package com.revoola
 
+import android.app.AlertDialog
 import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
@@ -25,6 +26,7 @@ import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.commonobject.RLTools.RLnextFinishAllActivity
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -83,6 +85,17 @@ open class RLBaseFragment : Fragment() {
             return "0000-00-00'T'00:00:00"
         }
 
+    }
+
+    fun RLGetUserDetails(context: Context): RLRevoolaUsersSettingsModel? {
+        val  json = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.user_model_data,null)
+        val gson = Gson()
+
+        return if (json != null) {
+            gson.fromJson(json, RLRevoolaUsersSettingsModel::class.java)
+        } else {
+            null
+        }
     }
 
     open fun RLnextActivity(cls: Class<*>?) {
@@ -373,6 +386,14 @@ open class RLBaseFragment : Fragment() {
             }
         }
          return 1
+    }
+
+    fun  RLCommonAlert(message: String,contextt: Context){
+        AlertDialog.Builder(contextt)
+            .setTitle("Payload Details")
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
 }

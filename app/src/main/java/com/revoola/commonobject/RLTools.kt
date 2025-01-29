@@ -105,6 +105,14 @@ object RLTools {
             else -> return R.drawable.ic_goal
         }
     }
+    fun RLChallengeTargetName(TargetType:String):String{
+        when (TargetType.toLowerCase()){
+            "individualtarget"-> return "individual"
+            "sharedtarget"-> return "shared"
+            else -> return "individual"
+        }
+    }
+
     fun RLChallengeForIcon(challengeForType:String):Int{
         when (challengeForType.toLowerCase()){
             "you"-> return R.drawable.ic_you
@@ -128,7 +136,7 @@ object RLTools {
     fun RLMonthNameTogetFirstDate(inputDate: String): String {
         return try {
             // Define the input date format
-            val inputFormat = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
+            val inputFormat = SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH)
 
             // Define the output date format
             val outputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
@@ -144,11 +152,85 @@ object RLTools {
         }
     }
 
+    fun RLStringDateToMonthYearFormate(dateString:String,isYear:Boolean):String {
+        // Define the input date format
+        val inputFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'XXX yyyy", Locale.ENGLISH)
+        } else {
+            TODO("VERSION.SDK_INT < N")
+        }
+        if (isYear){
+            // Define the output format
+            val outputFormat = SimpleDateFormat("yyyy", Locale.ENGLISH)
+            // Parse the input date string to a Date object
+            val date: Date? = inputFormat.parse(dateString)
+
+            // Format the Date object to the required format
+            val formattedDate = date?.let { outputFormat.format(it) }
+
+            return formattedDate.toString()
+        }else{
+            // Define the output format
+            val outputFormat = SimpleDateFormat("MMM", Locale.ENGLISH)
+            // Parse the input date string to a Date object
+            val date: Date? = inputFormat.parse(dateString)
+
+            // Format the Date object to the required format
+            val formattedDate = date?.let { outputFormat.format(it) }
+
+            return formattedDate.toString()
+        }
+
+    }
+
+    fun RLStringDateToDateFormate(dateString:String):Date? {
+
+        // Define the input date format
+        val inputFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'XXX yyyy", Locale.ENGLISH)
+        } else {
+            TODO("VERSION.SDK_INT < N")
+        }
+
+        // Parse the date string to Date object
+        val date: Date? = inputFormat.parse(dateString)
+
+        return date
+    }
 
     fun RLMonthNameTogetLastDate(dateString: String): String {
         // Define the input format
         val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DateTimeFormatter.ofPattern("MMM yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
+            DateTimeFormatter.ofPattern("MMM, yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
+        } else {
+            TODO("VERSION.SDK_INT < O not supported")
+        }
+
+        // Parse the input string to a LocalDate
+        val parsedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val normalizedDate = dateString.lowercase().replaceFirstChar { it.uppercase() }
+            // Adjust the date format and handle the comma
+            LocalDate.parse("$normalizedDate 01", DateTimeFormatter.ofPattern("MMM, yyyy dd").withLocale(java.util.Locale.ENGLISH))
+        } else {
+            TODO("VERSION.SDK_INT < O not supported")
+        }
+
+        // Get the last day of the month
+        val lastDateOfMonth = parsedDate.with(TemporalAdjusters.lastDayOfMonth())
+
+        // Convert LocalDate to legacy Date for formatting
+        val legacyDate = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+        // Format the output in the desired format
+        val outputFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", java.util.Locale.ENGLISH)
+        return outputFormatter.format(legacyDate)
+    }
+
+
+    fun RLMonthNameTogetLastDateOld(dateString: String): String {
+        // Define the input format
+        val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DateTimeFormatter.ofPattern("MMM, yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
         } else {
             TODO("VERSION.SDK_INT < O not supported")
         }
@@ -172,7 +254,13 @@ object RLTools {
         return outputFormatter.format(legacyDate)
     }
 
+    fun RlconvertDateToTimestamp(dateString: String): String {
+        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+        dateFormat.timeZone = TimeZone.getTimeZone("GMT") // Ensure consistent parsing
 
+        val date = dateFormat.parse(dateString) // Parse the date
+        return (date?.time?.div(1000)).toString() // Convert to seconds (Unix timestamp)
+    }
 
     fun RLConvertDate(inputDate: String): String {
         return try {

@@ -57,8 +57,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            android:layout_above="@+id/tvSelect"
+            android:paddingBottom="20dp"
+            android:background="@color/transparent_dialog"
             android:layout_below="@+id/rl_search"/>
+
+        <!--android:layout_above="@+id/tvSelect"-->
 
         <TextView
             android:id="@+id/tvSelect"
@@ -66,7 +69,7 @@
             android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight= "15dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="10dp"
             android:layout_alignParentBottom="true"
             android:background="@drawable/round_border_login_green"
             android:gravity="center"

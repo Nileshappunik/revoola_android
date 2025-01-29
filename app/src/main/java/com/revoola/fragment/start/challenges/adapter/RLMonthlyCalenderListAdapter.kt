@@ -7,14 +7,19 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.revoola.R
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlItemCalendarDateBinding
 import com.revoola.enumclass.RLDateType
 import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class RLMonthlyCalenderListAdapter(
     private val context: Context,
-    private val dates: List<com.revoola.fragment.start.challenges.model.RLMonthInfoModel>,
-    private val onDateSelected: (String) -> Unit
+    private val dates: List<RLMonthInfoModel>,private var selectionAllReadyMonth:String,
+    private val onDateSelected: (RLMonthInfoModel) -> Unit
     ) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLCalenderAdapter"
     private var selectedPosition = -1
@@ -38,32 +43,64 @@ class RLMonthlyCalenderListAdapter(
     inner class MyViewHolder(layoutBinding: RlItemCalendarDateBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlItemCalendarDateBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
-            val dateType = dates[position].dateType
+            val cardData=dates[position]
+            val dateType = cardData.dateType
             layoutBinding.dateText.visibility=View.GONE
             layoutBinding.monthText.visibility=View.VISIBLE
+
+            if (!selectionAllReadyMonth.isNullOrEmpty() && selectionAllReadyMonth.equals(cardData.monthNameWithYear)){
+                selectedPosition=position
+            }
+
             if (dateType.equals(RLDateType.BLANK)){
                 //blanck
             }else if (dateType.equals(RLDateType.OLD)){
-                val month = dates[position].date
+                val month = cardData.date
                 layoutBinding.monthText.text = month.toString()
                 layoutBinding.monthText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
                 layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+
+                if (RlISCurrentDateCheck(cardData.monthNameWithYear)){
+                    //When Current Date
+                    layoutBinding.monthText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                }else{
+                    //When Old Date
+                    layoutBinding.monthText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
+                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+                }
+
+
             }else if (dateType.equals(RLDateType.CURRENT)){
-                val month = dates[position].date
+                val month = cardData.date
                 layoutBinding.monthText.text = month.toString()
                 layoutBinding.monthText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
                 layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
-                layoutBinding.layDate.setOnClickListener {
-                    if (selectedPosition != position) {
-                        notifyItemChanged(selectedPosition)
-                        selectedPosition = position
-                        notifyItemChanged(position)
-                        onDateSelected(month)
+
+                if (RlISCurrentDateCheck(cardData.monthNameWithYear)){
+                    //When Current Date
+                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+
+                }else{
+                    //When Old Date
+                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
+                   // layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+                    if (selectedPosition == position) {
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+                    }else {
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+                    }
+
+                    layoutBinding.layDate.setOnClickListener {
+                        RLClickHandle(cardData)
                     }
                 }
+
+
             }
             else{
-                val month = dates[position].date
+                val month = cardData.date
                 layoutBinding.monthText.text = month.toString()
                 layoutBinding.monthText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
                 if (selectedPosition == position) {
@@ -72,15 +109,30 @@ class RLMonthlyCalenderListAdapter(
                     layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
                 }
                 layoutBinding.layDate.setOnClickListener {
-                    if (selectedPosition != position) {
-                        notifyItemChanged(selectedPosition)
-                        selectedPosition = position
-                        notifyItemChanged(position)
-                        onDateSelected(month)
-                    }
+                    RLClickHandle(cardData)
                 }
             }
         }
+
+        fun RLClickHandle(cardData:RLMonthInfoModel){
+            if (selectedPosition != position) {
+                notifyItemChanged(selectedPosition)
+                selectedPosition = position
+                selectionAllReadyMonth=cardData.monthNameWithYear
+                notifyItemChanged(position)
+                onDateSelected(cardData)
+            }
+        }
+        fun RlISCurrentDateCheck(input: String): Boolean {
+            val dateFormat = SimpleDateFormat("MMM, yyyy", Locale.ENGLISH)
+            val inputDate = Calendar.getInstance().apply { time = dateFormat.parse(input)!! }
+
+            val currentDate = Calendar.getInstance()
+
+            return inputDate.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR) &&
+                    inputDate.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH)
+        }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.revoola.fragment.start.challenges.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.revoola.R
 import com.revoola.databinding.RlItemCalendarDateBinding
 import com.revoola.enumclass.RLDateType
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
+import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -18,6 +20,7 @@ import java.util.Locale
 class RLCalenderListAdapter(
     private val context: Context,
     private val dates: List<RLDateInfoModel>,
+    private var selectionDate:Date?,
     private val onDateSelected: (Date) -> Unit
     ) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLCalenderAdapter"
@@ -42,12 +45,16 @@ class RLCalenderListAdapter(
     inner class MyViewHolder(layoutBinding: RlItemCalendarDateBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlItemCalendarDateBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
-            val dateType = dates[position].dateType
-            if (dateType.equals(RLDateType.BLANK)){
-                //blanck
-            }else if (dateType.equals(RLDateType.OLD)){
+            val cardData=dates[position]
+            if (selectionDate!=null && RlBothDateCheck(selectionDate!!,cardData.date)){
+                selectedPosition=position
+            }
 
-                val date = dates[position].date
+            if (cardData.dateType.equals(RLDateType.BLANK)){
+                //blanck
+            }else if (cardData.dateType.equals(RLDateType.OLD)){
+
+                val date = cardData.date
                 val day = date.date
                 layoutBinding.dateText.text = day.toString()
                // layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
@@ -62,24 +69,25 @@ class RLCalenderListAdapter(
                     layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
                 }
 
-            }else if (dateType.equals(RLDateType.CURRENT)){
-                val date = dates[position].date
+            }else if (cardData.dateType.equals(RLDateType.CURRENT)){
+                val date = cardData.date
                 val day = date.date
                 layoutBinding.dateText.text = day.toString()
-               // layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
-               // layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+
                 layoutBinding.layDate.setOnClickListener {
-                    if (selectedPosition != position) {
-                        notifyItemChanged(selectedPosition)
-                        selectedPosition = position
-                        notifyItemChanged(position)
-                        onDateSelected(date)
-                    }
+                    RLClickHandle(cardData)
                 }
                 if (RlISCurrentDateCheck(date)){
                     //When Current Date
                     layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
-                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                    //layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                    if (selectedPosition == position) {
+                        // //When Selection new Date
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+                    }else {
+                        // //When No Selection new Date
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                    }
                 }else{
                     //When New  Date
                     layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
@@ -93,7 +101,7 @@ class RLCalenderListAdapter(
                 }
             }
             else{
-                val date = dates[position].date
+                val date = cardData.date
                 val day = date.date
                 layoutBinding.dateText.text = day.toString()
                 layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
@@ -107,21 +115,37 @@ class RLCalenderListAdapter(
                 }
 
                 layoutBinding.layDate.setOnClickListener {
-                    if (selectedPosition != position) {
-                        notifyItemChanged(selectedPosition)
-                        selectedPosition = position
-                        notifyItemChanged(position)
-                        onDateSelected(date)
-                    }
+                    RLClickHandle(cardData)
                 }
             }
         }
 
-        fun RlISCurrentDateCheck(date: Date):Boolean{
+        private fun RLClickHandle(cardData: RLDateInfoModel){
+            if (selectedPosition != position) {
+                notifyItemChanged(selectedPosition)
+                selectionDate=cardData.date
+                selectedPosition = position
+                notifyItemChanged(position)
+                onDateSelected(cardData.date)
+            }
+        }
+
+        private fun RlISCurrentDateCheck(date: Date):Boolean{
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val calendar = Calendar.getInstance()
             val currentDate=dateFormat.format(calendar.time)
             val serverDate=dateFormat.format(date)
+            if (currentDate.equals(serverDate)){
+                return true
+            }else{
+                return false
+            }
+        }
+
+        private fun RlBothDateCheck(date: Date,srDate:Date):Boolean{
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val currentDate=dateFormat.format(date)
+            val serverDate=dateFormat.format(srDate)
             if (currentDate.equals(serverDate)){
                 return true
             }else{

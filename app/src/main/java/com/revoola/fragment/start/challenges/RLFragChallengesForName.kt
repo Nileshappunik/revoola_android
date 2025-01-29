@@ -79,7 +79,8 @@ class RLFragChallengesForName : RLBaseFragment() {
     }
     private fun RLUIBottom(cardData:RLEditChallengeAllData) {
         fragBinding.txtHeader.setText("")
-        when(cardData.challengeForType){
+
+        when(cardData.ChallengeType){
             "Steps"->{
                 fragBinding.imgHelpChallenges.setImageResource(R.drawable.fd_steps_green)
             }
