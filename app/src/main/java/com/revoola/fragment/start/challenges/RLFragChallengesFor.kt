@@ -303,6 +303,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         userdata.forEach { user ->
             if (selectDataID.contains(user.userid)) {
                 user.isSelected = true
+                selectUserdata += listOf(user)
             }else{
                 user.isSelected = false
             }
@@ -347,11 +348,11 @@ class RLFragChallengesFor : RLBaseFragment() {
         groupdata.forEach { user ->
             if (selectDataID.contains(user.group_id)) {
                 user.isSelected = true
+                selectGroupdata += listOf(user)
             }else{
                 user.isSelected = false
             }
         }
-
         val adaptergroup = RLChallengeForGroupListAdapter(activity,groupdata){ cardData ->
             // Handle selection
             if (cardData.isSelected){
