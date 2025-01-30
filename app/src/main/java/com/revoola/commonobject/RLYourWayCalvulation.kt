@@ -139,7 +139,8 @@ object RLYourWayCalvulation {
         if (!isValidValue(elevation)) return "0"
         val convertedElevation = if (getIsImperial(appUnit)) elevation.toDouble() * 3.281 else elevation.toDouble()
         val climbData=convertedElevation?:0
-        return climbData.toString()
+       val clm= "%.2f".format(climbData).toString()
+        return clm.toString()
     }
     // check the valid value or not return 0
     private fun isValidValue(value: Any?): Boolean {

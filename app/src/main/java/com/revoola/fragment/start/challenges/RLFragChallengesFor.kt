@@ -389,9 +389,7 @@ class RLFragChallengesFor : RLBaseFragment() {
                 RLshowAlertDialog("Please Select One Group")
             }
 
-
         }
     }
-
 
 }

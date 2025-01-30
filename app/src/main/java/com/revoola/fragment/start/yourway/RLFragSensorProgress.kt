@@ -156,7 +156,6 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         yourWayType = requireArguments().getString("YourWayType").toString().trim()
         isSpeedSensor = requireArguments().getBoolean("isspeedsensor",false)
-
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
 
@@ -573,9 +572,6 @@ class RLFragSensorProgress : RLBaseFragment(){
                                 fragBinding.inlayDistance.txtProgressTimeNumber.setText( "%.2f".format(it).toString())
                             }
                         }
-
-
-
                     }
                 })
                 /*rlLocationViewModel.caloriesBurnedData.observe(viewLifecycleOwner, Observer { calories ->
@@ -732,6 +728,10 @@ class RLFragSensorProgress : RLBaseFragment(){
                     Log.e("BLE", "Error: $errorMessage")
                 }
             })
+        }else{
+            if (yourWayType.toLowerCase().equals("run")||yourWayType.toLowerCase().equals("walk")||yourWayType.toLowerCase().equals("ride")){
+                RLstepGetToGPS()
+            }
         }
 
     }

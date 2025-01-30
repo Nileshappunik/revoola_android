@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.revoola.R
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlItemCalendarDateBinding
 import com.revoola.enumclass.RLDateType
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
@@ -49,47 +50,49 @@ class RLCalenderListAdapter(
             if (selectionDate!=null && RlBothDateCheck(selectionDate!!,cardData.date)){
                 selectedPosition=position
             }
-
-            if (cardData.dateType.equals(RLDateType.BLANK)){
-                //blanck
-            }else if (cardData.dateType.equals(RLDateType.OLD)){
-
-                val date = cardData.date
-                val day = date.date
-                layoutBinding.dateText.text = day.toString()
-               // layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
-              //  layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
-                if (RlISCurrentDateCheck(date)){
-                    //When Current Date
-                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
-                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
-                }else{
-                    //When Old Date
-                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
-                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
-                }
-
-            }else if (cardData.dateType.equals(RLDateType.CURRENT)){
-                val date = cardData.date
-                val day = date.date
-                layoutBinding.dateText.text = day.toString()
-
-                layoutBinding.layDate.setOnClickListener {
-                    RLClickHandle(cardData)
-                }
-                if (RlISCurrentDateCheck(date)){
-                    //When Current Date
-                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
-                    //layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
-                    if (selectedPosition == position) {
-                        // //When Selection new Date
-                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
-                    }else {
-                        // //When No Selection new Date
+            when(cardData.dateType){
+                RLDateType.BLANK-> RLTools.RlLogDPrint(TAG,"BLANK:- ${cardData.date}")
+                RLDateType.OLD-> {
+                    layoutBinding.dateText.text = (cardData.date.date).toString()
+                    if (RlISCurrentDateCheck(cardData.date)){
+                        //When Current Date
+                        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
                         layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                    }else{
+                        //When Old Date
+                        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
                     }
-                }else{
-                    //When New  Date
+                }
+                RLDateType.CURRENT-> {
+                    layoutBinding.dateText.text = (cardData.date.date).toString()
+                    if (RlISCurrentDateCheck(cardData.date)){
+                        //When Current Date
+                        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+                        if (selectedPosition == position) {
+                            //When Selection new Date
+                            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+                        }else {
+                            //When No Selection new Date
+                            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+                        }
+                    }else{
+                        //When Current New Date
+                        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+                        if (selectedPosition == position) {
+                            //When Selection new Date
+                            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+                        }else {
+                            //When No Selection new Date
+                            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+                        }
+                    }
+                    layoutBinding.layDate.setOnClickListener {
+                        RLClickHandle(cardData)
+                    }
+                }
+                RLDateType.NEW-> {
+                    layoutBinding.dateText.text = (cardData.date.date).toString()
                     layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
                     if (selectedPosition == position) {
                         // //When Selection new Date
@@ -98,24 +101,23 @@ class RLCalenderListAdapter(
                         // //When No Selection new Date
                         layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
                     }
+                    layoutBinding.layDate.setOnClickListener {
+                        RLClickHandle(cardData)
+                    }
                 }
-            }
-            else{
-                val date = cardData.date
-                val day = date.date
-                layoutBinding.dateText.text = day.toString()
-                layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
-
-                if (selectedPosition == position) {
-                    // //When Selection new Date
-                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
-                }else {
-                    // //When No Selection new Date
-                    layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
-                }
-
-                layoutBinding.layDate.setOnClickListener {
-                    RLClickHandle(cardData)
+                else-> {
+                    layoutBinding.dateText.text = (cardData.date.date).toString()
+                    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+                    if (selectedPosition == position) {
+                        // //When Selection new Date
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+                    }else {
+                        // //When No Selection new Date
+                        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+                    }
+                    layoutBinding.layDate.setOnClickListener {
+                        RLClickHandle(cardData)
+                    }
                 }
             }
         }
@@ -152,6 +154,80 @@ class RLCalenderListAdapter(
                 return false
             }
         }
+
     }
 
 }
+
+//OLD CODE
+/*
+if (cardData.dateType.equals(RLDateType.BLANK)){
+    //blanck
+}
+else if (cardData.dateType.equals(RLDateType.OLD)){
+
+    val date = cardData.date
+    val day = date.date
+    layoutBinding.dateText.text = day.toString()
+    // layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
+    //  layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+    if (RlISCurrentDateCheck(date)){
+        //When Current Date
+        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+    }else{
+        //When Old Date
+        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppTextLightGrayColor))
+        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+    }
+
+}
+else if (cardData.dateType.equals(RLDateType.CURRENT)){
+    val date = cardData.date
+    val day = date.date
+    layoutBinding.dateText.text = day.toString()
+
+    layoutBinding.layDate.setOnClickListener {
+        RLClickHandle(cardData)
+    }
+    if (RlISCurrentDateCheck(date)){
+        //When Current Date
+        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+        // layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+        if (selectedPosition == position) {
+            // //When Selection new Date
+            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+        }else {
+            // //When No Selection new Date
+            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_current_date)
+        }
+    }else{
+        //When New  Date
+        layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+        if (selectedPosition == position) {
+            // //When Selection new Date
+            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+        }else {
+            // //When No Selection new Date
+            layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+        }
+    }
+}
+else{
+    val date = cardData.date
+    val day = date.date
+    layoutBinding.dateText.text = day.toString()
+    layoutBinding.dateText.setTextColor(context.resources.getColor(R.color.AppBlackColor))
+
+    if (selectedPosition == position) {
+        // //When Selection new Date
+        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_selected_date)
+    }else {
+        // //When No Selection new Date
+        layoutBinding.layDate.setBackgroundResource(R.drawable.bg_unselected_date)
+    }
+
+    layoutBinding.layDate.setOnClickListener {
+        RLClickHandle(cardData)
+    }
+}*/

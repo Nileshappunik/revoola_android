@@ -56,6 +56,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
     private val weightInKg = RLConstants.weightInKg//  //you can change it dynamically
     private var currentStepCount = 0
     private var totalCaloriesBurned = 0.0
+    private var totalDistance = 0.0 // Variable to store cumulative distance
     private var lastLocation: Location? = null
 
     init {
@@ -73,7 +74,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult?: return
                 for (location in locationResult.locations) {
-                    lastLocation = location
+                   // lastLocation = location
                     startTime = System.currentTimeMillis()
                     val newLocation = locationResult.locations.last()
                    // RLTools.RlLogDPrint("RLFragSensorProgress", "Speed: ${location.speed} m/s")
@@ -88,7 +89,26 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                     _speedData.postValue(speedKmh.toFloat())
                     _paceData.postValue(calculatePace(location.speed).toDouble())
                     _elevationMeter.postValue(location.altitude)
-                    //Distance Count
+
+
+                    // Calculate distance between lastLocation and newLocation
+                    if (lastLocation != null) {
+                        val distanceInMeters = lastLocation!!.distanceTo(newLocation)
+                        totalDistance += distanceInMeters // Accumulate distance
+                    }
+
+                    // Update lastLocation
+                    lastLocation = newLocation
+
+                    // Convert distance to kilometers
+                    val distanceInKm = totalDistance / 1000
+
+                    // Post distance data
+                    _distanceData.postValue(distanceInKm.toDouble())
+
+
+                    //OLd Code
+                  /*  //Distance Count
                     val distanceInKm = RLGetDistance(
                         location.latitude,
                         location.longitude,
@@ -96,7 +116,8 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                         newLocation.longitude,
                         "K")
                    // RLTools.RlLogDPrint("RLFragSensorProgress", "Distance: ${distanceInKm} Km")
-                    _distanceData.postValue(distanceInKm.toDouble())
+                    _distanceData.postValue(distanceInKm.toDouble())*/
+
                     _locationData.postValue(location)
 
                     val distance = location.distanceTo(lastLocation!!)

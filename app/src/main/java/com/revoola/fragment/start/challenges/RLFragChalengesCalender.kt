@@ -44,6 +44,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
     private lateinit var calendarFrom: Calendar
     private var fromDate:String =""
     private var toDate:String =""
+
     var selectedFromMonthName:String = ""
     var selectedFromYear:String=""
     private var currentToYear:Int =0
@@ -100,10 +101,6 @@ class RLFragChalengesCalender : RLBaseFragment() {
 
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
 
-
-        calendarFrom = Calendar.getInstance()
-        calendarTo = Calendar.getInstance()
-
         when(cardData.ChallengeType){
             "Steps"->{fragBinding.inlayTop.ivTitle.setText(R.string.stepchallenge)}
             "Effort"->{fragBinding.inlayTop.ivTitle.setText(R.string.effortchallenge)}
@@ -126,7 +123,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
                 RLEditDateSeletionSet(cardData,false,cardData.CalenderType)
                 fragBinding.inlayTop.ivDescription.setText(R.string.customchallenge)}
         }
-        fragBinding.btnNext.setOnClickListener {
+        fragBinding.btnNextVisible.setOnClickListener {
            if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
                val todate=RLTools.RLConvertDate(toDate)
                val fromdate=RLTools.RLConvertDate(fromDate)
@@ -150,7 +147,10 @@ class RLFragChalengesCalender : RLBaseFragment() {
 
     }
 
+    //this function work all ready selection date handle
     private fun RLEditDateSeletionSet(cardData:RLEditChallengeAllData,isMonth:Boolean,CalenderType:String) {
+        calendarFrom = Calendar.getInstance()
+        calendarTo = Calendar.getInstance()
         if (cardData.toDate.isNotEmpty() && cardData.fromDate.isNotEmpty()){
             if (isMonth){
                 selectionCurrentYearFrom = RLTools.RLStringDateToMonthYearFormate(cardData.fromDate,true)
@@ -163,19 +163,29 @@ class RLFragChalengesCalender : RLBaseFragment() {
                 toDate=cardData.toDate
                 selectionAllReadyMonthTo = "${RLTools.RLStringDateToMonthYearFormate(cardData.toDate,false).toUpperCase()}, ${RLTools.RLStringDateToMonthYearFormate(cardData.toDate,true)}"
 
-
                 RLCalenderShow(CalenderType,true)
             }else {
                 selectionAllReadyDateFrom = RLTools.RLStringDateToDateFormate(cardData.fromDate)
                 if (!CalenderType.equals("Weekly")){
-                    selectionAllReadyDateTo = RLTools.RLStringDateToDateFormate(cardData.toDate)
-                    currentDateTO = selectionAllReadyDateFrom
+                   /* selectionAllReadyDateTo = RLTools.RLStringDateToDateFormate(cardData.toDate)
                     toDate = selectionAllReadyDateTo.toString()
+                    currentDateFrom= RLTools.RLStringDateToDateFormate(cardData.fromDate)!!
+                    currentDateTO = RLTools.RLStringDateToDateFormate(cardData.fromDate)!!*/
+
+
+                    val date=RLTools.RLStringDateToDateFormate(cardData.fromDate)
+                    selectionAllReadyDateFrom=date
+                    selectionAllReadyDateTo=null
+                    dayBefore = date?.let { getDayBefore(it) } ?: "null"
+                    currentDateTO = date
+                    currentDateFrom=date
+                    fromDate=date.toString()
+                    toDate = RLTools.RLStringDateToDateFormate(cardData.fromDate).toString()
+
                 }else{
                     selectionAllReadyDateTo=null
                     currentDateTO = selectionAllReadyDateFrom
                 }
-
                 dayBefore = selectionAllReadyDateFrom?.let { getDayBefore(it) } ?: "null"
                 fromDate = selectionAllReadyDateFrom.toString()
                 RLCalenderShow(CalenderType,true)
@@ -186,7 +196,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
 
     }
-
+    //this function work calender name wise calender Show
     private fun RLCalenderShow(CalenderType:String,isEdit:Boolean){
         when(CalenderType){
             "Daily"->{
@@ -203,10 +213,10 @@ class RLFragChalengesCalender : RLBaseFragment() {
             }
         }
     }
+    //Daily and Custom Calender Setup
     private fun RLDailyCalenderShow(){
-
-        RLsetupCalendarTO()
         RLsetupCalendarFrom()
+        RLsetupCalendarTO()
         fragBinding.previousMonthButton.setOnClickListener {
             calendarTo.add(Calendar.MONTH, -1)
             RLsetupCalendarTO()
@@ -226,6 +236,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             RLsetupCalendarFrom()
         }
     }
+    //Weekly Calender Setup
     private fun RLWeeklyCalenderShow(isEdit:Boolean){
         RLsetupCalendarWeeklyFrom()
         if (isEdit){
@@ -252,6 +263,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             RLsetupCalendarWeeklyTO()
         }
     }
+    //Monthly Name Calender Setup
     private fun RLMonthlyCalenderShow(){
          currentToYear=calendarTo.get(Calendar.YEAR)
          currentFromYear=calendarFrom.get(Calendar.YEAR)
@@ -278,7 +290,49 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
     }
 
-    //From Calender
+    //From Calender Setup
+    //Daily
+    private fun RLsetupCalendarFrom() {
+        // Generate dates for the current month
+        val dates = RLgenerateDatesForMonth(calendarFrom,false)
+
+        val adapter = RLCalenderListAdapter(requireContext(), dates,selectionAllReadyDateFrom) { date ->
+            // Handle date selection
+            println("Selected date: $date")
+            selectionAllReadyDateFrom=date
+            selectionAllReadyDateTo=null
+            dayBefore = date?.let { getDayBefore(it) } ?: "null"
+            fromDate=date.toString()
+            currentDateTO = date
+            toDate=""
+            RLsetupCalendarTO()
+            RLNextButtonSShowHide(toDate)
+        }
+        fragBinding.calendarRecyclerViewFrom.layoutManager = GridLayoutManager(requireContext(), 7)
+        fragBinding.calendarRecyclerViewFrom.adapter = adapter
+        RLupdateMonthYearTextView(fragBinding.monthYearTextViewFrom,calendarFrom)
+    }
+    //Week
+    private fun RLsetupCalendarWeeklyFrom() {
+        // Generate dates for the current month
+        val dates = RLgenerateDatesForMonth(calendarFrom,false)
+        val adapter = RLCalenderListAdapter(requireContext(), dates,selectionAllReadyDateFrom) { date ->
+            // Handle date selection
+            println("Selected date: $date")
+            selectionAllReadyDateFrom=date
+            selectionAllReadyDateTo=null
+            dayBefore = date?.let { getDayBefore(it) } ?: "null"
+            currentDateTO = date
+            currentDateFrom=date
+            RLsetupCalendarWeeklyTO()
+            fromDate=date.toString()
+            toDate=""
+            RLNextButtonSShowHide(toDate)
+        }
+        fragBinding.calendarRecyclerViewFrom.layoutManager = GridLayoutManager(requireContext(), 7)
+        fragBinding.calendarRecyclerViewFrom.adapter = adapter
+        RLupdateMonthYearTextView(fragBinding.monthYearTextViewFrom,calendarFrom)
+    }
     //Month
     private fun RLsetupCalendarMonthlyFrom(currentYearFrom: Int) {
         // Generate dates for the current month
@@ -298,87 +352,16 @@ class RLFragChalengesCalender : RLBaseFragment() {
             RLsetupCalendarMonthlyTO(currentToYear)
             fromDate=RLTools.RLMonthNameTogetFirstDate("01 ${monthData.monthNameWithYear}")
             println("Selected fromDate: $fromDate")
-            if (toDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
+            RLNextButtonSShowHide(toDate)
+
 
         }
         fragBinding.calendarRecyclerViewFrom.layoutManager = GridLayoutManager(requireContext(), 4)
         fragBinding.calendarRecyclerViewFrom.adapter = adapter
         fragBinding.monthYearTextViewFrom.setText(currentYearFrom.toString())
     }
-    //Daily
-    private fun RLsetupCalendarFrom() {
-        // Generate dates for the current month
-        val dates = RLgenerateDatesForMonth(calendarFrom,false)
 
-        val adapter = RLCalenderListAdapter(requireContext(), dates,selectionAllReadyDateFrom) { date ->
-            // Handle date selection
-            println("Selected date: $date")
-            selectionAllReadyDateFrom=date
-            selectionAllReadyDateTo=null
-            dayBefore = date?.let { getDayBefore(it) } ?: "null"
-            fromDate=date.toString()
-            currentDateTO = date
-            toDate=""
-            RLsetupCalendarTO()
-            if (toDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
-        }
-        fragBinding.calendarRecyclerViewFrom.layoutManager = GridLayoutManager(requireContext(), 7)
-        fragBinding.calendarRecyclerViewFrom.adapter = adapter
-        RLupdateMonthYearTextView(fragBinding.monthYearTextViewFrom,calendarFrom)
-    }
-    //Week
-    private fun RLsetupCalendarWeeklyFrom() {
-        // Generate dates for the current month
-        val dates = RLgenerateDatesForMonth(calendarFrom,false)
-
-        val adapter = RLCalenderListAdapter(requireContext(), dates,selectionAllReadyDateFrom) { date ->
-            // Handle date selection
-            println("Selected date: $date")
-            selectionAllReadyDateFrom=date
-            selectionAllReadyDateTo=null
-            dayBefore = date?.let { getDayBefore(it) } ?: "null"
-            currentDateTO = date
-            RLsetupCalendarWeeklyTO()
-            fromDate=date.toString()
-            toDate=""
-            if (toDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
-        }
-        fragBinding.calendarRecyclerViewFrom.layoutManager = GridLayoutManager(requireContext(), 7)
-        fragBinding.calendarRecyclerViewFrom.adapter = adapter
-        RLupdateMonthYearTextView(fragBinding.monthYearTextViewFrom,calendarFrom)
-    }
-
-    //TO Calender
-    //Month
-    private fun RLsetupCalendarMonthlyTO(currentYearFrom: Int) {
-        // Generate dates for the current month
-        val  currentMonth = mapMonthToIndex(selectionCurrentMonthFrom)
-        val currentYear = selectionCurrentYearFrom.toInt()
-        val MonthNameList:List<RLMonthInfoModel> = RlGenerateYearlyCalendar(currentYearFrom,currentYear,currentMonth)
-        val adapter = RLMonthlyCalenderListAdapter(requireContext(), MonthNameList,selectionAllReadyMonthTo) { monthData ->
-            // Handle date selection
-            selectionAllReadyMonthTo = monthData.monthNameWithYear
-            println("Selected toDateOriginal: ${monthData.monthNameWithYear}")
-            toDate=RLTools.RLMonthNameTogetLastDate("${monthData.monthNameWithYear}")
-            println("Selected toDate: $toDate")
-            if (fromDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
-        }
-        fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 4)
-        fragBinding.calendarRecyclerViewTo.adapter = adapter
-        fragBinding.monthYearTextView.setText(currentYearFrom.toString())
-    }
+    //TO Calender Setup
     //Daily
     private fun RLsetupCalendarTO() {
         // Generate dates for the current month
@@ -389,10 +372,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             println("Selected date: $date")
             toDate=date.toString()
             selectionAllReadyDateTo=date
-            if (fromDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
+            RLNextButtonSShowHide(fromDate)
         }
         fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 7)
         fragBinding.calendarRecyclerViewTo.adapter = adapter
@@ -407,11 +387,6 @@ class RLFragChalengesCalender : RLBaseFragment() {
             // Handle date selection
             println("Selected date: $date")
             selectionAllReadyDateTo=date
-            /*toDate=date.toString()
-            if (fromDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }*/
         }
         fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 7)
         fragBinding.calendarRecyclerViewTo.adapter = adapter
@@ -419,36 +394,36 @@ class RLFragChalengesCalender : RLBaseFragment() {
     }
     private fun RLsetupCalendarWeeklyTO() {
         // Generate dates for the current month
-        val dates = RLgenerateDatesForMonthWeekly(calendarTo)
-
+        val dates = RLgenerateDatesForWeekly(calendarTo)
         val adapter = RLCalenderListAdapter(requireContext(), dates,selectionAllReadyDateTo) { date ->
             // Handle date selection
             println("Selected date: $date")
             selectionAllReadyDateTo=date
             toDate=date.toString()
-            if (fromDate.isNotEmpty()){
-                fragBinding.btnNext.setBackgroundResource(R.drawable.round_green_thirty)
-                fragBinding.btnNext.setTextColor(resources.getColor(R.color.AppWhiteColor))
-            }
+            RLNextButtonSShowHide(fromDate)
         }
         fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 7)
         fragBinding.calendarRecyclerViewTo.adapter = adapter
         RLupdateMonthYearTextView(fragBinding.monthYearTextView, calendarTo)
     }
-
-    //MonthName to get MontNumber
-    private fun mapMonthToIndex(month: String): Int {
-        val months = DateFormatSymbols().shortMonths.map { it.uppercase() }
-        return months.indexOf(month.uppercase())
+    //Month
+    private fun RLsetupCalendarMonthlyTO(currentYearFrom: Int) {
+        // Generate dates for the current month
+        val  currentMonth = mapMonthToIndex(selectionCurrentMonthFrom)
+        val currentYear = selectionCurrentYearFrom.toInt()
+        val MonthNameList:List<RLMonthInfoModel> = RlGenerateYearlyCalendar(currentYearFrom,currentYear,currentMonth)
+        val adapter = RLMonthlyCalenderListAdapter(requireContext(), MonthNameList,selectionAllReadyMonthTo) { monthData ->
+            // Handle date selection
+            selectionAllReadyMonthTo = monthData.monthNameWithYear
+            toDate=RLTools.RLMonthNameTogetLastDate("${monthData.monthNameWithYear}")
+            RLNextButtonSShowHide(fromDate)
+        }
+        fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 4)
+        fragBinding.calendarRecyclerViewTo.adapter = adapter
+        fragBinding.monthYearTextView.setText(currentYearFrom.toString())
     }
-    //Selection to set YearName
-    private fun RLupdateMonthYearTextView(monthYearTextView: TextView, calendar: Calendar) {
-        val dateFormat = SimpleDateFormat("MMM, yyyy", Locale.getDefault())
-        val monthYear = dateFormat.format(calendar.time)
-        monthYearTextView.text = monthYear
-    }
 
-    //Regular Calender
+    //Daily Date Get
     private fun RLgenerateDatesForMonth(calendar: Calendar,isCalenderTo:Boolean): List<RLDateInfoModel> {
         // Generate days for the calendar
         val days = mutableListOf<RLDateInfoModel>()
@@ -504,9 +479,9 @@ class RLFragChalengesCalender : RLBaseFragment() {
             }else{
                 if (isCalenderTo){
                     currentDate = currentDateTO
-                }else{
+                }/*else{
                     currentDate = currentDateFrom
-                }
+                }*/
 
                 when {
                     dateIterator.time.before(currentDate) -> RLDateType.OLD
@@ -520,7 +495,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         return days
     }
     //Weekly Date Get
-    private fun RLgenerateDatesForMonthWeekly(calendar: Calendar): List<RLDateInfoModel> {
+    private fun RLgenerateDatesForWeekly(calendar: Calendar): List<RLDateInfoModel> {
         // Generate days for the calendar
         val days = mutableListOf<RLDateInfoModel>()
         calendar.set(Calendar.DAY_OF_MONTH, 1)
@@ -568,7 +543,8 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
 
         // val currentDate = Calendar.getInstance().time
-        val currentDate =currentDateFrom
+       // val currentDate =currentDateFrom
+        val currentDate =currentDateTO
         while (dateIterator.time.before(lastDayOfMonth) || dateIterator.time.equals(lastDayOfMonth)) {
             var  dateType = if (RLisSameDay(dateIterator.time, currentDate)){
                 RLDateType.CURRENT
@@ -623,13 +599,14 @@ class RLFragChalengesCalender : RLBaseFragment() {
         return months
     }
 
-    //other all Fun like agalnodayname,sameday,alertdialog
+    //This Function Work  if Current Day Sunday And This Function Return Saturday
     private fun getDayBefore(date: Date): String {
         val calendar = Calendar.getInstance()
         calendar.time = date
         calendar.add(Calendar.DAY_OF_MONTH, -1)
         return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()) ?: "Unknown"
     }
+    //Both Date Compaire And Check Both Date Same Or Not
     private fun RLisSameDay(date1: Date, date2: Date): Boolean {
         val cal1 = Calendar.getInstance()
         val cal2 = Calendar.getInstance()
@@ -638,6 +615,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
+    //Alert Dialog Show when From and  to Date Unselect
     private fun RLshowAlertDialog(message:String) {
         val sucDialog:Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -681,6 +659,27 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
 
         dialog.show()
+    }
+    //button next visibleinvisible
+    private fun RLNextButtonSShowHide(toDateget: String){
+        if (toDateget.isNotEmpty()){
+            fragBinding.btnNextVisible.visibility=View.VISIBLE
+            fragBinding.btnNextInvisible.visibility=View.GONE
+        }else{
+            fragBinding.btnNextVisible.visibility=View.GONE
+            fragBinding.btnNextInvisible.visibility=View.VISIBLE
+        }
+    }
+    //MonthName to get MonthNumber
+    private fun mapMonthToIndex(month: String): Int {
+        val months = DateFormatSymbols().shortMonths.map { it.uppercase() }
+        return months.indexOf(month.uppercase())
+    }
+    //Selection to set YearName
+    private fun RLupdateMonthYearTextView(monthYearTextView: TextView, calendar: Calendar) {
+        val dateFormat = SimpleDateFormat("MMM, yyyy", Locale.getDefault())
+        val monthYear = dateFormat.format(calendar.time)
+        monthYearTextView.text = monthYear
     }
 
 }

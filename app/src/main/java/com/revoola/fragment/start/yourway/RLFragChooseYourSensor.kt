@@ -142,7 +142,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
         }
     }
 
-    private fun RLclickToNextScreenOpen(yourWayType:String,isspeedsensor:Boolean){
+    private fun RLclickToNextScreenOpen(yourWayType:String,speedsensoravl:Boolean){
         val isBodyClass=requireArguments().getBoolean("isBody")
         val isMindClass=requireArguments().getBoolean("isMind")
         val isYourWayClass=requireArguments().getBoolean("isYourWay")
@@ -154,7 +154,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
             }
             var bundle: Bundle = Bundle()
             bundle.putString("YourWayType", yourWayType)
-            bundle.putBoolean("isspeedsensor",isspeedsensor)
+            bundle.putBoolean("isspeedsensor",speedsensoravl)
             if (isHeartRateDevice){
                 (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, RLFragHeartRateSensorProgress::class.java.simpleName, false)
             }else{
@@ -172,7 +172,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
 
             if (isHeartRateDevice){
                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
-            }else if(isspeedsensor){
+            }else if(speedsensoravl){
                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, true, null, false)
             }else{
                 (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
