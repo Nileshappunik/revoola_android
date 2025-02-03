@@ -22,6 +22,8 @@ import com.revoola.model.RLSetgoaled_challenges_request
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.model.RLFeedChallengesMapModel
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -52,17 +54,15 @@ class RLFragChallengeSummary : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenge_summary, container) as RlFragChallengeSummaryBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChallengeSummary" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengeSummary" )
+        currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
+        //TODO CURRENT USER CHANGES
+        currentUser=RLConstants.currentUser
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
@@ -106,6 +106,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         var timeGone = if (remainingDays >0) remainingDays else 0
         var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
 
+        // green and Blue vertical line chart
         val webSettings: WebSettings = fragBinding.webViewChart.settings
         webSettings.javaScriptEnabled = true
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -119,6 +120,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.loadDataWithBaseURL(null,
             RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
 
+        //user name Image and persentage chart  Ranking Chart
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
         webRankingSettings.javaScriptEnabled = true
         webRankingSettings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -132,11 +134,28 @@ class RLFragChallengeSummary : RLBaseFragment() {
         val jasonArray=JSONArray()
         val htmltext=RLAllHTMLChart.RLgetRankingChartHtml(jasonArray,currentUser)
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,htmltext, "text/html", "UTF-8", null)
+
+        //Step Chart
+        val webSettingsSteps: WebSettings = fragBinding.webViewStepChart.settings
+        webSettingsSteps.javaScriptEnabled = true
+        webSettingsSteps.cacheMode = WebSettings.LOAD_NO_CACHE
+        webSettingsSteps.domStorageEnabled = true
+        webSettingsSteps.useWideViewPort = true
+        webSettingsSteps.loadWithOverviewMode = true
+        fragBinding.webViewStepChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
+        fragBinding.webViewStepChart.isHorizontalScrollBarEnabled = false
+        fragBinding.webViewStepChart.isVerticalScrollBarEnabled = false
+        fragBinding.webViewStepChart.webViewClient = WebViewClient()
+        val htmlText=RLAllHTMLChart.RLgetIndividualStepsChartHtml(jasonArray)
+        fragBinding.webViewStepChart.loadDataWithBaseURL(null,htmlText, "text/html", "UTF-8", null)
+
+
+        //both Api call Chart and Ranking
         RLRankingDataGetApi(cardData.challengeid)
         RLStepDataGetApi(cardData.challengeid,cardData.userid)
+
     }
     private fun RLRankingDataGetApi(challengeid:String){
-        val jasonArray=JSONArray()
         val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
         val request = listOf(
             RLSetgoaled_challenges_request(goaled_challenges = RLSetgoaled_challenges(
@@ -150,21 +169,25 @@ class RLFragChallengeSummary : RLBaseFragment() {
                     if (response.type.equals("success")){
                         RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         var rank=0
-                        for ( i in 0 until response.text.data.size){
-                            val jsonObject=JSONObject()
-                            val intValue = response.text.data[i].percentage_of_goal_display.toDouble().roundToInt()
-                            jsonObject.put("value",intValue)
-                            jsonObject.put("name",response.text.data[i].username)
-                            jsonObject.put("number2",response.text.data[i].totalmetric)
-                            jsonObject.put("image",response.text.data[i].avatar)
-                            jsonObject.put("userid",response.text.data[i].userid)
-                            jasonArray.put(jsonObject)
-                            if(currentUser.equals(response.text.data[i].userid)){
-                                rank=response.text.data[i].ranking_by_challenge
-                            }
+                        val jsonArray = JSONArray().apply {
+                            response.text.data.map { data ->
+                                JSONObject().apply {
+                                    val intValue = data.percentage_of_goal_display.toDouble().roundToInt()
+                                    put("value", intValue)
+                                    put("name", data.username)
+                                    put("number2", data.totalmetric)
+                                    put("image", data.avatar)
+                                    put("userid", data.userid)
+                                    // Update rank if current user
+                                    if(currentUser.equals(data.userid)){
+                                        rank=data.ranking_by_challenge
+                                    }
+                                }
+                            }.forEach { put(it) }
                         }
-                        RLRankingMapSet(jasonArray)
-                        fragBinding.layRank.txtTimeNumber.setText("${rank.toString()} OF ${jasonArray.length()}")
+
+                        RLRankingMapSet(jsonArray)
+                        fragBinding.layRank.txtTimeNumber.setText("${rank.toString()} OF ${jsonArray.length()}")
                     }else {
                         RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
@@ -180,7 +203,6 @@ class RLFragChallengeSummary : RLBaseFragment() {
 
     }
     private fun RLStepDataGetApi(challengeid:String,userid:String){
-        val jasonArray=JSONArray()
         val request = listOf(
             RLSetMetricChartByDay(metric_chart_by_day = RLSetMetricChartByDayData(
                 userid = userid,challengeid =challengeid )
@@ -192,18 +214,17 @@ class RLFragChallengeSummary : RLBaseFragment() {
                 try {
                     if (response.type.equals("success")){
                         RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        for ( i in 0 until response.text.data.size){
-                            val jsonObject=JSONObject()
-                            val outputFormatter = SimpleDateFormat("dd/MM/yyyy")
-                            val inputFormatter = SimpleDateFormat("yyyy-MM-dd")
-                            val date: Date = inputFormatter.parse(response.text.data[i].datefield)
-                            val formattedDate: String = outputFormatter.format(date)
+                        val jsonArray = JSONArray().apply {
+                            response.text.data.map { data ->
+                                JSONObject().apply {
+                                    put("value", data.metric)
+                                    put("date", data.datefield)
 
-                            jsonObject.put("date",formattedDate)
-                            jsonObject.put("value",response.text.data[i].metric)
-                            jasonArray.put(jsonObject)
+                                }
+                            }.forEach { put(it) }
                         }
-                        RLStepMapSet(jasonArray)
+                        RLStepMapSet(jsonArray)
+
                     }else {
                         RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
                     }
@@ -221,30 +242,17 @@ class RLFragChallengeSummary : RLBaseFragment() {
         if (jasonArray.length()>0){
             fragBinding.webViewRankingChart.visibility=View.VISIBLE
             val htmltext=RLAllHTMLChart.RLgetRankingChartHtml(jasonArray,currentUser)
-            //RLTools.RlLogDPrint(TAG,"MAp:- $htmltext")
             fragBinding.webViewRankingChart.loadDataWithBaseURL(null,
                 htmltext, "text/html", "UTF-8", null)
         }else{
             fragBinding.webViewRankingChart.visibility=View.GONE
         }
 
-
-
     }
+
     private fun RLStepMapSet(jasonArray: JSONArray) {
-        val webSettingsSteps: WebSettings = fragBinding.webViewStepChart.settings
-        webSettingsSteps.javaScriptEnabled = true
-        webSettingsSteps.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettingsSteps.domStorageEnabled = true
-        webSettingsSteps.useWideViewPort = true
-        webSettingsSteps.loadWithOverviewMode = true
-        fragBinding.webViewStepChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
-        fragBinding.webViewStepChart.isHorizontalScrollBarEnabled = false
-        fragBinding.webViewStepChart.isVerticalScrollBarEnabled = false
-        fragBinding.webViewStepChart.webViewClient = WebViewClient()
         val htmlText=RLAllHTMLChart.RLgetIndividualStepsChartHtml(jasonArray)
-        fragBinding.webViewStepChart.loadDataWithBaseURL(null,
-            htmlText, "text/html", "UTF-8", null)
+        fragBinding.webViewStepChart.loadDataWithBaseURL(null,htmlText, "text/html", "UTF-8", null)
 
     }
 
@@ -252,4 +260,6 @@ class RLFragChallengeSummary : RLBaseFragment() {
         super.onPause()
         RLBottomHideShowSet(true)
     }
+
+
 }

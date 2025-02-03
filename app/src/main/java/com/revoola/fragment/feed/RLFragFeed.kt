@@ -44,6 +44,7 @@ import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
+import com.revoola.utils.RLPrefManager
 import com.revoola.utils.loadSvg
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -76,9 +77,11 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
-         lastfragmentopen= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"" )
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragFeed" )
-         currentUser=  com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+         lastfragmentopen= RLPrefManager.RLgetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
+        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
+         currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
+        //TODO CURRENT USER CHANGES
+        currentUser=RLConstants.currentUser
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
@@ -346,9 +349,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 goaled_challenges = RLSetgoaled_challenges(
                     id = currentUser,
                     type = "challenges_feed_thumbs",
-                    today = currentTimestamp)
-            )
-        )
+                    today = currentTimestamp)))
         RLTools.RlLogDPrint(TAG,"setdataChallenges= "+request)
         viewModel.RLgoaled_challenges(request) { result ->
             result.onSuccess { response ->

@@ -758,7 +758,7 @@ object RLAllHTMLChart {
         """.trimIndent()
     }
 
-    fun RLgetRankingChartHtml(jsondata: JSONArray, userid:String): String{
+    fun RLgetRankingChartHtmlOld(jsondata: JSONArray, userid:String): String{
         return """     
             <!DOCTYPE html>
             <html>
@@ -1028,7 +1028,7 @@ object RLAllHTMLChart {
             </html>
         """.trimIndent()
     }
-    fun RLgetIndividualStepsChartHtml(jsondata: JSONArray): String{
+    fun RLgetIndividualStepsChartHtmlOlD(jsondata: JSONArray): String{
         return """     
            <!DOCTYPE html>
            <html>
@@ -1339,4 +1339,397 @@ object RLAllHTMLChart {
 
         """.trimIndent()
     }
+
+    //Challenge Feed Summary Page Chart
+    fun RLgetRankingChartHtml(jsondata: JSONArray, userid:String): String{
+        return """ 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Dynamic Bar Chart</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .x-axis text {
+            font-family: "Omnes";
+        }
+
+        .x-axis path, .x-axis line {
+            stroke: white;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v7.js"></script>
+</head>
+<body>
+    <script>
+        var data = $jsondata;
+        var bar_color = "#ebf7ed";
+        var percentage_label_color = "#4a4c4f";
+        var user_name_label_color = "#4a4c4f"; // Change user_name_label_color to white
+       
+        var name_label_color = "#4a4c4f";
+        var index_label_color = "black";
+        var name_font_size = "45px";
+        var percentage_font_size = "45px";
+        var index_font_size = "50px";
+        var font_family = "Omnes, sans-serif";
+        var font_vertical_pos = 13;
+        //var barHeight = 66; // Fixed bar height
+        //var barPadding = 0.25; // Padding between bars
+
+
+
+        const barHeight = 66;
+        const barPadding = 16; // Fixed padding in pixels
+        var user_name = '$userid';
+        
+        // Find user index and prepare display data
+        const userIndex = data.findIndex(d => d.userid === user_name);
+        let displayData;
+
+        if (userIndex < 15) {
+            displayData = data.slice(0, 15);
+        } else {
+            displayData = data.slice(0, 14);
+            if (!displayData.some(d => d.userid === user_name)) {
+                displayData.push(data[userIndex]);
+            }
+        }
+
+        // Dynamically calculate SVG height
+        const svgWidth = window.innerWidth * 0.9;
+        const svgHeight = displayData.length * (barHeight + barPadding) + barPadding;
+
+
+        // Margins and inner dimensions
+        const margin = { top: 20, right: 150, bottom: 40, left: 120 };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
+        // Create SVG container
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform",  `translate(`+ margin.left +`,`+  margin.top +`)`);
+
+        // Define scales
+        const xScale = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.value)])
+            .range([0, width]);
+
+        const yScale = d3.scaleBand()
+            .domain(displayData.map(d => d.name))
+            .range([0, svgHeight - barPadding]) // Adjust for fixed padding
+            .paddingInner(0) // Set proportional padding to zero for exact gaps
+            .paddingOuter(0);
+
+
+
+        // Create bars
+        svg.selectAll(".bar")
+            .data(displayData)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", 0)
+            .attr("y", d => yScale(d.name))
+            .attr("width", d => xScale(d.value))
+            .attr("height", barHeight)
+            .attr("rx", 12)
+            .style("fill", d => d.userid === user_name ? "#39b54a" : "#ebf7ed");
+
+        // Add images as patterns
+        svg.append("defs")
+            .selectAll("pattern")
+            .data(displayData)
+            .enter()
+            .append("pattern")
+            .attr("id", (d, i) => `image-pattern-`+i+``)
+            .attr("width", 1)
+            .attr("height", 1)
+            .attr("patternContentUnits", "objectBoundingBox")
+            .append("image")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 1)
+            .attr("height", 1)
+            .attr("preserveAspectRatio", "xMidYMid slice")
+            .attr("xlink:href", d => d.image);
+
+        // Add circles with images
+        svg.selectAll(".circle")
+            .data(displayData)
+            .enter()
+            .append("circle")
+            .attr("cx", -margin.left / 2)
+            .attr("cy", d => yScale(d.name) + barHeight / 2)
+            .attr("r", barHeight / 2)
+            .style("fill", (d, i) => `url(#image-pattern-`+i+`)`);
+
+        // Add labels
+
+
+        // Draw dashed line if user_name bar is in position 15
+        if (userIndex >= 15) {
+            const yPos = yScale(displayData[14].name) + (barPadding / 2) - 12;
+            //const yPos = yScale(displayData[14].name) + barHeight + barPadding / 2 ;
+
+            svg.append("line")
+                .attr("x1", 0)
+                .attr("x2", width)
+                .attr("y1", yPos)
+                .attr("y2", yPos)
+                .style("stroke", "black")
+                .style("stroke-dasharray", "5,5")
+                .style("stroke-width", 2);
+        }
+       
+        // Percentage labels are label4
+
+        svg.selectAll(".label4")
+            .data(displayData)
+            .enter()
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width + 120) // Adjust the position to right-align the text
+            //.attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)
+            .attr("y", d => yScale(d.name) + barHeight / 2 + font_vertical_pos + 4)
+            .style("fill", percentage_label_color)
+            .style("font-size", percentage_font_size)
+            .style("font-family", font_family)
+            .style("text-anchor", "end") // Right-align the text
+            .text(d => d.value + "%");
+
+
+
+        // Find the index of the user in the data array
+        var userRowIndex = (data.findIndex(d => d.userid === user_name) + 1);
+
+
+
+        // labels in bars
+        // Find the first index where the value is 0 to adjust ranking shown for users with value 0
+        const firstZeroValueIndex = data.findIndex(d => d.value === 0) + 1; // Adding 1 for 1-based indexing
+
+        // Update the rendering of labels to incorporate conditional logic for rankings
+
+        // Determine the lowest ranking for users with a value of 0 among the first 15 bars
+        let ranksWithZeroValue = data
+            .map((d, i) => ({ value: d.value, rank: i + 1 }))
+            .filter(d => d.value === 0 && d.rank <= 15)
+            .map(d => d.rank);
+
+        let lowestRankForZeroValue = Math.min(...ranksWithZeroValue, data.length + 1); // Use a fallback if no 0 values
+
+
+
+        // Determine the text to display based on the presence of zero values
+        var displayText = data.some(d => d.value === 0) ? firstZeroValueIndex : "User Row Index: " + userRowIndex;
+
+
+        // Find the highest rank among rows with a value of 0
+        let zeroValueRank = data.findIndex(d => d.value === 0) + 1; // First occurrence of 0 value + 1 for rank
+        // These are the labels of usernames and ranks in the bars
+        
+        svg.selectAll(".label1")
+            .data(displayData)
+            .enter()
+            .append("text")
+            .attr("class", "label")
+            .attr("x", d => 10) // Starting position for the label
+            .attr("y", d => yScale(d.name) + barHeight / 2 + font_vertical_pos + 4)
+            .style("fill", d => d.userid === user_name ? user_name_label_color : name_label_color)
+            .style("font-size", name_font_size)
+            .style("font-family", font_family)
+            .each(function (d) {
+                const textElement = d3.select(this);
+
+                let ranking;
+                if (d.value === 0) {
+                    ranking = zeroValueRank;
+                } else {
+                    ranking = data.findIndex(x => x.userid === d.userid) + 1;
+                }
+
+                // Extract rank and name from the string
+                const rank = ``+ranking+``;
+                const name = d.name.split(" - ")[1];
+
+                // Add the name (left-aligned part)
+                textElement.append("tspan")
+                    .attr("x", 110) // Keep the left alignment for the name
+                    .attr("dy", 0) // No vertical adjustment
+                    .text(name);
+
+                // Add the rank (right-aligned part)
+                textElement.append("tspan")
+                    .attr("x", 90) // Position for right alignment
+                    .style("text-anchor", "end") // Right-align the rank
+                    .text(rank);
+            });
+
+        // Helper function to format seconds into hh:mm format
+        function formatSecondsToHHMM(seconds) {
+            const totalMinutes = Math.floor(seconds / 60);
+            const hours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+            const minutes = (totalMinutes % 60).toString().padStart(2, '0');
+            return ``+hours+`h `+minutes+`m`;
+        }
+
+        // Add metric values in hh:mm format at the right-hand end of bars
+        svg.selectAll(".label3")
+            .data(displayData)
+            .enter()
+            .append("text")
+            .attr("class", "label3")
+            .attr("x", d => width - 30) // Adjust the position to right-align the text
+            .attr("y", d => yScale(d.name) + barHeight / 2 + font_vertical_pos + 4) // Center the text vertically
+            .style("fill", d => (d.userid === user_name ? user_name_label_color : name_label_color))
+            .style("font-size", name_font_size)
+            .style("font-family", font_family)
+            .style("text-anchor", "end") // Right-align the text
+            .text(d => formatSecondsToHHMM(parseInt(d.number2.replace(/,/g, ''), 10))); // Convert number2 to seconds and format
+
+       
+    </script>
+</body>
+</html>
+ """.trimIndent()
+
+
+    }
+    fun RLgetIndividualStepsChartHtml(jsonData: JSONArray): String{
+        return """ <!DOCTYPE html>
+                        <html>
+                        <head>
+                          <script src="https://d3js.org/d3.v4.min.js"></script>
+                          <style>
+                            body {
+                              font: 25px sans-serif;
+                            }
+                            svg {
+                              font-family: Sans-Serif, Arial;
+                            }
+                            .axis path,
+                            .axis line {
+                              stroke: black;
+                            }
+                            .bar {
+                              fill: #ebf7ed;
+                            }
+                            .tick line {
+                              stroke-opacity: 0.99;
+                            }
+                          </style>
+                        </head>
+                        <body>
+                        <div id="chart"></div>
+                        <script>
+                         var array = [
+                              {
+                                name: "mktest3",
+                                values:$jsonData
+                              }
+                            ];
+                        
+                          var challengeData = array.find(entry => entry.name === "mktest3");
+                        
+                          createGraph(challengeData);
+                        
+                        function createGraph(data) {
+                            var margin = { top: 20, right: 50, bottom: 20, left: 120 },
+                                barHeight = 66,
+                                barSpacing = 16,
+                                totalBarsHeight = data.values.length * (barHeight + barSpacing),
+                                height = totalBarsHeight + margin.top + margin.bottom,
+                                width = window.innerWidth - 50;
+                        
+                            /* Format Data */
+                            var parseDate = d3.timeParse("%Y-%m-%d");
+                            data.values.forEach(function(d) {
+                                d.date = parseDate(d.date);
+                                d.value = +d.value;
+                            });
+                        
+                            /* Scales */
+                            var yScale = d3.scaleBand()
+                                           .range([margin.top, totalBarsHeight + margin.top])
+                                           .paddingInner(barSpacing / (barHeight + barSpacing))
+                                           .domain(data.values.map(d => d.date));
+                        
+                            var xScale = d3.scaleLinear()
+                                           .domain([0, d3.max(data.values, d => d.value)])
+                                           .range([margin.left, width - margin.right]);
+                        
+                            var svg = d3.select("#chart").append("svg")
+                                        .attr("width", width)
+                                        .attr("height", height);
+                        
+                            /* Add Axes */
+                            var yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat("%d %b"));
+                            var xAxis = d3.axisBottom(xScale).ticks(10);
+                        
+                            svg.append("g")
+                               .attr("transform", "translate(" + margin.left + ",0)")
+                               .call(yAxis)
+                               .selectAll("text")
+                               .style("font-size", 36);
+                        
+                            svg.append("g")
+                               .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+                               .call(xAxis)
+                               .style("display", "none");
+                        
+                            /* Draw Bars */
+                            svg.selectAll(".bar")
+                               .data(data.values)
+                               .enter().append("path")
+                               .attr("class", "bar")
+                               .attr("d", function(d) {
+                                   var x = margin.left + 2;
+                                   var y = yScale(d.date);
+                                   var width = d.value > 0 ? xScale(d.value) - margin.left : 0;
+                                   var radius = 10;
+                        
+                                   if (d.value === 0) {
+                                       return "M" + x + "," + y + " h0 v" + barHeight + " h0 z";
+                                   }
+                        
+                                   return "M" + x + "," + y + " " +
+                                          "h" + (width - radius) + " " +
+                                          "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius + " " +
+                                          "v" + (barHeight - 2 * radius) + " " +
+                                          "a" + radius + "," + radius + " 0 0 1 -" + radius + "," + radius + " " +
+                                          "h-" + (width - radius) + " " +
+                                          "z";
+                               })
+                               .attr("fill", function(d) { return d.value > 0 ? "#3329f5" : "none"; });
+                        
+                            /* Add Labels */
+                            svg.selectAll(".bar-label")
+                               .data(data.values)
+                               .enter().append("text")
+                               .attr("class", "bar-label")
+                               .attr("x", margin.left + 100)
+                               .attr("y", function(d) { return yScale(d.date) + barHeight / 2; })
+                               .attr("dy", "0.35em")
+                               .text(function(d) { return d.value > 0 ? d3.format(",")(d.value) : ""; })
+                               .style("font-size", 36)
+                               .style("fill", "black");
+                        }
+                        </script>
+                        </body>
+                        </html>  
+                """.trimIndent()
+    }
+
+
 }

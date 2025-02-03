@@ -269,8 +269,7 @@ class RLFragChallengesFor : RLBaseFragment() {
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
-    }
-    private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
+    }private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
 
@@ -362,7 +361,6 @@ class RLFragChallengesFor : RLBaseFragment() {
 
         }
         dialogMainBinding.recyclerFriend.adapter = adaptergroup
-
         dialogMainBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
