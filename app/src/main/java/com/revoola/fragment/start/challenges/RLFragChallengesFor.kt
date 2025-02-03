@@ -247,7 +247,7 @@ class RLFragChallengesFor : RLBaseFragment() {
 
     //All Api Call
     private fun RLgroupApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,isGroupVGroup:Boolean, dialog: Dialog ) {
-        currentUser="w2p8SQCvE3emjEEDo66f02eF6fG2"
+
         val request = listOf(RLrequestgroup_dataset(group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
 
@@ -271,7 +271,6 @@ class RLFragChallengesFor : RLBaseFragment() {
         }
     }
     private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
-        currentUser="w2p8SQCvE3emjEEDo66f02eF6fG2"
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
 

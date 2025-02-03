@@ -201,7 +201,6 @@ class RLFragEditChallenges : RLBaseFragment() {
         dialogMainBinding.tvClose.setOnClickListener {
             dialog.dismiss()
         }
-
         dialog.show()
     }
     private fun RLshowAlertDialog(message:String) {
