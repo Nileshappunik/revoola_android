@@ -1,22 +1,19 @@
 package com.revoola.databasefirebase
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.revoola.commonobject.RLTools
 import com.revoola.firebaseModel.RLChallengeRiderBody
 
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
     fun RLREVOOLAUSERFORSEARCHREADDATE(userId: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAUSERFORSEARCH).child(userId)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -26,7 +23,7 @@ class RLDatabaseManagerRead {
         }
     }
     fun RLREVOOLAVIDEOKEYSMINDRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOKEYSMIND)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEO_KEYS_MIND)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -38,8 +35,8 @@ class RLDatabaseManagerRead {
     }
 
     fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.CODESECTION)
-            .child(RLConstants.AVAILABLEMENUS).child(classname)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.CODE_SECTION)
+            .child(RLConstants.AVAILABLE_MENUS).child(classname)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(task.result?.value, null)
@@ -49,7 +46,7 @@ class RLDatabaseManagerRead {
             }
     }
     fun RLRevoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOKEYS)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEO_KEYS)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -61,7 +58,7 @@ class RLDatabaseManagerRead {
     }
 
     fun RLRevoolaVideosRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOS).child(videoId)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEOS).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(task.result?.value, null)
@@ -71,7 +68,7 @@ class RLDatabaseManagerRead {
             }
     }
     fun RLRevoolaVideosMindRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSEDSTRUCTURE).child(RLConstants.REVOOLAVIDEOSMIND).child(videoId)
+        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEOS_MIND).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(task.result?.value, null)

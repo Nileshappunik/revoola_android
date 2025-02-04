@@ -24,7 +24,6 @@ import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
@@ -319,8 +318,8 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         val assumedREV=VideoCardData.assumedREV?:"0"
         totalRev=assumedREV.toDouble()
         bundle.putString("VIDEODATA",data)
-        bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
-        bundle.putString(RLConstants.HEARTSENSOR, RLConstants.NOSENSOR)
+        bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
+        bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)
         bundle.putString("videoID",videoID)
 
         bundle.putString("totalTime",(totalTime?:"0"))

@@ -52,7 +52,7 @@ class RLFragYourWay : RLBaseFragment() {
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
 
          val databaseManager= RLDatabaseManagerRead()
-         databaseManager.RLALLMENULISTRead(RLConstants.YOURWAY){ data, error ->
+         databaseManager.RLALLMENULISTRead(RLConstants.YOUR_WAY){ data, error ->
              if (data != null) {
                  try {
                      val gson = Gson()

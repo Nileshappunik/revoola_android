@@ -17,6 +17,18 @@ class RLAuthManager {
             }
     }
 
+
+    fun RLRegisterGuestUser(callback: (FirebaseUser?, Exception?) -> Unit) {
+        auth.signInAnonymously()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(auth.currentUser, null)
+                } else {
+                    callback(null, task.exception)
+                }
+            }
+    }
+
     fun RlloginUser(email: String, password: String, callback: (FirebaseUser?, Exception?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

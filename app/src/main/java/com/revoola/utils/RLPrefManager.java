@@ -117,8 +117,7 @@ public class RLPrefManager {
         editor.apply();
     }
 
-    public static void RLclear_all(Context context) {
-
+    public static void RLClear_all(Context context) {
         final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
         editor.clear();
         editor.apply();

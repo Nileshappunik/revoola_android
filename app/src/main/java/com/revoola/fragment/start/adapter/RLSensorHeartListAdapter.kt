@@ -74,7 +74,7 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
                     }else{
                         com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.HEARTSENSOR)
+                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
                     }
                     notifyDataSetChanged()
@@ -88,8 +88,8 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
                 }else{
                     changeDeviceName.let {
                         val jsonobject= JsonParser.parseString(it).asJsonObject
-                        val jsonDeviceName:String= jsonobject.get(RLConstants.DEVICENAME).asString
-                        val jsonDeviceAddress:String= jsonobject.get(RLConstants.DEVICEADDRESS).asString
+                        val jsonDeviceName:String= jsonobject.get(RLConstants.DEVICE_NAME).asString
+                        val jsonDeviceAddress:String= jsonobject.get(RLConstants.DEVICE_ADDRESS).asString
                         if (jsonDeviceAddress.equals(cardData.deviceAddress)){
                             layoutBinding.txtSensorName.setText(jsonDeviceName)
                         }else{

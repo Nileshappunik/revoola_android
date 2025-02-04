@@ -1,9 +1,7 @@
 package com.revoola.base
 
 import android.app.Application
-import android.os.Bundle
 import com.google.firebase.FirebaseApp
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.model.MessageType
@@ -54,7 +52,7 @@ class MyApp : Application() {
         RLMoEngageInit()
 
         // Initialize RevenueCat using Purchases.Builder
-        val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.revenuecat_api_key).build()
+        val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.Revenuecat_Api_Key).build()
         // Initialize RevenueCat with your API key
         Purchases.configure(configurationRevenueCat) // Replace with your RevenueCat API key
 

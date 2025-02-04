@@ -1,23 +1,11 @@
 package com.revoola.fragment.start.body
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.GestureDetector
@@ -28,8 +16,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
@@ -40,13 +26,11 @@ import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.services.RLBLEService
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.services.RLBLEManagerHeartRate
 import com.revoola.services.RLBLEManagerSpeed
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -339,8 +323,8 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         totalRev=assumedREV.toDouble()
 
         bundle.putString("VIDEODATA",data)
-        bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
-        bundle.putString(RLConstants.HEARTSENSOR, RLConstants.SPEEDSENSOR)
+        bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
+        bundle.putString(RLConstants.HEART_SENSOR, RLConstants.SPEED_SENSOR)
         bundle.putString("videoID",videoID)
 
         bundle.putString("totalTime",(totalTime?:"0"))

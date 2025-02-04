@@ -55,12 +55,8 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.view.Window
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import com.revoola.activity.RLMainActivityRL
-import com.revoola.fragment.start.RLFragStart
 import com.revoola.utils.RLConstants
-import java.time.ZonedDateTime
 import java.time.temporal.TemporalAdjusters
 
 
@@ -818,34 +814,34 @@ object RLTools {
 
     fun RLgetImage(typename:String): String {
         if (typename.isNullOrEmpty()){
-            return RLConstants.WALKIMAGE
+            return RLConstants.WALK_IMAGE
         }
         if( typename.toLowerCase().equals("walk")){
-            return RLConstants.WALKIMAGE
+            return RLConstants.WALK_IMAGE
         }else if( typename.toLowerCase().equals("run")){
-            return RLConstants.RUNIMAGE
+            return RLConstants.RUN_IMAGE
         }else if( typename.toLowerCase().equals("yoga")){
-            return RLConstants.YOGAIMAGE
+            return RLConstants.YOGA_IMAGE
         }else if( typename.toLowerCase().equals("pilates")){
-            return RLConstants.PILATESIMAGE
+            return RLConstants.PILATES_IMAGE
         }else if( typename.toLowerCase().equals("ride")){
-            return RLConstants.RIDEIMAGE
+            return RLConstants.RIDE_IMAGE
         }else if( typename.toLowerCase().equals("workout")){
-            return RLConstants.WORKOUTIMAGE
+            return RLConstants.WORKOUT_IMAGE
         }else if (typename.toLowerCase().equals("challenge-effort")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else if (typename.toLowerCase().equals("challenge-steps")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else if (typename.toLowerCase().equals("challenge-calories")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else if (typename.toLowerCase().equals("challenge-distance")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else if (typename.toLowerCase().equals("challenge-climbed")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else if (typename.toLowerCase().equals("challenge-duration")){
-            return RLConstants.img_challenge_start
+            return RLConstants.Img_Challenge_Start
         }else{
-            return RLConstants.WALKIMAGE
+            return RLConstants.WALK_IMAGE
         }
     }
 

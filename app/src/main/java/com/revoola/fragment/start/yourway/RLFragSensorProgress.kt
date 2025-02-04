@@ -1,18 +1,8 @@
 package com.revoola.fragment.start.yourway
 
-import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -22,23 +12,16 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragSensorProgressBinding
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.firebaseModel.RLAssumedCalories
 import com.revoola.firebaseModel.RLAssumedRev
 import com.revoola.firebaseModel.RLElevationPoint
 import com.revoola.firebaseModel.RLLocationDetails
-import com.revoola.services.RLBLEService
 import com.revoola.services.RLLocationViewModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
@@ -233,9 +216,9 @@ class RLFragSensorProgress : RLBaseFragment(){
             bundle.putString("totalTime",totalTime)
             bundle.putString("gpxStringBuilder",gpxStringBuilder.toString()?:"")
             if (yourWayType.equals("Ride") && isSpeedSensorConnect){
-                bundle.putString("SENSOR", RLConstants.SPEEDSENSOR)
+                bundle.putString("SENSOR", RLConstants.SPEED_SENSOR)
             }else{
-                bundle.putString("SENSOR", RLConstants.NOSENSOR)
+                bundle.putString("SENSOR", RLConstants.NO_SENSOR)
             }
             bundle.putDouble("burntCalories",RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00))
             bundle.putDouble("totalElevation",RLYourWayCalvulation.noNanValueDouble(totalElevation?:0.00))

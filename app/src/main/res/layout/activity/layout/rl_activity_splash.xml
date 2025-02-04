@@ -26,7 +26,7 @@
         android:layout_margin="5dp"
         app:cardElevation="0dp">
       <TextView
-          android:id="@+id/txt_fullrevoolaexperience"
+          android:id="@+id/btn_FullExperience"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:textSize="25sp"
@@ -44,7 +44,7 @@
         android:layout_margin="5dp"
         app:cardElevation="0dp">
       <TextView
-          android:id="@+id/txt_justhereforaquickpeak"
+          android:id="@+id/btn_GuestUser"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:textSize="25sp"

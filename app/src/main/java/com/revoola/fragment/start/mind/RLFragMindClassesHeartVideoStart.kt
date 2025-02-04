@@ -138,8 +138,8 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
             val videoID=  requireArguments().getString("videoID","")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
-            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.HEARTSENSOR)
+            bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
+            bundle.putString(RLConstants.HEART_SENSOR, RLConstants.HEART_SENSOR)
 
             bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
             bundle.putString("totalTime",totalTime)

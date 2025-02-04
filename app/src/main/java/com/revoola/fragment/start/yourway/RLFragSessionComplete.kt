@@ -144,13 +144,13 @@ class RLFragSessionComplete : RLBaseFragment(){
                 RLuploadImagesToFirebase(imgUriList)
             }*/
             when (SensorType){
-                RLConstants.HEARTSENSOR->{
+                RLConstants.HEART_SENSOR->{
                     RlHeartRateDataEntryToFirebase(yourWayType,totalTime)
                 }
-                RLConstants.SPEEDSENSOR->{
+                RLConstants.SPEED_SENSOR->{
                     RlSpeedSensorDataEntryToFirebase(yourWayType,totalTime)
                 }
-                RLConstants.NOSENSOR->{
+                RLConstants.NO_SENSOR->{
                     RlNoSensorDataEntryToFirebase(yourWayType,totalTime)
                 }
             }
@@ -1153,7 +1153,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         //Entry Session Detail Data
         // val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSEDSTRUCTURE}/${RLConstants.REVOOLAUSERSESSIONDETAILDATA}/$currentUser")
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/${RLConstants.PROPOSED_STRUCTURE}/${RLConstants.REVOOLA_USER_SESSION_DETAIL_DATA}/$currentUser")
         val entryId = (System.currentTimeMillis() / 1000).toString()
        RLTools.RlLogEPrint(TAG,"print when call sessionDetail api ${Gson().toJson(entry)}")
         entryId.let {

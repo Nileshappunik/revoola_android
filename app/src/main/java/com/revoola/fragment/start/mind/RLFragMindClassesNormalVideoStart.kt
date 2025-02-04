@@ -24,7 +24,6 @@ import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
@@ -112,8 +111,8 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             }
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,RLConstants.MIND)
-            bundle.putString(RLConstants.HEARTSENSOR, RLConstants.NOSENSOR)
+            bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
+            bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)
 
 
             bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))

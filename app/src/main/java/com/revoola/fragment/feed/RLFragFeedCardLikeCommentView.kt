@@ -267,13 +267,12 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
 
         }
 
-
         if (!cardData.imageLinkSmall.isNullOrEmpty()){
             Glide.with(requireContext()).load(cardData.imageLinkSmall).into(layoutBinding.imgMain)
         }else if (!cardData.map_image.isNullOrEmpty()){
             Glide.with(requireContext()).load(cardData.map_image).into(layoutBinding.imgMain)
         }else{
-            Glide.with(requireContext()).load(RLConstants.img_feed_apple_fitness).into(layoutBinding.imgMain)
+            Glide.with(requireContext()).load(RLConstants.Img_Feed_Apple_Fitness).into(layoutBinding.imgMain)
         }
 
         layoutBinding.laySteps.relativeCard.visibility=View.GONE

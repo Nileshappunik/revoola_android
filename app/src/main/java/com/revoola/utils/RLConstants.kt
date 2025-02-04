@@ -3,59 +3,55 @@ package com.revoola.utils
     companion object {
         const val SERVER_PROBLEM: String = "Server Problem"
         const val LOGOUT_D = "4"
-        const val SCHEDULE = "1"
         const val EXIT = "5"
         const val CardData = "CARDDATA"
         const val FeedSelectTag = "FeedSelectTag"
         const val MIND = "Mind"
         const val BODY = "Body"
-        const val CLASSTYPE = "classtype"
+        const val CLASS_TYPE = "classtype"
         const val TYPE = "type"
         const val EFFORT = "effort"
         const val ELEVATION = "elevation"
         const val SPEED = "speed"
         const val PACE = "pace"
-        const val DEVICENAME = "devicename"
-        const val DEVICEADDRESS = "deviceAddress"
-        const val HEARTSENSOR = "HEARTRATESENSOR"
-        const val SPEEDSENSOR = "SPEEDSENSOR"
-        const val NOSENSOR = "NOSENSOR"
+        const val DEVICE_NAME = "devicename"
+        const val DEVICE_ADDRESS = "deviceAddress"
+        const val HEART_SENSOR = "HEARTRATESENSOR"
+        const val SPEED_SENSOR = "SPEEDSENSOR"
+        const val NO_SENSOR = "NOSENSOR"
         const val weightInKg = 70.0
 
-
-        //TODO : Realtime Database Table Name
+        //Realtime Database Table Name
         const val LIVE = "live"
-        const val PROPOSEDSTRUCTURE = "proposedstructure"
-        const val LIVEUSERSEMAIL = "liveUsersEmail"
-        const val DATAFORTESTING = "dataForTesting"
+        const val PROPOSED_STRUCTURE = "proposedstructure"
+        const val LIVE_USERS_EMAIL = "liveUsersEmail"
+        const val DATA_FOR_TESTING = "dataForTesting"
         const val CONNECTIVITY = "connectivity"
-        const val DEVICERECORDEDDATA = "deviceRecordedData"
-        const val ELEVATIONNEW = "elevation"
+        const val DEVICE_RECORDED_DATA = "deviceRecordedData"
+        const val ELEVATION_NEW = "elevation"
         const val GPX = "gpx"
         const val GPT_T = "gpx_T"
         const val GPX_T_SERVER = "gpx_T_Server"
         const val GPX_T_SERVER_N = "gpx_T_Server_N"
         const val LOCATION = "location"
-        const val REVOOLAUSERSESSIONSUMMARYDATA = "revoolaUserSessionSummaryData"
-        const val REVOOLAUSERSESSIONSUMMARYGRAPHDATA = "revoolaUserSessionSummaryGraphData"
-        const val REVOOLAUSERSESSIONDETAILDATA = "revoolaUserSessionDetailData"
+        const val REVOOLA_USER_SESSION_SUMMARY_DATA = "revoolaUserSessionSummaryData"
+        const val REVOOLA_USER_SESSION_SUMMARY_GRAPH_DATA = "revoolaUserSessionSummaryGraphData"
+        const val REVOOLA_USER_SESSION_DETAIL_DATA = "revoolaUserSessionDetailData"
 
-
-
-        const val REVOOLAUSEREMAILS= "revoolaUserEmails"
-        const val REVOOLAUSERFORSEARCH= "revoolaUsersForSearch"
-        const val REVOOLAUSERSETTINGS= "revoolaUserSettings"
-        const val BASICDATA= "basicData"
-        const val REVOOLAVIDEOKEYSMIND= "revoolaVideoKeysMind"
-        const val REVOOLAVIDEOKEYS= "revoolaVideoKeys"
-        const val REVOOLAVIDEOS= "revoolaVideos"
-        const val REVOOLAVIDEOSMIND= "revoolaVideosMind"
-        const val CODESECTION= "codeSection"
-        const val AVAILABLEMENUS= "availableMenus"
+        const val REVOOLA_USER_EMAILS= "revoolaUserEmails"
+        const val REVOOLA_USER_FOR_SEARCH= "revoolaUsersForSearch"
+        const val REVOOLA_USER_SETTINGS= "revoolaUserSettings"
+        const val BASIC_DATA= "basicData"
+        const val REVOOLA_VIDEO_KEYS_MIND= "revoolaVideoKeysMind"
+        const val REVOOLA_VIDEO_KEYS= "revoolaVideoKeys"
+        const val REVOOLA_VIDEOS= "revoolaVideos"
+        const val REVOOLA_VIDEOS_MIND= "revoolaVideosMind"
+        const val CODE_SECTION= "codeSection"
+        const val AVAILABLE_MENUS= "availableMenus"
         const val CHALLENGES= "challenges"
         const val FRIENDS= "friends"
         const val MAIN= "main"
-        const val YOURWAY= "yourWay"
+        const val YOUR_WAY= "yourWay"
 
         const val FORALL= "forAll"
         const val FORENERGISE= "forEnergise"
@@ -72,34 +68,33 @@ package com.revoola.utils
         const val FORWARMUP= "forWarmup"
         const val FORYOGA= "forYoga"
 
+        //ALL Insert API Server
+        const val insertJSON:String="https://video.revoola.com/_stuff/insertJSON.php"
 
-//      TODO: API
-
-        const val revenuecat_api_key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"
-
+        //ALL Get API Server
         const val BASE_URL: String = "https://video.revoola.com/_stuff/"
         const val URL_V3: String = "getResponse_v3.php"
         const val URL_V2: String = "getResponse_v2.php"
+
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
+        const val Revenuecat_Api_Key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"
 
-
-        const val friendsFab: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"
-
-        const val flagsImageUrl: String="https://video.revoola.com/flags/"
-
-        const val PILATESIMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
-        const val RIDEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
-        const val RUNIMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"
-        const val WALKIMAGE="https://video.revoola.com/v2/images/iphone8landscape_walk.png"
-        const val WORKOUTIMAGE="https://video.revoola.com/v2/images/iphone8landscape_workout.png"
-        const val YOGAIMAGE="https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
-        const val APPLEIMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple.png"
-        const val APPLE32IMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple_3x2.png"
-
+        //All Image Link
+        const val Friends_Fab_SVG: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"
+        const val Flags_Image_Url: String="https://video.revoola.com/flags/"
+        const val PILATES_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+        const val RIDE_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+        const val RUN_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_run.png"
+        const val WALK_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+        const val WORKOUT_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+        const val YOGA_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+        const val Img_Feed_Apple_Fitness = "https://video.revoola.com/v2/images/v3_app_apple.png"
+        const val Img_Challenge_Start = "https://video.revoola.com/v2/start/challenges_start.jpg"
+        const val APPLE_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple.png"
+        const val APPLE_32_IMAGE="https://video.revoola.com/v2/images/iphone8landscape_metrics_apple_3x2.png"
         const val img_feed_strava = "https://video.revoola.com/v2/images/v3_app_strava.png"
         const val img_feed_garmin = "https://video.revoola.com/v2/images/v3_app_connect.png"
         const val img_feed_oura = "https://video.revoola.com/v2/images/v3_app_oura.png"
-        const val img_feed_apple_fitness = "https://video.revoola.com/v2/images/v3_app_apple.png"
         const val img_feed_whoop = "https://video.revoola.com/v2/images/v3_app_whoop.png"
         const val img_feed_bend = "https://video.revoola.com/v2/images/v3_app_bend.png"
         const val img_feed_coros = "https://video.revoola.com/v2/images/v3_app_coros.png"
@@ -108,8 +103,9 @@ package com.revoola.utils
         const val img_feed_apple_health_app = "http://video.revoola.com/v2/images/v3_app_applehealth.png"
         const val img_feed_google_health_connect = "https://video.revoola.com/v2/images/v3_app_healthconnect.png"
         const val img_yourway_start = "https://video.revoola.com/v2/start/yourway_start.jpg"
-        const val img_challenge_start = "https://video.revoola.com/v2/start/challenges_start.jpg"
         const val img_app_applehealth ="https://video.revoola.com/v2/images/_app_applehealth.png"
+        const val GuestImg = "https://firebasestorage.googleapis.com/v0/b/rideathome-9080e.appspot.com/o/defaultProfileImg%2FdefaultProfileImg.jpeg?alt=media&token=798a91e9-81aa-4430-a91c-eb8ecc1b3a27"
+
 
         //Challenges List
         const val effort_custom_challenges ="effort-custom-challenges"
@@ -169,8 +165,8 @@ package com.revoola.utils
             "301 lbs", "302 lbs", "303 lbs", "304 lbs", "305 lbs","306 lbs", "307 lbs", "308 lbs", "309 lbs", "310 lbs",
             "311 lbs", "312 lbs", "313 lbs", "314 lbs", "315 lbs","316 lbs", "317 lbs", "318 lbs", "319 lbs", "320 lbs",
             "321 lbs", "322 lbs","323 lbs", "324 lbs", "325 lbs", "326 lbs", "327 lbs","328 lbs","329 lbs","330 lbs",
-            "331 lbs",
-        )
+            "331 lbs")
+
         val valuesMatric = arrayOf(
             "18 kg", "19 kg", "20 kg", "21 kg", "22 kg","23 kg", "24 kg", "25 kg", "26 kg", "27 kg","28 kg","29 kg","30 kg",
             "31 kg", "32 kg", "33 kg", "34 kg", "35 kg","36 kg", "37 kg", "38 kg", "39 kg", "40 kg",
@@ -189,24 +185,25 @@ package com.revoola.utils
             "161 kg", "162 kg", "163 kg", "164 kg", "165 kg","166 kg", "167 kg", "168 kg", "169 kg", "170 kg",
             "171 kg", "172 kg", "173 kg", "174 kg", "175 kg","176 kg", "177 kg", "178 kg", "179 kg", "180 kg",
             "181 kg", "182 kg", "183 kg", "184 kg", "185 kg","186 kg", "187 kg", "188 kg", "189 kg", "190 kg",
-            "191 kg", "192 kg", "193 kg", "194 kg", "195 kg","196 kg", "197 kg", "198 kg", "199 kg", "200 kg",
-        )
+            "191 kg", "192 kg", "193 kg", "194 kg", "195 kg","196 kg", "197 kg", "198 kg", "199 kg", "200 kg")
+
         val valuesUkStonesSt = arrayOf(
             "1 st", "2 st", "3 st", "4 st", "5 st","6 st", "7 st", "8 st", "9 st", "10 st",
             "11 st", "12 st", "13 st", "14 st", "15 st","16 st", "17 st", "18 st", "19 st", "20 st",
             "21 st", "22 st","23 st", "24 st", "25 st", "26 st", "27 st","28 st","29 st","30 st",
-            "31 st", "32 st", "33 st", "34 st", "35 st","36 st", "37 st", "38 st", "39 st", "40 st",
-        )
+            "31 st", "32 st", "33 st", "34 st", "35 st","36 st", "37 st", "38 st", "39 st", "40 st")
+
         val valuesUkStonesLb = arrayOf(
             "1 lb", "2 lb", "3 lb", "4 lb", "5 lb","6 lb", "7 lb", "8 lb", "9 lb", "10 lb",
-            "11 lb", "12 lb", "13 lb",
-        )
+            "11 lb", "12 lb", "13 lb")
 
         //Height Array
         val valuesFeet = arrayOf("1 Feet", "2 Feet", "3 Feet", "4 Feet", "5 Feet",
             "6 Feet", "7 Feet", "8 Feet", "9 Feet")
+
         val valuesInches = arrayOf("0 inches", "1 inches", "2 inches", "3 inches", "4 inches",
             "5 inches", "6 inches", "7 inches", "8 inches", "9 inches","10 inches", "11 inches")
+
         val valuesMatricHeight = arrayOf(
             "151 cm", "152 cm", "153 cm", "154 cm", "155 cm","156 cm", "157 cm", "158 cm", "159 cm", "160 cm",
             "161 cm", "162 cm", "163 cm", "164 cm", "165 cm","166 cm", "167 cm", "168 cm", "169 cm", "170 cm",
@@ -222,74 +219,5 @@ package com.revoola.utils
             "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
             "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")
 
-        /*//Height Array
-        val valuesFeet = arrayOf("1 Feet", "2 Feet", "3 Feet", "4 Feet", "5 Feet",
-            "6 Feet", "7 Feet", "8 Feet", "9 Feet")
-        val valuesInches = arrayOf("0 inches", "1 inches", "2 inches", "3 inches", "4 inches",
-            "5 inches", "6 inches", "7 inches", "8 inches", "9 inches","10 inches", "11 inches")
-        val valuesMatricHeight = arrayOf(
-            "151 cm", "152 cm", "153 cm", "154 cm", "155 cm","156 cm", "157 cm", "158 cm", "159 cm", "160 cm",
-            "161 cm", "162 cm", "163 cm", "164 cm", "165 cm","166 cm", "167 cm", "168 cm", "169 cm", "170 cm",
-            "171 cm", "172 cm", "173 cm", "174 cm", "175 cm","176 cm", "177 cm", "178 cm", "179 cm", "180 cm",
-            "181 cm", "182 cm", "183 cm", "184 cm", "185 cm","186 cm", "187 cm", "188 cm", "189 cm", "190 cm",
-            "191 cm", "192 cm", "193 cm", "194 cm", "195 cm","196 cm", "197 cm", "198 cm", "199 cm", "200 cm",
-            "201 cm", "202 cm", "203 cm", "204 cm", "205 cm","206 cm", "207 cm", "208 cm", "209 cm", "210 cm",
-            "211 cm", "212 cm", "213 cm", "214 cm", "215 cm","216 cm", "217 cm", "218 cm", "219 cm", "220 cm",
-            "221 cm", "222 cm","223 cm", "224 cm", "225 cm", "226 cm", "227 cm","228 cm","229 cm","230 cm",
-            "231 cm", "232 cm", "233 cm", "234 cm", "235 cm","236 cm", "237 cm", "238 cm", "239 cm", "240 cm",
-            "241 cm", "242 cm", "243 cm", "244 cm", "245 cm","246 cm", "247 cm", "248 cm", "249 cm", "250 cm",
-            "251 cm", "252 cm", "253 cm", "254 cm", "255 cm","256 cm", "257 cm", "258 cm", "259 cm", "260 cm",
-            "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
-            "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")*/
     }
-
-    /* else if (classType.equals(RLConstants.effort_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.steps_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.calories_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.duration_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.climbed_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.distance_custom_challenges)){
-
-     }else if (classType.equals(RLConstants.effort_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.steps_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.calories_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.duration_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.climbed_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.distance_daily_challenges)){
-
-     }else if (classType.equals(RLConstants.effort_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.steps_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.calories_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.duration_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.climbed_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.distance_weekly_challenges)){
-
-     }else if (classType.equals(RLConstants.effort_monthly_challenges)){
-
-     }else if (classType.equals(RLConstants.steps_monthly_challenges)){
-
-     }else if (classType.equals(RLConstants.calories_monthly_challenges)){
-
-     }else if (classType.equals(RLConstants.duration_monthly_challenges)){
-
-     }else if (classType.equals(RLConstants.climbed_monthly_challenges)){
-
-     }else if (classType.equals(RLConstants.distance_monthly_challenges)){
-
-     }*/
-}
+ }

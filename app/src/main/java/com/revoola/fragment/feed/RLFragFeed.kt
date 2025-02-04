@@ -57,7 +57,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
     //val valuesList = arrayOf("Friends", "Groups","You","Challenges")
-    private val valueslist = arrayOf("FRIENDS", "GROUPS","YOU","CHALLENGES")
+    private val valueslist = arrayOf("FRIENDS","GROUPS","YOU","CHALLENGES")
     private var adapter : RLFeedListAdapter?=null
     private var clickyou:Boolean=false
     private var currentState:String="FRIENDS"
@@ -80,17 +80,11 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
          lastfragmentopen= RLPrefManager.RLgetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
         RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
          currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
-        //TODO CURRENT USER CHANGES
-        currentUser=RLConstants.currentUser
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
@@ -146,7 +140,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         /*  fragBinding.imgPlus.setOnClickListener{
             (context as RLMainActivityRL.RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
         }*/
-        fragBinding.inlayFilter.loadSvg(RLConstants.friendsFab)
+        fragBinding.inlayFilter.loadSvg(RLConstants.Friends_Fab_SVG)
         fragBinding.inlayFilter.setOnClickListener {
            when(currentState){
                "CHALLENGES"->{(context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, true)}

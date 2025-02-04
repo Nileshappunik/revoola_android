@@ -120,8 +120,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
         fragBinding.inlayButton.commonButton.setText(R.string.save)
         fragBinding.inlayButton.commonButton.setOnClickListener {
-            val classType=  requireArguments().getString(RLConstants.CLASSTYPE,"")
-            val sensorType=  requireArguments().getString(RLConstants.HEARTSENSOR,"")
+            val classType=  requireArguments().getString(RLConstants.CLASS_TYPE,"")
+            val sensorType=  requireArguments().getString(RLConstants.HEART_SENSOR,"")
             if (classType.equals(RLConstants.BODY)){
 
                 val speedArray = arguments?.getDoubleArray("speedList")
@@ -133,13 +133,13 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 val distanceList: MutableList<Double> = distanceArray?.toMutableList() ?: mutableListOf()
                 val activeCaloriesList: MutableList<Double> = activeCaloriesArray?.toMutableList() ?: mutableListOf()
 
-                if (sensorType.equals(RLConstants.HEARTSENSOR)){
+                if (sensorType.equals(RLConstants.HEART_SENSOR)){
                     RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
                 }else  {
                     RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
                 }
             }else{
-                if (sensorType.equals(RLConstants.HEARTSENSOR)){
+                if (sensorType.equals(RLConstants.HEART_SENSOR)){
                     RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
                 }else  {
                     RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData)

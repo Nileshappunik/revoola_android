@@ -10,7 +10,6 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databinding.RlFragEditYourSensorBinding
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.gson.JsonObject
 
 
@@ -67,8 +66,8 @@ class RLFragEditYourSensor : RLBaseFragment() {
             val editdeviceName:String= fragBinding.edtSensorName.text.toString()
             if (editdeviceName.isNotEmpty()){
                 val jsonObject = JsonObject().apply {
-                    addProperty(RLConstants.DEVICENAME,editdeviceName)
-                    addProperty(RLConstants.DEVICEADDRESS,deviceAddress)
+                    addProperty(RLConstants.DEVICE_NAME,editdeviceName)
+                    addProperty(RLConstants.DEVICE_ADDRESS,deviceAddress)
                 }
                 com.revoola.utils.RLPrefManager.RLsetSomeJsonObjectValue(activity, com.revoola.utils.RLPrefManager.change_device_name, jsonObject)
                 RLcloseFragment()

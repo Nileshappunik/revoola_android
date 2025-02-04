@@ -242,7 +242,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             bundle.putString("gpxStringBuilder",gpxStringBuilder.toString()?:"")
 
 
-            bundle.putString("SENSOR",RLConstants.HEARTSENSOR)
+            bundle.putString("SENSOR",RLConstants.HEART_SENSOR)
             bundle.putDouble("avgRevPercentage",RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00))
             bundle.putDouble("burntCalories",RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00))
             bundle.putDouble("distance",RLYourWayCalvulation.noNanValueDouble(distance?:0.00))

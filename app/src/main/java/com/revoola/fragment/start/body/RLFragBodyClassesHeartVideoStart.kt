@@ -238,8 +238,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
     private fun RLCompleteSessionFragmentOpen(data: String, videoID: String) {
         val bundle: Bundle = Bundle()
         bundle.putString("VIDEODATA",data)
-        bundle.putString(RLConstants.CLASSTYPE, RLConstants.BODY)
-        bundle.putString(RLConstants.HEARTSENSOR, RLConstants.HEARTSENSOR)
+        bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
+        bundle.putString(RLConstants.HEART_SENSOR, RLConstants.HEART_SENSOR)
         bundle.putString("videoID",videoID)
 
         bundle.putString("totalTime",(totalTime?:"0"))

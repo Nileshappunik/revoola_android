@@ -160,10 +160,10 @@ class RLBLEService : Service() {
                 val hasHeartRateService = gatt.services.any { it.uuid == UUID_HEART_RATE_SERVICE }
                 val hasSpeedService = gatt.services.any { it.uuid == UUID_SPEED_SERVICE }
                 if (hasHeartRateService) {
-                    RLbroadcastConnectionDeviceType(RLConstants.HEARTSENSOR, true)
+                    RLbroadcastConnectionDeviceType(RLConstants.HEART_SENSOR, true)
                     RLheartRateServicesDiscovered(gatt)
                 }else if (hasSpeedService){
-                    RLbroadcastConnectionDeviceType(RLConstants.SPEEDSENSOR, true)
+                    RLbroadcastConnectionDeviceType(RLConstants.SPEED_SENSOR, true)
                     RLspeedAndCadenceServicesDiscovered(gatt)
                 }
             } else {

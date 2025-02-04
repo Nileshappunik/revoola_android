@@ -27,7 +27,6 @@ import com.revoola.fragment.start.classes.RLClassesSchedule
 import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
-import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import java.util.UUID
 
@@ -128,7 +127,7 @@ class RLFragMindClassesView : RLBaseFragment() {
         fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASSTYPE,classtype)
+            bundle.putString(RLConstants.CLASS_TYPE,classtype)
             bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
             bundle.putString("Message","")
             (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)

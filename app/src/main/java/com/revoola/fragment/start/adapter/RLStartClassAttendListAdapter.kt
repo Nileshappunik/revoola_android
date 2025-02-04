@@ -46,7 +46,7 @@ class RLStartClassAttendListAdapter(var dataList: MutableList<RLRanking>, val co
 
             layoutBinding.txtFriendName.setText(cardData.displayName)
             Glide.with(context).load(cardData.displayImage).into(layoutBinding.imgFriend)
-            Glide.with(context).load(RLConstants.flagsImageUrl+cardData.flagImage).into(layoutBinding.imgCountryFlag)
+            Glide.with(context).load(RLConstants.Flags_Image_Url+cardData.flagImage).into(layoutBinding.imgCountryFlag)
 
             val totalRev : Double =( cardData.totalRev?:0.00).toString().toDouble()
             val zoneColor=RLTools.RLGetZoneColor(RLTools.RLGetZoneNo(totalRev.roundToInt()))
