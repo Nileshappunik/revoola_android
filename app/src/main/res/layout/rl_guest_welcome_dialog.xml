@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/AppWhiteColor"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <ImageView
+            android:id="@+id/ivClose"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:scaleType="fitXY"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_cancel_gray"/>
+
+        <ImageView
+            android:id="@+id/iv_Logo"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:src="@drawable/ic_revoola_logo"
+            app:tint="@color/AppMainColor"/>
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Welcome"
+            android:fontFamily="@font/aptos_regular"
+            android:textStyle="bold"
+            android:layout_below="@+id/iv_Logo"
+            android:textColor="@color/black"
+            android:textSize="28sp"/>
+
+        <TextView
+            android:id="@+id/tvGuest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Hi Guest"
+            android:fontFamily="@font/aptos_regular"
+            android:textColor="@color/black"
+            android:textSize="26sp"
+            android:layout_below="@+id/tvWelcome" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="start"
+            android:fontFamily="@font/aptos_regular"
+            android:text="Feeling great is easier than you think! Answer these 4 questions and we'll create a personalised Revoola plan just for you."
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_below="@+id/tvGuest"/>
+
+        <LinearLayout
+            android:id="@+id/btnGetStarted"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/square_border"
+            android:layout_below="@+id/tvDescription"
+            android:backgroundTint="@color/AppLightGrayColor"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawablePadding="10dp"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/black"
+                android:fontFamily="@font/aptos_regular"
+                android:gravity="center_vertical"
+                android:background="@null"
+                android:text="Great. Let's get started"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_gravity="center_vertical"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/ic_arrow_right"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvOr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:text="or"
+            android:fontFamily="@font/aptos_regular"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_below="@+id/btnGetStarted" />
+
+        <LinearLayout
+            android:id="@+id/btnSkip"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_below="@+id/tvOr"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/square_border"
+            android:backgroundTint="@color/AppLightGrayColor"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawablePadding="10dp"
+                android:textSize="16sp"
+                android:background="@null"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/black"
+                android:fontFamily="@font/aptos_regular"
+                android:gravity="center_vertical"
+                android:text="No thanks. I don't want my personalised plan"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_gravity="center_vertical"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/ic_arrow_right"/>
+        </LinearLayout>
+
+</RelativeLayout>
+</layout>

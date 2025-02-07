@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.revoola.R
+import com.revoola.fragment.guest.RLWelcomeDialog
 
 class RLSplashFirstActivity : AppCompatActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
@@ -40,5 +41,7 @@ class RLSplashFirstActivity : AppCompatActivity() {
 
     }
 
-
+    private fun RLDialogShow(){
+        RLWelcomeDialog().show(supportFragmentManager, "RLWelcomeDialog")
+    }
 }

@@ -19,6 +19,6 @@
         android:title="@string/friends" />
     <item
         android:id="@+id/more"
-        android:icon="@drawable/ic_more_horiz"
+        android:icon="@drawable/ic_three_dot"
         android:title="@string/more" />
 </menu>

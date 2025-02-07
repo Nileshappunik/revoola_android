@@ -202,8 +202,8 @@ class RLSplashActivityRL : RLBaseActivity() {
             "dob" to dob,
             "TMHR" to TMHR,
             "AMHR" to AMHR,
-            "RFMHR" to RFMHR
-        )
+            "RFMHR" to RFMHR)
+
         /*val setUpMyProfile = mapOf(
             "email" to emailId,
             "gender" to "Male",
@@ -213,6 +213,7 @@ class RLSplashActivityRL : RLBaseActivity() {
             "paidortrial" to userService.subscriptionName,
             "next_payment_date" to userService.subscriptionTime,
             "subscription_end_date" to userService.subscriptionTime)
+
         val updateUserInsightlyMoe = mapOf(
             "email" to emailId,
             "uid" to userId,

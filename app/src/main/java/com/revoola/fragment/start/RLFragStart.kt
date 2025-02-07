@@ -64,7 +64,7 @@ class RLFragStart : RLBaseFragment() {
 
         fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
+                //Remove the listener to avoid multiple calls
                 fragBinding.rvStart.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                 val height =  fragBinding.rvStart.height
@@ -74,13 +74,12 @@ class RLFragStart : RLBaseFragment() {
                 fragBinding.rvStart.layoutManager = linearLayoutMain
                 val adapter = RLStartListAdapter(activity,dataList,height)
                 fragBinding.rvStart.adapter=adapter
-
             }
         })
-
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
+
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
     }
 
