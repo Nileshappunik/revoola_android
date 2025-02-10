@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlExpandableListItemMoreBinding
+import com.revoola.fragment.more.RLFragFaQs
 import com.revoola.fragment.more.RLFragGetStarted
 import com.revoola.model.RLMoreGroupItemModel
 
@@ -46,12 +47,18 @@ class RLHelpItemListAdapter(
             layoutBinding.layMoreClick.setOnClickListener {
                 when(cardData.title){
                     context.resources.getString(R.string.aquickintroduction)->{
+                        val bundle=Bundle()
+                        bundle.putBoolean("isFAqs",false)
+                        (context as RLMainActivityRL).RLloadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
 
                     }
                     context.resources.getString(R.string.getttingstarted)->{
                         (context as RLMainActivityRL).RLloadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)
                     }
                     context.resources.getString(R.string.faqs)->{
+                        val bundle=Bundle()
+                        bundle.putBoolean("isFAqs",true)
+                        (context as RLMainActivityRL).RLloadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
 
                     }
                 }

@@ -76,6 +76,18 @@ package com.revoola.utils
         const val URL_V3: String = "getResponse_v3.php"
         const val URL_V2: String = "getResponse_v2.php"
 
+
+        //Help Url ALl
+        const val FaQS_URL:String = "https://www.revoola.com/faqs"
+        const val Quick_Introduction_Url:String = "https://takeoff.jetstre.am/?account=revoola&file=AQuickTour5WebinPhone.mp4&type=streaming&service=wowza&protocol=https&output=playlist.m3u8"
+        const val Connecting_HearRate_Help_Video:String =  "connecting_heart_rate_sensor"
+        const val Connecting_Speed_Help_Video:String =  "connecting_speed_sensor"
+        const val Connecting_Apple_Watch_Help_Video:String =  "connecting_apple_watch"
+        const val A_Quick_Tour_of_Revoola_Help_Video:String =  "quick_tour"
+        const val Name_You_Sensor_Help_Video:String =  "name_your_sensor"
+        const val Troubleshooting_Cant_Find_My_Sensor_Help_Video:String =  "troubleshooting"
+
+
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
         const val Revenuecat_Api_Key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"
 

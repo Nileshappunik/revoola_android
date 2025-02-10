@@ -1,16 +1,23 @@
 package com.revoola.fragment.more
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
+import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.*
+import com.revoola.firebaseModel.RLGetStartedHelpVideo
 import com.revoola.fragment.more.adapter.RLGetStartedItemListAdapter
 import com.revoola.model.RLMoreGroupItemModel
+import com.revoola.model.RLRevoolaUsersSettingsModel
+import com.revoola.utils.RLConstants
 
 class RLFragGetStarted : RLBaseFragment() {
     val TAG: String = RLFragGetStarted::class.java.simpleName
@@ -45,8 +52,35 @@ class RLFragGetStarted : RLBaseFragment() {
 
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.recyclerview.layoutManager = linearLayoutMain
-        val adapter = RLGetStartedItemListAdapter(activity, dataList)
+        val adapter = RLGetStartedItemListAdapter(activity, dataList) {selectedItem ->
+            // Handle date selection
+            when(selectedItem){
+                getString(R.string.heartratesensor)->{
+                    RLOpenClickNextView(RLConstants.Connecting_HearRate_Help_Video)
+                }
+                getString(R.string.connectingaspeedsensor)->{
+                    RLOpenClickNextView(RLConstants.Connecting_Speed_Help_Video)
+                }
+                getString(R.string.aquicktourofrevoola)->{
+                    RLOpenClickNextView(RLConstants.A_Quick_Tour_of_Revoola_Help_Video)
+                }
+                getString(R.string.connectionapplewatch)->{
+                    RLOpenClickNextView(RLConstants.Connecting_Apple_Watch_Help_Video)
+                }
+                getString(R.string.icantfindmysensor)->{
+                    RLOpenClickNextView(RLConstants.Troubleshooting_Cant_Find_My_Sensor_Help_Video)
+                }
+                getString(R.string.nameyoursensor)->{
+                    RLOpenClickNextView(RLConstants.Name_You_Sensor_Help_Video)
+                }
+            }
+        }
         fragBinding.recyclerview.adapter = adapter
+    }
+
+    private fun RLOpenClickNextView(HelpType: String) {
+        val videoDialog = RLFragGetStartedVideoPlay(HelpType)
+        videoDialog.show(parentFragmentManager, "RLFragGetStartedVideoPlay")
     }
 
 }

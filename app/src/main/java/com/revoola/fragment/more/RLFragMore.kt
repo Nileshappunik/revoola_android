@@ -54,7 +54,8 @@ class RLFragMore : RLBaseFragment() {
         fragBinding.cardSchdualedclasses.setOnClickListener {
             (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
-        val editAccountChildDataList = listOf("CURRENT SUBSCRIPTION","CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")
+
+        val editAccountChildDataList = listOf("CURRENT SUBSCRIPTION","CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA","TRY PREMIUM FOR FREE")
         // Prepare the Data
         val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_sensors_g,resources.getString(R.string.syncwatchdata),emptyList()),
@@ -101,6 +102,9 @@ class RLFragMore : RLBaseFragment() {
                 }
                 "REQUEST TO DELETE YOUR DATA"->{
                     RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
+                }
+                "TRY PREMIUM FOR FREE"->{
+
                 }
             }
             false

@@ -686,8 +686,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 isExpande=true
                 binding.PERIODLAYOUT.visibility=View.GONE
             }
-
-
         }
 
         binding.tvClose.setOnClickListener {

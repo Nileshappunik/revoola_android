@@ -9,11 +9,14 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.revoola.R
 import com.revoola.databinding.RlListItemGetStarttedBinding
+import com.revoola.fragment.more.RLFragGetStartedVideoPlay
 import com.revoola.model.RLMoreGroupItemModel
+import com.revoola.utils.RLConstants
+import java.util.Date
 
 class RLGetStartedItemListAdapter(
     val context: FragmentActivity?,
-    val dataList: List<RLMoreGroupItemModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    val dataList: List<RLMoreGroupItemModel>, private val onItemSelected: (String) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLHelpItemListAdapter"
     var bundle: Bundle = Bundle()
 
@@ -42,26 +45,7 @@ class RLGetStartedItemListAdapter(
             layoutBinding.imgAccount.setImageResource(cardData.icon)
             layoutBinding.layMoreClick.setBackgroundColor(context!!.resources.getColor(R.color.AppWhiteColor))
             layoutBinding.layMoreClick.setOnClickListener {
-                when(cardData.title){
-                    context.resources.getString(R.string.heartratesensor)->{
-
-                    }
-                    context.resources.getString(R.string.connectingaspeedsensor)->{
-
-                    }
-                    context.resources.getString(R.string.aquicktourofrevoola)->{
-
-                    }
-                    context.resources.getString(R.string.connectionapplewatch)->{
-
-                    }
-                    context.resources.getString(R.string.icantfindmysensor)->{
-
-                    }
-                    context.resources.getString(R.string.nameyoursensor)->{
-
-                    }
-                }
+                onItemSelected(cardData.title)
             }
 
         }

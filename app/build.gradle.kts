@@ -166,6 +166,7 @@ dependencies {
     implementation ("androidx.media3:media3-exoplayer:1.0.0")
     implementation ("androidx.media3:media3-ui:1.0.0")
     implementation ("androidx.media3:media3-exoplayer-dash:1.0.0")
+    implementation ("androidx.media3:media3-exoplayer-hls:1.0.0")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")

@@ -98,6 +98,17 @@ class RLDatabaseManagerRead {
         }
     }
 
+    fun RlHelpVideoGetDataRead(HelpType: String,callback: (Any?, Exception?) -> Unit) {
+        val path ="/proposedstructure/codeSection/getStartedVideos/$HelpType"
+        database.child(path).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(task.result?.value, null)
+            } else {
+                callback(null, task.exception)
+            }
+        }
+    }
+
     fun RLClassLeaderBoardDataRead(viedoId: String,callback: (Any?, String?) -> Unit){
         val leaderboardMap = mutableMapOf<String, RLChallengeRiderBody>()
         val path ="/proposedstructure/revoolaClassLeaderBoards/$viedoId"

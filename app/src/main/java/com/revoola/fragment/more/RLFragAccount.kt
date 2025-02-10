@@ -22,7 +22,6 @@ import com.revenuecat.purchases.purchaseWith
 import com.revoola.fragment.more.adapter.PaywallItem
 import com.revoola.fragment.more.adapter.RLPaywallAdapter
 
-
 class RLFragAccount : RLBaseFragment() {
     val TAG: String = RLFragAccount::class.java.simpleName
     lateinit var fragBinding: RlFragAccountBinding

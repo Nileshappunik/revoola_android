@@ -76,6 +76,11 @@ class RlMoreExpandableListAdapter(
         viewimgtxt1.visibility=View.GONE
         txt_Child.visibility=View.VISIBLE
         txt_Child.text = childItem
+        if (childItem.equals("TRY PREMIUM FOR FREE")){
+            txt_Child.setTextColor(context.getColor(R.color.AppMainColor))
+        }else{
+            txt_Child.setTextColor(context.getColor(R.color.AppBlackColor))
+        }
         return view
     }
 
