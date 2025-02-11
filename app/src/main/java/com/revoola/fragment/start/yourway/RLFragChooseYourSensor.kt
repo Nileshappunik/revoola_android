@@ -79,7 +79,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment, "RLFragChooseYourSensor")
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment, "RLFragChooseYourSensor")
         RLuisetup()
 
         return fragBinding.root
@@ -120,7 +120,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
         }
         fragBinding.tvgo.setOnClickListener {
             var isspeedsensor:Boolean=false
-            val lastdevicetype= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
+            val lastdevicetype= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
             if (!lastdevicetype.isNullOrEmpty()){
                 connecetedDeviceType=lastdevicetype
             }
@@ -313,7 +313,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
                 "ACTION_DEVICE_FOUND" -> {
                     fragBinding.cardHeartRateSensor.visibility = View.VISIBLE
                     val lastConnectDeviceAddress =
-                        com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
+                        com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
 
                     val deviceName:String = intent.getStringExtra("DEVICE_NAME").toString()
                     val deviceAddress:String = intent.getStringExtra("DEVICE_ADDRESS").toString()
@@ -329,7 +329,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
                 }
                 "ACTION_DEVICE_FOUND_SPEED" -> {
                     fragBinding.cardCadenceSensor.visibility = View.VISIBLE
-                    val lastConnectDeviceAddress = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
+                    val lastConnectDeviceAddress = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "")
 
                     val deviceName:String = intent.getStringExtra("DEVICE_NAME").toString()
                     val deviceAddress:String = intent.getStringExtra("DEVICE_ADDRESS").toString()
@@ -363,7 +363,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
         if (device != null) {
             // Handle the found device
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, deviceAddress)
+            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, deviceAddress)
           //  rlbleService!!.RLconnectToDevice(device)
         }
     }
@@ -412,7 +412,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter {
             connecetedDeviceType=deviceType
             RLTools.RlLogDPrint(TAG, "BLE connection isconnection:-  $connecetedDeviceType")
             RLhandleDeviceFound(deviceAddress)
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, deviceAddress)
+            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, deviceAddress)
         }else{
             if (deviceType.equals(connecetedDeviceType)){
                 connecetedDeviceType=""

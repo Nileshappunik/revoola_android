@@ -59,7 +59,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
         RLuisetup()
         return fragBinding.root
     }

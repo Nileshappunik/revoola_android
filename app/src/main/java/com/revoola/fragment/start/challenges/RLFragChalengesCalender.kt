@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,7 +77,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_calender, container) as RlFragChalengesCalenderBinding
-       RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
+       RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
         RLuisetup()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -648,7 +647,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
+        val jsonString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

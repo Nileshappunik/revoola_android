@@ -1,22 +1,16 @@
 package com.revoola.fragment.more
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.activity.RLMainActivityRL
-import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.*
-import com.revoola.firebaseModel.RLGetStartedHelpVideo
 import com.revoola.fragment.more.adapter.RLGetStartedItemListAdapter
 import com.revoola.model.RLMoreGroupItemModel
-import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLConstants
 
 class RLFragGetStarted : RLBaseFragment() {
@@ -33,7 +27,7 @@ class RLFragGetStarted : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_get_started, container) as RlFragGetStartedBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragGetStarted")
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragGetStarted")
         RLuisetup()
         return fragBinding.root
     }

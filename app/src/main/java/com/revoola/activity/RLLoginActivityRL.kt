@@ -9,7 +9,6 @@ import android.widget.Toast
 import com.revoola.base.RLBaseActivity
 import com.revoola.R
 import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databinding.RlActivityLoginBinding
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.facebook.*
@@ -30,7 +29,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLFirebaseManager
-import com.revoola.utils.RLPrefManager
 
 class RLLoginActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginActivityRL::class.java.simpleName
@@ -190,8 +188,8 @@ class RLLoginActivityRL : RLBaseActivity() {
     }
     private fun RLupdateUI(user: FirebaseUser?) {
         if (user != null) {
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,user.uid)
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,user.email)
+            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,user.uid)
+            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,user.email)
             val userid:String= user.uid?:""
             val email:String=user.email?:""
             RLSetUsernameToFirebase(userid,email)

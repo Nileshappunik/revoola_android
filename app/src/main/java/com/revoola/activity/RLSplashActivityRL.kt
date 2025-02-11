@@ -1,62 +1,58 @@
 package com.revoola.activity
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.revoola.R
 import com.revoola.base.RLBaseActivity
 import com.revoola.databinding.RlActivitySplashBinding
 import com.revoola.utils.RLPrefManager
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.gson.Gson
 import com.revoola.RLBaseProgress
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RLFirebaseManager
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLConstants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class RLSplashActivityRL : RLBaseActivity() {
     val TAG: String = RLSplashActivityRL::class.java.simpleName
     lateinit var activityBinding: RlActivitySplashBinding
-
-    companion object {
-        const val ACTIVITY_FINE_LOCATION_PERMISSION_REQUEST_CODE = 1002
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         RLScreenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
-        RLlocatiobpermissioncheck()
         RLRemoteConfig()
-        val userId= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
+        RLBaseProgress.RLShowProgressDialog(this)
+        val userId= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){
+            RLBaseProgress.RLhideProgressDialog()
             activityBinding.btnFullExperience.setOnClickListener {
+                RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
                 startActivity(Intent(this, RLLoginActivityRL::class.java))
                 finish()
             }
             activityBinding.btnGuestUser.setOnClickListener {
+                RLBaseProgress.RLShowProgressDialog(this)
+                RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,true)
                 RLGuestUser()
-//                startActivity(Intent(this, RLMainActivityRL::class.java))
-//                finish()
             }
         }else{
             RLTools.RlLogEPrint(TAG,"USer: $userId")
-            startActivity(Intent(this, RLMainActivityRL::class.java))
-            finish()
+            if (RLPrefManager.RLGetGuestUser(this)){
+                RLBaseProgress.RLhideProgressDialog()
+                startActivity(Intent(this, RLMainActivityRL::class.java))
+                finish()
+            }else{
+                RLSetUsernameToFirebase(userId)
+            }
         }
     }
 
@@ -100,42 +96,36 @@ class RLSplashActivityRL : RLBaseActivity() {
                     val challenge_selectFor = remoteConfig.getString("challenge_selectFor")
                     val challenge_selectTarget = remoteConfig.getString("challenge_selectTarget")
                     val challenge_selectName = remoteConfig.getString("challenge_selectName")
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
-                    RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
+                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
+                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
+                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
+                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
+                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
                 } else {
                    RLTools.RlLogEPrint(TAG, "Fetch failed")
                 }
             })
     }
 
-    private fun RLlocatiobpermissioncheck(){
-        // Check if the permission is granted
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted, request it
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                ACTIVITY_FINE_LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            // Permission is already granted
-            //onActivityRecognitionPermissionGranted()
-        }
-    }
+    private fun RLSetUsernameToFirebase(userId:String){
+        //Firebase To Fetch UserData
+        RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                RLBaseProgress.RLhideProgressDialog()
+                if (userData.isBasicDataAdded){
 
-    //Handle the permission result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RLMainActivityRL.ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                //onActivityRecognitionPermissionGranted()
-            } else {
-                // Permission denied
-                Toast.makeText(this, "Activity Location Permission Denied", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, RLMainActivityRL::class.java))
+                    finish()
+                }else{
+                    startActivity(Intent(this, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",false))//.putExtra("EmailId",emailId).putExtra("Password",password))
+                    finish()
+                }
             }
         }
+
     }
 
     data class RLUser(
@@ -166,8 +156,8 @@ class RLSplashActivityRL : RLBaseActivity() {
         firebaseManager.RLRevoolaUserSettingFirebaseEntry(userId, emailId, versionName) { success ->
             if (success) {
                 RLBaseProgress.RLhideProgressDialog()
-                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user, userId)
-                RLPrefManager.RLsetSomeStringValue(this, RLPrefManager.current_user_email, emailId)
+                RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user, userId)
+                RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email, emailId)
                 startActivity(Intent(this, RLMainActivityRL::class.java))
                 finish()
             } else {

@@ -12,6 +12,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -32,60 +34,14 @@ open class  RLBaseActivity: AppCompatActivity() {
     lateinit var activity: Activity
     lateinit var RLApiClientRetrofit: RLApiClientRet
 
-
-    fun RLsetAct(activity: Activity) {
-        this.activity = activity
-    }
-
    open fun RLonBackPresAct(o: ImageView) {
         o.setOnClickListener { v: View? -> super.onBackPressed() }
     }
 
-    open fun RLonClickNoTask(o: LinearLayout) {
-        o.setOnClickListener { v: View? -> }
-    }
-
-
-    //TODO : Full Screen
-    open fun RLfullScreen() {
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
-    }
-
-    //TODO : Full Screen
-    open fun RLsetStatusBarDark() {
-        window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR//  set status RLText dark
-        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-    }
-
-    //TODO : DataBind
+    // DataBind
     open fun RLinflateBindLayout(activity1: Activity, layoutName: Int): Any? {
         activity = activity1
         return DataBindingUtil.setContentView(activity1, layoutName)
-    }
-
-    open fun RLclickActiviy(o: View, cls: Class<*>?, finishAll: String) {
-        if (finishAll == "NEXT") {
-            o.setOnClickListener { RLnextActivity(cls) }
-        } else if (finishAll == "ALL") {
-            o.setOnClickListener { RLnextFinishAllActivity(activity, cls) }
-        }
-    }
-
-    open fun RLnextActivity(cls: Class<*>?) {
-        val intent = Intent(activity, cls)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
-    open fun RLnextFinishAllActivity(activity: Activity, cls: Class<*>?) {
-        val intent = Intent(activity, cls)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
     }
 
     open fun RLScreenSet(isLandScape:Boolean) {
@@ -128,7 +84,25 @@ open class  RLBaseActivity: AppCompatActivity() {
     }
 
 
+    // Register All permission request launcher at the class level
+    val RLRequestPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val deniedPermissions = permissions.filterValues { !it }
+            /*if (deniedPermissions.isEmpty()) {
+                Toast.makeText(this, "All permissions granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Some permissions denied: $deniedPermissions", Toast.LENGTH_LONG).show()
+            }*/
+        }
 
+    // Register permission request launcher at the class level
+     val RLRequestPermissionHealthConnectLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val allGranted = permissions.values.all { it }
+        if (allGranted) {
+            Toast.makeText(this, "Health permissions granted", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Health permissions denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
 

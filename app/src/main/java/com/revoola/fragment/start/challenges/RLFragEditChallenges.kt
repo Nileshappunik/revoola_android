@@ -1,17 +1,13 @@
 package com.revoola.fragment.start.challenges
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,21 +17,16 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlDialogHelpStartBinding
-import com.revoola.databinding.RlFragSetYourGoalBinding
 import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
 import com.revoola.databinding.RlFragEditChallengesBinding
 import com.revoola.fragment.start.RLFragStart
-import com.revoola.fragment.start.challenges.adapter.RLCalenderListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLEditChallengesAdapter
 import com.revoola.fragment.start.challenges.model.RLEditChallenge
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
-import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
-import java.text.NumberFormat
-import java.util.Locale
 
 class RLFragEditChallenges : RLBaseFragment() {
     val TAG: String = RLFragEditChallenges::class.java.simpleName
@@ -55,8 +46,8 @@ class RLFragEditChallenges : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_challenges, container) as RlFragEditChallengesBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditChallenges" )
-        CurrentUserID=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditChallenges" )
+        CurrentUserID=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
@@ -192,7 +183,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

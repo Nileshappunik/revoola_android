@@ -23,7 +23,7 @@ class RLFragInviteFriends : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_invite_friends, container) as RlFragInviteFriendsBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragInviteFriends" )
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragInviteFriends" )
         fragBinding.toolbar.tvTitle.visibility=View.GONE
         RLonBackPresAct(fragBinding.toolbar.ivBack)
         RLuisetup()

@@ -121,7 +121,7 @@ class RELDynamicLinkManager private   constructor() {
 
         if(deepLinkPage.equals("m") || deepLinkPage.equals("b") || deepLinkPage.equals("o")) {
             val databaseManager = RLDatabaseManagerWrite()
-            val currentUser=  RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.current_user, "")
+            val currentUser=  RLPrefManager.RLGetSomeStringValue(context, RLPrefManager.current_user, "")
             databaseManager.REVOOLADEEPLINKWrite(currentUser)
             when (deepLinkPage) {
                 "m" -> {
@@ -355,7 +355,7 @@ class RELDynamicLinkManager private   constructor() {
     }
 
     private fun RLChallengeDataGetApi(challengeid:Int){
-        val currentUser=  RLPrefManager.RLgetSomeStringValue(context, RLPrefManager.current_user, "")
+        val currentUser=  RLPrefManager.RLGetSomeStringValue(context, RLPrefManager.current_user, "")
         val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
         //var id:Int, var type:String, var today:String,var challengeid:Int
         val request = listOf(

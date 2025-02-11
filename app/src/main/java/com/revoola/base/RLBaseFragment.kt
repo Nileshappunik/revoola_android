@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead
@@ -25,6 +27,8 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.commonobject.RLTools.RLnextFinishAllActivity
 import com.google.gson.Gson
+import com.moengage.core.MoECoreHelper
+import com.revoola.activity.RLSplashActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.utils.RLPrefManager
 import java.time.ZonedDateTime
@@ -88,7 +92,7 @@ open class RLBaseFragment : Fragment() {
     }
 
     fun RLGetUserDetails(context: Context): RLRevoolaUsersSettingsModel? {
-        val  json = RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.user_model_data,null)
+        val  json = RLPrefManager.RLGetSomeStringValue(requireContext(), RLPrefManager.user_model_data,null)
         val gson = Gson()
 
         return if (json != null) {
@@ -102,6 +106,16 @@ open class RLBaseFragment : Fragment() {
         val intent = Intent(activity, cls)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
+    }
+
+    open fun RLSignOut() {
+        Firebase.auth.signOut()
+        MoECoreHelper.logoutUser(requireContext())
+        // RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
+        RLPrefManager.RLClear_all(requireContext())
+        val intent = Intent(requireContext(), RLSplashActivityRL::class.java)
+        startActivity(intent)
+        activity?.finish()
     }
 
     /*open fun RLopeDrawerBar(findId: View) {
@@ -185,7 +199,7 @@ open class RLBaseFragment : Fragment() {
     }
 
     open fun RLHelpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
-        val helpString= com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, startHelpContent,"" )
+        val helpString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, startHelpContent,"" )
 
         if (helpString.isNotEmpty()){
             try {

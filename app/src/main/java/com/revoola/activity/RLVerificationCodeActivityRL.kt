@@ -162,7 +162,7 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
 
     }
     private fun RlLoginSuccessful(userId:String){
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,userId)
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,userId)
         startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",true))
         finish()
     }

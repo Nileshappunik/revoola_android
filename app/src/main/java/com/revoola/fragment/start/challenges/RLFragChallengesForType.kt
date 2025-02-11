@@ -40,7 +40,7 @@ class RLFragChallengesForType : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_type, container) as RlFragChallengesForTypeBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForType" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForType" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
@@ -105,7 +105,7 @@ class RLFragChallengesForType : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

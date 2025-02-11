@@ -42,7 +42,7 @@ class RLFragStart : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         RLStartList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -88,7 +88,9 @@ class RLFragStart : RLBaseFragment() {
             if (userData != null) {
                 val gson = Gson()
                 val json = gson.toJson(userData)
-                RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.user_model_data,json)
+                if (isAdded) {  // Check if fragment is attached
+                    RLPrefManager.RLSetSomeStringValue(requireContext(), RLPrefManager.user_model_data, json)
+                }
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
@@ -147,7 +149,7 @@ class RLFragStart : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.start_help_content,"")
+        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.start_help_content,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

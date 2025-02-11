@@ -22,7 +22,6 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
-import com.moengage.core.internal.logger.LOG_LEVEL_TO_TYPE_MAPPING
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
@@ -44,7 +43,7 @@ class RLFragChallengesForName : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
@@ -140,7 +139,7 @@ class RLFragChallengesForName : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
+        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

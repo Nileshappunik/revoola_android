@@ -88,7 +88,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
         authManager = RLAuthManager()
          userId = authManager.RlgetCurrentUser()!!.uid
-        emailId = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,"")
+        emailId = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,"")
 
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             RLRevoolaUserSettingWrite()

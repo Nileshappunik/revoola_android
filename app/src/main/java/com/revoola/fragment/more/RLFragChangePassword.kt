@@ -26,7 +26,7 @@ class RLFragChangePassword : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_change_password, container) as RlFragChangePasswordBinding
 
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChangePassword" )
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChangePassword" )
         RLonBackPresAct(fragBinding.ivBack)
         RLuisetup()
         return fragBinding.root

@@ -112,7 +112,7 @@ class RLBLEManagerHeartRate(private val context: Context) {
     }
 
     private fun connectToLastDevice() {
-        val lastDeviceAddress = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(
+        val lastDeviceAddress = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(
             context, com.revoola.utils.RLPrefManager.last_device_connect, ""
         )
         if (lastDeviceAddress.isNotEmpty()) {

@@ -22,7 +22,7 @@ class RLFragNoInternet : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         noInternetConnectionBinding = DataBindingUtil.inflate(inflater, R.layout.rl_no_internet_connection, container, false) as RlNoInternetConnectionBinding
         noInternetConnectionBinding.layoutNotConnect.setOnClickListener(View.OnClickListener { })
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragNoInternet" )
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragNoInternet" )
         noInternetConnectionBinding.tvRetry.setOnClickListener(View.OnClickListener {
             RLApiClientRetrofit =
                 RLApiClientRet(activity)

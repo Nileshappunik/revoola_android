@@ -47,8 +47,8 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_right_body_heart_video, container) as RlFragRightBodyHeartVideoBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragRightBodyWithHeartVideo")
-        currentUserID =  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user,"")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragRightBodyWithHeartVideo")
+        currentUserID =  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user,"")
         RLuisetup()
         return fragBinding.root
     }

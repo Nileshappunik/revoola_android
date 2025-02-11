@@ -74,7 +74,6 @@ class RLFirebaseManager {
             "weightkg" to "77")
         databaseManager.REVOOLAUSERSETTINGSWrite(userId,revoolaUserSettingsMap) { success, error ->
             callback(success)
-
         }
     }
 

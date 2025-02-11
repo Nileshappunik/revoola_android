@@ -32,14 +32,14 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
         RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.toolbarLogin.tvTitle.setText(R.string.basicdetails)
 
-        emailID= RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.login_email,"")
-        password=RLPrefManager.RLgetSomeStringValue(this,RLPrefManager.login_password,"")
+        emailID= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.login_email,"")
+        password=RLPrefManager.RLGetSomeStringValue(this,RLPrefManager.login_password,"")
 
         IsNewUser=intent.getBooleanExtra("IsNewUser",false)
       //  emailID= intent.getStringExtra("EmailId").toString()
       //  password= intent.getStringExtra("Password").toString()
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            val  userId=RLPrefManager.RLgetSomeStringValue(this, RLPrefManager.current_user,"")
+            val  userId=RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")
             RlLoginSuccessful(userId)
 
         })
@@ -190,8 +190,9 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     */
 
     private fun RlLoginSuccessful(userId:String){
-      RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,userId)
-       RLPrefManager.RLsetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,emailID)
+      RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,userId)
+       RLPrefManager.RLSetSomeStringValue(this,RLPrefManager.current_user_email,emailID)
+       RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
         startActivity(Intent(this, RLSignUpActivityRL::class.java)
             .putExtra("firstName",firstName)
             .putExtra("lastName",lastName)

@@ -23,7 +23,7 @@
                 android:id="@+id/relay_OverviewName"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:background="@color/AppNEWBGColor">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_user"

@@ -53,7 +53,7 @@ class RLClassesSchedule : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLClassesSchedule" )
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLClassesSchedule" )
         RLuisetup()
         return fragBinding.root
     }
@@ -151,7 +151,7 @@ class RLClassesSchedule : RLBaseFragment() {
             selectedCalendar.set(Calendar.MINUTE, selectedMinute)
             val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val formattedTime = timeFormat.format(selectedCalendar.time)
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
+            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
             //fragBinding.txtSelectDatatime.text = "$selectdate  $selectedHour:$selectedMinute"
             fragBinding.txtSelectDatatime.text = "$selectdate  $formattedTime"
             val color = ContextCompat.getColor(requireContext(), R.color.AppMainColor)
@@ -225,7 +225,7 @@ class RLClassesSchedule : RLBaseFragment() {
     }
     private fun RLAddEventToCalendar() {
         try {
-            val dateString = com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
+            val dateString = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
 
             val calendar = RLParseDateString(dateString.toString())
             val startMillis = calendar.timeInMillis

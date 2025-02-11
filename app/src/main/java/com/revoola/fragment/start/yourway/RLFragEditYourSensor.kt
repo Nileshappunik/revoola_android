@@ -11,6 +11,7 @@ import com.revoola.R
 import com.revoola.databinding.RlFragEditYourSensorBinding
 import com.revoola.utils.RLConstants
 import com.google.gson.JsonObject
+import com.revoola.utils.RLPrefManager
 
 
 class RLFragEditYourSensor : RLBaseFragment() {
@@ -31,7 +32,7 @@ class RLFragEditYourSensor : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_your_sensor, container) as RlFragEditYourSensorBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragEditYourSensor" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditYourSensor" )
         RLuisetup()
         return fragBinding.root
     }
@@ -57,8 +58,8 @@ class RLFragEditYourSensor : RLBaseFragment() {
         }
 
         fragBinding.tvforgetsensor.setOnClickListener {
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect, "no")
-            com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
+            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
+            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
             RLcloseFragment()
         }
 
@@ -69,7 +70,7 @@ class RLFragEditYourSensor : RLBaseFragment() {
                     addProperty(RLConstants.DEVICE_NAME,editdeviceName)
                     addProperty(RLConstants.DEVICE_ADDRESS,deviceAddress)
                 }
-                com.revoola.utils.RLPrefManager.RLsetSomeJsonObjectValue(activity, com.revoola.utils.RLPrefManager.change_device_name, jsonObject)
+                RLPrefManager.RLSetSomeJsonObjectValue(activity, RLPrefManager.change_device_name, jsonObject)
                 RLcloseFragment()
             }else{
                 RLcommonToast("Device Name is Empty")

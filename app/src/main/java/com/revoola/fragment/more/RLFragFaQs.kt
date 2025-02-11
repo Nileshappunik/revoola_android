@@ -12,19 +12,12 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.commonobject.RLTools
 import com.revoola.databinding.*
-import com.revoola.fragment.more.adapter.RLHelpItemListAdapter
-import com.revoola.fragment.start.challenges.RLFragChallengesForName
-import com.revoola.model.RLMoreGroupItemModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 
@@ -47,7 +40,7 @@ class RLFragFaQs : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_faqs, container) as RlFragFaqsBinding
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFaQs")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFaQs")
         RLuisetup()
         return fragBinding.root
     }

@@ -490,6 +490,7 @@
     <string name="showresults">SHOW RESULTS</string>
     <string name="joinchallenge">join Challenge</string>
     <string name="done">Done</string>
+    <string name="current_subscription">CURRENT SUBSCRIPTION</string>
 
 
 </resources>

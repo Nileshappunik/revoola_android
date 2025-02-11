@@ -48,7 +48,7 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val lastConnectDeviceAddress =
-                    com.revoola.utils.RLPrefManager.RLgetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "")
+                    com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "")
                 val cardData:RLBleListModel= dataList[position]
                 layoutBinding.img1.setImageResource(R.drawable.ic_heartrate)
                 if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
@@ -69,12 +69,12 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
                 }
                 layoutBinding.imgDone.setOnClickListener {
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
+                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
+                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
                     }else{
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
-                        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
+                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
+                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
                     }
                     notifyDataSetChanged()
@@ -82,7 +82,7 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
 
                 // when we Change name then display name Change
                 val changeDeviceName =
-                    com.revoola.utils.RLPrefManager.RLgetSomeStringValue(context, com.revoola.utils.RLPrefManager.change_device_name, "")
+                    com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.change_device_name, "")
                 if (changeDeviceName.isNullOrEmpty()){
                     layoutBinding.txtSensorName.setText(cardData.devicename)
                 }else{

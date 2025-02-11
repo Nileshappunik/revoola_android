@@ -2,6 +2,7 @@ package com.revoola.fragment.more
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -17,9 +18,9 @@ import com.revoola.utils.RLConstants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.moengage.core.MoECoreHelper
+import com.revoola.activity.RLSplashActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
-import com.revoola.fragment.start.RLFragStart
 import com.revoola.utils.RLPrefManager
 
 class RLFragMore : RLBaseFragment() {
@@ -35,7 +36,7 @@ class RLFragMore : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_more, container) as RlFragMoreBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMore" )
+       RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMore" )
         RLsetupuiList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -55,7 +56,11 @@ class RLFragMore : RLBaseFragment() {
             (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
 
-        val editAccountChildDataList = listOf("CURRENT SUBSCRIPTION","CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA","TRY PREMIUM FOR FREE")
+        val editAccountChildDataList = mutableListOf("CURRENT SUBSCRIPTION","CHANGE YOUR APP SETTINGS", "CHANGE YOUR PASSWORD", "RESTORE YOUR PURCHASES","REQUEST TO DELETE YOUR DATA")
+
+        if (RLPrefManager.RLGetGuestUser(requireContext())){
+            editAccountChildDataList.add("TRY PREMIUM FOR FREE")
+        }
         // Prepare the Data
         val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_sensors_g,resources.getString(R.string.syncwatchdata),emptyList()),
@@ -65,7 +70,7 @@ class RLFragMore : RLBaseFragment() {
         // Set up the Adapter
         val adapter = RlMoreExpandableListAdapter(requireContext(), groupDataList)
         fragBinding.expandableListView.setAdapter(adapter)
-
+        fragBinding.expandableListView.expandGroup(2)
         // Optionally: Set listeners for group and child clicks
         fragBinding.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
             // Handle group click if needed
@@ -88,7 +93,7 @@ class RLFragMore : RLBaseFragment() {
             when(groupDataList[groupPosition].childItems[childPosition].toString())
             {
                 "CURRENT SUBSCRIPTION"->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragCurrentSubScription(), TAG, true, null, false)
                 }
                 "CHANGE YOUR APP SETTINGS"->{
                     (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
@@ -104,13 +109,12 @@ class RLFragMore : RLBaseFragment() {
                     RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
                 }
                 "TRY PREMIUM FOR FREE"->{
-
+                    (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
                 }
             }
             false
         }
     }
-
 
     private fun RLshowBasicAlertDialog() {
         val builder = AlertDialog.Builder(requireContext())
@@ -145,11 +149,14 @@ class RLFragMore : RLBaseFragment() {
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
             if (type.equals(RLConstants.LOGOUT_D)){
-                Firebase.auth.signOut()
+                RLSignOut()
+               /* Firebase.auth.signOut()
                  MoECoreHelper.logoutUser(requireContext())
               // RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
                RLPrefManager.RLClear_all(requireContext())
-                activity?.finish()
+                val intent = Intent(requireContext(), RLSplashActivityRL::class.java)
+                startActivity(intent)
+                activity?.finish()*/
             }
         })
         sucDialog.show()
@@ -175,4 +182,5 @@ class RLFragMore : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
+
 }

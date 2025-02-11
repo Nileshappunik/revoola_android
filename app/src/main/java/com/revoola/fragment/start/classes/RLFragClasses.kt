@@ -11,7 +11,6 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragClassesBinding
 import com.revoola.fragment.start.body.RLFragBodyClasses
 import com.revoola.fragment.start.mind.RLFragMindClasses
-import com.revoola.utils.RLPrefManager
 
 
 class RLFragClasses : RLBaseFragment() {
@@ -27,7 +26,7 @@ class RLFragClasses : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes, container) as RlFragClassesBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClasses" )
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClasses" )
         RLuisetup()
         return fragBinding.root
     }

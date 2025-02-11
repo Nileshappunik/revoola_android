@@ -2,7 +2,6 @@ package com.revoola.fragment.feed
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListAdapter
@@ -40,7 +38,6 @@ import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetoverview_thumb_you
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
-import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
@@ -77,9 +74,9 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
-         lastfragmentopen= RLPrefManager.RLgetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
-        RLPrefManager.RLsetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
-         currentUser=  RLPrefManager.RLgetSomeStringValue(activity, RLPrefManager.current_user, "")
+         lastfragmentopen= RLPrefManager.RLGetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
+         currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService

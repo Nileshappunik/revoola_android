@@ -1,6 +1,7 @@
 package com.revoola.activity
 
 import android.Manifest
+import android.app.Activity
 import android.app.Dialog
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,9 +20,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
-import android.view.Window
-import android.widget.Button
-import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.health.connect.client.HealthConnectClient
 import com.revoola.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
 import com.revoola.databinding.RlActivityMainBinding
@@ -35,8 +36,13 @@ import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RELDynamicLinkManager
 import com.revoola.commonobject.RLTools
+import com.revoola.permission.RLHealthConnectManager
+import com.revoola.permission.RLPermissionManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class RLMainActivityRL  : RLBaseActivity() {
@@ -46,21 +52,30 @@ class RLMainActivityRL  : RLBaseActivity() {
     var sucDialog: Dialog? = null
     private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
 
-    companion object {
-        const val ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE = 1001
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityMainBinding =
-            RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
+        activityMainBinding =RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
         RLshowbottombarcolorwhite()
+        //First Fragment Open
         RLloadFrag(RLFragStart(), TAG, true, null, false)
+        //Start Menu First Open
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
-        RLchepermissionphysicalActivity()
+        //Navigation Item Click
+        RLNavItemClick()
+        // When Bottom Press Animation Stop
+        RLDisableLongPressToast(activityMainBinding.bottomNav)
+        // Internet Check And Reconnect
+        networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
 
+        //Permission Check All
+        RLHealthAndAllPermission()
+    }
+
+    private fun RLNavItemClick(){
         activityMainBinding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.overview -> {
@@ -100,12 +115,6 @@ class RLMainActivityRL  : RLBaseActivity() {
                 }
             }
         }
-        RLDisableLongPressToast(activityMainBinding.bottomNav)
-
-        // Internet Check And Reconnect
-        networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
-        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(networkChangeReceiver, filter)
     }
 
     private fun RLDisableLongPressToast(bottomNavigationView: BottomNavigationView) {
@@ -137,61 +146,6 @@ class RLMainActivityRL  : RLBaseActivity() {
         }
     }
 
-    private fun RLresizeDrawable(drawableId: Int, size: Int): Drawable? {
-        val drawable = ContextCompat.getDrawable(this, drawableId)
-        drawable?.setBounds(0, 0, size, size)
-        val bitmap = drawable?.toBitmap(size, size)
-        return BitmapDrawable(resources, bitmap)
-    }
-
-    fun RLchepermissionphysicalActivity() {
-        // Check if the permission is granted
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            // Permission is not granted, request it
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE
-            )
-        } else {
-            // Permission is already granted
-            RLonActivityRecognitionPermissionGranted()
-        }
-    }
-
-    // Handle the permission result
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == ACTIVITY_RECOGNITION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                RLonActivityRecognitionPermissionGranted()
-            } else {
-                // Permission denied
-                RLonActivityRecognitionPermissionDenied()
-            }
-        }
-    }
-
-    private fun RLonActivityRecognitionPermissionGranted() {
-        //Toast.makeText(this, "Activity Recognition Permission Granted", Toast.LENGTH_SHORT).show()
-        // Start using physical activity recognition features
-    }
-
-    private fun RLonActivityRecognitionPermissionDenied() {
-        Toast.makeText(this, "Activity Recognition Permission Denied", Toast.LENGTH_SHORT).show()
-        // Handle the denial appropriately, such as notifying the RLuser about limited functionality
-    }
-
     fun RLbottombarcolorDarkBlue() {
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.overview)
         item.setChecked(true)
@@ -211,13 +165,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         activityMainBinding.bottomNav.selectedItemId = selectedID
     }
 
-    fun RLloadFrag(
-        fragment: Fragment?,
-        tagName: String?,
-        isBackStack: Boolean,
-        fragmentName: String?,
-        type: Boolean
-    ): Boolean {
+    fun RLloadFrag(fragment: Fragment?, tagName: String?, isBackStack: Boolean, fragmentName: String?, type: Boolean): Boolean {
         if (fragment != null) {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
@@ -235,16 +183,6 @@ class RLMainActivityRL  : RLBaseActivity() {
             return true
         }
         return false
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        //RLshowbottombarcolorwhite()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //  unregisterReceiver(networkChangeReceiver) // Unregister receiver to avoid leaks
     }
 
     override fun onNewIntent(intent: android.content.Intent?) {
@@ -318,46 +256,29 @@ class RLMainActivityRL  : RLBaseActivity() {
         }
     }
 
+    private fun RLHealthAndAllPermission() {
+        val  healthConnectManager = RLHealthConnectManager(this)
+        if (!RLPermissionManager.arePermissionsGranted(this)) {
+            RLPermissionManager.requestPermissions(this,RLRequestPermissionsLauncher)
+        }
+
+        if (!healthConnectManager.isHealthConnectAvailable()) {
+            Toast.makeText(this, "Health Connect is not available on this device.", Toast.LENGTH_LONG).show()
+            return
+        }
+        // ✅ Check if permissions are already granted
+        CoroutineScope(Dispatchers.Main).launch {
+            val isGranted = healthConnectManager.arePermissionsGranted()
+            if (isGranted) {
+                Toast.makeText(this@RLMainActivityRL, "Health permissions already granted", Toast.LENGTH_SHORT).show()
+            } else {
+                // ✅ Request permissions
+                RLRequestPermissionHealthConnectLauncher.launch(healthConnectManager.requiredPermissions.toTypedArray())
+            }
+        }
+    }
 
 
-/* private fun RLShowInAppMessageDialog() {
-  val dialog = Dialog(this)
-  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-  dialog.setContentView(R.layout.rl_custom_inapp_message_dialog)
 
-  val titleTextView: TextView = dialog.findViewById(R.id.message_title)
-  val bodyTextView: TextView = dialog.findViewById(R.id.message_body)
-  val actionButton: Button = dialog.findViewById(R.id.action_button)
-  val closeButton: Button = dialog.findViewById(R.id.close_button)
-
-  titleTextView.text = message.title
-  bodyTextView.text = message.body
-
-  message.actionUrl?.let {
-      actionButton.visibility = View.VISIBLE
-      actionButton.setOnClickListener {
-          // Handle action (e.g., open a URL)
-          dialog.dismiss()
-      }
-  }
-
-  closeButton.setOnClickListener { dialog.dismiss() }
-  dialog.show()
-}
-
-
-  override fun onBackPressed() {
-      val fragmentclose:String=  PrefManager.getSomeStringValue(activity, PrefManager.current_fragment, "")
-      if(fragment!!.contains(RLFragStart::class.java.simpleName)){
-          RLTools.RlLogDPrint(TAG, "" + fragment)
-          showDialog(RLConstants.EXIT, RLConstants.SCHEDULE)
-      }else{
-          if (fragmentclose.equals(RLFragStart::class.java.simpleName)){
-              showDialog(RLConstants.EXIT,RLConstants.SCHEDULE)
-          }else{
-              super.onBackPressed()
-          }
-      }
-  }*/
 
 }

@@ -47,7 +47,6 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
-import com.revoola.fragment.start.RLFragStart
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Date
@@ -81,17 +80,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         //activity?.window!!.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Dark icons
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview_sessions, container) as RlFragOverviewSessionsBinding
-        com.revoola.utils.RLPrefManager.RLsetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragOverviewSession" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLgetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragOverviewSession" )
+        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         // Initialize GestureDetector
         gestureDetector = GestureDetector(requireContext(), RlSwipeGestureListener())
         RLuisetup()
@@ -299,6 +294,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
                 }
+                fragBinding.relayOverviewName.visibility=View.VISIBLE
             }
             "SESSIONS" -> {
                 RLwebviewurlload("sessions")
