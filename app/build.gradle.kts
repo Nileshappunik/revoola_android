@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.revoola"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.revoola"
         minSdk = 26
@@ -159,7 +159,7 @@ dependencies {
 
     //google login
     //implementation("com.google.android.gms:play-services-auth:19.0.0")
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.android.gms:play-services-auth:21.   3.0")
     implementation ("com.google.android.gms:play-services-maps:18.0.2")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
@@ -180,7 +180,7 @@ dependencies {
     implementation ("com.caverock:androidsvg:1.4")
 
     //Health Connect
-    implementation("androidx.health.connect:connect-client:1.1.0-alpha07")
+    implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
 
 
 }

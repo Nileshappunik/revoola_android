@@ -64,6 +64,10 @@
         <item name="android:textSize">@dimen/bottomtextsize</item>
     </style>
 
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
 
 

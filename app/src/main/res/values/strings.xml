@@ -14,6 +14,9 @@
     <string name="moengage_app_key">TVL0SDZ0N1L096MAKXGEUBUP_DEBUG</string>
     <bool name="branch_test_mode">false</bool>
 
+    <!--GOOGLE KEY-->
+    <string name="google_clientId">AIzaSyCOwcSM8SrRxnXsIAkqcwx5rSf4AHclUCw</string>
+
 
     <string name="no_conn">No Internet Connection</string>
     <string name="retry">Retry</string>
@@ -491,6 +494,7 @@
     <string name="joinchallenge">join Challenge</string>
     <string name="done">Done</string>
     <string name="current_subscription">CURRENT SUBSCRIPTION</string>
+    <string name="connect">Connect</string>
 
 
 </resources>

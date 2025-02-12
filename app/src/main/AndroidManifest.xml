@@ -29,6 +29,16 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
+    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"/>
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
+    <uses-permission android:name="android.permission.health.WRITE_STEPS"/>
+
+
+    <uses-permission android:name="android.permission.health.READ_HEALTH_DATA"/>
+    <uses-permission android:name="android.permission.health.WRITE_HEALTH_DATA"/>
+
+
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
@@ -43,7 +53,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.revoola.activity.RLSplashFirstActivity"
+            android:name=".activity.RLSplashFirstActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,13 +64,13 @@
         </activity>
 
         <activity
-            android:name="com.revoola.activity.RLSignUpActivityRL"
+            android:name=".activity.RLSignUpActivityRL"
             android:exported="false" />
         <activity
-            android:name="com.revoola.activity.RLSignUpNameActivityRL"
+            android:name=".activity.RLSignUpNameActivityRL"
             android:exported="false" />
         <activity
-            android:name="com.revoola.activity.RLVerificationCodeActivityRL"
+            android:name=".activity.RLVerificationCodeActivityRL"
             android:exported="false" />
        <!-- <activity
             android:name="com.revoola.activity.RLMainActivityRL"
@@ -82,22 +92,17 @@
 
         </activity>-->
         <activity
-            android:name="com.revoola.activity.RLForgotPasswordActivityRL"
+            android:name=".activity.RLForgotPasswordActivityRL"
             android:exported="false" />
         <activity
-            android:name="com.revoola.activity.RLLoginEmailActivityRL"
+            android:name=".activity.RLLoginEmailActivityRL"
             android:exported="false" />
         <activity
-            android:name="com.revoola.activity.RLLoginActivityRL"
+            android:name=".activity.RLLoginActivityRL"
             android:exported="false" />
         <activity
-            android:name="com.revoola.activity.RLSplashActivityRL"
+            android:name=".activity.RLSplashActivityRL"
             android:exported="false">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
         </activity>
 
         <meta-data
@@ -153,10 +158,10 @@
             android:launchMode="singleTask"
             android:exported="true" >
 
-            <intent-filter>
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
 
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -187,8 +192,14 @@
             android:value="@bool/branch_test_mode" />
 
         <!-- end Branch SDK -->
+        <!--health Connect-->
+        <meta-data
+            android:name="com.google.android.gms.health_data"
+            android:value="true" />
 
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_clientId" />
     </application>
 
 </manifest>

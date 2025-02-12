@@ -82,13 +82,13 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         val apiService = RLApiClientRetrofit.RLNetworkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+        /*requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
                 // For example, show a confirmation dialog or navigate back
                 RLTools.RLshowAlertDialog(requireContext(),requireActivity())
             }
-        })
+        })*/
         RLuisetup()
         return fragBinding.root
     }

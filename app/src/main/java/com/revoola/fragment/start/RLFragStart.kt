@@ -27,7 +27,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.RLHealthConnectBottomSheet
 import com.revoola.utils.RLPrefManager
 
 class RLFragStart : RLBaseFragment() {
@@ -81,6 +83,8 @@ class RLFragStart : RLBaseFragment() {
         }
 
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
+        (context as RLMainActivityRL).RLCheckAllPermission()
+
     }
 
     private fun RLfetchUserDetails() {

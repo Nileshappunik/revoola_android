@@ -40,6 +40,7 @@ import com.revoola.databinding.RlDialogHelpSigninBinding
 import com.revoola.commonobject.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.revoola.utils.RLPrefManager
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -88,8 +89,10 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
         authManager = RLAuthManager()
          userId = authManager.RlgetCurrentUser()!!.uid
-        emailId = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,"")
-
+        emailId = RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user_email,"")
+        if (emailId.isNullOrEmpty()){
+            emailId = authManager.RlgetCurrentUser()!!.email.toString()
+        }
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             RLRevoolaUserSettingWrite()
         })
@@ -453,11 +456,11 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             activityBinding.tvLogin.visibility=View.GONE
             activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
-        }else if (chooseimagefile.isEmpty()) {
+        }/*else if (chooseimagefile.isEmpty()) {
             activityBinding.tvLogin.visibility=View.GONE
             activityBinding.tvLoginNoClick.visibility=View.VISIBLE
             return false
-        }
+        }*/
         activityBinding.tvLogin.visibility=View.VISIBLE
         activityBinding.tvLoginNoClick.visibility=View.GONE
         return true
@@ -644,15 +647,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     //DATE SELECT
     private fun RLdialogStartDatePicker() {
-        val calendar: Calendar = Calendar.getInstance()
-        day = calendar.get(Calendar.DAY_OF_MONTH)
-        month = calendar.get(Calendar.MONTH)
-        year = calendar.get(Calendar.YEAR)
-        val datePickerDialog = DatePickerDialog(this, this, day, month, year)
-        datePickerDialog.datePicker.maxDate = System.currentTimeMillis() - 1000
+        val currentDate: Calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(
+            this,
+            this,
+            currentDate.get(Calendar.YEAR),
+            currentDate.get(Calendar.MONTH),
+            currentDate.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
         datePickerDialog.show()
-
     }
+
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
         var myMonth: Int = 0
         var Month: String = ""

@@ -45,11 +45,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
        activityBinding.toolbarLogin.tvTitle.setText(R.string.signuplogin)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
             if (RLvalidation()) {
-                if ( RLPrefManager.RLGetGuestUser(this)){
-                    RLLoginConvertGuestUser(emailID, password)
-                }else{
-                    RLloginapicall()
-                }
+                RLloginapicall()
             }
         })
         activityBinding.txtClickme.setOnClickListener(View.OnClickListener {
@@ -106,31 +102,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         return true
     }
 
-    private fun RLLoginConvertGuestUser(email: String, password: String) {
-        val credential = EmailAuthProvider.getCredential(email, password)
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.linkWithCredential(credential)
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    RLTools.RlLogDPrint(TAG, "Email account linked successfully!")
-                    val providerData = user.providerData
-                    // Iterate through the list of provider data
-                    val profile=providerData[0]
-                    val uid = profile.uid
-                    val userEmail = profile.email
-                    RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,uid)
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
-                    startActivity(Intent(this, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",false))
-                    finish()
-                } else {
-                    RLTools.RlLogEPrint(TAG, "Email linking failed: ${task.exception?.message}")
-                    if (task.exception is FirebaseAuthUserCollisionException) {
-                        Toast.makeText(this, "Email already in use!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-    }
+
     fun RLloginapicall() {
         authManager = RLAuthManager()
         authManager.RlloginUser(emailID, password) { user, exception ->
@@ -142,11 +114,8 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     val profile=providerData[0]
                     val uid = profile.uid
                     val userEmail = profile.email
-                    RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
                     RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,uid)
                     RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
-                    //startActivity(Intent(this, RLMainActivityRL::class.java))
-                    //finish()
                     RLSetUsernameToFirebase(uid)
 
                 } catch (e:Exception){

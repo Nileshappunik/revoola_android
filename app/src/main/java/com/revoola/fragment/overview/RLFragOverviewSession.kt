@@ -161,7 +161,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
    private fun RLSetUsernameToFirebase(){
         val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()!!.uid
+        val userId = authManager.RlgetCurrentUser()?.uid?:""
         val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
         databaseManager.RLREVOOLAUSERFORSEARCHREADDATE(userId){ data, error ->
             if (data != null) {

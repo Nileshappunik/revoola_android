@@ -1,8 +1,10 @@
 package com.revoola.activity
 
+import RLHealthConnectManager
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
@@ -12,6 +14,7 @@ import android.view.View
 import android.widget.Toast
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
@@ -22,6 +25,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.health.connect.client.HealthConnectClient
+import androidx.lifecycle.lifecycleScope
 import com.revoola.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
 import com.revoola.databinding.RlActivityMainBinding
@@ -36,7 +40,7 @@ import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RELDynamicLinkManager
 import com.revoola.commonobject.RLTools
-import com.revoola.permission.RLHealthConnectManager
+import com.revoola.fragment.RLHealthConnectBottomSheet
 import com.revoola.permission.RLPermissionManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -71,8 +75,15 @@ class RLMainActivityRL  : RLBaseActivity() {
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
 
-        //Permission Check All
-        RLHealthAndAllPermission()
+    }
+
+    fun RLCheckAllPermission(){
+        //All Permission
+        if (!RLPermissionManager.arePermissionsGranted(this)) {
+            RLPermissionManager.requestPermissions(this,RLRequestPermissionsLauncher)
+        }
+        val bottomSheet = RLHealthConnectBottomSheet()
+        bottomSheet.show(supportFragmentManager, "RLHealthConnectBottomSheet")
     }
 
     private fun RLNavItemClick(){
@@ -256,29 +267,41 @@ class RLMainActivityRL  : RLBaseActivity() {
         }
     }
 
-    private fun RLHealthAndAllPermission() {
+     fun RLHealthAndAllPermission() {
+        //Health permission
         val  healthConnectManager = RLHealthConnectManager(this)
-        if (!RLPermissionManager.arePermissionsGranted(this)) {
-            RLPermissionManager.requestPermissions(this,RLRequestPermissionsLauncher)
-        }
 
+        // Check availability and installation
         if (!healthConnectManager.isHealthConnectAvailable()) {
-            Toast.makeText(this, "Health Connect is not available on this device.", Toast.LENGTH_LONG).show()
+            if (!healthConnectManager.isHealthConnectInstalled()) {
+                // Health Connect app is not installed
+                Toast.makeText(this, "Please install Health Connect from Play Store", Toast.LENGTH_LONG).show()
+                // Optional: Open Play Store
+                try {
+                    val intent = Intent().apply {
+                        action = "androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Could not open Play Store", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Health Connect is not available on this device", Toast.LENGTH_LONG).show()
+            }
             return
         }
-        // ✅ Check if permissions are already granted
-        CoroutineScope(Dispatchers.Main).launch {
+
+        // Check permissions
+        lifecycleScope.launch {
             val isGranted = healthConnectManager.arePermissionsGranted()
+            RLTools.RlLogEPrint(TAG,"isGranted: $isGranted")
             if (isGranted) {
                 Toast.makeText(this@RLMainActivityRL, "Health permissions already granted", Toast.LENGTH_SHORT).show()
             } else {
-                // ✅ Request permissions
                 RLRequestPermissionHealthConnectLauncher.launch(healthConnectManager.requiredPermissions.toTypedArray())
             }
         }
+
     }
-
-
-
 
 }

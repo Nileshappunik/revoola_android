@@ -88,8 +88,7 @@ class RLFragAccount : RLBaseFragment() {
        // AppEventsLogger.activateApp(requireActivity())
 
         fragBinding.txtEmailaccount.setOnClickListener {
-            startActivity(Intent(requireActivity(), RLLoginEmailActivityRL::class.java))
-            requireActivity().finish()
+            (context as RLMainActivityRL).RLloadFrag(RLFragAccountConnect(), TAG, true, null, false)
         }
         fragBinding.txtGoogleaccount.setOnClickListener {
             RLgooglelogin()
@@ -162,7 +161,7 @@ class RLFragAccount : RLBaseFragment() {
         }
         callbackManager.onActivityResult(requestCode, resultCode, data)
     }
-    private fun RLhandleSignInResultGoogleOLd(completedTask: Task<GoogleSignInAccount>) {
+    private fun RLhandleSignInResultGoogle(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)!!
             // Signed in successfully, show authenticated UI.
@@ -172,24 +171,6 @@ class RLFragAccount : RLBaseFragment() {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             RLTools.RlLogEPrint(TAG, "Google sign in failed Message:-  " + e.localizedMessage)
-        }
-    }
-
-    private fun RLhandleSignInResultGoogle(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            RLTools.RlLogDPrint(TAG, "Google Sign In successful: ${account.email}")
-            RLfirebaseAuthWithGoogle(account)
-        } catch (e: ApiException) {
-            val errorMessage = when (e.statusCode) {
-                GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Sign in cancelled"
-                GoogleSignInStatusCodes.NETWORK_ERROR -> "Network error occurred"
-                GoogleSignInStatusCodes.INVALID_ACCOUNT -> "Invalid account"
-                GoogleSignInStatusCodes.SIGN_IN_REQUIRED -> "Sign in required"
-                else -> "Google sign in failed: ${e.statusCode}"
-            }
-            RLTools.RlLogEPrint(TAG, errorMessage)
-            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -218,54 +199,10 @@ class RLFragAccount : RLBaseFragment() {
 
     private fun RLupdateUI(user: FirebaseUser?) {
         if (user != null) {
-            RLPrefManager.RLSetSomeStringValue(requireContext(), RLPrefManager.current_user,user.uid)
-            RLPrefManager.RLSetSomeStringValue(requireContext(), RLPrefManager.current_user_email,user.email)
-            val userid:String= user.uid?:""
-            val email:String=user.email?:""
-            RLSetUsernameToFirebase(userid,email)
+            RLSignOut()
         } else {
             Toast.makeText(requireContext(), "Authentication Failed.", Toast.LENGTH_LONG).show()
         }
     }
-   //GOOGLE LOGIN END
-
-    ///FIREBASE Revoola User Setting USer Blanck Entry
-    private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
-        val versionName: String = try {
-            val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            packageInfo.versionName ?: "0"
-        } catch (e: Exception) {
-            "0"
-        }
-        val firebaseManager = RLFirebaseManager()
-        firebaseManager.RLRevoolaUserSettingFirebaseEntry(userId,emailId, versionName) { success ->
-            if (success) {
-                startActivity(Intent(requireActivity(), RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",false))
-                requireActivity().finish()
-            }else {
-                Toast.makeText(requireContext(), "Authentication Failed.", Toast.LENGTH_LONG).show()
-            }
-        }
-
-    }
-
-    private fun RLSetUsernameToFirebase(userId:String,email:String){
-        //Firebase To Fetch UserData
-        RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                if (userData.isBasicDataAdded){
-                  RLSignOut()
-                }else{
-                    RLRevoolaUserSettingFirebaseEntry(userId,email)
-                }
-
-            }
-        }
-    }
-
-
 
 }
