@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.gms.wearable.Wearable
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -18,10 +19,13 @@ import com.revoola.utils.RLConstants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.moengage.core.MoECoreHelper
+import com.revoola.RLBaseProgress
 import com.revoola.activity.RLSplashActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.model.RLWatchModel
 import com.revoola.utils.RLPrefManager
+import com.revoola.watch.WearDataSync
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -79,7 +83,9 @@ class RLFragMore : RLBaseFragment() {
                     (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
                 }
                 resources.getString(R.string.syncwatchdata)->{
-                   // (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+                    // Initialize WearDataSync with DataClient
+                    RLSyncWatchData()
+
                 }
                 resources.getString(R.string.signout)->{
                     RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
@@ -116,15 +122,30 @@ class RLFragMore : RLBaseFragment() {
         }
     }
 
-    private fun RLshowBasicAlertDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage(getString(R.string.youhavesuccessfullyrestored))
-        builder.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
-            dialog.dismiss()
+    private fun RLSyncWatchData() {
+        if (isAdded){
+            RLBaseProgress.RLShowProgressDialog(requireActivity())
+        }
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                val uid= RLAuthManager().RlgetCurrentUser()?.uid?:""
+                val weight=userData.weightkg?:"60"
+                val height =userData.height?:"167"
+                val dob= userData.dob
+                val gender=userData.gender
+                val RFMHR=userData.RFMHR
+                val restingHr=userData.restingHr
+                val userDataTransfer = RLWatchModel(uid, weight, height, dob, gender, RFMHR, restingHr)
+                if (isAdded){
+                    val  wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()))
+                    wearDataSync.sendUserDataToWatch(userDataTransfer)
+                }
+                RLBaseProgress.RLhideProgressDialog()
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
         }
 
-        val alertDialog = builder.create()
-        alertDialog.show()
     }
 
     private fun RLshowDialog(type: String, message: String) {
@@ -162,6 +183,7 @@ class RLFragMore : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
+
     private fun RLshowDialogAlert( message: String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -183,4 +205,14 @@ class RLFragMore : RLBaseFragment() {
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 
+    private fun RLshowBasicAlertDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(getString(R.string.youhavesuccessfullyrestored))
+        builder.setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
 }

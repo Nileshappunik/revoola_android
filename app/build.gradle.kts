@@ -182,6 +182,9 @@ dependencies {
     //Health Connect
     implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
 
+    //Watch Data Sync
+    implementation ("com.google.android.gms:play-services-wearable:19.0.0")
+    implementation ("androidx.wear:wear:1.3.0")
 
 }
 
