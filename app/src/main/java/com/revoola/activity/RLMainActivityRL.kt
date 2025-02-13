@@ -1,6 +1,5 @@
 package com.revoola.activity
 
-import RLHealthConnectManager
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
@@ -24,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.lifecycleScope
 import com.revoola.base.RLBaseActivity
@@ -41,11 +41,13 @@ import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RELDynamicLinkManager
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.RLHealthConnectBottomSheet
+import com.revoola.permission.RLHealthConnectManager
 import com.revoola.permission.RLPermissionManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -55,7 +57,7 @@ class RLMainActivityRL  : RLBaseActivity() {
     lateinit var activityMainBinding: RlActivityMainBinding
     var sucDialog: Dialog? = null
     private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
-
+    val  healthConnectManager = RLHealthConnectManager(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -82,8 +84,6 @@ class RLMainActivityRL  : RLBaseActivity() {
         if (!RLPermissionManager.arePermissionsGranted(this)) {
             RLPermissionManager.requestPermissions(this,RLRequestPermissionsLauncher)
         }
-        val bottomSheet = RLHealthConnectBottomSheet()
-        bottomSheet.show(supportFragmentManager, "RLHealthConnectBottomSheet")
     }
 
     private fun RLNavItemClick(){
@@ -267,10 +267,14 @@ class RLMainActivityRL  : RLBaseActivity() {
         }
     }
 
-     fun RLHealthAndAllPermission() {
+    val RLRequestPermissionHealthConnectLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val allGranted = permissions.values.all { it }
+        if (!allGranted) {
+            healthConnectManager.openHealthConnectPermissions()
+        }
+    }
+    fun RLHealthAndAllPermission() {
         //Health permission
-        val  healthConnectManager = RLHealthConnectManager(this)
-
         // Check availability and installation
         if (!healthConnectManager.isHealthConnectAvailable()) {
             if (!healthConnectManager.isHealthConnectInstalled()) {
@@ -291,17 +295,16 @@ class RLMainActivityRL  : RLBaseActivity() {
             return
         }
 
-        // Check permissions
+        // Check Health Connect permissions
         lifecycleScope.launch {
             val isGranted = healthConnectManager.arePermissionsGranted()
             RLTools.RlLogEPrint(TAG,"isGranted: $isGranted")
-            if (isGranted) {
-                Toast.makeText(this@RLMainActivityRL, "Health permissions already granted", Toast.LENGTH_SHORT).show()
-            } else {
+            if (!isGranted) {
                 RLRequestPermissionHealthConnectLauncher.launch(healthConnectManager.requiredPermissions.toTypedArray())
             }
         }
 
     }
+
 
 }

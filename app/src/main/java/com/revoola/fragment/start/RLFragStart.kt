@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
 import android.view.Window
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -30,7 +31,10 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.RLHealthConnectBottomSheet
+import com.revoola.permission.RLHealthConnectManager
 import com.revoola.utils.RLPrefManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -85,6 +89,14 @@ class RLFragStart : RLBaseFragment() {
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         (context as RLMainActivityRL).RLCheckAllPermission()
 
+        lifecycleScope.launch {
+            val  healthConnectManager = RLHealthConnectManager(requireContext())
+            delay(1000) // Small delay to ensure permissions are updated
+            if (!healthConnectManager.arePermissionsGranted()){
+                val bottomSheet = RLHealthConnectBottomSheet()
+                bottomSheet.show(parentFragmentManager, "RLHealthConnectBottomSheet")
+            }
+        }
     }
 
     private fun RLfetchUserDetails() {

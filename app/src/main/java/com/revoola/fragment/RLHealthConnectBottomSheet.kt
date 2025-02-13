@@ -1,6 +1,9 @@
 package com.revoola.fragment
 
+
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +14,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 
+
 class RLHealthConnectBottomSheet : BottomSheetDialogFragment() {
+    val TAG: String = RLHealthConnectBottomSheet::class.java.simpleName
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.rl_bottom_sheet_dialog, container, false)
     }
 
@@ -32,6 +34,13 @@ class RLHealthConnectBottomSheet : BottomSheetDialogFragment() {
             // Handle "CONNECT TO HEALTH" button click
             dismiss()
             (context as RLMainActivityRL).RLHealthAndAllPermission()
+
         }
+        // Set transparent background to apply rounded corners properly
+       // dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
+
 }
+
+
+

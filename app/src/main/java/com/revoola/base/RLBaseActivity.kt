@@ -95,15 +95,6 @@ open class  RLBaseActivity: AppCompatActivity() {
             }*/
         }
 
-    // Register permission request launcher at the class level
-     val RLRequestPermissionHealthConnectLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        val allGranted = permissions.values.all { it }
-        RLTools.RlLogEPrint("RLMainActivityRL","allGranted: $allGranted")
-        if (allGranted) {
-            Toast.makeText(this, "Health permissions granted", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Health permissions denied", Toast.LENGTH_SHORT).show()
-        }
-    }
+
 }
 
