@@ -105,7 +105,6 @@ class RLMainActivityRL  : RLBaseActivity() {
                 }
 
                 else -> {
-                    // loadFrag(RLFragStart(), TAG, true, RLFragStart::class.java.simpleName, false)
                     false
                 }
             }
