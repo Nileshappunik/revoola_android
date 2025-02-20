@@ -26,6 +26,7 @@ import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
+import com.revoola.ble.RLExtraValueKey
 import java.util.concurrent.TimeUnit
 
 class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
@@ -109,7 +110,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLstartCountdown()
-        val data=  requireArguments().getString("VIDEODATA","")
+        val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLMindBodyUISet(VideoCardData)
@@ -140,7 +141,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         }
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
-            val videoID=  requireArguments().getString("videoID","")
+            val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             fragBinding.videoView.stopPlayback()
             RLCompleteSessionFragmentOpen(data,videoID,VideoCardData)
 

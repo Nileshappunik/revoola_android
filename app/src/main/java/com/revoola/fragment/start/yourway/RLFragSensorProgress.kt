@@ -17,6 +17,7 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragSensorProgressBinding
 import androidx.lifecycle.Observer
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.firebaseModel.RLAssumedCalories
 import com.revoola.firebaseModel.RLAssumedRev
@@ -28,6 +29,7 @@ import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.services.RLBLEManagerSpeed
+import com.revoola.utils.RLPrefManager
 import java.lang.Math.round
 import kotlin.math.roundToInt
 
@@ -130,15 +132,14 @@ class RLFragSensorProgress : RLBaseFragment(){
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_sensor_progress, container) as RlFragSensorProgressBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragSensorProgress" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
+        yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString()
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup(){
         RLstartCountdown()
-
-        yourWayType = requireArguments().getString("YourWayType").toString().trim()
-        isSpeedSensor = requireArguments().getBoolean("isspeedsensor",false)
+        isSpeedSensor = requireArguments().getBoolean(RLExtraValueKey.isSpeedSensor,false)
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
 
@@ -173,7 +174,6 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
         }
 
-       // fragBinding.txtMaintitle.setText(yourWayType)
         fragBinding.inlayTop.ivTitle.setText(yourWayType)
         fragBinding.inlayTop.ivDescription.setText("")
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
@@ -194,8 +194,6 @@ class RLFragSensorProgress : RLBaseFragment(){
             }catch (e:Exception){
                RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
             }
-
-
         }
         fragBinding.layResume.setOnClickListener {
            try{

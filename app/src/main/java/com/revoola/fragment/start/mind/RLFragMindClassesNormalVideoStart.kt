@@ -26,6 +26,7 @@ import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
+import com.revoola.ble.RLExtraValueKey
 import java.util.concurrent.TimeUnit
 
 class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
@@ -71,8 +72,8 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLstartCountdown()
-        val data=  requireArguments().getString("VIDEODATA","")
-        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+        val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
+        val audioVideoType=  requireArguments().getString(RLExtraValueKey.audioVideoType,"")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         fragBinding.inlayCountdown.txtTitle.setText(VideoCardData.rideTitle)
@@ -105,7 +106,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             fragBinding.videoView.stopPlayback()
 
             var rms = VideoCardData.assumedRMS?:"0.0"
-            val videoID=  requireArguments().getString("videoID","")
+            val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             if (rms.isNullOrEmpty()){
                 rms="0.0"
             }

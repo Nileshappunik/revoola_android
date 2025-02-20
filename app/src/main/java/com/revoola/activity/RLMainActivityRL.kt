@@ -1,30 +1,18 @@
 package com.revoola.activity
 
-import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
-import android.net.Uri
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.TooltipCompat
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.lifecycleScope
 import com.revoola.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
@@ -40,14 +28,10 @@ import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.services.RELDynamicLinkManager
 import com.revoola.commonobject.RLTools
-import com.revoola.fragment.RLHealthConnectBottomSheet
 import com.revoola.permission.RLHealthConnectManager
 import com.revoola.permission.RLPermissionManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -58,13 +42,14 @@ class RLMainActivityRL  : RLBaseActivity() {
     var sucDialog: Dialog? = null
     private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
     val  healthConnectManager = RLHealthConnectManager(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityMainBinding =RLinflateBindLayout(this, R.layout.rl_activity_main) as RlActivityMainBinding
         RLshowbottombarcolorwhite()
         //First Fragment Open
-        RLloadFrag(RLFragStart(), TAG, true, null, false)
+         RLloadFrag(RLFragStart(), TAG, true, null, false)
         //Start Menu First Open
         val item: MenuItem = activityMainBinding.bottomNav.getMenu().findItem(R.id.start)
         item.setChecked(true)
@@ -76,7 +61,6 @@ class RLMainActivityRL  : RLBaseActivity() {
         networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
-
     }
 
     fun RLCheckAllPermission(){

@@ -15,6 +15,8 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import com.revoola.ble.BLEViewModel
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import java.lang.StringBuilder
@@ -22,6 +24,7 @@ import java.util.*
 
 class RLBLEService : Service() {
     val TAG: String = RLBLEService::class.java.simpleName
+
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var bluetoothLeScanner: BluetoothLeScanner? = null
     private val foundDevicesArray = mutableListOf<BluetoothDevice>()
@@ -40,6 +43,10 @@ class RLBLEService : Service() {
     private var totalTime = 0.0
 
     companion object {
+        // Add new UUIDs for battery and wake-up services
+        val UUID_BATTERY_SERVICE: UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb")
+        val UUID_BATTERY_CHARACTERISTIC: UUID = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb")
+
         // Replace with your own UUIDs
         val UUID_HEART_RATE_SERVICE: UUID = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb")
         val UUID_HEART_RATE_CHARACTERISTIC: UUID = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb")
@@ -96,8 +103,14 @@ class RLBLEService : Service() {
             super.onScanResult(callbackType, result)
             val device = result.device
             val scanRecord = result.scanRecord
+            val rssi = result.rssi  // Signal strength
             if (ContextCompat.checkSelfPermission(this@RLBLEService, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 // Request necessary permission
+            }
+            val batteryLevel = scanRecord?.getServiceData()?.get(ParcelUuid(UUID_BATTERY_SERVICE))
+            batteryLevel?.let { battery ->
+                val percentage = battery[0].toInt()
+                RLTools.RlLogEPrint(TAG, "Battery Level: $percentage% for device: ${device.name}")
             }
             scanRecord?.serviceUuids?.forEach { serviceUuid ->
                 when (serviceUuid.uuid) {
@@ -515,5 +528,6 @@ class RLBLEService : Service() {
         }
         return metValue * weightInKg * (durationInMinutes / 60)
     }
+
 
 }

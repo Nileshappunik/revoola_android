@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.databinding.RlLayoutStartMenuBinding
 import com.revoola.enumclass.RLStartAllMenuModel
-import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.utils.loadSvg
 
 class RLYourWayListAdapter(val context: FragmentActivity?,
@@ -69,11 +70,11 @@ class RLYourWayListAdapter(val context: FragmentActivity?,
             }
         }
         fun RLNextViewOpen(name:String){
-            var bundle: Bundle = Bundle()
-            bundle.putString("YourWayType",name)
-            bundle.putBoolean("isBody",false)
-            bundle.putBoolean("isMind",false)
-            bundle.putBoolean("isYourWay",true)
+            val bundle: Bundle = Bundle()
+            bundle.putString(RLExtraValueKey.yourWayType,name)
+            bundle.putBoolean(RLExtraValueKey.isBody,false)
+            bundle.putBoolean(RLExtraValueKey.isMind,false)
+            bundle.putBoolean(RLExtraValueKey.isYourWay,true)
             (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
         }

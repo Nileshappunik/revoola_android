@@ -18,6 +18,7 @@ import android.util.Log
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import androidx.lifecycle.Observer
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.databinding.RlFragHeartrateSensorProgressBinding
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.firebaseModel.RLElevationPoint
@@ -28,6 +29,7 @@ import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.services.RLBLEManagerHeartRate
+import com.revoola.utils.RLPrefManager
 import java.lang.Math.round
 import kotlin.math.roundToInt
 
@@ -131,24 +133,25 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragment.arguments = bundle
         return fragment
     }
+
     private val bleManager by lazy { RLBLEManagerHeartRate(requireContext()) }
+
     private val binding by lazy {
         RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragSensorProgress" )
-        yourWayType = requireArguments().getString("YourWayType").toString().trim()
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
+        yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString().trim()
         RLuisetup()
         return fragBinding.root
     }
+
     private fun RLuisetup() {
         RLstartCountdown()
-        val yourWayType = requireArguments().getString("YourWayType").toString().trim()
-        //fragBinding.txtMaintitle.setText(yourWayType)
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
 
         RLFirebaseToFetchUserData { userData ->
@@ -407,7 +410,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private fun  RlDataFillAllArray(){
         val currentCalories=RLYourWayCalvulation.calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble(),RestingHR,RFMHR)
         if (heartRateNumber>0){
-            heartRate=heartRateNumber
+            heartRate = heartRateNumber
         }
         val REVPer=RLYourWayCalvulation.calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender,RestingHR,RFMHR) //only REV
         RLUpdateHRPersentage(REVPer.roundToInt())
@@ -425,7 +428,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         maxBurntCalories=RLYourWayCalvulation.RLmax(maxBurntCalories,burntCalories.toInt())
 
         revPercentage=REVPer
-
 
         arrBurntCalories.add( RLYourWayCalvulation.noNanValueDouble(currentCalories))
         arrCadence.add(RLYourWayCalvulation.noNanValueDouble(cadenceData))

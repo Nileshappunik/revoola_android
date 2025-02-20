@@ -13,12 +13,13 @@ import com.revoola.databinding.RlCommonSensorListBinding
 import com.revoola.fragment.start.yourway.RLFragEditYourSensor
 import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLPrefManager
 import com.google.gson.JsonParser
 import com.revoola.commonobject.RLTools
 
 class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemClickListener: RLItemClickListenerAdapter) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLSensorHeartListAdapter"
-     val dataList = mutableListOf<RLBleListModel>()
+     val  dataList = mutableListOf<RLBleListModel>()
      var connectedDeviceAddress:String=""
     var connectedDeviceType:String=""
 
@@ -43,12 +44,20 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
         notifyItemRangeInserted(startPosition, newData.size)
     }
 
+    fun addUniqueItem(item: RLBleListModel) {
+        if (!dataList.any { it.deviceAddress == item.deviceAddress }) {
+            dataList.add(item)
+            notifyItemInserted(dataList.size)
+        }
+    }
+
+
     inner class MyViewHolder(layoutBinding: RlCommonSensorListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding:RlCommonSensorListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val lastConnectDeviceAddress =
-                    com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "")
+                   RLPrefManager.RLGetSomeStringValue(context,RLPrefManager.last_device_connect, "")
                 val cardData:RLBleListModel= dataList[position]
                 layoutBinding.img1.setImageResource(R.drawable.ic_heartrate)
                 if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
@@ -69,20 +78,19 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
                 }
                 layoutBinding.imgDone.setOnClickListener {
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
+                       RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect, "no")
+                       RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect_type, "")
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
                     }else{
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
+                       RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect, cardData.deviceAddress)
+                       RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
                     }
                     notifyDataSetChanged()
                 }
 
                 // when we Change name then display name Change
-                val changeDeviceName =
-                    com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.change_device_name, "")
+                val changeDeviceName = RLPrefManager.RLGetSomeStringValue(context,RLPrefManager.change_device_name, "")
                 if (changeDeviceName.isNullOrEmpty()){
                     layoutBinding.txtSensorName.setText(cardData.devicename)
                 }else{

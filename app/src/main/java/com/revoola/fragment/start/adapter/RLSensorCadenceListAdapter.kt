@@ -42,6 +42,12 @@ class RLSensorCadenceListAdapter(val context: FragmentActivity?, private val ite
         dataList.addAll(newData)
         notifyItemRangeInserted(startPosition, newData.size)
     }
+    fun addUniqueItem(item: RLBleListModel) {
+        if (!dataList.any { it.deviceAddress == item.deviceAddress }) {
+            dataList.add(item)
+            notifyItemInserted(dataList.size)
+        }
+    }
 
     inner class MyViewHolder(layoutBinding: RlCommonSensorListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding:RlCommonSensorListBinding = layoutBinding

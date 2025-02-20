@@ -6,8 +6,6 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 
-
-
 class RLBaseProgress : AppCompatActivity() {
     companion object {
         var dialog: Dialog? = null

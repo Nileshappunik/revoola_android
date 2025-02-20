@@ -186,5 +186,9 @@ dependencies {
     implementation ("com.google.android.gms:play-services-wearable:19.0.0")
     implementation ("androidx.wear:wear:1.3.0")
 
+    //view model
+    implementation ("androidx.fragment:fragment-ktx:1.6.2")
+    implementation ("androidx.activity:activity-ktx:1.8.2")
+
 }
 

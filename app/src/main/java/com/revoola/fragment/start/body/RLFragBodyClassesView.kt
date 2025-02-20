@@ -24,11 +24,12 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragMindClassesViewBinding
 import com.revoola.fragment.start.classes.RLClassesSchedule
-import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
+import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
+import com.revoola.ble.RLExtraValueKey
 import java.util.UUID
 
 class RLFragBodyClassesView : RLBaseFragment() {
@@ -96,20 +97,20 @@ class RLFragBodyClassesView : RLBaseFragment() {
                     ride=false
                 }
                 fragBinding.inlayButton.commonButton.setOnClickListener {
-                    var bundle: Bundle = Bundle()
+                    val bundle: Bundle = Bundle()
                     if (ride){
-                        bundle.putString("YourWayType","Ride")
+                        bundle.putString(RLExtraValueKey.yourWayType,"Ride")
                     }else{
-                        bundle.putString("YourWayType",VideoData.type)
+                        bundle.putString(RLExtraValueKey.yourWayType,VideoData.type)
                     }
-                    bundle.putBoolean("isBody",true)
-                    bundle.putBoolean("isMind",false)
-                    bundle.putBoolean("isYourWay",false)
+                    bundle.putBoolean(RLExtraValueKey.isBody,true)
+                    bundle.putBoolean(RLExtraValueKey.isMind,false)
+                    bundle.putBoolean(RLExtraValueKey.isYourWay,false)
 
-                    bundle.putString("VIDEODATA",jsonObject)
-                    bundle.putString("videoID",videoID)
-                    bundle.putBoolean("Ride",ride)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                    bundle.putString(RLExtraValueKey.videoData,jsonObject)
+                    bundle.putString(RLExtraValueKey.videoId,videoID)
+                    bundle.putBoolean(RLExtraValueKey.isRide,ride)
+                   (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
                 }
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {

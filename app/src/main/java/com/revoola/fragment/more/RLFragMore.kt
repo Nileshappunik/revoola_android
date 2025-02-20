@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -137,10 +138,23 @@ class RLFragMore : RLBaseFragment() {
                 val restingHr=userData.restingHr
                 val userDataTransfer = RLWatchModel(uid, weight, height, dob, gender, RFMHR, restingHr)
                 if (isAdded){
-                    val  wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()))
-                    wearDataSync.sendUserDataToWatch(userDataTransfer)
+                    //val  wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()))
+                    val wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()),Wearable.getNodeClient(requireContext()))
+                    wearDataSync.sendUserDataToWatch(userDataTransfer){ isSuccess, message ->
+                        if (isSuccess) {
+                            RLBaseProgress.RLhideProgressDialog()
+                           RLTools.RlLogDPrint(TAG, "WearDataSync Success: $message")
+                            // Handle success (e.g., update UI)
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogEPrint(TAG, "WearDataSync Error: $message")
+                            // Handle failure (e.g., show error message to the user)
+                        }
+                    }
+                }else{
+                    RLBaseProgress.RLhideProgressDialog()
                 }
-                RLBaseProgress.RLhideProgressDialog()
+
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }

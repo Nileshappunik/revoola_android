@@ -25,6 +25,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.services.RLBLEManagerHeartRate
 import com.revoola.services.RLSwipeGestureDetector
@@ -118,7 +119,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_heart_video_start, container) as RlFragBodyClassesHeartVideoStartBinding
-        RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragStart" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
@@ -157,8 +158,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         }
 
 
-        val data=  requireArguments().getString("VIDEODATA","")
-        val videoID=  requireArguments().getString("videoID","")
+        val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
+        val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
 
        parentFragmentManager.beginTransaction()
             .add(R.id.frame_left, RLFragLeftBodyWithHeartVideo())
@@ -172,7 +173,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment() {
         RLstartCountdown()
 
 
-        ride=  requireArguments().getBoolean("Ride")
+        ride=  requireArguments().getBoolean(RLExtraValueKey.isRide)
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLBodyUISet(VideoCardData)

@@ -24,10 +24,11 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragMindClassesViewBinding
 import com.revoola.fragment.start.classes.RLClassesSchedule
-import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
+import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
+import com.revoola.ble.RLExtraValueKey
 import java.util.UUID
 
 class RLFragMindClassesView : RLBaseFragment() {
@@ -93,21 +94,17 @@ class RLFragMindClassesView : RLBaseFragment() {
                 fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
 
-                    bundle.putString("YourWayType","all")
-                    bundle.putBoolean("isBody",false)
-                    bundle.putBoolean("isMind",true)
-                    bundle.putBoolean("isYourWay",false)
+                    bundle.putString(RLExtraValueKey.yourWayType,"all")
+                    bundle.putBoolean(RLExtraValueKey.isBody,false)
+                    bundle.putBoolean(RLExtraValueKey.isMind,true)
+                    bundle.putBoolean(RLExtraValueKey.isYourWay,false)
 
-                    bundle.putString("videoID",VideoID)
-                    bundle.putString("VIDEODATA",jsonObject)
-                    bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+                    bundle.putString(RLExtraValueKey.videoId,VideoID)
+                    bundle.putString(RLExtraValueKey.videoData,jsonObject)
+                    bundle.putString(RLExtraValueKey.audioVideoType,audioVideoType)
 
                     (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
-
-                   /* bundle.putString("VIDEODATA",jsonObject)
-                    bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassSensorChooes().newInstance(bundle), TAG, true,null, false)*/
                 }
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {
                     videoLink=VideoData.videoLinkiPhonex.toString()

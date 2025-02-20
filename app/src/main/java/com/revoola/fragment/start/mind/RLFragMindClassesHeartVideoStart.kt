@@ -29,6 +29,7 @@ import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.services.RLBLEManagerHeartRate
@@ -83,8 +84,8 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     }
     private fun RLuisetup() {
         RLstartCountdown()
-        val data=  requireArguments().getString("VIDEODATA","")
-        val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+        val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
+        val audioVideoType=  requireArguments().getString(RLExtraValueKey.audioVideoType,"")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
         RLMindBodyUISet(VideoCardData)
@@ -135,7 +136,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
                 rlbleService!!.RLstopNotifications()
             }*/
             bleManager.lrstopgetData()
-            val videoID=  requireArguments().getString("videoID","")
+            val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
