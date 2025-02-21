@@ -1,6 +1,7 @@
 package com.revoola.ble
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -20,15 +21,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.ParcelUuid
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.revoola.services.RLBLEService.Companion.UUID_CLIENT_CHARACTERISTIC_CONFIG
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 class BLERepository(private val context: Context) {
+
+    // Add these properties to track notification characteristics
+    private var heartRateCharacteristic: BluetoothGattCharacteristic? = null
+    private var speedCharacteristic: BluetoothGattCharacteristic? = null
+
 
     private val bluetoothLeScanner by lazy {
         bluetoothAdapter.bluetoothLeScanner
@@ -39,8 +43,8 @@ class BLERepository(private val context: Context) {
     }
 
     private var bluetoothGatt: BluetoothGatt? = null
-    private val _bleFlow = MutableStateFlow<BLEResult?>(null)
-    val bleFlow: StateFlow<BLEResult?> = _bleFlow.asStateFlow()
+    private val _bleFlow = MutableStateFlow<RLBLEResult?>(null)
+    val bleFlow: StateFlow<RLBLEResult?> = _bleFlow.asStateFlow()
 
     companion object {
         private const val REQUEST_ENABLE_BT = 1
@@ -64,18 +68,18 @@ class BLERepository(private val context: Context) {
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-                        _bleFlow.value = BLEResult.ConnectionState(
+                        _bleFlow.value = RLBLEResult.RLConnectionState(
                             deviceName = gatt.device.name ?: "Unknown Device",
                             isConnected = true
                         )
                         gatt.discoverServices()
                     }else {
-                        _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
+                        _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
                     }
 
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    _bleFlow.value = BLEResult.ConnectionState(
+                    _bleFlow.value = RLBLEResult.RLConnectionState(
                         deviceName = gatt.device.name ?: "Unknown Device",
                         isConnected = false
                     )
@@ -98,45 +102,6 @@ class BLERepository(private val context: Context) {
         }
     }
 
-    fun disConnectDevice_OLD() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                bluetoothGatt?.let { gatt ->
-                    gatt.disconnect()
-                    _bleFlow.value = BLEResult.ConnectionState(
-                        deviceName = gatt.device.name ?: "Unknown Device",
-                        isConnected = false
-                    )
-                    cleanupConnection()
-                }
-            } catch (e: Exception) {
-                _bleFlow.value = BLEResult.Error("Failed to disconnect: ${e.message}")
-            }
-        } else {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
-        }
-    }
-
-    fun connectToDevice_OLD(deviceAddress: String) {
-        if (!hasRequiredPermissions()) {
-            _bleFlow.value = BLEResult.Error("Missing required permissions")
-            return
-        }
-
-        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-            bluetoothGatt = device.connectGatt(context, false, gattCallback)
-        } else {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
-        }
-
-    }
-
-    private fun setupCharacteristicNotifications_OLD(gatt: BluetoothGatt) {
-        // Setup notifications for heart rate and speed characteristics
-        // Implementation details...
-    }
-
     private fun parseCharacteristicData(characteristic: BluetoothGattCharacteristic) {
         when (characteristic.service.uuid) {
             HEART_RATE_SERVICE_UUID -> parseHeartRateData(characteristic)
@@ -153,7 +118,7 @@ class BLERepository(private val context: Context) {
         }
         val heartRate = characteristic.getIntValue(format, 1).toString()
 
-        _bleFlow.value = BLEResult.SensorData(heartRate = heartRate)
+        _bleFlow.value = RLBLEResult.RLSensorData(heartRate = heartRate)
     }
 
     private fun parseSpeedData(characteristic: BluetoothGattCharacteristic) {
@@ -238,7 +203,7 @@ class BLERepository(private val context: Context) {
             this.lastCrankEventTime = lastCrankEventTime
         }
 
-        _bleFlow.value = BLEResult.SensorData(
+        _bleFlow.value = RLBLEResult.RLSensorData(
             speed = speed,
             avgSpeed = avgSpeed,
             distance = distance,
@@ -260,7 +225,7 @@ class BLERepository(private val context: Context) {
             bluetoothGatt?.close()
             bluetoothGatt = null
         } else {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
         }
     }
 
@@ -276,7 +241,7 @@ class BLERepository(private val context: Context) {
 
     fun startScan() {
         if (!hasRequiredPermissions()) {
-            _bleFlow.value = BLEResult.Error("Missing required permissions")
+            _bleFlow.value = RLBLEResult.RLError("Missing required permissions")
             return
         }
 
@@ -286,17 +251,12 @@ class BLERepository(private val context: Context) {
                 .build()
 
             val filters = listOf(
-                ScanFilter.Builder()
-                    .setServiceUuid(ParcelUuid(HEART_RATE_SERVICE_UUID))
-                    .build(),
-                ScanFilter.Builder()
-                    .setServiceUuid(ParcelUuid(SPEED_SERVICE_UUID))
-                    .build()
-            )
+                ScanFilter.Builder().setServiceUuid(ParcelUuid(HEART_RATE_SERVICE_UUID)).build(),
+                ScanFilter.Builder().setServiceUuid(ParcelUuid(SPEED_SERVICE_UUID)).build())
 
             bluetoothLeScanner.startScan(filters, settings, scanCallback)
         } else {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_SCAN permission")
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_SCAN permission")
         }
     }
 
@@ -314,24 +274,26 @@ class BLERepository(private val context: Context) {
                 val deviceType = when {
                     result.scanRecord?.serviceUuids?.any {
                         it.uuid == HEART_RATE_SERVICE_UUID
-                    } == true -> DeviceType.HEART_RATE
+                    } == true -> RLDeviceType.HEART_RATE
                     result.scanRecord?.serviceUuids?.any {
                         it.uuid == SPEED_SERVICE_UUID
-                    } == true -> DeviceType.SPEED
+                    } == true -> RLDeviceType.SPEED
                     // Add more conditions for CADENCE if needed
-                    else -> DeviceType.SPEED // Default type or determine based on your needs
+                    else -> RLDeviceType.SPEED // Default type or determine based on your needs
                 }
 
-                _bleFlow.value = BLEResult.DeviceFound(
+                val isWatch = isWatchDevice(device, result)
+
+                _bleFlow.value = RLBLEResult.RLDeviceFound(
                     deviceName = device.name ?: "Unknown Device",
                     deviceAddress = device.address,
                     deviceType = deviceType,
-                    isConnected = false
+                    isWatch = isWatch
                 )
             }
         }
         override fun onScanFailed(errorCode: Int) {
-            _bleFlow.value = BLEResult.Error("Scan failed with error code: $errorCode")
+            _bleFlow.value = RLBLEResult.RLError("Scan failed with error code: $errorCode")
         }
     }
     // Add a method to check Bluetooth state
@@ -349,9 +311,9 @@ class BLERepository(private val context: Context) {
         }
     }
 
-    private fun setupCharacteristicNotifications(gatt: BluetoothGatt) {
+    private fun setupCharacteristicNotifications_OLD(gatt: BluetoothGatt) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
             return
         }
 
@@ -363,9 +325,8 @@ class BLERepository(private val context: Context) {
                 when (service.uuid) {
                     HEART_RATE_SERVICE_UUID -> {
                         // Get Heart Rate Measurement characteristic
-                        val characteristic = service.getCharacteristic(
-                            UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb")
-                        )
+                       // val characteristic = service.getCharacteristic(UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb"))
+                        val characteristic = service.getCharacteristic(HEART_RATE_SERVICE_UUID)
                         characteristic?.let {
                             // Enable notifications
                             gatt.setCharacteristicNotification(it, true)
@@ -381,9 +342,8 @@ class BLERepository(private val context: Context) {
 
                     SPEED_SERVICE_UUID -> {
                         // Get CSC Measurement characteristic
-                        val characteristic = service.getCharacteristic(
-                            UUID.fromString("00002a5b-0000-1000-8000-00805f9b34fb")
-                        )
+                      //  val characteristic = service.getCharacteristic(UUID.fromString("00002a5b-0000-1000-8000-00805f9b34fb"))
+                        val characteristic = service.getCharacteristic(SPEED_SERVICE_UUID)
                         characteristic?.let {
                             // Enable notifications
                             gatt.setCharacteristicNotification(it, true)
@@ -399,13 +359,59 @@ class BLERepository(private val context: Context) {
                 }
             }
         } catch (e: Exception) {
-            _bleFlow.value = BLEResult.Error("Failed to setup notifications: ${e.message}")
+            _bleFlow.value = RLBLEResult.RLError("Failed to setup notifications: ${e.message}")
+        }
+    }
+
+    // Modify your existing setupCharacteristicNotifications to store the characteristics
+    private fun setupCharacteristicNotifications(gatt: BluetoothGatt) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
+            return
+        }
+
+        try {
+            val services = gatt.services
+
+            for (service in services) {
+                when (service.uuid) {
+                    HEART_RATE_SERVICE_UUID -> {
+                        val characteristic = service.getCharacteristic(UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb"))
+                        characteristic?.let {
+                            heartRateCharacteristic = it
+                            enableCharacteristicNotification(gatt, it)
+                        }
+                    }
+                    SPEED_SERVICE_UUID -> {
+                        val characteristic = service.getCharacteristic(UUID.fromString("00002a5b-0000-1000-8000-00805f9b34fb"))
+                        characteristic?.let {
+                            speedCharacteristic = it
+                            enableCharacteristicNotification(gatt, it)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            _bleFlow.value = RLBLEResult.RLError("Failed to setup notifications: ${e.message}")
+        }
+    }
+
+    private fun enableCharacteristicNotification(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
+            return
+        }
+        gatt.setCharacteristicNotification(characteristic, true)
+        val descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+        descriptor?.let { desc ->
+            desc.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            gatt.writeDescriptor(desc)
         }
     }
 
     fun connectToDevice(deviceAddress: String) {
         if (!hasRequiredPermissions()) {
-            _bleFlow.value = BLEResult.Error("Missing required permissions")
+            _bleFlow.value = RLBLEResult.RLError("Missing required permissions")
             return
         }
         try {
@@ -414,10 +420,10 @@ class BLERepository(private val context: Context) {
                 bluetoothGatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
                 bluetoothGatt?.requestMtu(517) // Request maximum MTU size
             } else {
-                _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
+                _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
             }
         } catch (e: Exception) {
-            _bleFlow.value = BLEResult.Error("Failed to connect: ${e.message}")
+            _bleFlow.value = RLBLEResult.RLError("Failed to connect: ${e.message}")
         }
     }
     fun disconnectDevice(deviceAddress: String) {
@@ -427,23 +433,126 @@ class BLERepository(private val context: Context) {
                 if (bluetoothGatt?.device?.address == deviceAddress) {
                     bluetoothGatt?.let { gatt ->
                         gatt.disconnect()
-                        _bleFlow.value = BLEResult.ConnectionState(
+                        _bleFlow.value = RLBLEResult.RLConnectionState(
                             deviceName = gatt.device.name ?: "Unknown Device",
                             isConnected = false
                         )
                         cleanupConnection()
                     }
                 } else {
-                    _bleFlow.value = BLEResult.Error("Device not connected: $deviceAddress")
+                    _bleFlow.value = RLBLEResult.RLError("Device not connected: $deviceAddress")
                 }
             } catch (e: Exception) {
-                _bleFlow.value = BLEResult.Error("Failed to disconnect: ${e.message}")
+                _bleFlow.value = RLBLEResult.RLError("Failed to disconnect: ${e.message}")
             }
         } else {
-            _bleFlow.value = BLEResult.Error("Missing BLUETOOTH_CONNECT permission")
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
         }
     }
-    
+
+    // Add notification control functions
+    fun pauseNotifications() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
+            return
+        }
+
+        bluetoothGatt?.let { gatt ->
+            heartRateCharacteristic?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, false)
+            }
+            speedCharacteristic?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, false)
+            }
+            _bleFlow.value = RLBLEResult.RLConnectionState(
+                deviceName = gatt.device.name ?: "Unknown Device",
+                isConnected = true,
+                isPaused = true
+            )
+        }
+    }
+
+    fun resumeNotifications() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
+            return
+        }
+
+        bluetoothGatt?.let { gatt ->
+            heartRateCharacteristic?.let { characteristic ->
+                enableCharacteristicNotification(gatt, characteristic)
+            }
+            speedCharacteristic?.let { characteristic ->
+                enableCharacteristicNotification(gatt, characteristic)
+            }
+            _bleFlow.value = RLBLEResult.RLConnectionState(
+                deviceName = gatt.device.name ?: "Unknown Device",
+                isConnected = true,
+                isPaused = false
+            )
+        }
+    }
+
+    fun stopNotifications() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
+            return
+        }
+
+        bluetoothGatt?.let { gatt ->
+            heartRateCharacteristic?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, false)
+                val descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+                descriptor?.let { desc ->
+                    desc.value = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+                    gatt.writeDescriptor(desc)
+                }
+            }
+            speedCharacteristic?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, false)
+                val descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
+                descriptor?.let { desc ->
+                    desc.value = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+                    gatt.writeDescriptor(desc)
+                }
+            }
+
+            gatt.disconnect()
+            cleanupConnection()
+
+            _bleFlow.value = RLBLEResult.RLConnectionState(
+                deviceName = gatt.device.name ?: "Unknown Device",
+                isConnected = false
+            )
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun isWatchDevice(device: BluetoothDevice, result: ScanResult): Boolean {
+        val deviceName = device.name ?: "Unknown Device"
+
+        // 1️⃣ Check if the name contains common smartwatch keywords
+        val watchKeywords = listOf("watch", "garmin", "fitbit", "ticwatch", "galaxy", "huawei", "amazfit")
+        if (watchKeywords.any { deviceName.contains(it, ignoreCase = true) }) {
+            return true
+        }
+
+        // 2️⃣ Check manufacturer data safely
+        val manufacturerData = result.scanRecord?.manufacturerSpecificData
+        if (manufacturerData == null || manufacturerData.size() == 0) {
+            return false // No manufacturer data available, cannot identify
+        }
+
+        val manufacturerId = manufacturerData.keyAt(0) // Now safe to access
+
+        val knownSmartwatchManufacturers = listOf(
+            0x004C, // Apple (Apple Watch)
+            0x0075, // Samsung (Galaxy Watch)
+            0x02E0  // Garmin
+        )
+
+        return manufacturerId in knownSmartwatchManufacturers
+    }
 
 }
 

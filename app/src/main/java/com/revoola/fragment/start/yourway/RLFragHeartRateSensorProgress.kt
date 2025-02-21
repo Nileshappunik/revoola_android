@@ -15,9 +15,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
 import android.util.Log
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.revoola.ble.BLERepository
+import com.revoola.ble.BLEViewModel
+import com.revoola.ble.BluetoothState
+import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.databinding.RlFragHeartrateSensorProgressBinding
 import com.revoola.enumclass.RLYourWayArrayType
@@ -28,8 +36,8 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.services.RLBLEManagerHeartRate
 import com.revoola.utils.RLPrefManager
+import kotlinx.coroutines.launch
 import java.lang.Math.round
 import kotlin.math.roundToInt
 
@@ -123,18 +131,20 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
     private val gpxStringBuilder = StringBuilder()
 
-    companion object {
-        private val REQUEST_CODE_BLE_PERMISSIONS = 1
-        private const val REQUEST_ENABLE_BT = 1
-        private const val REQUEST_PERMISSIONS = 2
+    private val bleRepository by lazy {
+        BLERepository(requireContext())
     }
+
+    private val viewModel: BLEViewModel by activityViewModels {
+        RLBLEViewModelFactory(bleRepository)
+    }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragHeartRateSensorProgress()
         fragment.arguments = bundle
         return fragment
     }
 
-    private val bleManager by lazy { RLBLEManagerHeartRate(requireContext()) }
 
     private val binding by lazy {
         RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
@@ -197,6 +207,34 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         RLwayTypeDesignSet(yourWayType)
 
+        val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
+        viewModel.connectToDevice(sensorDeviceAddress)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Add the Bluetooth state collector first
+                launch {
+                    viewModel.sensorData.collect { dataGet ->
+                        val data = dataGet?.heartRate?:"0"
+                        heartRateNumber=RlGetValueInt(data.toString())
+                        val  heartRateSetValue=RlGetValueInt(data.toString())
+                        if (heartRateSetValue > 0){
+                            arrHRRecordedSecond.add(totalTime.toInt()?:0)
+                            fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
+                            maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                            minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                            fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
+                            if (!arrHr.isNullOrEmpty()){
+                                val avgHeartRate=arrHr.average().roundToInt()?:0
+                                fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        }
+
         fragBinding.layPause.setOnClickListener {
            try {
                 timerManager.RLpause()
@@ -204,7 +242,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 fragBinding.layPause.visibility=View.GONE
                 fragBinding.layResumestop.visibility=View.VISIBLE
 
-               bleManager.rlpausegetData()
+               viewModel.pauseNotifications()
+
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstopLocationUpdates()
                }
@@ -220,7 +259,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
                 fragBinding.layPause.visibility=View.VISIBLE
                 fragBinding.layResumestop.visibility=View.GONE
 
-               bleManager.rlresumegetData()
+               viewModel.resumeNotifications()
+
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstartLocationUpdates()
                }
@@ -231,7 +271,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragBinding.layStop.setOnClickListener {
            try{
                 timerManager.RLstop()
-               bleManager.lrstopgetData()
+               viewModel.stopNotifications()
+
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstopLocationUpdates()
                }
@@ -683,51 +724,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         lastLocation = location
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (bleManager.checkAndRequestPermissions(requireActivity())) {
-            bleManager.setupBluetooth {
-                bleManager.startBLEService()
-            }
-        }
-        bleManager.setCallback(object : RLBLEManagerHeartRate.BLECallback {
-            override fun onHeartRateDataReceived(data: String) {
-                Log.d("BLE", "Heart Rate: $heartRate")
-                heartRateNumber=RlGetValueInt(data.toString())
-                var heartRateSetValue=RlGetValueInt(data.toString())
-                if (heartRateSetValue > 0){
-                    arrHRRecordedSecond.add(totalTime.toInt()?:0)
-                    fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
-                    maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
-                    minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
-                    fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
-                    if (!arrHr.isNullOrEmpty()){
-                        val avgHeartRate=arrHr.average().roundToInt()?:0
-                        fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
-                    }
-
-                }
-            }
-
-            @SuppressLint("MissingPermission")
-            override fun onDeviceConnected(device: BluetoothDevice) {
-                Log.d("BLE", "Connected to device: ${device.name}")
-            }
-
-            override fun onDeviceDisconnected() {
-                Log.d("BLE", "Device disconnected")
-            }
-
-            override fun onError(errorMessage: String) {
-                Log.e("BLE", "Error: $errorMessage")
-            }
-        })
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         try {
-            bleManager.cleanup()
+            viewModel.stopNotifications()
         }catch (e:Exception){
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }

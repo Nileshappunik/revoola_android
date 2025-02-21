@@ -80,11 +80,11 @@ class RLSensorHeartListAdapter(val context: FragmentActivity?, private val itemC
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
                        RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect, "no")
                        RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect_type, "")
-                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false,cardData.isWatchDevice)
                     }else{
                        RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect, cardData.deviceAddress)
                        RLPrefManager.RLSetSomeStringValue(context,RLPrefManager.last_device_connect_type,RLConstants.HEART_SENSOR)
-                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true,cardData.isWatchDevice)
                     }
                     notifyDataSetChanged()
                 }

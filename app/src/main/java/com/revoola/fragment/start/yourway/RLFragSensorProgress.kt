@@ -124,6 +124,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         return fragment
     }
     private val bleManager by lazy { RLBLEManagerSpeed(requireContext()) }
+
     private val binding by lazy {
         RlFragSensorProgressBinding.inflate(layoutInflater)
     }

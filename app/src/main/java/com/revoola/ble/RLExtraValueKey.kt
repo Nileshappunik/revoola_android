@@ -5,7 +5,7 @@ object RLExtraValueKey {
     const val isMind = "isMind"
     const val isYourWay = "isYourWay"
     const val yourWayType = "YourWayType"
-    const val sensorDeviceType = "sensorDeviceType"
+    const val sensorDeviceAddress = "sensorDeviceAddress"
     const val videoData = "videoData"
     const val videoId = "videoId"
     const val audioVideoType = "audioVideoType"

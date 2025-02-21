@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/AppWhiteColor"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="35dp">
+
+
+        <TextView
+            android:id="@+id/tvWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:text="Please shake your wrist to wake your watch"
+            android:fontFamily="@font/aptos_bold"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/black"
+            android:textSize="38sp"/>
+
+        <!-- Watch Image -->
+        <ImageView
+            android:id="@+id/watch_image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+           android:layout_centerInParent="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_below="@+id/tvWelcome"
+            android:src="@drawable/ic_watch"
+            android:scaleType="fitCenter"
+            android:contentDescription="Watch UI"/>
+
+        <!-- OK Button -->
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:text="OK"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/AppMainColor"
+            android:textSize="18sp"
+            android:background="@drawable/login_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="16dp"/>
+
+</RelativeLayout>
+</layout>

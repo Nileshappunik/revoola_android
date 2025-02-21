@@ -9,17 +9,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BLEViewModel(
-    private val bleRepository: BLERepository
-) : ViewModel() {
-    private val _deviceList = MutableStateFlow<List<BLEResult.DeviceFound>>(emptyList())
-    val deviceList: StateFlow<List<BLEResult.DeviceFound>> = _deviceList.asStateFlow()
+class BLEViewModel(private val bleRepository: BLERepository) : ViewModel() {
+    private val _deviceList = MutableStateFlow<List<RLBLEResult.RLDeviceFound>>(emptyList())
+    val deviceList: StateFlow<List<RLBLEResult.RLDeviceFound>> = _deviceList.asStateFlow()
 
-    private val _sensorData = MutableStateFlow<BLEResult.SensorData?>(null)
-    val sensorData: StateFlow<BLEResult.SensorData?> = _sensorData.asStateFlow()
+    private val _sensorData = MutableStateFlow<RLBLEResult.RLSensorData?>(null)
+    val sensorData: StateFlow<RLBLEResult.RLSensorData?> = _sensorData.asStateFlow()
 
-    private val _connectionState = MutableStateFlow<BLEResult.ConnectionState?>(null)
-    val connectionState: StateFlow<BLEResult.ConnectionState?> = _connectionState.asStateFlow()
+    private val _connectionState = MutableStateFlow<RLBLEResult.RLConnectionState?>(null)
+    val connectionState: StateFlow<RLBLEResult.RLConnectionState?> = _connectionState.asStateFlow()
 
     private val _bluetoothState = MutableStateFlow<BluetoothState>(BluetoothState.Unknown)
     val bluetoothState: StateFlow<BluetoothState> = _bluetoothState.asStateFlow()
@@ -29,23 +27,23 @@ class BLEViewModel(
         viewModelScope.launch {
             bleRepository.bleFlow.collect { result ->
                 when (result) {
-                    is BLEResult.DeviceFound -> updateDeviceList(result)
-                    is BLEResult.ConnectionState -> _connectionState.value = result
-                    is BLEResult.SensorData -> _sensorData.value = result
-                    is BLEResult.Error -> handleError(result)
+                    is RLBLEResult.RLDeviceFound -> updateDeviceList(result)
+                    is RLBLEResult.RLConnectionState -> _connectionState.value = result
+                    is RLBLEResult.RLSensorData -> _sensorData.value = result
+                    is RLBLEResult.RLError -> handleError(result)
                     null -> {} // No action needed
                 }
             }
         }
     }
 
-    private fun updateDeviceList(device: BLEResult.DeviceFound) {
+    private fun updateDeviceList(device: RLBLEResult.RLDeviceFound) {
         _deviceList.update { currentList ->
             currentList.filter { it.deviceAddress != device.deviceAddress } + device
         }
     }
 
-    private fun handleError(error: BLEResult.Error) {
+    private fun handleError(error: RLBLEResult.RLError) {
         // Handle error appropriately
     }
 
@@ -83,6 +81,16 @@ class BLEViewModel(
 
     fun requestBluetoothEnable(activity: Activity) {
         bleRepository.requestBluetoothEnable(activity)
+    }
+
+    fun pauseNotifications() {
+        bleRepository.pauseNotifications()
+    }
+    fun resumeNotifications() {
+        bleRepository.resumeNotifications()
+    }
+    fun stopNotifications() {
+        bleRepository.stopNotifications()
     }
 
     // Make sure to stop scanning when ViewModel is cleared

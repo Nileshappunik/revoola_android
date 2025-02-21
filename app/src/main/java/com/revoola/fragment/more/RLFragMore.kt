@@ -2,13 +2,11 @@ package com.revoola.fragment.more
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -17,16 +15,12 @@ import com.revoola.databinding.RlFragMoreBinding
 import com.revoola.fragment.more.adapter.RlMoreExpandableListAdapter
 import com.revoola.model.RLMoreGroupItemModel
 import com.revoola.utils.RLConstants
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.moengage.core.MoECoreHelper
 import com.revoola.RLBaseProgress
-import com.revoola.activity.RLSplashActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.model.RLWatchModel
 import com.revoola.utils.RLPrefManager
-import com.revoola.watch.WearDataSync
+import com.revoola.watch.RLWearDataSync
 
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
@@ -139,7 +133,7 @@ class RLFragMore : RLBaseFragment() {
                 val userDataTransfer = RLWatchModel(uid, weight, height, dob, gender, RFMHR, restingHr)
                 if (isAdded){
                     //val  wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()))
-                    val wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()),Wearable.getNodeClient(requireContext()))
+                    val wearDataSync = RLWearDataSync(Wearable.getDataClient(requireContext()),Wearable.getNodeClient(requireContext()))
                     wearDataSync.sendUserDataToWatch(userDataTransfer){ isSuccess, message ->
                         if (isSuccess) {
                             RLBaseProgress.RLhideProgressDialog()

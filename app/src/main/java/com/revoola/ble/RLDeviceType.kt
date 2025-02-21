@@ -1,6 +1,6 @@
 package com.revoola.ble
 
-enum class DeviceType {
+enum class RLDeviceType {
     HEART_RATE,
     SPEED,
     CADENCE,

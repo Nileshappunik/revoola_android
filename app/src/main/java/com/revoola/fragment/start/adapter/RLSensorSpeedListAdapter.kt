@@ -78,11 +78,11 @@ class RLSensorSpeedListAdapter(val context: FragmentActivity?, private val itemC
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
                         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
                         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
-                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false,cardData.isWatchDevice)
                     }else{
                         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
                         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.SPEED_SENSOR)
-                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true)
+                        itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true,cardData.isWatchDevice)
                     }
                     notifyDataSetChanged()
                 }
