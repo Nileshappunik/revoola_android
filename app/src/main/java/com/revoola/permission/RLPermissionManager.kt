@@ -18,7 +18,9 @@ object RLPermissionManager {
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.BODY_SENSORS)
+        Manifest.permission.BODY_SENSORS,
+        Manifest.permission.BLUETOOTH_SCAN
+        )
     //Manifest.permission.ACTIVITY_RECOGNITION,
     fun arePermissionsGranted(activity: AppCompatActivity): Boolean {
         return allPermissions.all { permission ->

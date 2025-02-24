@@ -1,6 +1,7 @@
 package com.revoola.fragment.start.yourway
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.wearable.Wearable
 import com.revoola.R
 import com.revoola.RLBaseFragment
 import com.revoola.activity.RLMainActivityRL
@@ -53,6 +55,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
 
     private var sensorDeviceType = ""
     private var sensorDeviceAddress = ""
+    private var yourWayType = ""
     private var isWatch = false
 
     private val binding by lazy {
@@ -94,6 +97,8 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             RLcloseFragment()
         }
 
+        RLGetConnectedWearOsDevices(requireContext())
+
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvHeartrateSensorList.layoutManager = linearLayoutManager
         adapter = RLSensorHeartListAdapter(activity,this)
@@ -109,7 +114,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
         adaptercadence = RLSensorCadenceListAdapter(activity,this)
         fragBinding.rvCadenceSensorList.adapter = adaptercadence
 
-        val yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString()
+         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString()
 
         if (yourWayType.equals(RLYourWayName.Ride.toString()) || yourWayType.equals(RLYourWayName.Run.toString()) || yourWayType.equals(RLYourWayName.Walk.toString())) {
             fragBinding.cardGps.visibility = View.VISIBLE
@@ -190,7 +195,9 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
                 adapter.addUniqueItem(RLBleListModel(deviceData.deviceName,deviceData.deviceAddress,
                     RLDeviceType.HEART_RATE.toString(),lastConnect,deviceData.isWatch))
             }else{
-                fragBinding.cardCadenceSensor.visibility = View.VISIBLE
+                if (yourWayType.equals(RLYourWayName.Ride.toString()) || yourWayType.equals(RLYourWayName.Run.toString()) || yourWayType.equals(RLYourWayName.Walk.toString())) {
+                    fragBinding.cardCadenceSensor.visibility = View.VISIBLE
+                }
                 adapterspeed.addUniqueItem(RLBleListModel(deviceData.deviceName,deviceData.deviceAddress,
                     RLDeviceType.SPEED.toString(),lastConnect,deviceData.isWatch))
                 adaptercadence.addUniqueItem(RLBleListModel(deviceData.deviceName,deviceData.deviceAddress,
@@ -215,6 +222,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             val  bundle: Bundle = Bundle()
             bundle.putString(RLExtraValueKey.yourWayType, yourWayType)
             bundle.putString(RLExtraValueKey.sensorDeviceAddress, sensorDeviceAddress)
+            bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,false)
@@ -238,6 +246,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putString(RLExtraValueKey.videoData,VideoData)
             bundle.putString(RLExtraValueKey.videoId,videoID)
             bundle.putBoolean(RLExtraValueKey.isRide,isRide)
+            bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
                     (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
@@ -258,6 +267,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putString(RLExtraValueKey.videoData,videoData)
             bundle.putString(RLExtraValueKey.audioVideoType,audioVideoType)
             bundle.putString(RLExtraValueKey.videoId,videoId)
+            bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
                     (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
@@ -300,4 +310,27 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
         super.onDestroyView()
         viewModel.stopScanning()
     }
+
+    private fun RLGetConnectedWearOsDevices(context: Context) {
+        Wearable.getNodeClient(context).connectedNodes
+            .addOnSuccessListener { nodes ->
+                nodes.forEach { node ->
+                    fragBinding.cardHeartRateSensor.visibility = View.VISIBLE
+                    val lastConnectDeviceAddress =RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+                    val lastConnect = lastConnectDeviceAddress.equals(node.id)
+                    if (lastConnect){
+                        sensorDeviceType = RLDeviceType.HEART_RATE.toString()
+                        sensorDeviceAddress = node.id
+                        isWatch = true
+                    }
+                    adapter.addUniqueItem(RLBleListModel(node.displayName,node.id,RLDeviceType.HEART_RATE.toString(),lastConnect,true))
+                    RLTools.RlLogEPrint("WearOS", "Connected Wear OS device: ${node.displayName}, id: ${node.id}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                RLTools.RlLogEPrint("WearOS", "Error retrieving connected nodes ${ exception.message}",)
+            }
+    }
+
+
 }

@@ -169,8 +169,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 val jsonObject = gson.toJson(data)
                 val  userData = gson.fromJson(jsonObject, RLRevoolaSearchUserModel::class.java)
                 fragBinding.txtUsername.setText("Hi,${ userData.name}")
-                Glide.with(requireContext()).load(userData.displayImage)
-                    .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
+                if (isAdded){
+                    Glide.with(requireContext()).load(userData.displayImage)
+                        .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
+                }
             }
         }
     }

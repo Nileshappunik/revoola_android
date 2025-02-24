@@ -24,6 +24,7 @@ sealed class RLBLEResult {
         val calories: String = ""
     ) : RLBLEResult()
 
+
     data class RLError(val message: String) : RLBLEResult()
 }
 

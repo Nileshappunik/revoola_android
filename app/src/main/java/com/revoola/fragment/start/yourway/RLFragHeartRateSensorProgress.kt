@@ -3,6 +3,7 @@ package com.revoola.fragment.start.yourway
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.location.Location
@@ -40,8 +41,14 @@ import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.launch
 import java.lang.Math.round
 import kotlin.math.roundToInt
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 
-class RLFragHeartRateSensorProgress : RLBaseFragment(){
+class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedListener{
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
     lateinit var fragBinding: RlFragHeartrateSensorProgressBinding
     private val timerManager = RLTimerManager()
@@ -145,7 +152,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         return fragment
     }
 
-
     private val binding by lazy {
         RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
     }
@@ -156,6 +162,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString().trim()
+
         RLuisetup()
         return fragBinding.root
     }
@@ -163,7 +170,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     private fun RLuisetup() {
         RLstartCountdown()
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
-
+        val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg
@@ -207,42 +214,21 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
         RLwayTypeDesignSet(yourWayType)
 
-        val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
-        viewModel.connectToDevice(sensorDeviceAddress)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Add the Bluetooth state collector first
-                launch {
-                    viewModel.sensorData.collect { dataGet ->
-                        val data = dataGet?.heartRate?:"0"
-                        heartRateNumber=RlGetValueInt(data.toString())
-                        val  heartRateSetValue=RlGetValueInt(data.toString())
-                        if (heartRateSetValue > 0){
-                            arrHRRecordedSecond.add(totalTime.toInt()?:0)
-                            fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
-                            maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
-                            minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
-                            fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
-                            if (!arrHr.isNullOrEmpty()){
-                                val avgHeartRate=arrHr.average().roundToInt()?:0
-                                fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
-                            }
-
-                        }
-                    }
-                }
-
-            }
-        }
-
         fragBinding.layPause.setOnClickListener {
            try {
+               RLSendDataToWearOS(context = requireContext(),
+                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   calories = burntCalories,
+                   total_Rev = totalRev,
+                   REVPer = revPercentage,
+                   buttonType = "PAUSE")
+               viewModel.pauseNotifications()
                 timerManager.RLpause()
 
                 fragBinding.layPause.visibility=View.GONE
                 fragBinding.layResumestop.visibility=View.VISIBLE
 
-               viewModel.pauseNotifications()
+
 
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstopLocationUpdates()
@@ -254,6 +240,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
         fragBinding.layResume.setOnClickListener {
            try{
+               RLSendDataToWearOS(context = requireContext(),
+                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   calories = burntCalories,
+                   total_Rev = totalRev,
+                   REVPer = revPercentage,
+                   buttonType = "RESUME")
                 timerManager.RLresume()
 
                 fragBinding.layPause.visibility=View.VISIBLE
@@ -270,9 +262,15 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
         }
         fragBinding.layStop.setOnClickListener {
            try{
+               RLSendDataToWearOS(context = requireContext(),
+                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   calories = burntCalories,
+                   total_Rev = totalRev,
+                   REVPer = revPercentage,
+                   buttonType = "STOP")
                 timerManager.RLstop()
                viewModel.stopNotifications()
-
+               Wearable.getDataClient(requireContext()).removeListener(this)
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstopLocationUpdates()
                }
@@ -344,6 +342,40 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
+        }
+
+        if (isWatch){
+            Wearable.getDataClient(requireContext()).removeListener(this)
+            Wearable.getDataClient(requireContext()).addListener(this)
+        }
+        else{
+            val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
+            viewModel.connectToDevice(sensorDeviceAddress)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    // Add the Bluetooth state collector first
+                    launch {
+                        viewModel.sensorData.collect { dataGet ->
+                            val data = dataGet?.heartRate?:"0"
+                            heartRateNumber=RlGetValueInt(data.toString())
+                            val  heartRateSetValue=RlGetValueInt(data.toString())
+                            if (heartRateSetValue > 0){
+                                arrHRRecordedSecond.add(totalTime.toInt()?:0)
+                                fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
+                                maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                                minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                                fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
+                                if (!arrHr.isNullOrEmpty()){
+                                    val avgHeartRate=arrHr.average().roundToInt()?:0
+                                    fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            }
         }
     }
 
@@ -444,6 +476,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
             activity?.runOnUiThread {
                 fragBinding.inlayTime.txtProgressTimeNumber.setText(RLYourWayCalvulation.RLformatElapsedTime(elapsedTime))
                 totalTime=(elapsedTime/1000).toString()
+                RLSendDataToWearOS(context = requireContext(),
+                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(elapsedTime) ,
+                    calories = burntCalories,
+                    total_Rev = totalRev,
+                    REVPer = revPercentage,
+                    buttonType = "START")
                 RlDataFillAllArray()
             }
         }
@@ -727,9 +765,72 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(){
     override fun onDestroy() {
         super.onDestroy()
         try {
+            timerManager.RLstop()
+            Wearable.getDataClient(requireContext()).removeListener(this)
             viewModel.stopNotifications()
         }catch (e:Exception){
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
+
+    private fun RLSendDataToWearOS(context: Context, formattedTime: String,
+                                   calories: Double, total_Rev: Double,
+                                   REVPer: Double, buttonType: String) {
+        // Create a PutDataMapRequest with a unique path
+        val putDataMapRequest = PutDataMapRequest.create("/mobile_to_wear")
+        val dataMap = putDataMapRequest.dataMap
+
+        // Put your data into the DataMap using distinct keys
+        dataMap.putString("formattedTime", formattedTime)
+        dataMap.putDouble("calories", calories)
+        dataMap.putDouble("total_Rev", total_Rev)
+        dataMap.putDouble("REVPer", REVPer)
+        dataMap.putString("buttonType", buttonType)
+        dataMap.putString("SessionName", "YourWay")
+
+        // Create the PutDataRequest; marking it as urgent ensures it gets delivered quickly.
+        val putDataRequest = putDataMapRequest.asPutDataRequest().setUrgent()
+
+        // Send the DataItem to connected Wear OS devices
+        Wearable.getDataClient(context).putDataItem(putDataRequest)
+            .addOnSuccessListener {
+                // Log.d(TAG, "Data sent successfully: formattedTime=$formattedTime, calories=$calories, total_Rev=$total_Rev, REVPer=$REVPer, buttonType=$buttonType")
+            }
+            .addOnFailureListener { exception ->
+                // Log.e(TAG, "Failed to send data", exception)
+            }
+    }
+
+    override fun onDataChanged(dataEvents: DataEventBuffer) {
+        for (event in dataEvents) {
+            if (event.type == DataEvent.TYPE_CHANGED) {
+                val dataItem = event.dataItem
+                if (dataItem.uri.path == "/wear_data/Heart_Rate") {
+                    val dataMapItem = DataMapItem.fromDataItem(dataItem)
+                    val heartRate = RlGetValueInt(dataMapItem.dataMap.getInt("Heart_Rate", 0).toString())
+
+                    // Update your UI or state with the heart rate
+                    activity?.runOnUiThread {
+                        // For example, update a TextView:
+                        heartRateNumber=RlGetValueInt(heartRate.toString())
+                        val  heartRateSetValue=RlGetValueInt(heartRate.toString())
+                        if (heartRateSetValue > 0){
+                            arrHRRecordedSecond.add(totalTime.toInt()?:0)
+                            fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(heartRate.toString())
+                            maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                            minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                            fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
+                            if (!arrHr.isNullOrEmpty()){
+                                val avgHeartRate=arrHr.average().roundToInt()?:0
+                                fragBinding.inlayHeartrate.txtAvgNumber.setText(avgHeartRate.toString())
+                            }
+
+                        }
+                    }
+                    RLTools.RlLogEPrint("DataListener", "Received heart rate: $heartRate")
+                }
+            }
+        }
+    }
+
 }

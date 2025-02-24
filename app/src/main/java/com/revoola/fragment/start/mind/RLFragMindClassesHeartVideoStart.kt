@@ -2,6 +2,7 @@ package com.revoola.fragment.start.mind
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -19,6 +20,16 @@ import android.widget.VideoView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -29,14 +40,17 @@ import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
+import com.revoola.ble.BLERepository
+import com.revoola.ble.BLEViewModel
+import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.services.RLBLEManagerHeartRate
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
+class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChangedListener{
     val TAG: String = RLFragMindClassesHeartVideoStart::class.java.simpleName
     lateinit var fragBinding: RlFragMindClassesHeartVideoStartBinding
 
@@ -54,10 +68,30 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     var minHeartrate=0
     var avgHr=0
 
-    private val bleManager by lazy { RLBLEManagerHeartRate(requireContext()) }
+    private var burntCalories =0.0
+    private var totalRev  =0.0
+    private var revPercentage=0.0
+
+    private var wsWeight="60"
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+    private var RestingHR="50"
+    private var appUnit=""
+
     private val binding by lazy {
         RlFragMindClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
+
+    private val bleRepository by lazy {
+        BLERepository(requireContext())
+    }
+
+    private val viewModel: BLEViewModel by activityViewModels {
+        RLBLEViewModelFactory(bleRepository)
+    }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragMindClassesHeartVideoStart()
         fragment.arguments = bundle
@@ -69,6 +103,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_heart_video_start, container) as RlFragMindClassesHeartVideoStartBinding
         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesHeartVideoStart" )
+        RLUserDataGet()
         RLuisetup()
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -82,6 +117,23 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
         return fragBinding.root
     }
+
+    private fun RLUserDataGet() {
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                appUnit=userData.appUnit
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
+    }
+
     private fun RLuisetup() {
         RLstartCountdown()
         val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
@@ -101,6 +153,34 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
 
         fragBinding.inlayTime.imgIcon.setImageResource(R.drawable.fd_active_time_green)
         fragBinding.inlayTime.txtName.setText(R.string.time)
+
+        val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
+        if (isWatch){
+            Wearable.getDataClient(requireContext()).removeListener(this)
+            Wearable.getDataClient(requireContext()).addListener(this)
+        }
+        else{
+            val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
+            viewModel.connectToDevice(sensorDeviceAddress)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    // Add the Bluetooth state collector first
+                    launch {
+                        viewModel.sensorData.collect { dataGet ->
+                            val data = dataGet?.heartRate?:"0"
+                            heartRateNumber=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                            var heartRateSetValue=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                            if (heartRateSetValue > 0){
+                                maxHeartrate=RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                                minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        }
 
     }
 
@@ -131,11 +211,16 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
+            RLSendDataToWearOS(context = requireContext(),
+                formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                calories = burntCalories,
+                total_Rev = totalRev,
+                REVPer = revPercentage,
+                buttonType = "STOP")
             fragBinding.videoView.stopPlayback()
-            /*if (isServiceBound) {
-                rlbleService!!.RLstopNotifications()
-            }*/
-            bleManager.lrstopgetData()
+            viewModel.stopNotifications()
+            timerManager.RLstop()
+            Wearable.getDataClient(requireContext()).removeListener(this)
             val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             val bundle = Bundle()
             bundle.putString("VIDEODATA",data)
@@ -154,23 +239,31 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
+                RLSendDataToWearOS(context = requireContext(),
+                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                    calories = burntCalories,
+                    total_Rev = totalRev,
+                    REVPer = revPercentage,
+                    buttonType = "PAUSE")
+                viewModel.pauseNotifications()
                 fragBinding.videoView.pause()
                 pauseVideo=false
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
-                /*if (isServiceBound) {
-                    rlbleService!!.RLpauseNotifications()
-                }*/
-                bleManager.rlpausegetData()
+
             }else{
+                RLSendDataToWearOS(context = requireContext(),
+                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                    calories = burntCalories,
+                    total_Rev = totalRev,
+                    REVPer = revPercentage,
+                    buttonType = "RESUME")
+                viewModel.resumeNotifications()
                 pauseVideo=true
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
-                /*if (isServiceBound) {
-                    rlbleService!!.RLresumeNotifications()
-                }*/
-                bleManager.rlresumegetData()
+
             }
         }
 
@@ -220,7 +313,14 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         timerManager.RLstart { elapsedTime ->
             activity?.runOnUiThread {
                 totalTime=(elapsedTime/1000).toString()
+                RLSendDataToWearOS(context = requireContext(),
+                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(elapsedTime) ,
+                    calories = burntCalories,
+                    total_Rev = totalRev,
+                    REVPer = revPercentage,
+                    buttonType = "START")
                 RlDataFillAllArray()
+
             }
         }
     }
@@ -228,6 +328,13 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
     private fun  RlDataFillAllArray(){
         arrHr.add(heartRateNumber)
         avgHr = arrHr.average().roundToInt()?:0
+        val currentCalories=RLYourWayCalvulation.calculateCurrentCalories(gender,wsAge,wsWeight.toDouble(),heartRateNumber.toDouble(),RestingHR,RFMHR)
+        burntCalories=burntCalories+currentCalories
+
+        val REVPer=RLYourWayCalvulation.calculateREVPer(heartRateNumber,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender,RestingHR,RFMHR) //only REV
+        val REVSec = REVPer / 360//each second REV PERSENTAGE
+        totalRev = totalRev+ REVSec
+        revPercentage=REVPer
     }
     //SWIPE LEFT RIGHT WITH ANIMATION SET
     private fun RLAdjustAspectRatio(videoView: VideoView, videoWidth: Int, videoHeight: Int) {
@@ -302,46 +409,13 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
         fragBinding.animatedview.startAnimation(anim)
     }
 
-    override fun onStart() {
-        super.onStart()
-        // timerManager.resume()
-        if (bleManager.checkAndRequestPermissions(requireActivity())) {
-            bleManager.setupBluetooth {
-                bleManager.startBLEService()
-            }
-        }
-
-        bleManager.setCallback(object : RLBLEManagerHeartRate.BLECallback {
-            override fun onHeartRateDataReceived(data: String) {
-                Log.d("BLE", "Heart Rate: $data")
-                heartRateNumber=RLYourWayCalvulation.RlGetValueInt(data.toString())
-                var heartRateSetValue=RLYourWayCalvulation.RlGetValueInt(data.toString())
-                if (heartRateSetValue > 0){
-                    maxHeartrate=RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
-                    minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
-                }
-            }
-
-            @SuppressLint("MissingPermission")
-            override fun onDeviceConnected(device: BluetoothDevice) {
-                Log.d("BLE", "Connected to device: ${device.name}")
-            }
-
-            override fun onDeviceDisconnected() {
-                Log.d("BLE", "Device disconnected")
-            }
-
-            override fun onError(errorMessage: String) {
-                Log.e("BLE", "Error: $errorMessage")
-            }
-        })
-    }
 
     override fun onDestroy() {
         super.onDestroy()
-        fragBinding.videoView.stopPlayback()
         try {
-            bleManager.cleanup()
+            timerManager.RLstop()
+            fragBinding.videoView.stopPlayback()
+            Wearable.getDataClient(requireContext()).removeListener(this)
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
@@ -352,5 +426,60 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() {
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
+    private fun RlGetValueInt(value:String):Int{
+        if (value.isNullOrEmpty()){
+            return 0
+        }else if(value.toDouble() < 0) {
+            return 0
+        }else{
+            return value.toDouble().toInt()
+        }
+    }
 
+
+    private fun RLSendDataToWearOS(context: Context, formattedTime: String,
+                                   calories: Double, total_Rev: Double,
+                                   REVPer: Double, buttonType: String) {
+        // Create a PutDataMapRequest with a unique path
+        val putDataMapRequest = PutDataMapRequest.create("/mobile_to_wear")
+        val dataMap = putDataMapRequest.dataMap
+
+        // Put your data into the DataMap using distinct keys
+        dataMap.putString("formattedTime", formattedTime)
+        dataMap.putDouble("calories", calories)
+        dataMap.putDouble("total_Rev", total_Rev)
+        dataMap.putDouble("REVPer", REVPer)
+        dataMap.putString("buttonType", buttonType)
+        dataMap.putString("SessionName", "Mind")
+
+        // Create the PutDataRequest; marking it as urgent ensures it gets delivered quickly.
+        val putDataRequest = putDataMapRequest.asPutDataRequest().setUrgent()
+
+        // Send the DataItem to connected Wear OS devices
+        Wearable.getDataClient(context).putDataItem(putDataRequest)
+            .addOnSuccessListener {
+                // Log.d(TAG, "Data sent successfully: formattedTime=$formattedTime, calories=$calories, total_Rev=$total_Rev, REVPer=$REVPer, buttonType=$buttonType")
+            }
+            .addOnFailureListener { exception ->
+                // Log.e(TAG, "Failed to send data", exception)
+            }
+    }
+
+    override fun onDataChanged(dataEvents: DataEventBuffer) {
+        for (event in dataEvents) {
+            if (event.type == DataEvent.TYPE_CHANGED) {
+                val dataItem = event.dataItem
+                if (dataItem.uri.path == "/wear_data/Heart_Rate") {
+                    val dataMapItem = DataMapItem.fromDataItem(dataItem)
+                    val data = RlGetValueInt(dataMapItem.dataMap.getInt("Heart_Rate", 0).toString())
+                    heartRateNumber=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                    var heartRateSetValue=RLYourWayCalvulation.RlGetValueInt(data.toString())
+                    if (heartRateSetValue > 0){
+                        maxHeartrate=RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
+                        minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                    }
+                }
+            }
+        }
+    }
 }

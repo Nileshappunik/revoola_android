@@ -18,6 +18,10 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -29,10 +33,13 @@ import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
+import com.revoola.ble.BLERepository
+import com.revoola.ble.BLEViewModel
+import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.services.RLBLEManagerSpeed
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -95,7 +102,14 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     private var maxSpeedForOneMile:Double=0.0
     var minHeartrate =0
 
-    private val bleManager by lazy { RLBLEManagerSpeed(requireContext()) }
+    private val bleRepository by lazy {
+        BLERepository(requireContext())
+    }
+
+    private val viewModel: BLEViewModel by activityViewModels {
+        RLBLEViewModelFactory(bleRepository)
+    }
+
     private val binding by lazy {
         RlFragBodyClassesSpeedVideoStartBinding.inflate(layoutInflater)
     }
@@ -143,6 +157,46 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         fragBinding.inlayTime.txtName.setText(R.string.time)
         fragBinding.inlayTime.progressView2.visibility=View.GONE
 
+        val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
+        viewModel.connectToDevice(sensorDeviceAddress)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Add the Bluetooth state collector first
+                launch {
+                    viewModel.sensorData.collect { dataGet ->
+                        val SPEED = dataGet?.speed?:"0"
+                        val DISTANCE = dataGet?.distance?:"0"
+                        val CADENCE = dataGet?.cadence?:"0"
+                        val AvgSPEED = dataGet?.avgSpeed?:"0"
+                        val CALORIES = dataGet?.calories?:"0"
+
+                        val speedSetValue=RLYourWayCalvulation.RlGetValueInt(SPEED.toString())?:0
+                        val cadenceSetValue=RLYourWayCalvulation.RlGetValueInt(CADENCE!!.toString())?:0
+                        if (cadenceSetValue>0){
+                            fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
+                        }
+
+                        distanceNumber=RLYourWayCalvulation.RlGetValueDouble(DISTANCE.toString())?:0.0
+                        climbedNumber=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
+                        speedNumber=RLYourWayCalvulation.RlGetValueDouble(SPEED.toString())?:0.0
+                        activeCaloriesNumber=RLYourWayCalvulation.RlGetValueDouble(CALORIES.toString())?:0.0
+                        cadenceData=RLYourWayCalvulation.RlGetValueDouble(CADENCE.toString())?:0.0
+                        if (!arrCadence.isNullOrEmpty()){
+                            maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.toInt())
+                            avgCadence=arrCadence.average()?:0.00
+                        }
+                        speedList.add(speedSetValue.toDouble())
+                        if (!speedList.isNullOrEmpty()){
+                            avgSpeed=speedList.average()?:0.00
+                            maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
+                        }
+                    }
+                }
+
+            }
+        }
+
+
     }
     private fun RLformatTime(milliseconds: Int): String {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds.toLong())
@@ -169,22 +223,22 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             fragBinding.videoView.stopPlayback()
-            bleManager.lrstopgetData()
+           viewModel.stopNotifications()
             RLCompleteSessionFragmentOpen(data,videoID,VideoCardData)
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
                 fragBinding.videoView.pause()
                 pauseVideo=false
-                fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
+                fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
-                bleManager.rlpausegetData()
+                viewModel.pauseNotifications()
             }else{
                 pauseVideo=true
                 fragBinding.videoView.start()
-                fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
+                fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
-                bleManager.rlresumegetData()
+               viewModel.resumeNotifications()
             }
         }
         fragBinding.relayVideoplay.setOnClickListener {
@@ -375,61 +429,11 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (bleManager.checkAndRequestPermissions(requireActivity())) {
-            bleManager.setupBluetooth {
-                bleManager.startBLEService()
-            }
-        }
-        bleManager.setCallback(object : RLBLEManagerSpeed.BLECallback {
-            override fun onHeartRateDataReceived(SPEED:String, AvgSPEED:String, DISTANCE:String, CADENCE:String, CALORIES:String) {
-                var speedSetValue=RLYourWayCalvulation.RlGetValueInt(SPEED.toString())?:0
-                var avgspeedSetValue=RLYourWayCalvulation.RlGetValueInt(AvgSPEED.toString())?:0
-                var distanceSetValue=RLYourWayCalvulation.RlGetValueInt(DISTANCE.toString())?:0
-                var cadenceSetValue=RLYourWayCalvulation.RlGetValueInt(CADENCE!!.toString())?:0
-                if (cadenceSetValue>0){
-                    fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
-                }
-
-                distanceNumber=RLYourWayCalvulation.RlGetValueDouble(DISTANCE.toString())?:0.0
-                climbedNumber=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
-                speedNumber=RLYourWayCalvulation.RlGetValueDouble(SPEED.toString())?:0.0
-                activeCaloriesNumber=RLYourWayCalvulation.RlGetValueDouble(CALORIES.toString())?:0.0
-                cadenceData=RLYourWayCalvulation.RlGetValueDouble(CADENCE.toString())?:0.0
-                if (!arrCadence.isNullOrEmpty()){
-                    maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.toInt())
-                    avgCadence=arrCadence.average()?:0.00
-                }
-                speedList.add(speedSetValue.toDouble())
-                if (!speedList.isNullOrEmpty()){
-                    avgSpeed=speedList.average()?:0.00
-                    maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
-                }
-            }
-
-            override fun onConnectionStateChange(is_connected: Boolean) {
-                Log.d("BLE", "Connected to device: $is_connected")
-            }
-            @SuppressLint("MissingPermission")
-            override fun onDeviceConnected(device: BluetoothDevice) {
-                Log.d("BLE", "Connected to device: ${device.name}")
-            }
-
-            override fun onDeviceDisconnected() {
-                Log.d("BLE", "Device disconnected")
-            }
-
-            override fun onError(errorMessage: String) {
-                Log.e("BLE", "Error: $errorMessage")
-            }
-        })
-    }
     override fun onDestroy() {
         super.onDestroy()
         fragBinding.videoView.stopPlayback()
         try {
-            bleManager.cleanup()
+            viewModel.stopNotifications()
             // Show the status bar and navigation bar again and set dark color
             @Suppress("DEPRECATION")
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE

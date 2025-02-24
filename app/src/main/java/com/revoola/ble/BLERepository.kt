@@ -21,7 +21,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.ParcelUuid
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.wearable.Wearable
+import com.revoola.commonobject.RLTools
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +35,7 @@ class BLERepository(private val context: Context) {
     // Add these properties to track notification characteristics
     private var heartRateCharacteristic: BluetoothGattCharacteristic? = null
     private var speedCharacteristic: BluetoothGattCharacteristic? = null
+    private var watchCharacteristic: BluetoothGattCharacteristic? = null
 
 
     private val bluetoothLeScanner by lazy {
@@ -50,8 +54,9 @@ class BLERepository(private val context: Context) {
         private const val REQUEST_ENABLE_BT = 1
         private val HEART_RATE_SERVICE_UUID = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb")
         private val SPEED_SERVICE_UUID = UUID.fromString("00001816-0000-1000-8000-00805f9b34fb")
+
         private val CLIENT_CHARACTERISTIC_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-        @Volatile
+
         private var INSTANCE: BLERepository? = null
 
         fun getInstance(context: Context): BLERepository {
@@ -253,8 +258,8 @@ class BLERepository(private val context: Context) {
             val filters = listOf(
                 ScanFilter.Builder().setServiceUuid(ParcelUuid(HEART_RATE_SERVICE_UUID)).build(),
                 ScanFilter.Builder().setServiceUuid(ParcelUuid(SPEED_SERVICE_UUID)).build())
-
             bluetoothLeScanner.startScan(filters, settings, scanCallback)
+
         } else {
             _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_SCAN permission")
         }
@@ -282,13 +287,11 @@ class BLERepository(private val context: Context) {
                     else -> RLDeviceType.SPEED // Default type or determine based on your needs
                 }
 
-                val isWatch = isWatchDevice(device, result)
-
                 _bleFlow.value = RLBLEResult.RLDeviceFound(
                     deviceName = device.name ?: "Unknown Device",
                     deviceAddress = device.address,
                     deviceType = deviceType,
-                    isWatch = isWatch
+                    isWatch = false
                 )
             }
         }
@@ -311,7 +314,7 @@ class BLERepository(private val context: Context) {
         }
     }
 
-    private fun setupCharacteristicNotifications_OLD(gatt: BluetoothGatt) {
+    private fun setupCharacteristicNotifications_Old(gatt: BluetoothGatt) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
             return
@@ -325,7 +328,6 @@ class BLERepository(private val context: Context) {
                 when (service.uuid) {
                     HEART_RATE_SERVICE_UUID -> {
                         // Get Heart Rate Measurement characteristic
-                       // val characteristic = service.getCharacteristic(UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb"))
                         val characteristic = service.getCharacteristic(HEART_RATE_SERVICE_UUID)
                         characteristic?.let {
                             // Enable notifications
@@ -342,8 +344,7 @@ class BLERepository(private val context: Context) {
 
                     SPEED_SERVICE_UUID -> {
                         // Get CSC Measurement characteristic
-                      //  val characteristic = service.getCharacteristic(UUID.fromString("00002a5b-0000-1000-8000-00805f9b34fb"))
-                        val characteristic = service.getCharacteristic(SPEED_SERVICE_UUID)
+                       val characteristic = service.getCharacteristic(SPEED_SERVICE_UUID)
                         characteristic?.let {
                             // Enable notifications
                             gatt.setCharacteristicNotification(it, true)
@@ -464,6 +465,9 @@ class BLERepository(private val context: Context) {
             speedCharacteristic?.let { characteristic ->
                 gatt.setCharacteristicNotification(characteristic, false)
             }
+            watchCharacteristic?.let { characteristic ->
+                gatt.setCharacteristicNotification(characteristic, false)
+            }
             _bleFlow.value = RLBLEResult.RLConnectionState(
                 deviceName = gatt.device.name ?: "Unknown Device",
                 isConnected = true,
@@ -526,34 +530,6 @@ class BLERepository(private val context: Context) {
             )
         }
     }
-
-    @SuppressLint("MissingPermission")
-    private fun isWatchDevice(device: BluetoothDevice, result: ScanResult): Boolean {
-        val deviceName = device.name ?: "Unknown Device"
-
-        // 1️⃣ Check if the name contains common smartwatch keywords
-        val watchKeywords = listOf("watch", "garmin", "fitbit", "ticwatch", "galaxy", "huawei", "amazfit")
-        if (watchKeywords.any { deviceName.contains(it, ignoreCase = true) }) {
-            return true
-        }
-
-        // 2️⃣ Check manufacturer data safely
-        val manufacturerData = result.scanRecord?.manufacturerSpecificData
-        if (manufacturerData == null || manufacturerData.size() == 0) {
-            return false // No manufacturer data available, cannot identify
-        }
-
-        val manufacturerId = manufacturerData.keyAt(0) // Now safe to access
-
-        val knownSmartwatchManufacturers = listOf(
-            0x004C, // Apple (Apple Watch)
-            0x0075, // Samsung (Galaxy Watch)
-            0x02E0  // Garmin
-        )
-
-        return manufacturerId in knownSmartwatchManufacturers
-    }
-
 }
 
 

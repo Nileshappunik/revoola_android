@@ -104,7 +104,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
-
+            timerManager.RLstop()
             var rms = VideoCardData.assumedRMS?:"0.0"
             val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             if (rms.isNullOrEmpty()){
@@ -128,12 +128,14 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
-                fragBinding.videoView.pause()
                 pauseVideo=false
+                timerManager.RLresume()
+                fragBinding.videoView.pause()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
             }else{
                 pauseVideo=true
+                timerManager.RLpause()
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)

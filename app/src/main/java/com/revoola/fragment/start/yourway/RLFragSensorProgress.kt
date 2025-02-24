@@ -13,10 +13,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
 import android.util.Log
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragSensorProgressBinding
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.revoola.ble.BLERepository
+import com.revoola.ble.BLEViewModel
+import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.firebaseModel.RLAssumedCalories
@@ -28,8 +35,8 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.services.RLBLEManagerSpeed
 import com.revoola.utils.RLPrefManager
+import kotlinx.coroutines.launch
 import java.lang.Math.round
 import kotlin.math.roundToInt
 
@@ -123,7 +130,14 @@ class RLFragSensorProgress : RLBaseFragment(){
         fragment.arguments = bundle
         return fragment
     }
-    private val bleManager by lazy { RLBLEManagerSpeed(requireContext()) }
+
+    private val bleRepository by lazy {
+        BLERepository(requireContext())
+    }
+
+    private val viewModel: BLEViewModel by activityViewModels {
+        RLBLEViewModelFactory(bleRepository)
+    }
 
     private val binding by lazy {
         RlFragSensorProgressBinding.inflate(layoutInflater)
@@ -187,7 +201,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                 timerManager.RLpause()
                 fragBinding.layPause.visibility=View.GONE
                 fragBinding.layResumestop.visibility=View.VISIBLE
-                bleManager.rlpausegetData()
+                viewModel.pauseNotifications()
                 if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                     rlLocationViewModel.RLstopLocationUpdates()
                 }
@@ -201,7 +215,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                 timerManager.RLresume()
                 fragBinding.layPause.visibility=View.VISIBLE
                 fragBinding.layResumestop.visibility=View.GONE
-               bleManager.rlresumegetData()
+               viewModel.resumeNotifications()
                if (issGpsConnect && (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride"))){
                    rlLocationViewModel.RLstartLocationUpdates()
                }
@@ -264,7 +278,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
             try {
                 timerManager.RLstop()
-                bleManager.lrstopgetData()
+                viewModel.stopNotifications()
                 if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                     rlLocationViewModel.RLstopLocationUpdates()
                 }
@@ -273,6 +287,70 @@ class RLFragSensorProgress : RLBaseFragment(){
             }
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
+        }
+
+        if (isSpeedSensor){
+            //Speed Sensor
+            val  sensorDeviceAddress = requireArguments().getString(RLExtraValueKey.sensorDeviceAddress).toString()
+            viewModel.connectToDevice(sensorDeviceAddress)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    // Add the Bluetooth state collector first
+                    launch {
+                        viewModel.sensorData.collect { dataGet ->
+                            val SPEED = dataGet?.speed?:"0"
+                            val DISTANCE = dataGet?.distance?:"0"
+                            val CADENCE = dataGet?.cadence?:"0"
+
+                            val speedSetValue=RLYourWayCalvulation.RlGetValueInt(SPEED.toString())?:0
+                            val distanceSetValue=RLYourWayCalvulation.RlGetValueInt(DISTANCE.toString())?:0
+                            val cadenceSetValue=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
+
+                            distanceNumber=RLYourWayCalvulation.RlGetValueDouble(DISTANCE.toString())?:0.0
+                            climbedNumber=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
+                            speedNumber=RLYourWayCalvulation.RlGetValueDouble(SPEED.toString())?:0.0
+                            cadenceData=RLYourWayCalvulation.RlGetValueDouble(CADENCE.toString())?:0.0
+                            maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.toInt())
+
+                            val floatSpeed:Float= speedSetValue.toFloat()?:0f
+                            paceNumber=RLYourWayCalvulation.calculatePace(floatSpeed)
+
+                            speedList.add(speedSetValue.toDouble())
+                            fragBinding.inlaySpeed.txtProgressTimeNumber.setText(speedSetValue.toString())
+                            if (!speedList.isNullOrEmpty()){
+                                val averageSpeed=speedList.average().toDouble()?:0.0
+                                maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
+                                fragBinding.inlaySpeed.txtAvgNumber.setText(averageSpeed.toString())
+                                fragBinding.inlaySpeed.txtMaxNumber.setText( maxSpeed.toString())
+                            }
+                            if (cadenceSetValue>0){
+                                fragBinding.inlayStep.txtProgressTimeNumber.setText(CADENCE.toString())
+                            }
+                            if (distanceSetValue>0){
+                                fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString())
+                            }
+                            if (paceNumber>0){
+                                fragBinding.inlayPace.txtProgressTimeNumber.setText(paceNumber.toString())
+                                paceList.add(paceNumber)
+                                if (!paceList.isNullOrEmpty()){
+                                    val averagePace=paceList.average().roundToInt()?:0
+                                    //val maxPace=paceList.maxOrNull()!!.toInt()?:0
+                                    maxPace=RLYourWayCalvulation.RLmax(maxPace,paceNumber.toInt())
+                                    fragBinding.inlayPace.txtAvgNumber.setText( averagePace.toString())
+                                    fragBinding.inlayPace.txtMaxNumber.setText( maxPace.toString())
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        else{
+            //No Sensor
+            if (yourWayType.toLowerCase().equals("run")||yourWayType.toLowerCase().equals("walk")||yourWayType.toLowerCase().equals("ride")){
+                RLstepGetToGPS()
+            }
         }
     }
     fun  RLwayTypeDesignSet(yourWayType:String){
@@ -633,95 +711,11 @@ class RLFragSensorProgress : RLBaseFragment(){
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (isSpeedSensor){
-            if (bleManager.checkAndRequestPermissions(requireActivity())) {
-                bleManager.setupBluetooth {
-                    bleManager.startBLEService()
-                }
-            }
-            bleManager.setCallback(object : RLBLEManagerSpeed.BLECallback {
-                override fun onHeartRateDataReceived(SPEED:String, AvgSPEED:String, DISTANCE:String, CADENCE:String, CALORIES:String) {
-                    var speedSetValue=RLYourWayCalvulation.RlGetValueInt(SPEED.toString())?:0
-                    var avgspeedSetValue=RLYourWayCalvulation.RlGetValueInt(AvgSPEED.toString())?:0
-                    var distanceSetValue=RLYourWayCalvulation.RlGetValueInt(DISTANCE.toString())?:0
-                    var cadenceSetValue=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
-
-                    distanceNumber=RLYourWayCalvulation.RlGetValueDouble(DISTANCE.toString())?:0.0
-                    climbedNumber=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
-                    speedNumber=RLYourWayCalvulation.RlGetValueDouble(SPEED.toString())?:0.0
-                    //activeCaloriesNumber=RLYourWayCalvulation.RlGetValueDouble(CALORIES.toString())?:0.0
-                    cadenceData=RLYourWayCalvulation.RlGetValueDouble(CADENCE.toString())?:0.0
-                    maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.toInt())
-
-                    val floatSpeed:Float= speedSetValue.toFloat()?:0f
-                    paceNumber=RLYourWayCalvulation.calculatePace(floatSpeed)
-
-                    speedList.add(speedSetValue.toDouble())
-                    fragBinding.inlaySpeed.txtProgressTimeNumber.setText(speedSetValue.toString())
-                    if (!speedList.isNullOrEmpty()){
-                        val averageSpeed=speedList.average().toDouble()?:0.0
-                        maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
-                        fragBinding.inlaySpeed.txtAvgNumber.setText(averageSpeed.toString())
-                        fragBinding.inlaySpeed.txtMaxNumber.setText( maxSpeed.toString())
-                    }
-                    if (cadenceSetValue>0){
-                        fragBinding.inlayStep.txtProgressTimeNumber.setText(CADENCE.toString())
-                    }
-                    if (distanceSetValue>0){
-                        fragBinding.inlayDistance.txtProgressTimeNumber.setText(DISTANCE.toString())
-                    }
-                    if (paceNumber>0){
-                        fragBinding.inlayPace.txtProgressTimeNumber.setText(paceNumber.toString())
-                        paceList.add(paceNumber)
-                        if (!paceList.isNullOrEmpty()){
-                            val averagePace=paceList.average().roundToInt()?:0
-                            //val maxPace=paceList.maxOrNull()!!.toInt()?:0
-                            maxPace=RLYourWayCalvulation.RLmax(maxPace,paceNumber.toInt())
-                            fragBinding.inlayPace.txtAvgNumber.setText( averagePace.toString())
-                            fragBinding.inlayPace.txtMaxNumber.setText( maxPace.toString())
-                        }
-                    }
-                }
-
-                override fun onConnectionStateChange(is_connected: Boolean) {
-                    if (is_connected){
-                        // commonToast("BLE DEVICE CONNECT")
-                        RLTools.RlLogDPrint(TAG,"BLE DEVICE CONNECT")
-                    }else{
-                        //commonToast("NO ANY BLE DEVICE CONNECT")
-                        RLTools.RlLogDPrint(TAG,"NO ANY BLE DEVICE CONNECT")
-                        if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                            RLstepGetToGPS()
-                        }
-                    }
-                }
-                @SuppressLint("MissingPermission")
-                override fun onDeviceConnected(device: BluetoothDevice) {
-                    Log.d("BLE", "Connected to device: ${device.name}")
-                }
-
-                override fun onDeviceDisconnected() {
-                    Log.d("BLE", "Device disconnected")
-                }
-
-                override fun onError(errorMessage: String) {
-                    Log.e("BLE", "Error: $errorMessage")
-                }
-            })
-        }else{
-            if (yourWayType.toLowerCase().equals("run")||yourWayType.toLowerCase().equals("walk")||yourWayType.toLowerCase().equals("ride")){
-                RLstepGetToGPS()
-            }
-        }
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         try {
-            bleManager.cleanup()
+            timerManager.RLstop()
+            viewModel.stopNotifications()
         }catch (e:Exception){
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }

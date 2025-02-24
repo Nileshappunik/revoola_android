@@ -79,8 +79,18 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         fragBinding?.inlayCalories?.txtNumber?.setText(calories)
     }
 
-    fun RLUpdateHRPersentage(REVPer : Int) {
+    fun RLUpdateHRPersentage(REVPer: Int, heartRate: Int, burntCalories: Double, totalRev: Double) {
         try {
+            if (heartRate>0){
+                fragBinding?.inlayHeartrate?.txtNumber?.setText(heartRate.toString())
+            }
+            if (burntCalories>0){
+                fragBinding?.inlayCalories?.txtNumber?.setText(burntCalories.roundToInt().toString())
+            }
+            if (totalRev>0){
+                fragBinding?.inlayEffort?.txtNumber?.setText(totalRev.roundToInt().toString())
+            }
+
         if (REVPer>=100){
             fragBinding.progresstext.setText("100%")
             fragBinding.circularProgressBar.RLsetProgress(100)
@@ -97,6 +107,8 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
         }catch (e:Exception){
             RLTools.RlLogEPrint(TAG,"Exception: ${e.message}")
         }
+
+
     }
 
     override fun onDestroy() {
