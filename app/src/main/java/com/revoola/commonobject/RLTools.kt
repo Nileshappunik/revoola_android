@@ -786,6 +786,40 @@ object RLTools {
         }
     }
 
+    fun RLzoneDiff(REVPer: Int):Int {
+        when {
+            REVPer <= 30 -> {
+                //Zone 1
+                return 1
+            }
+            REVPer <= 50 -> {
+                //Zone 2
+                return 2
+            }
+            REVPer <= 60 -> {
+                //Zone 3
+                return 3
+            }
+            REVPer <= 70 -> {
+                //Zone 4
+                return 4
+            }
+            REVPer <= 80 -> {
+                //Zone 5
+                return 5
+            }
+            REVPer <= 90 -> {
+                //Zone 6
+                return 6
+            }
+            REVPer <= 100 -> {
+                //Zone 7
+                return 7
+            }
+        }
+        return 1
+    }
+
     fun RLGetZoneNo(num: Int): String {
         return when {
             num < 30 -> "zone1"

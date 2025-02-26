@@ -1,8 +1,6 @@
 package com.revoola.fragment.start.yourway
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -15,7 +13,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
-import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import com.revoola.R
@@ -25,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.revoola.ble.BLERepository
 import com.revoola.ble.BLEViewModel
-import com.revoola.ble.BluetoothState
 import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.databinding.RlFragHeartrateSensorProgressBinding
@@ -47,6 +43,9 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import com.revoola.databasefirebase.RLZoneDataDetails
+import com.revoola.databasefirebase.RLZoneDataSummery
+import com.revoola.databasefirebase.RevoolaKeys
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedListener{
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
@@ -138,6 +137,9 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
     private val gpxStringBuilder = StringBuilder()
 
+    private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
+    private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
+
     private val bleRepository by lazy {
         BLERepository(requireContext())
     }
@@ -168,6 +170,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
     }
 
     private fun RLuisetup() {
+        initializeDefaultZonesSummery()
         RLstartCountdown()
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
         val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
@@ -279,53 +282,55 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
            }
 
             val bundle: Bundle = Bundle()
-            bundle.putString("YourWayType",yourWayType)
-            bundle.putString("totalTime",(totalTime?:"0"))
-            bundle.putString("gpxStringBuilder",gpxStringBuilder.toString()?:"")
 
+            val cardData = RLSessionDataTransferModel()
 
-            bundle.putString("SENSOR",RLConstants.HEART_SENSOR)
-            bundle.putDouble("avgRevPercentage",RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00))
-            bundle.putDouble("burntCalories",RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00))
-            bundle.putDouble("distance",RLYourWayCalvulation.noNanValueDouble(distance?:0.00))
-            bundle.putDouble("maxRevPercentage",RLYourWayCalvulation.noNanValueDouble(maxRevPercentage?:0.00))
-            bundle.putDouble("minRevPercentage",RLYourWayCalvulation.noNanValueDouble(minRevPercentage?:0.00))
-            bundle.putDouble("revPercentage",RLYourWayCalvulation.noNanValueDouble(revPercentage?:0.00))
-            bundle.putDouble("totalElevation",RLYourWayCalvulation.noNanValueDouble(totalElevation?:0.00))
-            bundle.putDouble("totalRev",RLYourWayCalvulation.noNanValueDouble(totalRev?:0.00))
-            bundle.putInt("totalSteps",stepsNumber?:0)
-            bundle.putInt("maxSpeed",maxSpeed?:0)
-            bundle.putInt("maxHeartRate",maxHeartrate?:0)
-            bundle.putInt("maxCadence",maxCadence?:0)
-            bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
-            bundle.putInt("minHeartrate",minHeartrate?:0)
+            cardData.yourWayType = yourWayType
+            cardData.totalTime = totalTime?:"0"
+            cardData.gpxStringBuilder = gpxStringBuilder.toString()?:""
 
-            bundle.putDouble("maxSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00))
-            bundle.putDouble("maxSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00))
-            bundle.putDouble("avgSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneKm?:0.00))
-            bundle.putDouble("avgSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneMile?:0.00))
+            cardData.SENSOR = RLConstants.HEART_SENSOR
+            cardData.avgRevPercentage = RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00)
+            cardData.burntCalories = RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00)
+            cardData.distance = RLYourWayCalvulation.noNanValueDouble(distance?:0.00)
+            cardData.maxRevPercentage = RLYourWayCalvulation.noNanValueDouble(maxRevPercentage?:0.00)
+            cardData.minRevPercentage = RLYourWayCalvulation.noNanValueDouble(minRevPercentage?:0.00)
+            cardData.revPercentage = RLYourWayCalvulation.noNanValueDouble(revPercentage?:0.00)
+            cardData.totalElevation = RLYourWayCalvulation.noNanValueDouble(totalElevation?:0.00)
+            cardData.totalRev = RLYourWayCalvulation.noNanValueDouble(totalRev?:0.00)
+            cardData.totalSteps = stepsNumber?:0
+            cardData.maxSpeed = maxSpeed?:0
+            cardData.maxHeartRate = maxHeartrate?:0
+            cardData.maxCadence = maxCadence?:0
+            cardData.maxBurntCalories = maxBurntCalories?:0
+            cardData.minHeartRate = minHeartrate?:0
 
-            bundle.putBooleanArray("arrConnection",arrConnection.toBooleanArray())
+            cardData.maxSpeedForOneKm = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00)
+            cardData.maxSpeedForOneMile = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00)
+            cardData.avgSpeedForOneKm = RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneKm?:0.00)
+            cardData.avgSpeedForOneMile = RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneMile?:0.00)
 
-            bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrDistance.toString(),arrDistance.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrElevation.toString(),arrElevation.toDoubleArray())
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrHRRecordedSecond.toString(),ArrayList(arrHRRecordedSecond))
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
-            bundle.putDoubleArray(RLYourWayArrayType.arrRevPercentage.toString(),arrRevPercentage.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrRevSecond.toString(),arrRevSecond.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrSpeed.toString(),arrSpeed.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrCumElevation.toString(),arrCumElevation.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
+            cardData.arrConnection = arrConnection
 
-            bundle.putDoubleArray(RLYourWayArrayType.arrAvgCadence.toString(),arrAvgCadence.toDoubleArray())
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgHr.toString(),ArrayList(arrAvgHr))
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString(),ArrayList(arrAvgRevPercentage))
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxCadence.toString(),ArrayList(arrMaxCadence))
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrMaxHr.toString(),ArrayList(arrMaxHr))
-            bundle.putDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString(),arrMaxRevPercentage.toDoubleArray())
+            cardData.arrBurntCalories = arrBurntCalories
+            cardData.arrCadence = arrCadence
+            cardData.arrDistance = arrDistance
+            cardData.arrElevation = arrElevation
+            cardData.arrHRRecordedSecond = arrHRRecordedSecond
+            cardData.arrHr = arrHr
+            cardData.arrRevPercentage = arrRevPercentage
+            cardData.arrRevSecond = arrRevSecond
+            cardData.arrSpeed = arrSpeed
+            cardData.arrCumDistance = arrCumDistance
+            cardData.arrCumElevation = arrCumElevation
+            cardData.arrCumSpeed = arrCumSpeed
+
+            cardData.arrAvgCadence = arrAvgCadence
+            cardData.arrAvgHr = arrAvgHr
+            cardData.arrAvgRevPercentage = arrAvgRevPercentage
+            cardData.arrMaxCadence = arrMaxCadence
+            cardData.arrMaxHr = arrMaxHr
+            cardData.arrMaxRevPercentage = arrMaxRevPercentage
 
             if (arrSpeedForOneKm.isNullOrEmpty()){
                 arrSpeedForOneKm= mutableListOf(0.00)
@@ -333,11 +338,34 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             if (arrSpeedForOneMile.isNullOrEmpty()){
                 arrSpeedForOneMile= mutableListOf(0.00)
             }
-            bundle.putDoubleArray(RLYourWayArrayType.speedForOneKm.toString(),arrSpeedForOneKm.toDoubleArray())
-            bundle.putDoubleArray(RLYourWayArrayType.speedForOneMile.toString(),arrSpeedForOneMile.toDoubleArray())
 
-            bundle.putParcelableArrayList(RLYourWayArrayType.arrDataLocation.toString(), ArrayList(arrDataLocation))
-            bundle.putParcelableArrayList(RLYourWayArrayType.arrLocationDetails.toString(),ArrayList(arrLocationDetails))
+            cardData.speedForOneKm = arrSpeedForOneKm
+            cardData.speedForOneMile = arrSpeedForOneMile
+
+            if (arrDataLocation.isNullOrEmpty()){
+                val dataclass= RLElevationPoint(0.00,0.00,0.00)
+                arrDataLocation.add(dataclass)
+            }
+            if (arrLocationDetails.isNullOrEmpty()){
+                val dataclass= RLLocationDetails(0.00,0.00,0.00,0.00,0.00,0.00)
+                arrLocationDetails.add(dataclass)
+            }
+
+            cardData.arrDataLocation = arrDataLocation
+            cardData.arrLocationDetails = arrLocationDetails
+
+            cardData.zoneDataSummery = getZoneDataMapSummery()
+            cardData.zoneDataDetail = getZoneDataMapDetail()
+
+            cardData.wsWeight = wsWeight
+            cardData.wsHeight = wsHeight
+            cardData.wsAge = wsAge
+            cardData.gender = gender
+            cardData.RFMHR = RFMHR
+            cardData.RestingHR = RestingHR
+            cardData.appUnit = appUnit
+
+            bundle.putSerializable("cardData",cardData)
 
 
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
@@ -574,6 +602,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 """.trimIndent())
 
         arrConnection.add(true)
+
+        val REVPecentage=REVPer.roundToInt()
+        updateZoneData(RLTools.RLzoneDiff(REVPecentage))
+
     }
 
     private fun RLUpdateHRPersentage(REVPer : Int) {
@@ -832,5 +864,82 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             }
         }
     }
+
+    private fun updateZoneData(zoneNumber:Int) {
+        // Only update the active zone with new values
+        val zoneKey = when (zoneNumber) {
+            1 -> RevoolaKeys.Zone1
+            2 -> RevoolaKeys.Zone2
+            3 -> RevoolaKeys.Zone3
+            4 -> RevoolaKeys.Zone4
+            5 -> RevoolaKeys.Zone5
+            6 -> RevoolaKeys.Zone6
+            7 -> RevoolaKeys.Zone7
+            else -> null
+        }
+        // If we have a valid zone, replace its data with new values
+        if (zoneKey != null) {
+            val newZoneDataSummery = RLZoneDataSummery(
+                avgCadence = RLYourWayCalvulation.noNanValueDouble(arrCadence.average()),
+                avgHr = arrHr.average().roundToInt()?:0,
+                avgPower = 0,
+                avgPowerFromDevice = 0,
+                avgSpeed = arrSpeed.average()?:0.0,
+                burntCalories = burntCalories?:0.0,
+                distance = distance?:0.0,
+                remark = "android",
+                seconds = totalTime.toInt()?:0,
+                totalRev = totalRev?:0.0
+            )
+            val newZoneDataDetail = RLZoneDataDetails(
+                burntCalories = burntCalories?:0.0,
+                distance = distance?:0.0,
+                remark = "android",
+                seconds = totalTime.toInt()?:0,
+                totalRev = totalRev?:0.0
+            )
+            zoneDataMapSummery[zoneKey] = newZoneDataSummery
+            zoneDataMapDetails[zoneKey] = newZoneDataDetail
+        }
+    }
+    private val defaultZoneSummeryData = RLZoneDataSummery(
+        avgCadence = 0.0,
+        avgHr = 0,
+        avgPower = 0,
+        avgPowerFromDevice = 0,
+        avgSpeed = 0.0,
+        burntCalories = 0.0,
+        distance = 0.0,
+        remark = "android",
+        seconds = 0,
+        totalRev = 0.0 )
+
+    private val defaultZoneDetailData = RLZoneDataDetails(
+        burntCalories = 0.0,
+        distance = 0.0,
+        remark = "android",
+        seconds = 0,
+        totalRev = 0.0)
+
+    private fun getZoneDataMapSummery(): Map<String, RLZoneDataSummery> = zoneDataMapSummery.toMap()
+    private fun getZoneDataMapDetail(): Map<String, RLZoneDataDetails> = zoneDataMapDetails.toMap()
+
+    private fun initializeDefaultZonesSummery() {
+        listOf(
+            RevoolaKeys.Zone1,
+            RevoolaKeys.Zone2,
+            RevoolaKeys.Zone3,
+            RevoolaKeys.Zone4,
+            RevoolaKeys.Zone5,
+            RevoolaKeys.Zone6,
+            RevoolaKeys.Zone7
+        ).forEach { name ->
+            zoneDataMapSummery[name] = defaultZoneSummeryData
+            zoneDataMapDetails[name] = defaultZoneDetailData
+        }
+    }
+
+
+
 
 }
