@@ -13,7 +13,7 @@ class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
     fun RLREVOOLAUSERFORSEARCHREADDATE(userId: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -23,7 +23,7 @@ class RLDatabaseManagerRead {
         }
     }
     fun RLREVOOLAVIDEOKEYSMINDRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEO_KEYS_MIND)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEO_KEYS_MIND)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -35,7 +35,7 @@ class RLDatabaseManagerRead {
     }
 
     fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.CODE_SECTION)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.CODE_SECTION)
             .child(RLConstants.AVAILABLE_MENUS).child(classname)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -46,7 +46,7 @@ class RLDatabaseManagerRead {
             }
     }
     fun RLRevoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEO_KEYS)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEO_KEYS)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -58,7 +58,7 @@ class RLDatabaseManagerRead {
     }
 
     fun RLRevoolaVideosRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEOS).child(videoId)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEOS).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(task.result?.value, null)
@@ -68,7 +68,7 @@ class RLDatabaseManagerRead {
             }
     }
     fun RLRevoolaVideosMindRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_VIDEOS_MIND).child(videoId)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEOS_MIND).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(task.result?.value, null)
@@ -88,7 +88,7 @@ class RLDatabaseManagerRead {
     }
 
     fun RlUserBasicDataRead(userId: String,callback: (Any?, Exception?) -> Unit) {
-        val path ="/proposedstructure/revoolaUserSettings/$userId/basicData"
+        val path = RevoolaFirebasePath.basicDataDataPath(userId)
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -99,7 +99,7 @@ class RLDatabaseManagerRead {
     }
 
     fun RlHelpVideoGetDataRead(HelpType: String,callback: (Any?, Exception?) -> Unit) {
-        val path ="/proposedstructure/codeSection/getStartedVideos/$HelpType"
+        val path =RevoolaFirebasePath.getStartedVideosDataPath(HelpType)
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -111,7 +111,7 @@ class RLDatabaseManagerRead {
 
     fun RLClassLeaderBoardDataRead(viedoId: String,callback: (Any?, String?) -> Unit){
         val leaderboardMap = mutableMapOf<String, RLChallengeRiderBody>()
-        val path ="/proposedstructure/revoolaClassLeaderBoards/$viedoId"
+        val path = RevoolaFirebasePath.classLeaderBoardsDataPath(viedoId)
         database.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.e("FirebaseError", "Fetch snapshot: ${snapshot}")

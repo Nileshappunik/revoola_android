@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -19,9 +20,19 @@ import com.revoola.fragment.start.adapter.RLSelectedImagesAdapter
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
+import com.revoola.RLBaseProgress
+import com.revoola.api.RLApiClientRet
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.model.RLClassLeaderboard
+import com.revoola.model.RLUsernameV2
+import com.revoola.model.RLYourWayApiPayload
 import com.revoola.utils.RLPrefManager
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.io.Serializable
 import kotlin.math.roundToInt
@@ -34,6 +45,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     private var displayImage =""
     private var displayName =""
     private var visibilityflagforthatsession:Int =0
+    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
@@ -51,6 +64,15 @@ class RLFragSessionComplete : RLBaseFragment(){
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionComplete" )
         currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        if (currentUser.isEmpty()){
+            currentUser=RLAuthManager().RlgetCurrentUser()?.uid?:""
+        }
+        // Api call
+        RLApiClientRetrofit = RLApiClientRet(activity)
+        val apiService = RLApiClientRetrofit.RLNetworkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
+
         RLuisetup()
         return fragBinding.root
     }
@@ -99,8 +121,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
         fragBinding.inlayButton.commonButton.setText(R.string.save)
         fragBinding.inlayButton.commonButton.setOnClickListener {
+            if(isAdded){
+                RLBaseProgress.RLShowProgressDialog(requireActivity())
+            }
             RLMakeSensorData(cardData)
         }
+    }
+    private fun safeNumber(value: Double?): Double {
+        return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
     }
 
     private fun RLMakeSensorData(cardData: RLSessionDataTransferModel) {
@@ -184,13 +212,13 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
 
         val summaryDataMap = hashMapOf(
-            RevoolaKeys.arrBurntCalories to  cardData.arrBurntCalories.average(),
-            RevoolaKeys.arrCadence to  cardData.arrCadence.average(),
-            RevoolaKeys.arrHr to  cardData.arrHr.average().roundToInt(),
+            RevoolaKeys.arrBurntCalories to safeNumber(cardData.arrBurntCalories.average()),
+            RevoolaKeys.arrCadence to safeNumber(cardData.arrCadence.average()),
+            RevoolaKeys.arrHr to safeNumber(cardData.arrHr.average()),
             RevoolaKeys.avgPower to  0,
             RevoolaKeys.avgPowerFromDevice to  0,
-            RevoolaKeys.avgRevPercentage to cardData.arrRevPercentage.average(),
-            RevoolaKeys.avgSpeed to  cardData.arrSpeed.average(),
+            RevoolaKeys.avgRevPercentage to safeNumber(cardData.arrRevPercentage.average()),
+            RevoolaKeys.avgSpeed to safeNumber(cardData.arrSpeed.average()),
             RevoolaKeys.avgSpeedForOneKm to  cardData.avgSpeedForOneKm,
             RevoolaKeys.avgSpeedForOneMile to  cardData.avgSpeedForOneMile,
             RevoolaKeys.burntCalories to  cardData.burntCalories,
@@ -309,7 +337,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
                 RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapHeart,cardData)
+                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapHeart,cardData,currentTimestamp)
             }
             RLConstants.SPEED_SENSOR->{
                 val detailsDataMap = hashMapOf(
@@ -364,7 +392,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
                 RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData)
+                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
 
             }
             RLConstants.NO_SENSOR->{
@@ -422,19 +450,27 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
                 RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData)
+                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
 
             }
         }
     }
 
     private fun RLFirebaseEntry(
-        deviceRecordedDataMap: HashMap<String, Double>,elevationDataMap: HashMap<String, Any>,
-        gpxDataMap: HashMap<String, String>,gpx_TDataMap: HashMap<String, Any>,
-        gpx_T_ServerDataMap: HashMap<String, Any>,gpx_T_Server_NDataMap: HashMap<String, Any>,
-        locationDataMap: HashMap<String, Any>,ghostDataMap: HashMap<String, Any>,
-        summaryDataMap: HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
-        graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModel) {
+        deviceRecordedDataMap: HashMap<String, Double>,
+        elevationDataMap: HashMap<String, Any>,
+        gpxDataMap: HashMap<String, String>,
+        gpx_TDataMap: HashMap<String, Any>,
+        gpx_T_ServerDataMap: HashMap<String, Any>,
+        gpx_T_Server_NDataMap: HashMap<String, Any>,
+        locationDataMap: HashMap<String, Any>,
+        ghostDataMap: HashMap<String, Any>,
+        summaryDataMap: HashMap<String, Serializable?>,
+        detailsDataMap: HashMap<String, Any?>,
+        graphDataMap: HashMap<String, Any>,
+        cardData: RLSessionDataTransferModel,
+        currentTimestamp: String
+    ) {
         //Firebase  Entry
         val databaseManager = RLDatabaseManagerWrite()
 
@@ -563,9 +599,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        RLInsertApiCall(cardData,currentTimestamp)
                     } else {
                         RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
@@ -618,6 +652,75 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.rvSelectedImages.visibility=View.GONE
             fragBinding.txtAddPhoto.visibility=View.VISIBLE
         }
+    }
+
+    private fun RLInsertApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
+        if (RLApiClientRetrofit.RLisConnected()) {
+            val jsonPayload = createPayload(cardData,currentTimestamp)
+            val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
+
+            RLTools.RlLogDPrint(TAG,"YourWay Insert Request: $request")
+            //Insert Api Call
+            viewModel.RLInsertYourWayData(request) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogDPrint(TAG, "YourWay Insert Success= " + response.type)
+                            RLBottomHideShowSet(true)
+                            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogDPrint(TAG, "YourWay Insert Fail= " + response.type)
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.RLhideProgressDialog()
+                        e.printStackTrace()
+                        RLTools.RlLogDPrint(TAG, "YourWay Insert Catch= " + e.message)
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogDPrint(TAG, "YourWay Insert Error= " + error.message)
+                }
+            }
+        }
+
+    }
+
+    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): String {
+        val classLeaderboard = RLClassLeaderboard(
+            userId = currentUser,
+            classId = "",
+            timestamp = currentTimestamp,
+            timestampLocal = currentTimestamp,
+            totalRev = cardData.totalRev,
+            visibilityFlagForThatSession = visibilityflagforthatsession,
+            discipline = cardData.yourWayType,
+            duration = cardData.totalTime,
+            calories = cardData.burntCalories,
+            bmo = 2,
+            rmm = 0,
+            rms = 0,
+            source = "android",
+            goal = "all")
+
+        val usernameV2 = RLUsernameV2(
+            userId = currentUser,
+            avatar = cardData.userModel!!.displayImage,
+            username = cardData.userModel!!.displayName,
+            accessToken = "",
+            firstName = cardData.userModel!!.firstName,
+            lastName = cardData.userModel!!.lastName,
+            email = cardData.userModel!!.emailId,
+            currentGroup = cardData.userModel?.currentGroup?:"premium")
+
+        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard,usernameV2))
+
+        // Convert to JSON String
+        return Gson().toJson(apiPayload)
     }
 
 

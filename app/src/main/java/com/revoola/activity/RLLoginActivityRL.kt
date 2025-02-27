@@ -29,6 +29,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLFirebaseManager
+import com.revoola.utils.RLPrefManager
 
 class RLLoginActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginActivityRL::class.java.simpleName
@@ -188,8 +189,8 @@ class RLLoginActivityRL : RLBaseActivity() {
     }
     private fun RLupdateUI(user: FirebaseUser?) {
         if (user != null) {
-            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,user.uid)
-            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user_email,user.email)
+            RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,user.uid)
+            RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email,user.email)
             val userid:String= user.uid?:""
             val email:String=user.email?:""
             RLSetUsernameToFirebase(userid,email)

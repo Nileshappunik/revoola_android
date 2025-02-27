@@ -1,5 +1,8 @@
 package com.revoola.api
 
+
+import com.revoola.model.RLChallengePayload
+import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -23,6 +26,8 @@ import com.revoola.model.RLSetsearch_userrequest
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
+import com.revoola.model.RLYourWayApiPayload
+import com.revoola.model.RLYourWayApiResponse
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -94,5 +99,13 @@ interface RLNetworkService {
         @Query("overviewid") overviewid: String,
         @Query("limit") limit: Int,
         @Query("index") index: Int): Call<RLFeedModel>
+
+    //Insert Api
+    @POST(RLConstants.insertJSONApi)
+    fun RLInsertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLYourWayApiResponse>
+
+    @POST(RLConstants.insertJSONApi)
+    fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLYourWayApiResponse>
+
 
 }

@@ -38,6 +38,7 @@ import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.launch
 import java.lang.Math.round
@@ -117,6 +118,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var gender="Male"
     private var RFMHR=191
     private var RestingHR="50"
+    private var  userModel: RLRevoolaUsersSettingsModel?=null
 
     private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
     private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
@@ -160,6 +162,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         return fragBinding.root
     }
     private fun RLuisetup(){
+        initializeDefaultZonesSummery()
         RLstartCountdown()
         isSpeedSensor = requireArguments().getBoolean(RLExtraValueKey.isSpeedSensor,false)
         fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
@@ -167,6 +170,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
+                userModel=userData
                 appUnit=userData.appUnit
                 wsHeight=userData.height?:"167"
                 wsWeight=userData.weightkg?:"70"
@@ -294,6 +298,8 @@ class RLFragSensorProgress : RLBaseFragment(){
             cardData.RFMHR = RFMHR
             cardData.RestingHR = RestingHR
             cardData.appUnit = appUnit
+            cardData.userModel = userModel
+
 
             bundle.putSerializable("cardData",cardData)
             try {

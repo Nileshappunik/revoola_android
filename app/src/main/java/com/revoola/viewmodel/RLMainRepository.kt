@@ -1,5 +1,8 @@
 package com.revoola.viewmodel
 import com.revoola.api.RLNetworkService
+import com.revoola.fragment.start.challenges.RLFragEditChallenges
+import com.revoola.model.RLChallengePayload
+import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -23,6 +26,8 @@ import com.revoola.model.RLSetsearch_userrequest
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
+import com.revoola.model.RLYourWayApiPayload
+import com.revoola.model.RLYourWayApiResponse
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -315,6 +320,39 @@ class RLMainRepository(private val apiService: RLNetworkService) {
                 }
             }
             override fun onFailure(call: Call<RLFeedModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    //Innsert Api
+    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        apiService.RLInsertYourWayData(request).enqueue(object : Callback<RLYourWayApiResponse> {
+            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        apiService.RLInsertChallenges(request).enqueue(object : Callback<RLYourWayApiResponse> {
+            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

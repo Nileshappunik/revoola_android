@@ -1,0 +1,42 @@
+package com.revoola.model
+
+import com.google.gson.annotations.SerializedName
+
+data class RLYourWayApiPayload(
+    @SerializedName("classleaderboard") val classLeaderboard: RLClassLeaderboard,
+    @SerializedName("username_v2") val usernameV2: RLUsernameV2
+)
+
+data class RLClassLeaderboard(
+    @SerializedName("userid") val userId: String,
+    @SerializedName("classid") val classId: String,
+    @SerializedName("timestamp") val timestamp: String,
+    @SerializedName("timestamp_local") val timestampLocal: String,
+    @SerializedName("totalrev") val totalRev: Double,
+    @SerializedName("visibilityflagforthatsession") val visibilityFlagForThatSession: Int,
+    @SerializedName("discipline") val discipline: String,
+    @SerializedName("duration") val duration: String,
+    @SerializedName("calories") val calories: Double?,
+    @SerializedName("bmo") val bmo: Int,
+    @SerializedName("rmm") val rmm: Int,
+    @SerializedName("rms") val rms: Int,
+    @SerializedName("source") val source: String,
+    @SerializedName("goal") val goal: String
+)
+
+data class RLUsernameV2(
+    @SerializedName("userid") val userId: String,
+    @SerializedName("avatar") val avatar: String,
+    @SerializedName("username") val username: String,
+    @SerializedName("access_token") val accessToken: String,
+    @SerializedName("first_name") val firstName: String,
+    @SerializedName("last_name") val lastName: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("current_group") val currentGroup: String
+)
+
+
+data class RLYourWayApiResponse(
+    @SerializedName("type") val type: String,
+    @SerializedName("text") val text: String
+)

@@ -4,6 +4,7 @@ import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.firebaseModel.RLElevationPoint
 import com.revoola.firebaseModel.RLLocationDetails
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import java.io.Serializable
 
 class RLSessionDataTransferModel : Serializable {
@@ -12,6 +13,7 @@ class RLSessionDataTransferModel : Serializable {
     var gpxStringBuilder: String ="0"
     var SENSOR: String =""
 
+
     var wsWeight="60"
     var wsHeight="167"
     var wsAge=25
@@ -19,6 +21,12 @@ class RLSessionDataTransferModel : Serializable {
     var RFMHR=191
     var RestingHR="50"
     var appUnit=""
+
+    var VIDEODATA=""
+    var classType=""
+    var videoID: String =""
+    var avgHr: Int =0
+    var rms: Double =0.0
 
     var avgRevPercentage: Double = 0.0
     var burntCalories: Double = 0.0
@@ -34,8 +42,12 @@ class RLSessionDataTransferModel : Serializable {
     var maxSpeed: Int = 0
     var maxHeartRate: Int = 0
     var maxCadence: Int = 0
+    var avgBurntCalories: Double = 0.0
     var maxBurntCalories: Int = 0
     var minHeartRate: Int = 0
+
+    var avgCadence: Double = 0.0
+    var avgSpeed: Double = 0.0
 
     var maxSpeedForOneKm:  Double = 0.0
     var maxSpeedForOneMile:  Double = 0.0
@@ -49,6 +61,8 @@ class RLSessionDataTransferModel : Serializable {
     var arrElevation:MutableList<Double> = mutableListOf()
     var arrHRRecordedSecond:MutableList<Int> = mutableListOf()
     var arrHr:MutableList<Int> = mutableListOf()
+    var arrPower:MutableList<Int> = mutableListOf()
+    var arrPowerFromDevice:MutableList<Int> = mutableListOf()
     var arrRevPercentage:MutableList<Double> = mutableListOf()
     var arrRevSecond:MutableList<Double> = mutableListOf()
     var arrSpeed:MutableList<Double> = mutableListOf()
@@ -71,6 +85,8 @@ class RLSessionDataTransferModel : Serializable {
 
     var zoneDataSummery: Map<String, RLZoneDataSummery> = mapOf()
     var zoneDataDetail: Map<String, RLZoneDataDetails> = mapOf()
+
+    var  userModel: RLRevoolaUsersSettingsModel? = null
 
      
 }

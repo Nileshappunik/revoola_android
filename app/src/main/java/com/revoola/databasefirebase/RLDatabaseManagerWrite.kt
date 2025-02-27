@@ -17,7 +17,7 @@ class RLDatabaseManagerWrite {
             }
     }
     fun REVOOLAUSEREMAILSWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_EMAILS).child(userId).setValue(data)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_EMAILS).child(userId).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(true, null)
@@ -27,7 +27,7 @@ class RLDatabaseManagerWrite {
             }
     }
     fun REVOOLAUSERFORSEARCHWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId).setValue(data)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(true, null)
@@ -37,7 +37,7 @@ class RLDatabaseManagerWrite {
             }
     }
     fun REVOOLAUSERSETTINGSWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_SETTINGS).child(userId).child(RLConstants.BASIC_DATA).setValue(data)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_SETTINGS).child(userId).child(RLConstants.BASIC_DATA).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(true, null)
@@ -48,7 +48,7 @@ class RLDatabaseManagerWrite {
     }
 
     fun REVOOLADEEPLINKWrite(userId:String) {
-        database.child(RLConstants.PROPOSED_STRUCTURE).child(RLConstants.REVOOLA_USER_SETTINGS)
+        database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_SETTINGS)
             .child(userId).child(RLConstants.BASIC_DATA).child("link").setValue("")
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

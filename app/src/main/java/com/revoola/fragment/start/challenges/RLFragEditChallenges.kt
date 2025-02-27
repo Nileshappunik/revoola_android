@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -21,17 +22,27 @@ import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
+import com.revoola.RLBaseProgress
+import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragEditChallengesBinding
+import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.revoola.fragment.start.challenges.adapter.RLEditChallengesAdapter
 import com.revoola.fragment.start.challenges.model.RLEditChallenge
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
+import com.revoola.model.RLChallengePayload
+import com.revoola.model.RLChallengesApiPayload
 import com.revoola.utils.RLPrefManager
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragEditChallenges : RLBaseFragment() {
     val TAG: String = RLFragEditChallenges::class.java.simpleName
     lateinit var fragBinding: RlFragEditChallengesBinding
     var CurrentUserID:String=""
+    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragEditChallenges()
@@ -55,6 +66,14 @@ class RLFragEditChallenges : RLBaseFragment() {
                 RLshowAlertDialog("Do you want to discard the changes?")
             }
         })
+        // Api call
+        RLApiClientRetrofit = RLApiClientRet(activity)
+        val apiService = RLApiClientRetrofit.RLNetworkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(
+            RLMainViewModel::class.java)
+
+
         RLuisetup()
         return fragBinding.root
     }
@@ -120,6 +139,9 @@ class RLFragEditChallenges : RLBaseFragment() {
         fragBinding.recyclerviewEdit.adapter=adapter
 
         fragBinding.btnDone.setOnClickListener {
+            if (isAdded){
+                RLBaseProgress.RLShowProgressDialog(requireActivity())
+            }
             val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
             val userData= RLGetUserDetails(requireContext())
             val challengePayload=RLChallengePayload()
@@ -145,7 +167,6 @@ class RLFragEditChallenges : RLBaseFragment() {
                     challengePayload.group = "true"
                 }
             }
-
             challengePayload.groupid_userid = cardData.selectGroupList
             challengePayload.metric =cardData.ChallengeType
             challengePayload.creationdate = currentTimestamp
@@ -162,10 +183,11 @@ class RLFragEditChallenges : RLBaseFragment() {
             challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
             if (payLoad!=null){
-                RLTools.RlLogEPrint(TAG,"Payload: $payLoad")
-                //TODO API CAll CODE HERE START
-                // Show AlertDialog
-                RLCommonAlert(payLoad.toString(),requireContext())
+               // RLTools.RlLogEPrint(TAG,"Payload: $payLoad")
+                RLTools.RlLogEPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
+                RLshowAlertDialog(payLoad.toString())
+              //  val cardRequesrData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
+               // RLInsertApiCall(cardRequesrData)
             }
         }
 
@@ -322,23 +344,37 @@ class RLFragEditChallenges : RLBaseFragment() {
         return body
     }
 
-    data class RLChallengePayload(
-        var groupid_userid: List<String> = emptyList(), // Represents an array of strings
-        var groupongroup: String = "", // String property
-        var group: String = "", // String property
-        var metric: String = "", // String property
-        var creationdate: String = "", // String property (date)
-        var startdate: String = "", // String property (date)
-        var enddate: String = "", // String property (date)
-        var goalvalue: String = "", // String property
-        var max: String = "", // String property
-        var challenger: String = "", // String property
-        var displayImage: String = "", // String property
-        var typeOfSelect: String = "", // String property
-        var targetType: String = "", // String property
-        var challenge_name: String = "", // String property
-        var day_type: String = "", // String property
-        var isChallengeEdit: Boolean = false // Boolean property
-    )
+
+    private fun RLInsertApiCall(request: List<RLChallengesApiPayload>) {
+        if (RLApiClientRetrofit.RLisConnected()) {
+            RLTools.RlLogDPrint(TAG,"Challenges Insert Request: $request")
+            //Insert Api Call
+            viewModel.RLInsertChallenges(request) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogDPrint(TAG, "Challenges Insert Success= " + response.type)
+                            RLBaseProgress.RLhideProgressDialog()
+                            (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false,null, false)
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogDPrint(TAG, "Challenges Insert Fail= " + response.type)
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.RLhideProgressDialog()
+                        e.printStackTrace()
+                        RLTools.RlLogDPrint(TAG, "Challenges Insert Catch= " + e.message)
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogDPrint(TAG, "Challenges Insert Error= " + error.message)
+                }
+            }
+        }
+
+    }
+
 
 }

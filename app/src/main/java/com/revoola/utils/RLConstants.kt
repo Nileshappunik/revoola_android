@@ -23,20 +23,8 @@ package com.revoola.utils
 
         //Realtime Database Table Name
         const val LIVE = "live"
-        const val PROPOSED_STRUCTURE = "proposedstructure"
         const val LIVE_USERS_EMAIL = "liveUsersEmail"
-        const val DATA_FOR_TESTING = "dataForTesting"
-        const val CONNECTIVITY = "connectivity"
-        const val DEVICE_RECORDED_DATA = "deviceRecordedData"
-        const val ELEVATION_NEW = "elevation"
-        const val GPX = "gpx"
-        const val GPT_T = "gpx_T"
-        const val GPX_T_SERVER = "gpx_T_Server"
-        const val GPX_T_SERVER_N = "gpx_T_Server_N"
-        const val LOCATION = "location"
-        const val REVOOLA_USER_SESSION_SUMMARY_DATA = "revoolaUserSessionSummaryData"
-        const val REVOOLA_USER_SESSION_SUMMARY_GRAPH_DATA = "revoolaUserSessionSummaryGraphData"
-        const val REVOOLA_USER_SESSION_DETAIL_DATA = "revoolaUserSessionDetailData"
+
 
         const val REVOOLA_USER_EMAILS= "revoolaUserEmails"
         const val REVOOLA_USER_FOR_SEARCH= "revoolaUsersForSearch"
@@ -68,13 +56,12 @@ package com.revoola.utils
         const val FORWARMUP= "forWarmup"
         const val FORYOGA= "forYoga"
 
-        //ALL Insert API Server
-        const val insertJSON:String="https://video.revoola.com/_stuff/insertJSON.php"
 
         //ALL Get API Server
         const val BASE_URL: String = "https://video.revoola.com/_stuff/"
         const val URL_V3: String = "getResponse_v3.php"
         const val URL_V2: String = "getResponse_v2.php"
+        const val insertJSONApi = "insertJSON.php"
 
 
         //Help Url ALl

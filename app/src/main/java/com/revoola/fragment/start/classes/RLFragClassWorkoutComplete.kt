@@ -21,6 +21,8 @@ import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
+import com.revoola.databasefirebase.RevoolaFirebasePath
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -61,6 +63,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         return fragBinding.root
     }
     private fun RLuisetup() {
+        //val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg?:"60"
@@ -651,7 +654,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val sessionUserCompletedVideos = mapOf(videoID to true)
 
         //Entry GhostData lastForClass
-        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/lastForClass")
+        val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.ghostLastForClassDataPath(currentUser))
         databaseRefGhostLast.child(videoID).setValue(sessionGhostForClassLastForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData LastForClass Entry saved successfully!")
@@ -662,7 +665,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
 
         //Entry GhostData bestForClass
-        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/ghostForClass/bestForClass")
+        val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.ghostBestForClassDataPath(currentUser))
         databaseRefGhostBest.child(videoID).setValue(sessionGhostForClassBestForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData BestForClass Entry saved successfully!")
@@ -673,7 +676,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
 
         //revoola_UserSessionSummaryData
-        val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
+        val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
@@ -688,7 +691,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
 
         //revoola_UserSessionSummaryGraphData
-        val databaseRefGraph = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryGraphData/$currentUser")
+        val databaseRefGraph = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.graphDataPath(currentUser))
         val entryIdGraph = (System.currentTimeMillis() / 1000).toString()
         entryIdGraph.let {
             databaseRefGraph.child(it).setValue(sessionUserSessionSummaryGraphData)
@@ -702,7 +705,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
 
         //revoolaUserCompletedVideos
-        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/revoolaUserCompletedVideos")
+        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.userCompletedVideosDataPath(currentUser))
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -713,7 +716,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
 
         //revoola_UserSessionDetailData
-         val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+         val databaseRef = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.detailDataPath(currentUser))
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
@@ -731,34 +734,6 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
     }
 
-    private fun RlZoneValueGet(
-        zoneKey: String,
-        activeZone: Int,
-        burntCalories: Double,
-        distance: Double,
-        totalTime: String,
-        totalRev: Double
-    ): HashMap<String, out Any> {
-        if (zoneKey.equals("zone$activeZone")) {
-            // Fill the data for the active zone
-          return  hashMapOf(
-                "burntCalories" to burntCalories,
-                "distance" to distance,
-                "remark" to "Android",
-                "seconds" to totalTime,
-                "totalRev" to totalRev
-            )
-        } else {
-            // Fill blank/default data for other zones
-            return  hashMapOf(
-                "burntCalories" to 0,
-                "distance" to 0,
-                "remark" to "Android",
-                "seconds" to 0,
-                "totalRev" to 0
-            )
-        }
-    }
     //ALL MiND DATA TO FIREBASE ENTRY
     private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel){
         val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
@@ -838,7 +813,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         val sessionUserCompletedVideos = mapOf(videoID to true)
 
         //revoola_UserSessionSummaryData
-        val databaseRefSummery = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionSummaryData/$currentUser")
+        val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
@@ -853,7 +828,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
 
         //revoolaUserCompletedVideos
-        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSettings/$currentUser/revoolaUserCompletedVideos")
+        val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.userCompletedVideosDataPath(currentUser))
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -864,7 +839,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
 
         //revoola_UserSessionDetailData
-        val databaseRef = FirebaseDatabase.getInstance().getReference("/proposedstructure/revoolaUserSessionDetailData/$currentUser")
+        val databaseRef = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.detailDataPath(currentUser))
         val entryId = (System.currentTimeMillis() / 1000).toString()
         entryId.let {
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
@@ -880,6 +855,35 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 }
         }
 
+    }
+
+    private fun RlZoneValueGet(
+        zoneKey: String,
+        activeZone: Int,
+        burntCalories: Double,
+        distance: Double,
+        totalTime: String,
+        totalRev: Double
+    ): HashMap<String, out Any> {
+        if (zoneKey.equals("zone$activeZone")) {
+            // Fill the data for the active zone
+            return  hashMapOf(
+                "burntCalories" to burntCalories,
+                "distance" to distance,
+                "remark" to "Android",
+                "seconds" to totalTime,
+                "totalRev" to totalRev
+            )
+        } else {
+            // Fill blank/default data for other zones
+            return  hashMapOf(
+                "burntCalories" to 0,
+                "distance" to 0,
+                "remark" to "Android",
+                "seconds" to 0,
+                "totalRev" to 0
+            )
+        }
     }
 
 }

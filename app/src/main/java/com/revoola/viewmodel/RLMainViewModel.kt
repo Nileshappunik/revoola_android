@@ -1,5 +1,7 @@
 package com.revoola.viewmodel
 import androidx.lifecycle.ViewModel
+import com.revoola.model.RLChallengePayload
+import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -23,6 +25,8 @@ import com.revoola.model.RLSetsearch_userrequest
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
+import com.revoola.model.RLYourWayApiPayload
+import com.revoola.model.RLYourWayApiResponse
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -99,5 +103,14 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.RLgetCommentsData(q,overviewid,limit,index, callback)
     }
 
+
+    //Insert Api
+    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        mainRepository.RLInsertYourWayData(request, callback)
+    }
+
+    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        mainRepository.RLInsertChallenges(request, callback)
+    }
 
 }

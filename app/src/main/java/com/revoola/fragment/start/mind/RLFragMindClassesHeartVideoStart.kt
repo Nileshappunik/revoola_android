@@ -46,6 +46,10 @@ import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.databasefirebase.RLZoneDataDetails
+import com.revoola.databasefirebase.RLZoneDataSummery
+import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -79,6 +83,8 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit=""
+
+
 
     private val binding by lazy {
         RlFragMindClassesHeartVideoStartBinding.inflate(layoutInflater)
@@ -223,6 +229,29 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
             Wearable.getDataClient(requireContext()).removeListener(this)
             val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             val bundle = Bundle()
+
+            val cardData = RLSessionDataTransferModel()
+            cardData.VIDEODATA = data
+            cardData.classType = RLConstants.MIND
+            cardData.SENSOR = RLConstants.HEART_SENSOR
+            cardData.arrHr = arrHr
+            cardData.totalTime = totalTime
+            cardData.videoID = videoID
+            cardData.avgHr = avgHr
+            cardData.maxHeartRate = maxHeartrate
+            cardData.minHeartRate = minHeartrate
+            cardData.rms = 0.0
+
+            cardData.wsWeight = wsWeight
+            cardData.wsHeight=wsHeight
+            cardData.wsAge=wsAge
+            cardData.gender=gender
+            cardData.RFMHR=RFMHR
+            cardData.RestingHR=RestingHR
+            cardData.appUnit=appUnit
+
+            bundle.putSerializable("cardData",cardData)
+
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEART_SENSOR, RLConstants.HEART_SENSOR)
@@ -482,4 +511,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
             }
         }
     }
+
+
+
 }

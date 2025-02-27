@@ -38,6 +38,10 @@ import com.revoola.ble.BLEViewModel
 import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.databasefirebase.RLZoneDataDetails
+import com.revoola.databasefirebase.RLZoneDataSummery
+import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import com.revoola.services.RLSwipeGestureDetector
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.launch
@@ -114,6 +118,8 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
     private var maxSpeedForOneMile:Double=0.0
     var minHeartrate =0
 
+    private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
+
     private val binding by lazy {
         RlFragBodyClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
@@ -144,6 +150,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
     }
 
     private fun RLuisetup() {
+        initializeDefaultZonesSummery()
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg
@@ -304,6 +311,70 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
     //when all data set and new open then this function call
     private fun RLCompleteSessionFragmentOpen(data: String, videoID: String) {
         val bundle: Bundle = Bundle()
+        val cardData = RLSessionDataTransferModel()
+
+
+        cardData.VIDEODATA = data
+        cardData.classType = RLConstants.MIND
+        cardData.SENSOR = RLConstants.HEART_SENSOR
+        cardData.videoID = videoID
+
+        cardData.totalTime = totalTime
+        cardData.avgRevPercentage = avgRevPercentage
+        cardData.burntCalories = burntCalories
+        cardData.distance = distance
+        cardData.maxRevPercentage = maxRevPercentage
+        cardData.minRevPercentage = minRevPercentage
+        cardData.revPercentage = revPercentage
+        cardData.totalRev = totalRev
+        cardData.maxSpeed = maxSpeed
+        cardData.maxHeartRate = maxHeartrate
+        cardData.maxCadence = maxCadence
+        cardData.maxBurntCalories = maxBurntCalories
+        cardData.minHeartRate = minHeartrate
+
+        cardData.avgBurntCalories = avgBurntCalories
+
+        cardData.avgCadence = avgCadence
+        cardData.avgHr = avgHr
+        cardData.avgSpeed = avgSpeed
+
+        cardData.maxSpeedForOneKm = maxSpeedForOneKm
+        cardData.maxSpeedForOneMile = maxSpeedForOneMile
+        cardData.avgSpeedForOneKm = avgSpeedForOneKm
+        cardData.avgSpeedForOneMile = avgSpeedForOneMile
+
+        cardData.arrBurntCalories = arrBurntCalories
+        cardData.arrCadence = arrCadence
+        cardData.arrDistance = arrDistance
+        cardData.arrHr = arrHr
+        cardData.arrPower = arrPower
+        cardData.arrPowerFromDevice = arrPowerFromDevice
+
+
+        cardData.arrRevPercentage = arrRevPercentage
+        cardData.arrRevSecond = arrRevSecond
+        cardData.arrSpeed = arrSpeed
+        cardData.arrCumDistance = arrCumDistance
+        cardData.arrCumSpeed = arrCumSpeed
+
+        cardData.arrAvgRevPercentage = arrAvgRevPercentage
+        cardData.arrMaxRevPercentage = arrMaxRevPercentage
+
+
+        cardData.zoneDataDetail = getZoneDataMapDetail()
+
+        cardData.wsWeight = wsWeight
+        cardData.wsHeight=wsHeight
+        cardData.wsAge=wsAge
+        cardData.gender=gender
+        cardData.RFMHR=RFMHR
+        cardData.RestingHR=RestingHR
+        cardData.appUnit=appUnit
+
+        bundle.putSerializable("cardData",cardData)
+
+
         bundle.putString("VIDEODATA",data)
         bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
         bundle.putString(RLConstants.HEART_SENSOR, RLConstants.HEART_SENSOR)
@@ -461,6 +532,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
         arrPower.add(0)
         arrPowerFromDevice.add(0)
 
+        updateZoneData(RLTools.RLzoneDiff(REVPer.roundToInt()))
     }
 
     override fun onDestroy() {
@@ -536,6 +608,54 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
                     }
                 }
             }
+        }
+    }
+
+
+    private val defaultZoneDetailData = RLZoneDataDetails(
+        burntCalories = 0.0,
+        distance = 0.0,
+        remark = "android",
+        seconds = 0,
+        totalRev = 0.0)
+
+    private fun getZoneDataMapDetail(): Map<String, RLZoneDataDetails> = zoneDataMapDetails.toMap()
+
+    private fun initializeDefaultZonesSummery() {
+        listOf(
+            RevoolaKeys.Zone1,
+            RevoolaKeys.Zone2,
+            RevoolaKeys.Zone3,
+            RevoolaKeys.Zone4,
+            RevoolaKeys.Zone5,
+            RevoolaKeys.Zone6,
+            RevoolaKeys.Zone7
+        ).forEach { name ->
+            zoneDataMapDetails[name] = defaultZoneDetailData
+        }
+    }
+    private fun updateZoneData(zoneNumber:Int) {
+        // Only update the active zone with new values
+        val zoneKey = when (zoneNumber) {
+            1 -> RevoolaKeys.Zone1
+            2 -> RevoolaKeys.Zone2
+            3 -> RevoolaKeys.Zone3
+            4 -> RevoolaKeys.Zone4
+            5 -> RevoolaKeys.Zone5
+            6 -> RevoolaKeys.Zone6
+            7 -> RevoolaKeys.Zone7
+            else -> null
+        }
+        // If we have a valid zone, replace its data with new values
+        if (zoneKey != null) {
+            val newZoneDataDetail = RLZoneDataDetails(
+                burntCalories = burntCalories?:0.0,
+                distance = distance?:0.0,
+                remark = "android",
+                seconds = totalTime.toInt()?:0,
+                totalRev = totalRev?:0.0
+            )
+            zoneDataMapDetails[zoneKey] = newZoneDataDetail
         }
     }
 

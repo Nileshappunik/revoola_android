@@ -46,6 +46,7 @@ import com.google.android.gms.wearable.Wearable
 import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.model.RLRevoolaUsersSettingsModel
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedListener{
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
@@ -137,6 +138,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
     private val gpxStringBuilder = StringBuilder()
 
+    private var  userModel:RLRevoolaUsersSettingsModel?=null
+
     private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
     private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
 
@@ -176,6 +179,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
+                userModel=userData
+
                 wsWeight=userData.weightkg
                 wsHeight=userData.height
                 wsAge= RLTools.RLCalculateAge(userData.dob)
@@ -304,6 +309,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.maxCadence = maxCadence?:0
             cardData.maxBurntCalories = maxBurntCalories?:0
             cardData.minHeartRate = minHeartrate?:0
+
+            cardData.userModel=userModel
 
             cardData.maxSpeedForOneKm = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00)
             cardData.maxSpeedForOneMile = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00)

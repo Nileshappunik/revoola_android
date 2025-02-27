@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import com.moengage.core.MoECoreHelper
 import com.revoola.activity.RLSplashActivityRL
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.utils.RLPrefManager
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -245,7 +246,8 @@ open class RLBaseFragment : Fragment() {
     //Firebase To Fetch AssumedCalories Data
     fun RLfetchAssumedCalories(callback: (RLAssumedCalories?) -> Unit) {
         // Firebase to fetch user data
-        val path ="/proposedstructure/codeSection/assumedCalories"
+
+        val path = RevoolaFirebasePath.assumedCaloriesDataPath()
         RLDatabaseManagerRead().RlreadData(path) { data, error ->
             if (data != null) {
                 val gson = Gson()
@@ -260,7 +262,7 @@ open class RLBaseFragment : Fragment() {
     //Firebase To Fetch AssumedRev Data
     fun RLfetchAssumedRev(callback: (RLAssumedRev?) -> Unit) {
         // Firebase to fetch user data
-        val path ="/proposedstructure/codeSection/assumedRev"
+        val path = RevoolaFirebasePath.assumedRevDataPath()
         RLDatabaseManagerRead().RlreadData(path) { data, error ->
             if (data != null) {
                 val gson = Gson()
