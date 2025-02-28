@@ -315,7 +315,7 @@ class RLFragBodyClassesHeartVideoStart : RLBaseFragment(),DataClient.OnDataChang
 
 
         cardData.VIDEODATA = data
-        cardData.classType = RLConstants.MIND
+        cardData.classType = RLConstants.BODY
         cardData.SENSOR = RLConstants.HEART_SENSOR
         cardData.videoID = videoID
 

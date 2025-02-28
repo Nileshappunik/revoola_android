@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class RLYourWayApiPayload(
     @SerializedName("classleaderboard") val classLeaderboard: RLClassLeaderboard,
-    @SerializedName("username_v2") val usernameV2: RLUsernameV2
+    //@SerializedName("username_v2") val usernameV2: RLUsernameV2
 )
 
 data class RLClassLeaderboard(

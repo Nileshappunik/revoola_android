@@ -969,6 +969,137 @@ object RLTools {
         return roundedNumber.toString()
     }
 
+    private fun isValidValue(value: Double?): Boolean {
+        return if (value == null || value.isNaN() || value.isInfinite()) false else true
+    }
+
+    private fun isValidValueInt(value: Int?): Boolean {
+        return if (value == null) false else true
+    }
+
+    fun RLGetIsImperial(appUnit:String): Boolean {
+        return when (appUnit) {
+            "Imperial" -> true
+            "Metric" -> false
+            else -> false
+        }
+    }
+
+    fun RLToTimeLabel(secs: Int?): String {
+        if (!isValidValueInt(secs)) return "0"
+
+        val secNum = secs ?: 0
+        val hours = secNum / 3600
+        val minutes = (secNum / 60) % 60
+        val seconds = secNum % 60
+
+        var time = ""
+
+        if (hours > 0) {
+            time += "${hours}h "
+        }
+        if (minutes > 0) {
+            time += "${minutes}m "
+        }
+        if (hours == 0 && seconds > 0) {
+            time += "${seconds}s"
+        }
+        if (time.isEmpty()) {
+            time = "00s"
+        }
+
+        return time.trim() // Removes any trailing spaces
+    }
+
+
+    fun RLFormatValue(title: String?, value: Any?): String {
+        if (title != null) {
+            val lowercaseTitle = title.lowercase()
+
+            return when {
+                lowercaseTitle.contains("time") ||
+                        lowercaseTitle.contains("pace") ||
+                        lowercaseTitle.contains("minute") -> value.toString()
+
+                lowercaseTitle.contains("session") -> RLToTimeLabel(value as Int?)
+
+                lowercaseTitle.contains("speed") ||
+                        lowercaseTitle.contains("distance") -> {
+                    val parsedValue = value.toString().toDoubleOrNull()
+                    if (parsedValue == null || !parsedValue.isFinite()) "0"
+                    else addComma("%.2f".format(parsedValue))
+                }
+
+                else -> {
+                    val parsedValue = value.toString().toDoubleOrNull()
+                    if (parsedValue == null || !parsedValue.isFinite()) "0"
+                    else addComma("%.0f".format(parsedValue))
+                }
+            }
+        }
+        val parsedValue = value.toString().toDoubleOrNull()
+        return if (parsedValue == null || !parsedValue.isFinite()) "0"
+        else addComma("%.0f".format(parsedValue))
+    }
+
+    fun addComma(nStr: Any?): String {
+        return try {
+            val number = nStr.toString().toDoubleOrNull() ?: return "0"
+            val formatter: NumberFormat = DecimalFormat("#,###.##")
+            formatter.format(number)
+        } catch (e: Exception) {
+            "0"
+        }
+    }
+
+    fun RLFormatMinutesToTimeLabel(minutes: Int): String {
+        return if (minutes >= 60) {
+            val hours = minutes / 60
+            val remainingMinutes = minutes % 60
+            if (remainingMinutes > 0) {
+                String.format("%dh %02dm", hours, remainingMinutes) // Adds leading zero if < 10
+            } else {
+                String.format("%dh", hours)
+            }
+        } else {
+            String.format("%02dm", minutes)
+        }
+    }
+
+
+    fun RLConvertDistanceData(distance: Double?,appUnit:String): String {
+        if (!isValidValue(distance)) return "0"
+        val convertedDistance = if (RLGetIsImperial(appUnit)) distance?.div(1.609) else distance
+        return RLFormatValue("distance", convertedDistance ?: 0.0)
+    }
+
+    fun RLGetClimbData(elevation: Double?,appUnit:String): String {
+        if (!isValidValue(elevation)) return "0"
+        val convertedElevation = if (RLGetIsImperial(appUnit)) elevation?.times(3.281) else elevation
+        return convertedElevation?.toInt().toString()
+    }
+
+    fun RLGetDisplayMessage(joiningDate:Long,sessionCount:Int): String {
+        val date = Calendar.getInstance()
+        val y = date.get(Calendar.YEAR)
+        val m = date.get(Calendar.MONTH)
+
+        val firstDay = Calendar.getInstance().apply {
+            set(y, m, 1, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val today = firstDay.timeInMillis / 1000
+
+        return if (joiningDate < today) {
+            if (sessionCount > 0) "Keep up the good work. You are smashing it"
+            else "Good to see you back. Let's get going"
+        } else {
+            if (sessionCount > 0) "Good to see you back. Let's get going!"
+            else "Good to see you here. Let's get going!"
+        }
+    }
+
+
     fun RLdaytimeget(totalSeconds:Int):String {
         val secondsInADay = 86400
         val secondsInAnHour = 3600
@@ -996,7 +1127,8 @@ object RLTools {
         val secondsInAMinute = 60
         val minutes = totalSeconds / secondsInAMinute
         val formattedMinutes = String.format("%02d", minutes)
-        return (formattedMinutes.toString())
+        val timeminutes = RLFormatMinutesToTimeLabel(formattedMinutes.toInt())
+        return timeminutes
     }
 
     fun RLnestedScrollTo(nested: NestedScrollView, targetView: View) {

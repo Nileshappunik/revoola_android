@@ -27,6 +27,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import java.util.concurrent.TimeUnit
 
 class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
@@ -316,8 +317,18 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     //when all data set and new open then this function call
     private fun RLCompleteSessionFragmentOpen(data: String, videoID: String,VideoCardData: RLFulllVideoModel) {
         val bundle: Bundle = Bundle()
+        val cardData = RLSessionDataTransferModel()
+
         val assumedREV=VideoCardData.assumedREV?:"0"
         totalRev=assumedREV.toDouble()
+
+        cardData.VIDEODATA = data
+        cardData.classType = RLConstants.BODY
+        cardData.SENSOR = RLConstants.NO_SENSOR
+        cardData.videoID = videoID
+        cardData.totalTime = totalTime?:"0"
+        cardData.avgRevPercentage = avgRevPercentage?:0.00
+
         bundle.putString("VIDEODATA",data)
         bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
         bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)

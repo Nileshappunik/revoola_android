@@ -47,9 +47,13 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.model.RLGetUserAggregatedData
+import com.revoola.model.RLGetUserAggregatedDataRequest
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.Calendar
 import java.util.Date
+import java.util.TimeZone
 
 class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     val TAG: String = RLFragOverviewSession::class.java.simpleName
@@ -57,6 +61,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
+    var appUnit:String=""
    // val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED" )
     val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
@@ -73,6 +78,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private val binding by lazy {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
@@ -135,6 +141,24 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
 
+        //Firebase To Get Data
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                val authManager = RLAuthManager()
+                val userId = authManager.RlgetCurrentUser()?.uid?:""
+                currentUser = userId
+                appUnit = userData.appUnit
+                fragBinding.txtUsername.setText("Hi ${ userData.firstName},")
+                RLapicallAggregatedData(userData.joiningDate?:0)
+                if (isAdded){
+                    Glide.with(requireContext()).load(userData.displayImage)
+                        .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
+                }
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
+
         if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
             RLAPiCall("OVERVIEW")
@@ -154,26 +178,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.recycleSession.setOnTouchListener { v, event ->
             gestureDetector.onTouchEvent(event)
             true
-        }
-        //FIREBASE TO GET NICKNAME AND DISPLAY
-        RLSetUsernameToFirebase()
-    }
-
-   private fun RLSetUsernameToFirebase(){
-        val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()?.uid?:""
-        val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
-        databaseManager.RLREVOOLAUSERFORSEARCHREADDATE(userId){ data, error ->
-            if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val  userData = gson.fromJson(jsonObject, RLRevoolaSearchUserModel::class.java)
-                fragBinding.txtUsername.setText("Hi,${ userData.name}")
-                if (isAdded){
-                    Glide.with(requireContext()).load(userData.displayImage)
-                        .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
-                }
-            }
         }
     }
 
@@ -288,11 +292,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                             RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
                             RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
-                        4-> dataList.add(RLSessionitemset("DISTANCE (miles)",
-                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
+                        4-> { val distance =RLTools.RLConvertDistanceData(carddate.total_distance.toDouble()?:0.0,appUnit)
+                            dataList.add(RLSessionitemset("DISTANCE (miles)",distance,R.drawable.ic_distance))}
+                            //RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))}
                         5-> dataList.add(RLSessionitemset("STEPS",
                             RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        6-> dataList.add(RLSessionitemset("CLIMBED (feet)",carddate.total_elevation.toString(),R.drawable.ic_climb))
+                        6-> {val climbed =RLTools.RLGetClimbData(carddate.total_elevation.toDouble()?:0.0,appUnit)
+                            dataList.add(RLSessionitemset("CLIMBED (feet)",climbed,R.drawable.ic_climb))}
                         7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
                 }
@@ -307,9 +313,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLTools.RLminutesget(carddate.max_time_per_session.toInt())+"m".toString(),R.drawable.fd_active_time_green))
+                            RLTools.RLminutesget(carddate.max_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt())+"m".toString(),R.drawable.fd_active_time_green))
+                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("EFFORT",
                             RLTools.RLformatCommas(carddate.total_REV.toDouble()?:0.0),R.drawable.ic_heart))
                         3-> dataList.add(RLSessionitemset("RELAXATION",carddate.total_rms.toString(),R.drawable.ic_mind_read))
@@ -350,18 +356,18 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
             "RELAXATION" -> {
                 RLwebviewurlload("relaxation")
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.total_rmm.toInt())+"m".toString())
+                fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.total_rmm.toInt()).toString())
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLTools.RLminutesget(carddate.max_time_per_session.toInt())+"m".toString(),R.drawable.fd_active_time_green))
+                            RLTools.RLminutesget(carddate.max_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt())+"m".toString(),R.drawable.fd_active_time_green))
+                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("MAX RELAXATION",
-                            RLTools.RLminutesget(carddate.max_rmm_per_session.toInt()),R.drawable.ic_mind_read))
+                            carddate.max_rmm_per_session.toString(),R.drawable.ic_mind_read))
                         3-> dataList.add(RLSessionitemset("AVG RELAXATION",
-                            RLTools.RLminutesget(carddate.avg_rmm_per_session.toInt()),R.drawable.ic_mind_read))
+                            carddate.avg_rmm_per_session.toString(),R.drawable.ic_mind_read))
                     }
                 }
             }
@@ -691,5 +697,45 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
+    }
+
+    private fun RLapicallAggregatedData(joiningDate:Long) {
+        val date = Calendar.getInstance()
+        val firstDay = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        val offset = TimeZone.getDefault().rawOffset / 1000
+        val timestampFrom = (firstDay.timeInMillis / 1000) - offset
+        val timestampTo = (date.timeInMillis / 1000) - offset
+
+        val request = listOf(
+            RLGetUserAggregatedDataRequest(
+                getUserAggregatedData = RLGetUserAggregatedData(
+                    userid = currentUser,
+                    classtype = "all",
+                    timestampfrom = timestampFrom,
+                    timestampto = timestampTo)
+            )
+        )
+        RLTools.RlLogDPrint(TAG,"request:- $request")
+        viewModel.RLgetUserAggregatedData(request) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        val session=response.text[0].aggregated[0].session
+                        val displayMessage = RLTools.RLGetDisplayMessage(joiningDate = joiningDate,session)
+                        fragBinding.txtGoodtoseeyou.setText(displayMessage)
+                    }else {
+                        RLcommonToast(response.type)
+                    }
+                }catch (e:Exception){
+                    RLTools.RlLogDPrint(TAG,"exception= "+e.message)
+                }
+            }.onFailure { error ->
+                // Handle failure
+                RLTools.RlLogDPrint(TAG,"error= "+error.message)
+                RLcommonToast(RLConstants.SERVER_PROBLEM)
+            }
+        }
     }
 }

@@ -717,71 +717,72 @@ class RLFragSessionComplete : RLBaseFragment(){
             email = cardData.userModel!!.emailId,
             currentGroup = cardData.userModel?.currentGroup?:"premium")
 
-        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard,usernameV2))
+      //  val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard,usernameV2))
+        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard))
 
         // Convert to JSON String
         return Gson().toJson(apiPayload)
     }
 
-
-     /*if (imgUriList.size>0){
-                RLuploadImagesToFirebase(imgUriList)
-            }
-
-
- //SELECTED IMAGE SENT TO SERVER
-    private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
-        val storageReference = FirebaseStorage.getInstance().reference
-        val databaseReference = FirebaseDatabase.getInstance().reference.child("live")
-
-        for (uri in imageUris) {
-            val fileName = System.currentTimeMillis().toString() + ".jpg"
-            val fileReference = storageReference.child("uploads/$fileName")
-
-            fileReference.putFile(uri)
-                .addOnSuccessListener { taskSnapshot ->
-                    fileReference.downloadUrl.addOnSuccessListener { downloadUri ->
-                        RLsaveImageUrlToDatabase(downloadUri.toString(), databaseReference)
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    // Handle any errors
-                    RLcommonToast( "Upload failed: ${exception.message}")
-                }
-        }
-    }
-    private fun RLsaveImageUrlToDatabase(downloadUrl: String, databaseReference: DatabaseReference) {
-        val imageId = databaseReference.push().key // Generate a unique ID for each image
-        imageId?.let {
-            databaseReference.child(it).setValue(downloadUrl)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                        RLcommonToast("Image uploaded successfully!")
-                    } else {
-                        RLcommonToast("Failed to upload image URL to database.")
-                    }
-                }
-        }
-    }
-    private fun RLuploadImageToFirebaseStorage(imageUri: Uri, text: String) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
-
-        imageRef.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                // Get the URL of the uploaded image
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    val imageUrl = uri.toString()
-                    // Once we have the image URL, save it with the text to the database
-
-                }
-            }
-            .addOnFailureListener { e ->
-               RLTools.RlLogEPrint("FirebaseStorage", "Image upload failed:- $e")
-            }
-    }*/
-
 }
+
+
+/*if (imgUriList.size>0){
+               RLuploadImagesToFirebase(imgUriList)
+           }
+
+
+//SELECTED IMAGE SENT TO SERVER
+   private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
+       val storageReference = FirebaseStorage.getInstance().reference
+       val databaseReference = FirebaseDatabase.getInstance().reference.child("live")
+
+       for (uri in imageUris) {
+           val fileName = System.currentTimeMillis().toString() + ".jpg"
+           val fileReference = storageReference.child("uploads/$fileName")
+
+           fileReference.putFile(uri)
+               .addOnSuccessListener { taskSnapshot ->
+                   fileReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                       RLsaveImageUrlToDatabase(downloadUri.toString(), databaseReference)
+                   }
+               }
+               .addOnFailureListener { exception ->
+                   // Handle any errors
+                   RLcommonToast( "Upload failed: ${exception.message}")
+               }
+       }
+   }
+   private fun RLsaveImageUrlToDatabase(downloadUrl: String, databaseReference: DatabaseReference) {
+       val imageId = databaseReference.push().key // Generate a unique ID for each image
+       imageId?.let {
+           databaseReference.child(it).setValue(downloadUrl)
+               .addOnCompleteListener { task ->
+                   if (task.isSuccessful) {
+                       RLBottomHideShowSet(true)
+                       (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                       (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                       RLcommonToast("Image uploaded successfully!")
+                   } else {
+                       RLcommonToast("Failed to upload image URL to database.")
+                   }
+               }
+       }
+   }
+   private fun RLuploadImageToFirebaseStorage(imageUri: Uri, text: String) {
+       val storageRef = FirebaseStorage.getInstance().reference
+       val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+
+       imageRef.putFile(imageUri)
+           .addOnSuccessListener { taskSnapshot ->
+               // Get the URL of the uploaded image
+               imageRef.downloadUrl.addOnSuccessListener { uri ->
+                   val imageUrl = uri.toString()
+                   // Once we have the image URL, save it with the text to the database
+
+               }
+           }
+           .addOnFailureListener { e ->
+              RLTools.RlLogEPrint("FirebaseStorage", "Image upload failed:- $e")
+           }
+   }*/

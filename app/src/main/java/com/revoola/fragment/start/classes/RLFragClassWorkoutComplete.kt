@@ -23,11 +23,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.model.RLGetUserAggregatedData
+import com.revoola.model.RLGetUserAggregatedDataRequest
 import gun0912.tedimagepicker.builder.TedImagePicker
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.roundToInt
 
 class RLFragClassWorkoutComplete : RLBaseFragment(){
@@ -43,6 +47,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
     private var RestingHR="50"
     private var displayImage =""
     private var displayName =""
+    private var joiningDate:Long = 0
     private var visibilityflagforthatsession:Int =0
 
     fun newInstance(bundle: Bundle?): Fragment {
@@ -74,6 +79,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 RestingHR=userData.restingHr
                 displayImage =userData.displayImage
                 displayName =userData.displayName
+                joiningDate =userData.joiningDate
             } else {
                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
@@ -885,5 +891,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             )
         }
     }
+
+
 
 }
