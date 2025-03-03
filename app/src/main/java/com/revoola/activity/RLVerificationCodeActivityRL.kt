@@ -34,7 +34,7 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_verification_code) as RlActivityVerificationCodeBinding
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(this,
             RLMainViewModelFactory(

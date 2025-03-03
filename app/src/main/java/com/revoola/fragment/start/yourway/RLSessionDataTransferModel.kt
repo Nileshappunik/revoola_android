@@ -25,6 +25,7 @@ class RLSessionDataTransferModel : Serializable {
     var VIDEODATA=""
     var classType=""
     var videoID: String =""
+    var CLASS_TYPE: String =""
     var avgHr: Int =0
     var rms: Double =0.0
 

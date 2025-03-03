@@ -113,7 +113,7 @@ class RELDynamicLinkManager private   constructor() {
     private fun RlRedirectToPage(deepLinkPage: String, rlMainActivityRL: RLMainActivityRL) {
         // Api call
         RLApiClientRetrofit = RLApiClientRet(context)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(rlMainActivityRL, RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 

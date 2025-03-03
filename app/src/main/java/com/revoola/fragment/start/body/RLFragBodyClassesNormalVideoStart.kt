@@ -27,6 +27,7 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import java.util.concurrent.TimeUnit
 
@@ -40,6 +41,14 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
 
     private var totalTime:String =""
     private val timerManager = RLTimerManager()
+
+    private var wsWeight="60"
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+    private var RestingHR="50"
+    private var appUnit=""
 
     // this all arr need to insert
     private var arrAvgRevPercentage:MutableList<Int> = mutableListOf()
@@ -55,7 +64,6 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     private var arrRevPercentage:MutableList<Double> = mutableListOf()
     private var arrRevSecond:MutableList<Double> = mutableListOf()
     private var arrMaxRevPercentage:MutableList<Double> = mutableListOf()
-
 
 
     private var avgRevPercentage=0.0
@@ -110,6 +118,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLUserDataGet()
         RLstartCountdown()
         val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
         val gson = Gson()
@@ -328,6 +337,54 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         cardData.videoID = videoID
         cardData.totalTime = totalTime?:"0"
         cardData.avgRevPercentage = avgRevPercentage?:0.00
+        cardData.burntCalories = noNanValueDouble(burntCalories?:0.00)
+        cardData.distance = noNanValueDouble(distance?:0.00)
+        cardData.maxRevPercentage = noNanValueDouble(maxRevPercentage?:0.00)
+        cardData.minRevPercentage =noNanValueDouble(minRevPercentage?:0.00)
+        cardData.revPercentage =noNanValueDouble(revPercentage?:0.00)
+        cardData.totalRev =noNanValueDouble(totalRev?:0.00)
+        cardData.maxSpeed =maxSpeed?:0
+        cardData.maxHeartRate =maxHeartrate?:0
+        cardData.maxCadence =maxCadence?:0
+        cardData.maxBurntCalories =maxBurntCalories?:0
+        cardData.minHeartRate =minHeartrate?:0
+
+        cardData.avgBurntCalories =avgBurntCalories?:0.0
+        cardData.avgCadence =avgCadence?:0.0
+        cardData.avgCadence =avgCadence?:0.0
+        cardData.avgHr =avgHr?:0
+        cardData.avgSpeed =avgSpeed?:0.0
+
+        cardData.maxSpeedForOneKm = noNanValueDouble(maxSpeedForOneKm?:0.00)
+        cardData.maxSpeedForOneMile = noNanValueDouble(maxSpeedForOneMile?:0.00)
+        cardData.avgSpeedForOneKm = noNanValueDouble(avgSpeedForOneKm?:0.00)
+        cardData.avgSpeedForOneMile = noNanValueDouble(avgSpeedForOneMile?:0.00)
+
+        cardData.arrBurntCalories = arrBurntCalories
+        cardData.arrCadence = arrCadence
+        cardData.arrDistance = arrDistance
+        cardData.arrHr = arrHr
+        cardData.arrPower = arrPower
+        cardData.arrPowerFromDevice = arrPowerFromDevice
+
+        cardData.arrRevPercentage = arrRevPercentage
+        cardData.arrRevSecond = arrRevSecond
+        cardData.arrSpeed = arrSpeed
+        cardData.arrCumDistance = arrCumDistance
+        cardData.arrCumSpeed = arrCumSpeed
+
+        cardData.arrAvgRevPercentage = arrAvgRevPercentage
+        cardData.arrMaxRevPercentage = arrMaxRevPercentage
+
+        cardData.wsWeight = wsWeight
+        cardData.wsHeight=wsHeight
+        cardData.wsAge=wsAge
+        cardData.gender=gender
+        cardData.RFMHR=RFMHR
+        cardData.RestingHR=RestingHR
+        cardData.appUnit=appUnit
+
+        bundle.putSerializable("cardData",cardData)
 
         bundle.putString("VIDEODATA",data)
         bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
@@ -381,6 +438,21 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
     }
 
+    private fun RLUserDataGet() {
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                appUnit=userData.appUnit
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
+    }
 
 
 }

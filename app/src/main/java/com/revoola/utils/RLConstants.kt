@@ -58,10 +58,15 @@ package com.revoola.utils
 
 
         //ALL Get API Server
-        const val BASE_URL: String = "https://video.revoola.com/_stuff/"
-        const val URL_V3: String = "getResponse_v3.php"
-        const val URL_V2: String = "getResponse_v2.php"
-        const val insertJSONApi = "insertJSON.php"
+        const val BASE_URL: String = "https://video.revoola.com/" // _stuff/"
+        const val URL_V3: String = "_stuff/getResponse_v3.php"
+        const val URL_V2: String = "_stuff/getResponse_v2.php"
+        const val insertJSONApi = "_stuff/insertJSON.php"
+        const val mpfIfCWxBL_insert = "my_overview_thumb/mpfIfCWxBL_insert.php"
+
+        //MOENAGE URL
+        const val UPDATE_USER_INSIGHTLY = "https://us-central1-rideathome-9080e.cloudfunctions.net/insightly-updateAccount"
+        const val UPDATE_MOENAGE_USER = "https://us-central1-rideathome-9080e.cloudfunctions.net/moengage-updateAccount"
 
 
         //Help Url ALl

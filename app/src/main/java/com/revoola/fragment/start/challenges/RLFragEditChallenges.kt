@@ -25,7 +25,6 @@ import com.google.gson.Gson
 import com.revoola.RLBaseProgress
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragEditChallengesBinding
-import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.revoola.fragment.start.challenges.adapter.RLEditChallengesAdapter
 import com.revoola.fragment.start.challenges.model.RLEditChallenge
@@ -68,7 +67,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         })
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(
             RLMainViewModel::class.java)

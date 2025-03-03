@@ -54,7 +54,7 @@ class RLFragOverview : RLBaseFragment() {
         RLcheckBluetoothPermissions()
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),
             RLMainViewModelFactory(

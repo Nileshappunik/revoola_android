@@ -8,8 +8,12 @@ import com.revoola.model.RLFeedModel
 import com.revoola.model.RLGetGroupMemberModel
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.model.RLGroupModel
+import com.revoola.model.RLInsightlyApiPayload
+import com.revoola.model.RLInsightlyMoEngageResponse
+import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
+import com.revoola.model.RLOverviewApiPayload
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverviewGraphResponse
 import com.revoola.model.RLRequestDetail_dataset
@@ -31,6 +35,8 @@ import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
 import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLgetUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
@@ -108,6 +114,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertYourWayData(request, callback)
     }
+    fun RLInsertYourWayOverviewData(request: Map<String, RequestBody>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        mainRepository.RLInsertYourWayOverviewData(request, callback)
+    }
+
 
     fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertChallenges(request, callback)

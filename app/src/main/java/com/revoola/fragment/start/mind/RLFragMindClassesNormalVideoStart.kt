@@ -27,6 +27,8 @@ import com.revoola.utils.RLConstants
 import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import java.util.concurrent.TimeUnit
 
 class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
@@ -39,6 +41,14 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
     private var totalTime:String =""
     private val timerManager = RLTimerManager()
+
+    private var wsWeight="60"
+    private var wsHeight="167"
+    private var wsAge=25
+    private var gender="Male"
+    private var RFMHR=191
+    private var RestingHR="50"
+    private var appUnit=""
 
     var arrHr:MutableList<Int> = mutableListOf()
 
@@ -71,6 +81,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLUserDataGet()
         RLstartCountdown()
         val data=  requireArguments().getString(RLExtraValueKey.videoData,"")
         val audioVideoType=  requireArguments().getString(RLExtraValueKey.audioVideoType,"")
@@ -111,10 +122,33 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 rms="0.0"
             }
             val bundle = Bundle()
+            val cardData = RLSessionDataTransferModel()
+
+            cardData.VIDEODATA=data
+            cardData.CLASS_TYPE=RLConstants.MIND
+            cardData.SENSOR=RLConstants.NO_SENSOR
+
+            cardData.arrHr=arrHr
+            cardData.totalTime=totalTime
+            cardData.videoID=videoID
+            cardData.avgHr=0
+            cardData.maxHeartRate=0
+            cardData.minHeartRate=0
+            cardData.rms= rms.toDouble()
+
+            cardData.wsWeight = wsWeight
+            cardData.wsHeight=wsHeight
+            cardData.wsAge=wsAge
+            cardData.gender=gender
+            cardData.RFMHR=RFMHR
+            cardData.RestingHR=RestingHR
+            cardData.appUnit=appUnit
+
+            bundle.putSerializable("cardData",cardData)
+
             bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)
-
 
             bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
             bundle.putString("totalTime",totalTime)
@@ -257,6 +291,22 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     private fun onSwipeLeft() {
         //fragBinding.inlayTime.relaySensorProgress.visibility=View.GONE
         toggleVisibility(false)
+    }
+
+    private fun RLUserDataGet() {
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                wsWeight=userData.weightkg
+                wsHeight=userData.height
+                wsAge= RLTools.RLCalculateAge(userData.dob)
+                gender=userData.gender
+                RFMHR=userData.RFMHR
+                RestingHR=userData.restingHr
+                appUnit=userData.appUnit
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
     }
 
     private fun toggleVisibility(visible: Boolean) {

@@ -85,7 +85,6 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
     private var appUnit=""
 
 
-
     private val binding by lazy {
         RlFragMindClassesHeartVideoStartBinding.inflate(layoutInflater)
     }
@@ -241,6 +240,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
             cardData.maxHeartRate = maxHeartrate
             cardData.minHeartRate = minHeartrate
             cardData.rms = 0.0
+
 
             cardData.wsWeight = wsWeight
             cardData.wsHeight=wsHeight

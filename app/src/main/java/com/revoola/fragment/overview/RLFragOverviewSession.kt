@@ -30,7 +30,6 @@ import com.revoola.fragment.overview.adapter.RLOverviewSessionListAdapter
 import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RLAuthManager
-import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFilterOverviewBinding
 import com.revoola.databinding.RlFragOverviewBinding
 import com.revoola.databinding.RlFragOverviewSessionsBinding
@@ -38,7 +37,6 @@ import com.revoola.fragment.overview.adapter.RLAllDialogListAdapter
 import com.revoola.interfaceall.RLItemClickListener
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverview_graphData
-import com.revoola.model.RLRevoolaSearchUserModel
 import com.revoola.model.RLSessionitemset
 import com.revoola.model.RlOverviewGraphData
 import com.revoola.utils.RLConstants
@@ -90,7 +88,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         // Initialize GestureDetector
@@ -434,7 +432,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 RLwebviewurlload("climbed")
                 val award= (carddate.medals_gold ?: 0) + (carddate.medals_silver ?: 0) + (carddate.medals_bronze ?: 0)
                 fragBinding.txtTotalsessionNumber.setText(carddate.total_elevation.toString())
-                totaldisplayitem=4
+                totaldisplayitem = 4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX CLIMBED (ft)",

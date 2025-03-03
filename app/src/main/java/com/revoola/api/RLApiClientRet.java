@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RLApiClientRet {
    private static Retrofit retrofit = null;
-   public final RLNetworkService RLNetworkService;
+   public final RLNetworkService networkService;
 
    public static final String HEADER_CACHE_CONTROL = "Cache-Control";
    public static final String HEADER_PRAGMA = "Pragma";
@@ -47,7 +47,8 @@ public class RLApiClientRet {
               .addConverterFactory(GsonConverterFactory.create())
               // Important to set a client on the build to prevent .build() from making new ones
               .client(okHttpClient);
-      RLNetworkService = retrofitBuilder.baseUrl(RLConstants.BASE_URL).build().create(RLNetworkService.class);
+
+      networkService = retrofitBuilder.baseUrl(RLConstants.BASE_URL).build().create(RLNetworkService.class);
    }
 
    private Cache provideCache() {

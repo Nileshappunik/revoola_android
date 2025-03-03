@@ -10,7 +10,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.revoola.R
+import com.revoola.commonobject.RLTools
 import com.revoola.fragment.guest.RLWelcomeDialog
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class RLSplashFirstActivity : AppCompatActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
@@ -41,6 +48,8 @@ class RLSplashFirstActivity : AppCompatActivity() {
 
 
     }
+
+
 
      private fun RLDialogShow(){
      RLWelcomeDialog().show(supportFragmentManager, "RLWelcomeDialog")

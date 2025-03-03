@@ -35,6 +35,10 @@ import com.revoola.permission.RLHealthConnectManager
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -59,6 +63,9 @@ class RLFragStart : RLBaseFragment() {
         })
         return fragBinding.root
     }
+
+
+
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
         RLfetchUserDetails()
         fragBinding.inlayTop.ivBack.visibility=View.GONE

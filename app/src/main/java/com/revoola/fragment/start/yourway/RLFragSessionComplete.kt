@@ -27,6 +27,10 @@ import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.model.RLClassLeaderboard
+import com.revoola.model.RLInsightlyApiPayload
+import com.revoola.model.RLInsightlyMoEngageResponse
+import com.revoola.model.RLInsightlyMoengageApiPayload
+import com.revoola.model.RLOverviewApiPayload
 import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.utils.RLPrefManager
@@ -34,8 +38,17 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import gun0912.tedimagepicker.builder.TedImagePicker
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.Serializable
-import kotlin.math.roundToInt
 
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
@@ -69,7 +82,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.RLNetworkService
+        val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
@@ -82,6 +95,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             // Handle checked change
         }
+
         fragBinding.layPrivacy.setOnClickListener {
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
             when(titleTxt){
@@ -124,6 +138,8 @@ class RLFragSessionComplete : RLBaseFragment(){
             if(isAdded){
                 RLBaseProgress.RLShowProgressDialog(requireActivity())
             }
+            val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+            //RLInsertOverviewApiCall(cardData,currentTimestamp)
             RLMakeSensorData(cardData)
         }
     }
@@ -659,31 +675,59 @@ class RLFragSessionComplete : RLBaseFragment(){
             val jsonPayload = createPayload(cardData,currentTimestamp)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
 
+
             RLTools.RlLogDPrint(TAG,"YourWay Insert Request: $request")
             //Insert Api Call
             viewModel.RLInsertYourWayData(request) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "YourWay Insert Success= " + response.type)
-                            RLBottomHideShowSet(true)
-                            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-
+                            RLInsertOverviewApiCall(cardData,currentTimestamp)
+                            RLTools.RlLogDPrint(TAG, "YourWay Insert Success: ${response.text}")
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "YourWay Insert Fail= " + response.type)
+                            RLTools.RlLogEPrint(TAG, "YourWay Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
                         RLBaseProgress.RLhideProgressDialog()
                         e.printStackTrace()
-                        RLTools.RlLogDPrint(TAG, "YourWay Insert Catch= " + e.message)
+                        RLTools.RlLogEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
                     RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogDPrint(TAG, "YourWay Insert Error= " + error.message)
+                    RLTools.RlLogEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
+                }
+            }
+        }
+
+    }
+
+    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
+        if (RLApiClientRetrofit.RLisConnected()) {
+            val dataMap  = createOverviewPayload(cardData,currentTimestamp)
+
+            RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
+            //Insert Api Call
+            viewModel.RLInsertYourWayOverviewData(dataMap) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
+                            RLupdateUserInsightlyApiCall(cardData)
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.RLhideProgressDialog()
+                        e.printStackTrace()
+                        RLTools.RlLogEPrint(TAG, "Overview Insert Catch: ${e.message}" )
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogEPrint(TAG, "Overview Insert Error: ${error.message}" )
                 }
             }
         }
@@ -724,8 +768,157 @@ class RLFragSessionComplete : RLBaseFragment(){
         return Gson().toJson(apiPayload)
     }
 
-}
+    private fun createOverviewPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): Map<String, RequestBody>  {
+        val classLeaderboard = RLOverviewApiPayload(
+            userid= currentUser,
+            className= "${cardData.yourWayType} Session",
+            classType= cardData.yourWayType,
+            timestamp= currentTimestamp,
+            timestamp_local= currentTimestamp,
+            totalRev= safeNumber(cardData.totalRev),
+            totalTime= cardData.totalTime,
+            burntCalories= safeNumber(cardData.burntCalories),
+            totalRMM= 0,
+            totalRMS= 0,
+            maxRevPercentage= safeNumber(cardData.maxRevPercentage),
+            avgRevPercentage= safeNumber(cardData.avgRevPercentage),
+            zone1Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone1]?.seconds?:0,
+            zone2Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone2]?.seconds?:0,
+            zone3Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone3]?.seconds?:0,
+            zone4Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone4]?.seconds?:0,
+            zone5Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone5]?.seconds?:0,
+            zone6Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone6]?.seconds?:0,
+            zone7Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds?:0,
+            medals= "",
+            awards= "",
+            visibilityflagforthatsession= visibilityflagforthatsession,
+            bmo= 2,
+            instructor="" ,
+            duration= "",
+            rideTitle= "",
+            mainTitle= cardData.yourWayType,
+            originalClassDate="" ,
+            videoKey="" ,
+            goal= "all",
+            medals_gold= 0,
+            medals_silver= 0,
+            medals_bronze= 0,
+            elevation= safeNumber(cardData.totalElevation),
+            power= 0,
+            hr= cardData.avgHr,
+            steps= cardData.totalSteps,
+            distance= safeNumber(cardData.distance),
+            hrm= if (cardData.maxHeartRate>0)1 else 0,
+            class_level= "",
+            average_speed= safeNumber(cardData.avgSpeed),
+            imageLinkSmall= "",
+            share_map= 1,
+            from_third_party_source= 0,
+            source      =      "android",
+            mapImage="",
+            userImage= emptyList()
+        )
+        // Convert to JSON String
+        //return Gson().toJson(classLeaderboard)
+        // Convert to Map<String, RequestBody>
+        return Gson().toJson(classLeaderboard).let {
+            mapOf("payload" to createRequestBody(it))
+        }
+    }
 
+    private fun RLupdateUserInsightlyApiCall(cardData: RLSessionDataTransferModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val insightlyId = cardData.userModel?.insightlyId ?: 0
+                val requestApi = RLInsightlyApiPayload(
+                    email = cardData.userModel?.emailId ?: "",
+                    device_type = "Android",
+                    your_way = RLTools.RLgetCurrentISO8601(),
+                    insightlyId = insightlyId
+                )
+
+                val client = OkHttpClient()
+                val mediaType = "application/json".toMediaType()
+                val body = Gson().toJson(requestApi).toRequestBody(mediaType)
+                val request = Request.Builder()
+                    .url(RLConstants.UPDATE_USER_INSIGHTLY)
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+
+                // Log response on background thread
+                RLTools.RlLogDPrint(TAG, "Insightly Response: $responseBody")
+                // Deserialize JSON response
+                val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
+
+                // If UI update needed, switch to Main Thread
+                CoroutineScope(Dispatchers.Main).launch {
+                    // Handle UI updates if required (e.g., Toast message)
+                    if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
+                        // Show success message in UI
+                        RLupdateUserInsightlyMoengageApiCall(cardData)
+                    }
+                }
+
+            } catch (e: Exception) {
+                RLBaseProgress.RLhideProgressDialog()
+                RLTools.RlLogEPrint(TAG, "Insightly Error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestApi = RLInsightlyMoengageApiPayload(
+                    email=cardData.userModel!!.emailId,
+                    uid= currentUser,
+                    device_type= "Android",
+                    Is_basic_data_added= cardData.userModel!!.isBasicDataAdded,
+                    your_way= RLTools.RLgetCurrentISO8601())
+
+                val client = OkHttpClient()
+                val mediaType = "application/json".toMediaType()
+                val body = Gson().toJson(requestApi).toRequestBody(mediaType)
+                val request = Request.Builder()
+                    .url(RLConstants.UPDATE_MOENAGE_USER)
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+
+                // Log response on background thread
+                RLTools.RlLogDPrint(TAG, "Insightly Moengage Response: $responseBody")
+                val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
+                // If UI update needed, switch to Main Thread
+                CoroutineScope(Dispatchers.Main).launch {
+                    // Handle UI updates if required (e.g., Toast message)
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogDPrint(TAG, "Moengage Insert Success: ${response}")
+                    RLBottomHideShowSet(true)
+                    (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                    (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+
+                }
+
+            } catch (e: Exception) {
+                RLBaseProgress.RLhideProgressDialog()
+                RLTools.RlLogEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun createRequestBody(value: String): RequestBody {
+        return RequestBody.create("text/plain".toMediaTypeOrNull(), value)
+       // return RequestBody.create("application/json".toMediaTypeOrNull(), value)
+    }
+
+}
 
 /*if (imgUriList.size>0){
                RLuploadImagesToFirebase(imgUriList)

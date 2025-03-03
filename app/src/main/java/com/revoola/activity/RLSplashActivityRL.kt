@@ -29,6 +29,7 @@ class RLSplashActivityRL : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
+
         RLRemoteConfig()
         RLBaseProgress.RLShowProgressDialog(this)
         val userId= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")

@@ -1051,6 +1051,11 @@ object RLTools {
             "0"
         }
     }
+    fun RLgetCurrentISO8601(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC") // Ensure UTC time zone
+        return sdf.format(Date()) // Get current date & time
+    }
 
     fun RLFormatMinutesToTimeLabel(minutes: Int): String {
         return if (minutes >= 60) {
