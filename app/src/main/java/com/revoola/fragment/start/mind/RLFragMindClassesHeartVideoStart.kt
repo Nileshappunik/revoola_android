@@ -83,6 +83,11 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit=""
+    private var displayImage = ""
+    private var displayName = ""
+    private var  joiningDate: Long = 0
+    private var emailId=""
+    private var isBasicDataAdded=true
 
 
     private val binding by lazy {
@@ -133,6 +138,11 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
                 appUnit=userData.appUnit
+                displayImage=userData.displayImage
+                displayName=userData.displayName
+                joiningDate=userData.joiningDate
+                emailId=userData.emailId
+                isBasicDataAdded=userData.isBasicDataAdded
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
@@ -249,10 +259,15 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
             cardData.RFMHR=RFMHR
             cardData.RestingHR=RestingHR
             cardData.appUnit=appUnit
+            cardData.displayImage = displayImage
+            cardData.displayName =displayName
+            cardData.joiningDate= joiningDate
+            cardData.emailId = emailId
+            cardData.isBasicDataAdded = isBasicDataAdded
 
             bundle.putSerializable("cardData",cardData)
 
-            bundle.putString("VIDEODATA",data)
+            /*bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEART_SENSOR, RLConstants.HEART_SENSOR)
 
@@ -262,7 +277,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
             bundle.putInt("avgHr",avgHr)
             bundle.putInt("maxHr",maxHeartrate)
             bundle.putInt("minHr",minHeartrate)
-            bundle.putDouble("rms",0.0)
+            bundle.putDouble("rms",0.0)*/
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }

@@ -89,6 +89,7 @@
                 android:layout_height="30dp"
                 android:foregroundGravity="bottom"
                 android:layout_marginStart="0dp"
+                android:paddingEnd="5dp"
                 android:layout_below="@+id/logo"/>
         </RelativeLayout>
 

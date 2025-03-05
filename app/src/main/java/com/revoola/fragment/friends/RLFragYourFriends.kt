@@ -131,7 +131,7 @@ class RLFragYourFriends : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
@@ -155,7 +155,7 @@ class RLFragYourFriends : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
@@ -182,7 +182,7 @@ class RLFragYourFriends : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }

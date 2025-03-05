@@ -238,7 +238,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
@@ -732,7 +732,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }.onFailure { error ->
                 // Handle failure
                 RLTools.RlLogDPrint(TAG,"error= "+error.message)
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
             }
         }
     }

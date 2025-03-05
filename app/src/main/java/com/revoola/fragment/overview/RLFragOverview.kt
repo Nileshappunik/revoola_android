@@ -163,7 +163,7 @@ class RLFragOverview : RLBaseFragment() {
             }.onFailure { error ->
                 // Handle failure
                 RLTools.RlLogDPrint(TAG,"error= "+error.message)
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
             }
         }
     }

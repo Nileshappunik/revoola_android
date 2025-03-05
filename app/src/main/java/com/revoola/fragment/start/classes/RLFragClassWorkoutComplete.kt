@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -21,12 +22,34 @@ import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
+import com.revoola.RLBaseProgress
+import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RevoolaFirebasePath
+import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.model.RLClassLeaderboard
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
+import com.revoola.model.RLInsightlyMoEngageResponse
+import com.revoola.model.RLInsightlyMoengageApiPayload
+import com.revoola.model.RLInsightlyMoengageBodyApiPayload
+import com.revoola.model.RLUsernameV2
+import com.revoola.model.RLYourWayApiPayload
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
+import java.util.Base64
 import java.util.Calendar
 import java.util.Date
 import java.util.HashMap
@@ -37,17 +60,11 @@ import kotlin.math.roundToInt
 class RLFragClassWorkoutComplete : RLBaseFragment(){
     val TAG: String = RLFragClassWorkoutComplete::class.java.simpleName
     lateinit var fragBinding: RlFragSessionCompleteBinding
+    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
+
     private var imgUriList = mutableListOf<Uri>()
     private var currentUser =""
-    private var wsWeight="60"
-    private var wsHeight="167"
-    private var wsAge=25
-    private var gender="Male"
-    private var RFMHR=191
-    private var RestingHR="50"
-    private var displayImage =""
-    private var displayName =""
-    private var joiningDate:Long = 0
     private var visibilityflagforthatsession:Int =0
 
     fun newInstance(bundle: Bundle?): Fragment {
@@ -64,30 +81,19 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClassWorkoutComplete" )
         currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        // Api call
+        RLApiClientRetrofit = RLApiClientRet(activity)
+        val apiService = RLApiClientRetrofit.networkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
+
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        //val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
-        RLFirebaseToFetchUserData { userData ->
-            if (userData != null) {
-                wsWeight=userData.weightkg?:"60"
-                wsHeight=userData.height?:"167"
-                wsAge= RLTools.RLCalculateAge(userData.dob)
-                gender=userData.gender
-                RFMHR=userData.RFMHR
-                RestingHR=userData.restingHr
-                displayImage =userData.displayImage
-                displayName =userData.displayName
-                joiningDate =userData.joiningDate
-            } else {
-               RLTools.RlLogEPrint(TAG, "Error fetching user data")
-            }
-        }
-
-        val data=  requireArguments().getString("VIDEODATA","")
+        val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
         val gson = Gson()
-        val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
+        val VideoCardData = gson.fromJson(cardData.VIDEODATA, RLFulllVideoModel::class.java)
         fragBinding.edtSessionName.setText(VideoCardData.rideTitle)
         fragBinding.txtMainTitle.setText("ACTIVITY COMPLETE!")
         RLShareMapHide(false)
@@ -129,29 +135,18 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
         fragBinding.inlayButton.commonButton.setText(R.string.save)
         fragBinding.inlayButton.commonButton.setOnClickListener {
-            val classType=  requireArguments().getString(RLConstants.CLASS_TYPE,"")
-            val sensorType=  requireArguments().getString(RLConstants.HEART_SENSOR,"")
-            if (classType.equals(RLConstants.BODY)){
-
-                val speedArray = arguments?.getDoubleArray("speedList")
-                val distanceArray = arguments?.getDoubleArray("distanceList")
-                val activeCaloriesArray = arguments?.getDoubleArray("activeCaloriesList")
-
-                val climbedList: ArrayList<Int>? = requireArguments().getIntegerArrayList("climbedList")
-                val speedList: MutableList<Double> = speedArray?.toMutableList() ?: mutableListOf()
-                val distanceList: MutableList<Double> = distanceArray?.toMutableList() ?: mutableListOf()
-                val activeCaloriesList: MutableList<Double> = activeCaloriesArray?.toMutableList() ?: mutableListOf()
-
-                if (sensorType.equals(RLConstants.HEART_SENSOR)){
-                    RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
+            if (isAdded){RLBaseProgress.RLShowProgressDialog(requireActivity())}
+            if ((cardData.classType).equals(RLConstants.BODY)){
+                if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
+                    RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
                 }else  {
-                    RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
+                    RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
                 }
             }else{
-                if (sensorType.equals(RLConstants.HEART_SENSOR)){
-                    RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
+                if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
+                    RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
                 }else  {
-                    RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
+                    RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
                 }
 
             }
@@ -211,93 +206,36 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
     }
 
     //ALL BODY DATA TO FIREBASE ENTRY
-    private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel){
-        var sessionUserSessionDetailData= hashMapOf<String, Any>()
+    private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel,cardData:RLSessionDataTransferModel){
+        var sessionUserSessionDetailData= hashMapOf<String, Any?>()
         var sessionUserSessionSummaryGraphData= hashMapOf<String, Any>()
         var sessionGhostForClassBestForClass= hashMapOf<String, Any>()
         var sessionGhostForClassLastForClass= hashMapOf<String, Any>()
         val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())//"20241128105036"
-        val totalTime=  requireArguments().getString("totalTime","0")
-        val videoID=  requireArguments().getString("videoID","")
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
 
-        val avgRevPercentage=requireArguments().getDouble("avgRevPercentage")?:0.0
-        val burntCalories=requireArguments().getDouble("burntCalories")?:0.0
-        var distance=requireArguments().getDouble("distance")?:0.0
-        val maxRevPercentage=requireArguments().getDouble("maxRevPercentage")?:0.0
-        val minRevPercentage=requireArguments().getDouble("minRevPercentage")?:0.0
-        val revPercentage=requireArguments().getDouble("revPercentage")?:0.0
-        val totalRev=requireArguments().getDouble("totalRev")?:0.0
-        val maxSpeed=requireArguments().getInt("maxSpeed")?:0
-        val maxHr=requireArguments().getInt("maxHeartrate")?:0
-        val maxCadence=requireArguments().getInt("maxCadence")?:0
-        val maxBurntCalories=requireArguments().getInt("maxBurntCalories")?:0
-        val minHr=requireArguments().getInt("minHeartrate")?:0
-        val avgBurntCalories=requireArguments().getDouble("avgBurntCalories")?:0.0
-        val avgCadence=requireArguments().getDouble("avgCadence")?:0.0
-        val avgHr=requireArguments().getDouble("avgHr")?:0.0
-        val avgSpeed=requireArguments().getDouble("avgSpeed")?:0.0
-        val maxSpeedForOneKm=requireArguments().getDouble("maxSpeedForOneKm")?:0.0
-        val maxSpeedForOneMile=requireArguments().getDouble("maxSpeedForOneMile")?:0.0
-        val avgSpeedForOneKm=requireArguments().getDouble("avgSpeedForOneKm")?:0.0
-        val avgSpeedForOneMile=requireArguments().getDouble("avgSpeedForOneMile")?:0.0
-
-        val arrHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHr.toString())
-        val arrPower: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrPower.toString())
-        val arrPowerFromDevice: ArrayList<Int>? = requireArguments().getIntegerArrayList(
-            RLYourWayArrayType.arrPowerFromDevice.toString())
-        val arrAvgRevPercentage: ArrayList<Int>? = requireArguments().getIntegerArrayList(
-            RLYourWayArrayType.arrAvgRevPercentage.toString())
-
-        val arrBurntCaloriesList=arguments?.getDoubleArray(RLYourWayArrayType.arrBurntCalories.toString())
-        val arrCadenceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCadence.toString())
-        val arrDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrDistance.toString())
-        val arrRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevPercentage.toString())
-        val arrRevSecondList=arguments?.getDoubleArray(RLYourWayArrayType.arrRevSecond.toString())
-        val arrSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrSpeed.toString())
-        val arrCumDistanceList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumDistance.toString())
-        val arrCumSpeedList=arguments?.getDoubleArray(RLYourWayArrayType.arrCumSpeed.toString())
-        val arrMaxRevPercentageList=arguments?.getDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString())
-
-
-        val arrBurntCalories: MutableList<Double> = arrBurntCaloriesList?.toMutableList() ?: mutableListOf(0.0)
-        val arrCadence: MutableList<Double> = arrCadenceList?.toMutableList() ?: mutableListOf(0.0)
-        val arrDistance: MutableList<Double> = arrDistanceList?.toMutableList() ?: mutableListOf(0.0)
-        val arrRevPercentage: MutableList<Double> = arrRevPercentageList?.toMutableList() ?: mutableListOf(0.0)
-        val arrRevSecond: MutableList<Double> = arrRevSecondList?.toMutableList() ?: mutableListOf(0.0)
-        val arrSpeed: MutableList<Double> = arrSpeedList?.toMutableList() ?: mutableListOf(0.0)
-        val arrCumDistance: MutableList<Double> = arrCumDistanceList?.toMutableList() ?: mutableListOf(0.0)
-        val arrCumSpeed: MutableList<Double> = arrCumSpeedList?.toMutableList() ?: mutableListOf(0.0)
-        val arrMaxRevPercentage: MutableList<Double> = arrMaxRevPercentageList?.toMutableList() ?: mutableListOf(0.0)
-
-        val REVPer = revPercentage.roundToInt()
-        val activeZone = RLzoneDiff(REVPer) // Determine the active zone
-
-        if (distance.isNaN() ){
-            distance=0.0
-        }
         when(sensorType){
             "HEART_SENSOR"->{
-                 sessionUserSessionDetailData = hashMapOf(
-                    "MaxHrUsedForCalculation" to RFMHR,
-                    "MaxHrUsedForCalculation_Last" to RFMHR,
-                    "RestingHrUsedForCalculation" to RestingHR,
-                    "RestingHrUsedForCalculation_Last" to RestingHR,
-                    "arrAvgRevPercentage" to  (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrBurntCalories" to (arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCadence" to (arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCumDistance" to (arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCumSpeed" to (arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrDistance" to (arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to  (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrPowerFromDevice" to  (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrHr" to  (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "avgRevPercentage" to avgRevPercentage,
-                    "burntCalories" to burntCalories,
+                  sessionUserSessionDetailData = hashMapOf<String, Any?>(
+                    "MaxHrUsedForCalculation" to cardData.RFMHR,
+                    "MaxHrUsedForCalculation_Last" to cardData.RFMHR,
+                    "RestingHrUsedForCalculation" to cardData.RestingHR,
+                    "RestingHrUsedForCalculation_Last" to cardData.RestingHR,
+                    "arrAvgRevPercentage" to  (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrBurntCalories" to (cardData.arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (cardData.arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumDistance" to (cardData.arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumSpeed" to (cardData.arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrDistance" to (cardData.arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to  (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to  (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (cardData.arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrHr" to  (cardData.arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrRevSecond" to (cardData.arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (cardData.arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "avgRevPercentage" to safeNumber(cardData.avgRevPercentage),
+                    "burntCalories" to safeNumber(cardData.burntCalories),
                     "classDate" to classDate,
                     "classDescription" to videoCardData.rideDescription,
                     "classImage" to "",
@@ -305,9 +243,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "classNote" to fragBinding.edtAddNotes.text.toString(),
                     "classType" to videoCardData.classType,
                     "demsElevation" to 0,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
-                    "distance" to distance,
+                    "displayImage" to cardData.displayImage,
+                    "displayName" to cardData.displayName,
+                    "distance" to safeNumber(cardData.distance),
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "imageLinkLarge" to videoCardData.imageLinkLarge,
@@ -315,94 +253,94 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isClass" to true,
                     "isPowerDeviceConnected" to false,
                     "location" to "Ahmedabad",
-                    "maxRevPercentage" to maxRevPercentage,
-                    "minRevPercentage" to minRevPercentage,
+                    "maxRevPercentage" to safeNumber(cardData.maxRevPercentage),
+                    "minRevPercentage" to safeNumber(cardData.minRevPercentage),
                     "remark" to "Android",
-                    "revPercentage" to revPercentage,
+                    "revPercentage" to safeNumber(cardData.revPercentage),
                     "rms" to 0,
                     "timestamp" to currentTimestamp,
                     "totalElevation" to 0,
                     "totalPower" to 0,
-                    "totalRev" to totalRev,
-                    "totalTime" to totalTime,
-                    "videoKey" to videoID,
+                    "totalRev" to safeNumber(cardData.totalRev),
+                    "totalTime" to cardData.totalTime,
+                    "videoKey" to cardData.videoID,
                     "visibilityflagforthatsession" to visibilityflagforthatsession,
-                     "zone1" to RlZoneValueGet("zone1",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone2" to RlZoneValueGet("zone2",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone3" to RlZoneValueGet("zone3",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone4" to RlZoneValueGet("zone4",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone5" to RlZoneValueGet("zone5",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone6" to RlZoneValueGet("zone6",activeZone,burntCalories,distance,totalTime,totalRev),
-                     "zone7" to RlZoneValueGet("zone7",activeZone,burntCalories,distance,totalTime,totalRev),
+                     RevoolaKeys.Zone1 to cardData.zoneDataDetail[RevoolaKeys.Zone1],
+                     RevoolaKeys.Zone2 to cardData.zoneDataDetail[RevoolaKeys.Zone2],
+                     RevoolaKeys.Zone3 to cardData.zoneDataDetail[RevoolaKeys.Zone3],
+                     RevoolaKeys.Zone4 to cardData.zoneDataDetail[RevoolaKeys.Zone4],
+                     RevoolaKeys.Zone5 to cardData.zoneDataDetail[RevoolaKeys.Zone5],
+                     RevoolaKeys.Zone6 to cardData.zoneDataDetail[RevoolaKeys.Zone6],
+                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
                  sessionUserSessionSummaryGraphData = hashMapOf(
-                    "arrCadence" to (arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (cardData.arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrHr" to (cardData.arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (cardData.arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (cardData.arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "remark" to "Android"
                 )
                  sessionGhostForClassBestForClass = hashMapOf(
-                    "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrAvgPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrAvgRevPercentage" to (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrHr" to (cardData.arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrRevSecond" to (cardData.arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrRevPercentage" to (cardData.arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "classDate" to classDate,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
+                    "displayImage" to cardData.displayImage,
+                    "displayName" to cardData.displayName,
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "isPowerDeviceConnected" to false,
                     "location" to "",
                     "remark" to "Android",
-                    "totalRev" to totalRev,
+                    "totalRev" to safeNumber(cardData.totalRev),
                     "visibilityflagforthatsession" to visibilityflagforthatsession
                 )
                  sessionGhostForClassLastForClass =  hashMapOf(
-                     "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                     "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrRevSecond" to (arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                     "arrRevPercentage" to (arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrAvgPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrAvgRevPercentage" to (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrPowerFromDevice" to (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrHr" to (cardData.arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrRevSecond" to (cardData.arrRevSecond?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrRevPercentage" to (cardData.arrRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                      "classDate" to classDate,
-                     "displayImage" to displayImage,
-                     "displayName" to displayName,
+                     "displayImage" to cardData.displayImage,
+                     "displayName" to cardData.displayName,
                      "flagImage" to "flag-of-United-Kingdom.png",
                      "flagName" to "United Kingdom",
                      "isPowerDeviceConnected" to false,
                      "location" to "",
                      "remark" to "Android",
-                     "totalRev" to totalRev,
+                     "totalRev" to safeNumber(cardData.totalRev),
                      "visibilityflagforthatsession" to visibilityflagforthatsession
                  )
             }
             "NO_SENSOR"->{
 
                  sessionUserSessionDetailData = hashMapOf(
-                    "MaxHrUsedForCalculation" to RFMHR,
-                    "MaxHrUsedForCalculation_Last" to RFMHR,
-                    "RestingHrUsedForCalculation" to RestingHR,
-                    "RestingHrUsedForCalculation_Last" to RestingHR,
-                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrBurntCalories" to (arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCadence" to (arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCumDistance" to (arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrCumSpeed" to (arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrDistance" to (arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "avgRevPercentage" to avgRevPercentage,
-                    "burntCalories" to burntCalories,
+                    "MaxHrUsedForCalculation" to cardData.RFMHR,
+                    "MaxHrUsedForCalculation_Last" to cardData.RFMHR,
+                    "RestingHrUsedForCalculation" to cardData.RestingHR,
+                    "RestingHrUsedForCalculation_Last" to cardData.RestingHR,
+                    "arrAvgRevPercentage" to (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrBurntCalories" to (cardData.arrBurntCalories?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (cardData.arrCadence?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumDistance" to (cardData.arrCumDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCumSpeed" to (cardData.arrCumSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrDistance" to (cardData.arrDistance?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (cardData.arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "avgRevPercentage" to safeNumber(cardData.avgRevPercentage),
+                    "burntCalories" to safeNumber(cardData.burntCalories),
                     "classDate" to classDate,
                     "classDescription" to videoCardData.rideDescription,
                     "classImage" to "",
@@ -410,9 +348,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "classNote" to fragBinding.edtAddNotes.text.toString(),
                     "classType" to videoCardData.classType,
                     "demsElevation" to 0,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
-                    "distance" to distance,
+                    "displayImage" to cardData.displayImage,
+                    "displayName" to cardData.displayName,
+                    "distance" to safeNumber(cardData.distance),
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "imageLinkLarge" to videoCardData.imageLinkLarge,
@@ -420,24 +358,24 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     "isClass" to true,
                     "isPowerDeviceConnected" to false,
                     "location" to "",
-                    "maxRevPercentage" to maxRevPercentage,
-                    "minRevPercentage" to minRevPercentage,
+                    "maxRevPercentage" to safeNumber(cardData.maxRevPercentage),
+                    "minRevPercentage" to safeNumber(cardData.minRevPercentage),
                     "remark" to "Android",
-                    "revPercentage" to revPercentage,
+                    "revPercentage" to safeNumber(cardData.revPercentage),
                     "rms" to 0,
                     "timestamp" to currentTimestamp,
                     "totalElevation" to 0,
                     "totalPower" to 0,
-                    "totalRev" to totalRev,
-                    "totalTime" to totalTime,
-                    "videoKey" to videoID,
+                    "totalRev" to safeNumber(cardData.totalRev),
+                    "totalTime" to cardData.totalTime,
+                    "videoKey" to cardData.videoID,
                     "visibilityflagforthatsession" to visibilityflagforthatsession,
                     "zone1" to hashMapOf(
-                        "burntCalories" to burntCalories,
-                        "distance" to distance,
+                        "burntCalories" to safeNumber(cardData.burntCalories),
+                        "distance" to safeNumber(cardData.distance),
                         "remark" to "Android",
-                        "seconds" to totalTime,
-                        "totalRev" to totalRev
+                        "seconds" to cardData.totalTime,
+                        "totalRev" to safeNumber(cardData.totalRev)
                     ),
                     "zone2" to hashMapOf(
                         "burntCalories" to 0,
@@ -483,43 +421,43 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     )
                 )
                  sessionUserSessionSummaryGraphData = hashMapOf(
-                    "arrCadence" to (arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrSpeed" to (arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrCadence" to (cardData.arrCadence.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrSpeed" to (cardData.arrSpeed?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
                     "remark" to "Android"
                 )
                  sessionGhostForClassBestForClass = hashMapOf(
-                    "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                    "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                    "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrAvgPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrAvgRevPercentage" to (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                    "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                    "arrPowerFromDevice" to (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
                     "classDate" to classDate,
-                    "displayImage" to displayImage,
-                    "displayName" to displayName,
+                    "displayImage" to cardData.displayImage,
+                    "displayName" to cardData.displayName,
                     "flagImage" to "flag-of-United-Kingdom.png",
                     "flagName" to "United Kingdom",
                     "isPowerDeviceConnected" to false,
                     "location" to "",
                     "remark" to "Android",
-                    "totalRev" to totalRev,
+                    "totalRev" to safeNumber(cardData.totalRev),
                     "visibilityflagforthatsession" to visibilityflagforthatsession
                 )
                  sessionGhostForClassLastForClass =  hashMapOf(
-                     "arrAvgPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrAvgRevPercentage" to (arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrMaxRevPercentage" to (arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
-                     "arrPower" to (arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
-                     "arrPowerFromDevice" to (arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrAvgPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrAvgRevPercentage" to (cardData.arrAvgRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrMaxRevPercentage" to (cardData.arrMaxRevPercentage?.takeIf { it.isNotEmpty() } ?: listOf(0.0, 0.0, 0.0, 0.0, 0.0)),
+                     "arrPower" to (cardData.arrPower?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+                     "arrPowerFromDevice" to (cardData.arrPowerFromDevice?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
                      "classDate" to classDate,
-                     "displayImage" to displayImage,
-                     "displayName" to displayName,
+                     "displayImage" to cardData.displayImage,
+                     "displayName" to cardData.displayName,
                      "flagImage" to "flag-of-United-Kingdom.png",
                      "flagName" to "United Kingdom",
                      "isPowerDeviceConnected" to false,
                      "location" to "",
                      "remark" to "Android",
-                     "totalRev" to totalRev,
+                     "totalRev" to safeNumber(cardData.totalRev),
                      "visibilityflagforthatsession" to visibilityflagforthatsession
                  )
             }
@@ -527,16 +465,16 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         //revoola_UserSessionSummaryData  Prepaire
         val sessionUserSessionSummaryData = hashMapOf(
-            "avgBurntCalories" to avgBurntCalories,
-            "avgCadence" to avgCadence,
-            "avgHr" to avgHr,
+            "avgBurntCalories" to safeNumber(cardData.avgBurntCalories),
+            "avgCadence" to safeNumber(cardData.avgCadence),
+            "avgHr" to safeIntNumber(cardData.avgHr),
             "avgPower" to 0,
             "avgPowerFromDevice" to 0,
-            "avgRevPercentage" to avgRevPercentage,
-            "avgSpeed" to avgSpeed,
-            "avgSpeedForOneKm" to avgSpeedForOneKm,
-            "avgSpeedForOneMile" to avgSpeedForOneMile,
-            "burntCalories" to burntCalories,
+            "avgRevPercentage" to safeNumber(cardData.avgRevPercentage),
+            "avgSpeed" to safeNumber(cardData.avgSpeed),
+            "avgSpeedForOneKm" to safeNumber(cardData.avgSpeedForOneKm),
+            "avgSpeedForOneMile" to safeNumber(cardData.avgSpeedForOneMile),
+            "burntCalories" to safeNumber(cardData.burntCalories),
             "classDate" to classDate,
             "classDescription" to videoCardData.rideDescription,
             "classImage" to "",
@@ -544,44 +482,44 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             "classNote" to fragBinding.edtAddNotes.text.toString(),
             "classType" to videoCardData.classType,
             "demsElevation" to 0,
-            "distance" to distance,
+            "distance" to safeNumber(cardData.distance),
             "imageLinkLarge" to videoCardData.imageLinkLarge,
             "imageLinkSmall" to videoCardData.imageLinkSmall,
             "isClass" to true,
             "isPowerDeviceConnected" to false,
             "location" to "",
-            "maxBurntCalories" to maxBurntCalories,
-            "maxCadence" to maxCadence,
-            "maxHr" to maxHr,
+            "maxBurntCalories" to safeIntNumber(cardData.maxBurntCalories),
+            "maxCadence" to safeIntNumber(cardData.maxCadence),
+            "maxHr" to safeIntNumber(cardData.maxHeartRate),
             "maxPower" to 0,
             "maxPowerFromDevice" to 0,
-            "maxRevPercentage" to maxRevPercentage,
-            "maxSpeed" to maxSpeed,
-            "maxSpeedForOneKm" to maxSpeedForOneKm,
-            "maxSpeedForOneMile" to maxSpeedForOneMile,
-            "minHr" to minHr,
-            "minRevPercentage" to minRevPercentage,
+            "maxRevPercentage" to safeNumber(cardData.maxRevPercentage),
+            "maxSpeed" to safeIntNumber(cardData.maxSpeed),
+            "maxSpeedForOneKm" to safeNumber(cardData.maxSpeedForOneKm),
+            "maxSpeedForOneMile" to safeNumber(cardData.maxSpeedForOneMile),
+            "minHr" to safeIntNumber(cardData.minHeartRate),
+            "minRevPercentage" to safeNumber(cardData.minRevPercentage),
             "remark" to "Android",
-            "revPercentage" to revPercentage,
+            "revPercentage" to safeNumber(cardData.revPercentage),
             "rms" to 0,
             "timestamp" to currentTimestamp,
             "totalElevation" to 0,
             "totalPower" to 0,
-            "totalRev" to totalRev,
-            "totalTime" to totalTime,
-            "videoKey" to videoID,
+            "totalRev" to safeNumber(cardData.totalRev),
+            "totalTime" to cardData.totalTime,
+            "videoKey" to cardData.videoID,
             "visibilityflagforthatsession" to visibilityflagforthatsession,
             "zone1" to hashMapOf(
-                "avgCadence" to avgCadence,
-                "avgHr" to avgHr,
+                "avgCadence" to safeNumber(cardData.avgCadence),
+                "avgHr" to safeIntNumber(cardData.avgHr),
                 "avgPower" to 0,
                 "avgPowerFromDevice" to 0,
-                "avgSpeed" to avgSpeed,
-                "burntCalories" to burntCalories,
-                "distance" to distance,
+                "avgSpeed" to safeNumber(cardData.avgSpeed),
+                "burntCalories" to safeNumber(cardData.burntCalories),
+                "distance" to safeNumber(cardData.distance),
                 "remark" to "Android",
-                "seconds" to totalTime,
-                "totalRev" to totalRev
+                "seconds" to cardData.totalTime,
+                "totalRev" to safeNumber(cardData.totalRev)
             ),
             "zone2" to hashMapOf(
                 "avgCadence" to 0,
@@ -657,27 +595,27 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             )
         )
 
-        val sessionUserCompletedVideos = mapOf(videoID to true)
+        val sessionUserCompletedVideos = mapOf(cardData.videoID to true)
 
         //Entry GhostData lastForClass
         val databaseRefGhostLast = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.ghostLastForClassDataPath(currentUser))
-        databaseRefGhostLast.child(videoID).setValue(sessionGhostForClassLastForClass).addOnCompleteListener { task ->
+        databaseRefGhostLast.child(cardData.videoID).setValue(sessionGhostForClassLastForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData LastForClass Entry saved successfully!")
+                    RLTools.RlLogDPrint(TAG, "revoola_GhostData LastForClass Entry saved successfully!")
 
                 } else {
-                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_GhostData LastForClass Entry Failed to save:- ${task.exception}")
+                   RLTools.RlLogEPrint(TAG, "revoola_GhostData LastForClass Entry Failed to save:- ${task.exception}")
                 }
             }
 
         //Entry GhostData bestForClass
         val databaseRefGhostBest = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.ghostBestForClassDataPath(currentUser))
-        databaseRefGhostBest.child(videoID).setValue(sessionGhostForClassBestForClass).addOnCompleteListener { task ->
+        databaseRefGhostBest.child(cardData.videoID).setValue(sessionGhostForClassBestForClass).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_GhostData BestForClass Entry saved successfully!")
+                    RLTools.RlLogDPrint(TAG, "revoola_GhostData BestForClass Entry saved successfully!")
 
                 } else {
-                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_GhostData BestForClass Entry Failed to save :- ${task.exception}")
+                   RLTools.RlLogEPrint(TAG, "revoola_GhostData BestForClass Entry Failed to save :- ${task.exception}")
                 }
             }
 
@@ -688,10 +626,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+                        RLTools.RlLogDPrint(TAG, "revoola_UserSessionSummaryData Entry saved successfully!")
 
                     } else {
-                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save :- ${task.exception}")
+                       RLTools.RlLogEPrint(TAG, "revoola_UserSessionSummaryData Entry Failed to save :- ${task.exception}")
                     }
                 }
         }
@@ -703,9 +641,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(sessionUserSessionSummaryGraphData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry saved successfully!")
+                        RLTools.RlLogDPrint(TAG, "revoola_UserSessionSummaryGraphData Entry saved successfully!")
                     } else {
-                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryGraphData Entry Failed to save :- ${task.exception}")
+                       RLTools.RlLogEPrint(TAG, "revoola_UserSessionSummaryGraphData Entry Failed to save :- ${task.exception}")
                     }
                 }
         }
@@ -715,9 +653,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                    RLTools.RlLogDPrint(TAG, "revoola_UserCompletedVideos Entry saved successfully!")
                 } else {
-                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
+                   RLTools.RlLogEPrint(TAG, "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
                 }
             }
 
@@ -728,12 +666,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        RLTools.RlLogDPrint(TAG, "revoola_UserSessionDetailData Entry saved successfully!")
+                        RLInsertApiCall(cardData,currentTimestamp,0,videoCardData)
                     } else {
-                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
+                       RLTools.RlLogEPrint(TAG, "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }
@@ -741,33 +677,23 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
     }
 
     //ALL MiND DATA TO FIREBASE ENTRY
-    private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel){
+    private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel,cardData:RLSessionDataTransferModel){
         val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
-        val totalTime=  requireArguments().getString("totalTime","0")
-        val videoID=  requireArguments().getString("videoID","")
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-
-        val avgHr=  requireArguments().getInt("avgHr",0)?:0
-        val maxHr=  requireArguments().getInt("maxHr",0)?:0
-        val minHr=  requireArguments().getInt("minHr",0)?:0
-        val rms=  requireArguments().getDouble("rms",0.0)?:0.0
-
-        val arrHr: ArrayList<Int>? = requireArguments().getIntegerArrayList(RLYourWayArrayType.arrHr.toString())
-
         val sessionUserSessionDetailData = hashMapOf(
-            "MaxHrUsedForCalculation" to RFMHR,
-            "MaxHrUsedForCalculation_Last" to RFMHR,
-            "RestingHrUsedForCalculation" to RestingHR,
-            "RestingHrUsedForCalculation_Last" to RestingHR,
-            "arrHr" to (arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
+            "MaxHrUsedForCalculation" to cardData.RFMHR,
+            "MaxHrUsedForCalculation_Last" to cardData.RFMHR,
+            "RestingHrUsedForCalculation" to cardData.RestingHR,
+            "RestingHrUsedForCalculation_Last" to cardData.RestingHR,
+            "arrHr" to (cardData.arrHr?.takeIf { it.isNotEmpty() } ?: listOf(0, 0, 0, 0, 0)),
             "classDate" to classDate,
             "classDescription" to videoCardData.rideDescription,
             "classImage" to "",
             "className" to fragBinding.edtSessionName.text.toString(),
             "classNote" to fragBinding.edtAddNotes.text.toString(),
             "classType" to videoCardData.classType,
-            "displayImage" to displayImage,
-            "displayName" to displayName,
+            "displayImage" to cardData.displayImage,
+            "displayName" to cardData.displayName,
             "duration" to videoCardData.duration,
             "flagImage" to "flag-of-United-Kingdom.png",
             "flagName" to "United Kingdom",
@@ -781,15 +707,15 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             "originalClassDate" to videoCardData.originalClassDate,
             "remark" to "Android",
             "rideTitle" to videoCardData.rideTitle,
-            "rms" to rms,
+            "rms" to safeNumber(cardData.rms),
             "timestamp" to currentTimestamp,
-            "totalTime" to totalTime,
-            "videoKey" to videoID,
+            "totalTime" to cardData.totalTime,
+            "videoKey" to cardData.videoID,
             "visibilityflagforthatsession" to visibilityflagforthatsession
         )
 
         val sessionUserSessionSummaryData = hashMapOf(
-            "avgHr" to avgHr,
+            "avgHr" to cardData.avgHr,
             "classDate" to classDate,
             "classDescription" to videoCardData.rideDescription,
             "classImage" to "",
@@ -804,19 +730,19 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             "isMindClass" to true,
             "location" to "",
             "mainTitle" to videoCardData.classType,
-            "maxHr" to maxHr,
-            "minHr" to minHr,
+            "maxHr" to cardData.maxHeartRate,
+            "minHr" to cardData.minHeartRate,
             "originalClassDate" to videoCardData.originalClassDate,
             "remark" to "Android",
             "rideTitle" to videoCardData.rideTitle,
-            "rms" to rms,
+            "rms" to safeNumber(cardData.rms),
             "timestamp" to currentTimestamp,
-            "totalTime" to totalTime,
-            "videoKey" to videoID,
+            "totalTime" to cardData.totalTime,
+            "videoKey" to cardData.videoID,
             "visibilityflagforthatsession" to visibilityflagforthatsession
         )
 
-        val sessionUserCompletedVideos = mapOf(videoID to true)
+        val sessionUserCompletedVideos = mapOf(cardData.videoID to true)
 
         //revoola_UserSessionSummaryData
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
@@ -825,10 +751,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry saved successfully!")
+                        RLTools.RlLogDPrint(TAG, "revoola_UserSessionSummaryData Entry saved successfully!")
 
                     } else {
-                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionSummaryData Entry Failed to save:- ${task.exception}")
+                       RLTools.RlLogEPrint(TAG, "revoola_UserSessionSummaryData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }
@@ -838,9 +764,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry saved successfully!")
+                    RLTools.RlLogDPrint(TAG, "revoola_UserCompletedVideos Entry saved successfully!")
                 } else {
-                   RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
+                   RLTools.RlLogEPrint(TAG, "revoola_UserCompletedVideos Entry Failed to save:- ${task.exception}")
                 }
             }
 
@@ -851,47 +777,254 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry saved successfully!")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        RLTools.RlLogDPrint(TAG, "revoola_UserSessionDetailData Entry saved successfully!")
+                        RLInsertApiCall(cardData,currentTimestamp,1,videoCardData)
                     } else {
-                       RLTools.RlLogEPrint("FirebaseDatabase", "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
+                       RLTools.RlLogEPrint(TAG, "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
                 }
         }
 
     }
 
-    private fun RlZoneValueGet(
-        zoneKey: String,
-        activeZone: Int,
-        burntCalories: Double,
-        distance: Double,
-        totalTime: String,
-        totalRev: Double
-    ): HashMap<String, out Any> {
-        if (zoneKey.equals("zone$activeZone")) {
-            // Fill the data for the active zone
-            return  hashMapOf(
-                "burntCalories" to burntCalories,
-                "distance" to distance,
-                "remark" to "Android",
-                "seconds" to totalTime,
-                "totalRev" to totalRev
-            )
-        } else {
-            // Fill blank/default data for other zones
-            return  hashMapOf(
-                "burntCalories" to 0,
-                "distance" to 0,
-                "remark" to "Android",
-                "seconds" to 0,
-                "totalRev" to 0
-            )
-        }
+    private fun safeNumber(value: Double?): Double {
+        return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
     }
 
+    private fun safeIntNumber(value: Int?): Int {
+        return if (value == null || value < 0) 0 else value
+    }
+
+    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): String {
+        val classLeaderboard = RLClassLeaderboard(
+            userId = currentUser,
+            classId = cardData.videoID,
+            timestamp = currentTimestamp,
+            timestampLocal = currentTimestamp,
+            totalRev = safeNumber(cardData.totalRev),
+            visibilityFlagForThatSession = visibilityflagforthatsession,
+            discipline = videoCardData.classType,
+            duration = cardData.totalTime,
+            calories = safeNumber(cardData.burntCalories),
+            bmo = bmo,
+            rmm = safeIntNumber((cardData.totalTime?:"0").toInt()),
+            rms = 0,
+            source = "android",
+            goal = "all")
+
+        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard))
+
+        // Convert to JSON String
+        return Gson().toJson(apiPayload)
+    }
+    private fun RLInsertApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
+        if (RLApiClientRetrofit.RLisConnected()) {
+            val jsonPayload = createPayload(cardData,currentTimestamp,bmo,videoCardData)
+            val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
 
 
+            RLTools.RlLogDPrint(TAG,"MindBody Insert Request: $request")
+            //Insert Api Call
+            viewModel.RLInsertYourWayData(request) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLInsertOverviewApiCall(cardData,currentTimestamp,bmo,videoCardData)
+                            RLTools.RlLogDPrint(TAG, "MindBody Insert Success: ${response.text}")
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogEPrint(TAG, "MindBody Insert Fail: ${response.text}")
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogEPrint(TAG, "MindBody Insert Catch: ${e.localizedMessage}" )
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogEPrint(TAG, "MindBody Insert Error: ${error.localizedMessage}" )
+                }
+            }
+        }
+
+    }
+
+    private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): Map<String, RequestBody> {
+        val requestBodyMap = mutableMapOf<String, RequestBody>()
+
+        // Add text fields as form data
+        requestBodyMap["data[myOverviewThumbnails][userid]"] = createRequestBody(currentUser)
+        requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody(videoCardData.rideTitle)
+        requestBodyMap["data[myOverviewThumbnails][classType]"] = createRequestBody(videoCardData.classType)
+        requestBodyMap["data[myOverviewThumbnails][timestamp]"] = createRequestBody(currentTimestamp)
+        requestBodyMap["data[myOverviewThumbnails][timestamp_local]"] = createRequestBody(currentTimestamp)
+        requestBodyMap["data[myOverviewThumbnails][totalREV]"] = createRequestBody(safeNumber(cardData.totalRev).toString())
+        requestBodyMap["data[myOverviewThumbnails][totalTime]"] = createRequestBody(cardData.totalTime.toString())
+
+        val burntCalories = safeNumber(cardData.burntCalories) ?: 0
+        requestBodyMap["data[myOverviewThumbnails][burntCalories]"] = createRequestBody(burntCalories.toString())
+
+        requestBodyMap["data[myOverviewThumbnails][totalRMM]"] = createRequestBody(cardData.totalTime)
+        requestBodyMap["data[myOverviewThumbnails][totalRMS]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][maxRevPercentage]"] = createRequestBody(safeNumber(cardData.maxRevPercentage).toString())
+        requestBodyMap["data[myOverviewThumbnails][avgRevPercentage]"] = createRequestBody(safeNumber(cardData.avgRevPercentage).toString())
+
+        requestBodyMap["data[myOverviewThumbnails][zone1Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone1]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone2Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone2]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone3Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone3]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone4Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone4]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone5Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone5]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone6Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone6]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone7Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][medals]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][awards]"] = createRequestBody("0")
+
+
+            requestBodyMap["data[myOverviewThumbnails][visibilityflagforthatsession]"] = createRequestBody(visibilityflagforthatsession.toString())
+        requestBodyMap["data[myOverviewThumbnails][bmo]"] = createRequestBody(bmo.toString())
+        requestBodyMap["data[myOverviewThumbnails][instructor]"] = createRequestBody(videoCardData.instructor)
+        requestBodyMap["data[myOverviewThumbnails][duration]"] = createRequestBody(videoCardData.duration)
+        requestBodyMap["data[myOverviewThumbnails][rideTitle]"] = createRequestBody(videoCardData.rideTitle)
+        requestBodyMap["data[myOverviewThumbnails][mainTitle]"] = createRequestBody(videoCardData.classType)
+
+
+        requestBodyMap["data[myOverviewThumbnails][originalClassDate]"] = createRequestBody(videoCardData.originalClassDate)
+        requestBodyMap["data[myOverviewThumbnails][videoKey]"] = createRequestBody(cardData.videoID)
+
+
+        requestBodyMap["data[myOverviewThumbnails][goal]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][medals_gold]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][medals_silver]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][medals_bronze]"] = createRequestBody("0")
+
+        requestBodyMap["data[myOverviewThumbnails][elevation]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
+        requestBodyMap["data[myOverviewThumbnails][power]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
+        requestBodyMap["data[myOverviewThumbnails][steps]"] = createRequestBody(safeIntNumber(cardData.totalSteps).toString())
+        requestBodyMap["data[myOverviewThumbnails][distance]"] = createRequestBody(safeNumber(cardData.distance).toString())
+        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][class_level]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.avgSpeed).toString())
+        requestBodyMap["data[myOverviewThumbnails][imageLinkSmall]"] = createRequestBody(videoCardData.imageLinkSquareV2)
+        requestBodyMap["data[myOverviewThumbnails][share_map]"] = createRequestBody("")
+
+        requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
+        requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
+
+        // Handle user images
+        try {
+            if (imgUriList.isNotEmpty()) {
+                imgUriList.forEachIndexed { index, uri ->
+                    val imageFile = RLTools.RLGetFileFromUri(requireContext(), uri)
+                    val imageRequestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageFile)
+                    requestBodyMap["userImage[]"] = imageRequestBody
+                }
+            }else{
+                RLTools.RlLogDPrint(TAG, "No Images")
+            }
+        }catch (e:Exception){
+            RLTools.RlLogDPrint(TAG, "Exception Images :${e.localizedMessage}")
+        }
+
+        // Handle map image
+        val mapImage = ""// myOverviewThumbnails["mapImage"] as? String
+        if (!mapImage.isNullOrEmpty()) {
+            val mapImageRequestBody = base64ToRequestBody(mapImage)
+            requestBodyMap["mapImage"] = mapImageRequestBody
+        }
+
+        return requestBodyMap
+    }
+
+    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
+        if (RLApiClientRetrofit.RLisConnected()) {
+            val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp,bmo,videoCardData)
+
+            RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
+            //Insert Api Call
+            viewModel.RLInsertYourWayOverviewData(dataMap) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
+                            RLupdateUserInsightlyMoengageApiCall(cardData)
+                        } else {
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.RLhideProgressDialog()
+                        e.printStackTrace()
+                        RLTools.RlLogEPrint(TAG, "Overview Insert Catch: ${e.message}" )
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogEPrint(TAG, "Overview Insert Error: ${error.message}" )
+                }
+            }
+        }
+
+    }
+    // Convert text to RequestBody
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+    // Convert Base64 image to RequestBody
+    private fun base64ToRequestBody(base64String: String): RequestBody {
+        val decodedBytes = Base64.getDecoder().decode(base64String.split(",")[1])
+        return decodedBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+    }
+
+    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestApi = RLInsightlyMoengageBodyApiPayload(
+                    email=cardData.emailId,
+                    uid= currentUser,
+                    device_type= "Android",
+                    Is_basic_data_added= cardData.isBasicDataAdded,
+                    mind_activity= RLTools.RLgetCurrentISO8601())
+
+                RLTools.RlLogDPrint(TAG, "Moengage requestApi: $requestApi")
+
+                val client = OkHttpClient()
+                val mediaType = "application/json".toMediaType()
+                val body = Gson().toJson(requestApi).toRequestBody(mediaType)
+                val request = Request.Builder()
+                    .url(RLConstants.UPDATE_MOENAGE_USER)
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+
+                // Log response on background thread
+                RLTools.RlLogDPrint(TAG, "Moengage Response: $responseBody")
+                val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
+                // If UI update needed, switch to Main Thread
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
+                        // Show success message in UI
+                        // Handle UI updates if required (e.g., Toast message)
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogDPrint(TAG, "Moengage Insert Success: ${apiResponse.response[0].status}")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+
+                    }else{
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
+                    }
+
+                }
+
+            } catch (e: Exception) {
+                RLBaseProgress.RLhideProgressDialog()
+                RLTools.RlLogEPrint(TAG, "Moengage Exception: ${e.localizedMessage}")
+            }
+        }
+    }
 }

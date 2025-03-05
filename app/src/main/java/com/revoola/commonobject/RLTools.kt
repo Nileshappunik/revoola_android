@@ -57,6 +57,8 @@ import android.view.Window
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.revoola.utils.RLConstants
+import java.io.File
+import java.io.FileOutputStream
 import java.time.temporal.TemporalAdjusters
 
 
@@ -1011,7 +1013,14 @@ object RLTools {
         return time.trim() // Removes any trailing spaces
     }
 
-
+     fun RLGetFileFromUri(context: Context, uri: Uri): File {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File.createTempFile("temp_img", ".jpg", context.cacheDir)
+        FileOutputStream(file).use { output ->
+            inputStream?.copyTo(output)
+        }
+        return file
+    }
     fun RLFormatValue(title: String?, value: Any?): String {
         if (title != null) {
             val lowercaseTitle = title.lowercase()

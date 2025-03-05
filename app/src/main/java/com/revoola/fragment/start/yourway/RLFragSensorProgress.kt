@@ -118,7 +118,9 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var gender="Male"
     private var RFMHR=191
     private var RestingHR="50"
-    private var  userModel: RLRevoolaUsersSettingsModel?=null
+    private var emailId=""
+    private var isBasicDataAdded=true
+
 
     private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
     private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
@@ -170,7 +172,6 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
-                userModel=userData
                 appUnit=userData.appUnit
                 wsHeight=userData.height?:"167"
                 wsWeight=userData.weightkg?:"70"
@@ -178,6 +179,8 @@ class RLFragSensorProgress : RLBaseFragment(){
                 gender=userData.gender
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
+                emailId=userData.emailId
+                isBasicDataAdded=userData.isBasicDataAdded
             } else {
                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
@@ -298,7 +301,8 @@ class RLFragSensorProgress : RLBaseFragment(){
             cardData.RFMHR = RFMHR
             cardData.RestingHR = RestingHR
             cardData.appUnit = appUnit
-            cardData.userModel = userModel
+            cardData.emailId = emailId
+            cardData.isBasicDataAdded = isBasicDataAdded
 
 
             bundle.putSerializable("cardData",cardData)

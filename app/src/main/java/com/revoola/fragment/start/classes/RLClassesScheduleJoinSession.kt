@@ -115,7 +115,7 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }
@@ -172,7 +172,7 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }

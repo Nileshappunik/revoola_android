@@ -21,11 +21,16 @@ class RLSessionDataTransferModel : Serializable {
     var RFMHR=191
     var RestingHR="50"
     var appUnit=""
+    var emailId=""
+    var isBasicDataAdded=true
+     var displayImage = ""
+     var displayName = ""
+     var  joiningDate: Long = 0
 
     var VIDEODATA=""
     var classType=""
     var videoID: String =""
-    var CLASS_TYPE: String =""
+    //var CLASS_TYPE: String =""
     var avgHr: Int =0
     var rms: Double =0.0
 
@@ -87,8 +92,5 @@ class RLSessionDataTransferModel : Serializable {
     var zoneDataSummery: Map<String, RLZoneDataSummery> = mapOf()
     var zoneDataDetail: Map<String, RLZoneDataDetails> = mapOf()
 
-    var  userModel: RLRevoolaUsersSettingsModel? = null
-
-     
 }
 

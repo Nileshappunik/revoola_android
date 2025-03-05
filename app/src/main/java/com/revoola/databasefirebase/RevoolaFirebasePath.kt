@@ -78,6 +78,4 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaClassLeaderBoards/$viedoId"
     }
 
-
-
 }

@@ -1,7 +1,6 @@
 package com.revoola.utils
  class RLConstants {
     companion object {
-        const val SERVER_PROBLEM: String = "Server Problem"
         const val LOGOUT_D = "4"
         const val EXIT = "5"
         const val CardData = "CARDDATA"

@@ -106,6 +106,7 @@ object RevoolaKeys {
     const val displayName = "displayName"
     const val flagImage = "flagImage"
     const val flagName = "flagName"
+    const val MaxHrUsedForCalculation = "maxHrUsedForCalculation"
 
 
 

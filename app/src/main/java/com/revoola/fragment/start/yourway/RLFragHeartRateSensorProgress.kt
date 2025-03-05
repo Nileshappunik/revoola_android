@@ -110,6 +110,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit=""
+    private var emailId=""
+    private var isBasicDataAdded=true
+
+
+
     private var burntCalories =0.0
     private var totalRev  =0.0
     private var lastrevPercentage=0.0
@@ -138,7 +143,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
     private val gpxStringBuilder = StringBuilder()
 
-    private var  userModel:RLRevoolaUsersSettingsModel?=null
 
     private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
     private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
@@ -179,8 +183,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
-                userModel=userData
-
                 wsWeight=userData.weightkg
                 wsHeight=userData.height
                 wsAge= RLTools.RLCalculateAge(userData.dob)
@@ -188,6 +190,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
                 appUnit=userData.appUnit
+                emailId=userData.emailId
+                isBasicDataAdded=userData.isBasicDataAdded
             } else {
                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
@@ -310,7 +314,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.maxBurntCalories = maxBurntCalories?:0
             cardData.minHeartRate = minHeartrate?:0
 
-            cardData.userModel=userModel
+
 
             cardData.maxSpeedForOneKm = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00)
             cardData.maxSpeedForOneMile = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00)
@@ -371,6 +375,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.RFMHR = RFMHR
             cardData.RestingHR = RestingHR
             cardData.appUnit = appUnit
+            cardData.emailId = emailId
+            cardData.isBasicDataAdded = isBasicDataAdded
 
             bundle.putSerializable("cardData",cardData)
 

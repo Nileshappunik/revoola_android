@@ -15,6 +15,7 @@ import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragNotificationBinding
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -39,8 +40,8 @@ class RLFragNotification : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_notification, container) as RlFragNotificationBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragNotification" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragNotification" )
+        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -108,7 +109,7 @@ class RLFragNotification : RLBaseFragment() {
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
-                RLcommonToast(RLConstants.SERVER_PROBLEM)
+
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }

@@ -30,7 +30,6 @@ import com.revoola.model.RLClassLeaderboard
 import com.revoola.model.RLInsightlyApiPayload
 import com.revoola.model.RLInsightlyMoEngageResponse
 import com.revoola.model.RLInsightlyMoengageApiPayload
-import com.revoola.model.RLOverviewApiPayload
 import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.utils.RLPrefManager
@@ -49,6 +48,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.Serializable
+import java.util.Base64
 
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
@@ -670,6 +670,28 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
+    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): String {
+        val classLeaderboard = RLClassLeaderboard(
+            userId = currentUser,
+            classId = "",
+            timestamp = currentTimestamp,
+            timestampLocal = currentTimestamp,
+            totalRev = cardData.totalRev,
+            visibilityFlagForThatSession = visibilityflagforthatsession,
+            discipline = cardData.yourWayType,
+            duration = cardData.totalTime,
+            calories = cardData.burntCalories,
+            bmo = 2,
+            rmm = 0,
+            rms = 0,
+            source = "android",
+            goal = "all")
+
+        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard))
+
+        // Convert to JSON String
+        return Gson().toJson(apiPayload)
+    }
     private fun RLInsertApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
         if (RLApiClientRetrofit.RLisConnected()) {
             val jsonPayload = createPayload(cardData,currentTimestamp)
@@ -703,9 +725,69 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     }
 
+
+    private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModel, currentTimestamp: String): Map<String, RequestBody> {
+        val requestBodyMap = mutableMapOf<String, RequestBody>()
+
+        // Add text fields as form data
+        requestBodyMap["data[myOverviewThumbnails][userid]"] = createRequestBody(currentUser)
+        requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody("${cardData.yourWayType} Session")
+        requestBodyMap["data[myOverviewThumbnails][classType]"] = createRequestBody(cardData.yourWayType)
+        requestBodyMap["data[myOverviewThumbnails][timestamp]"] = createRequestBody(currentTimestamp)
+        requestBodyMap["data[myOverviewThumbnails][timestamp_local]"] = createRequestBody(currentTimestamp)
+        requestBodyMap["data[myOverviewThumbnails][totalREV]"] = createRequestBody(safeNumber(cardData.totalRev).toString())
+        requestBodyMap["data[myOverviewThumbnails][totalTime]"] = createRequestBody(cardData.totalTime.toString())
+
+        val burntCalories = safeNumber(cardData.burntCalories) ?: 0
+        requestBodyMap["data[myOverviewThumbnails][burntCalories]"] = createRequestBody(burntCalories.toString())
+
+        requestBodyMap["data[myOverviewThumbnails][totalRMM]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][totalRMS]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][maxRevPercentage]"] = createRequestBody(safeNumber(cardData.maxRevPercentage).toString())
+        requestBodyMap["data[myOverviewThumbnails][avgRevPercentage]"] = createRequestBody(safeNumber(cardData.avgRevPercentage).toString())
+
+        requestBodyMap["data[myOverviewThumbnails][visibilityflagforthatsession]"] = createRequestBody(visibilityflagforthatsession.toString())
+        requestBodyMap["data[myOverviewThumbnails][bmo]"] = createRequestBody("2")
+        requestBodyMap["data[myOverviewThumbnails][instructor]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][duration]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][rideTitle]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][mainTitle]"] = createRequestBody(cardData.yourWayType)
+        requestBodyMap["data[myOverviewThumbnails][goal]"] = createRequestBody("all")
+        requestBodyMap["data[myOverviewThumbnails][medals_gold]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][medals_silver]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][medals_bronze]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
+        requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
+
+        // Handle user images
+        val userImages = emptyList<String>() //myOverviewThumbnails["userImage"] as? List<String>
+        userImages.forEachIndexed { index, base64Image ->
+            val imageRequestBody = base64ToRequestBody(base64Image)
+            requestBodyMap["userImage[$index]"] = imageRequestBody
+        }
+
+        // Handle map image
+        val mapImage = ""// myOverviewThumbnails["mapImage"] as? String
+        if (!mapImage.isNullOrEmpty()) {
+            val mapImageRequestBody = base64ToRequestBody(mapImage)
+            requestBodyMap["mapImage"] = mapImageRequestBody
+        }
+
+        return requestBodyMap
+    }
+    // Convert text to RequestBody
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+    // Convert Base64 image to RequestBody
+    private fun base64ToRequestBody(base64String: String): RequestBody {
+        val decodedBytes = Base64.getDecoder().decode(base64String.split(",")[1])
+        return decodedBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
+    }
     private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
         if (RLApiClientRetrofit.RLisConnected()) {
-            val dataMap  = createOverviewPayload(cardData,currentTimestamp)
+            //  val dataMap  = createOverviewPayload(cardData,currentTimestamp)
+            val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
 
             RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
             //Insert Api Call
@@ -714,7 +796,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     try {
                         if (response.type.equals("success")) {
                             RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
-                            RLupdateUserInsightlyApiCall(cardData)
+                            RLupdateUserInsightlyMoengageApiCall(cardData)
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
                             RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
@@ -734,151 +816,17 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     }
 
-    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): String {
-        val classLeaderboard = RLClassLeaderboard(
-            userId = currentUser,
-            classId = "",
-            timestamp = currentTimestamp,
-            timestampLocal = currentTimestamp,
-            totalRev = cardData.totalRev,
-            visibilityFlagForThatSession = visibilityflagforthatsession,
-            discipline = cardData.yourWayType,
-            duration = cardData.totalTime,
-            calories = cardData.burntCalories,
-            bmo = 2,
-            rmm = 0,
-            rms = 0,
-            source = "android",
-            goal = "all")
-
-        val usernameV2 = RLUsernameV2(
-            userId = currentUser,
-            avatar = cardData.userModel!!.displayImage,
-            username = cardData.userModel!!.displayName,
-            accessToken = "",
-            firstName = cardData.userModel!!.firstName,
-            lastName = cardData.userModel!!.lastName,
-            email = cardData.userModel!!.emailId,
-            currentGroup = cardData.userModel?.currentGroup?:"premium")
-
-      //  val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard,usernameV2))
-        val apiPayload = listOf(RLYourWayApiPayload(classLeaderboard))
-
-        // Convert to JSON String
-        return Gson().toJson(apiPayload)
-    }
-
-    private fun createOverviewPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): Map<String, RequestBody>  {
-        val classLeaderboard = RLOverviewApiPayload(
-            userid= currentUser,
-            className= "${cardData.yourWayType} Session",
-            classType= cardData.yourWayType,
-            timestamp= currentTimestamp,
-            timestamp_local= currentTimestamp,
-            totalRev= safeNumber(cardData.totalRev),
-            totalTime= cardData.totalTime,
-            burntCalories= safeNumber(cardData.burntCalories),
-            totalRMM= 0,
-            totalRMS= 0,
-            maxRevPercentage= safeNumber(cardData.maxRevPercentage),
-            avgRevPercentage= safeNumber(cardData.avgRevPercentage),
-            zone1Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone1]?.seconds?:0,
-            zone2Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone2]?.seconds?:0,
-            zone3Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone3]?.seconds?:0,
-            zone4Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone4]?.seconds?:0,
-            zone5Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone5]?.seconds?:0,
-            zone6Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone6]?.seconds?:0,
-            zone7Seconds= cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds?:0,
-            medals= "",
-            awards= "",
-            visibilityflagforthatsession= visibilityflagforthatsession,
-            bmo= 2,
-            instructor="" ,
-            duration= "",
-            rideTitle= "",
-            mainTitle= cardData.yourWayType,
-            originalClassDate="" ,
-            videoKey="" ,
-            goal= "all",
-            medals_gold= 0,
-            medals_silver= 0,
-            medals_bronze= 0,
-            elevation= safeNumber(cardData.totalElevation),
-            power= 0,
-            hr= cardData.avgHr,
-            steps= cardData.totalSteps,
-            distance= safeNumber(cardData.distance),
-            hrm= if (cardData.maxHeartRate>0)1 else 0,
-            class_level= "",
-            average_speed= safeNumber(cardData.avgSpeed),
-            imageLinkSmall= "",
-            share_map= 1,
-            from_third_party_source= 0,
-            source      =      "android",
-            mapImage="",
-            userImage= emptyList()
-        )
-        // Convert to JSON String
-        //return Gson().toJson(classLeaderboard)
-        // Convert to Map<String, RequestBody>
-        return Gson().toJson(classLeaderboard).let {
-            mapOf("payload" to createRequestBody(it))
-        }
-    }
-
-    private fun RLupdateUserInsightlyApiCall(cardData: RLSessionDataTransferModel) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val insightlyId = cardData.userModel?.insightlyId ?: 0
-                val requestApi = RLInsightlyApiPayload(
-                    email = cardData.userModel?.emailId ?: "",
-                    device_type = "Android",
-                    your_way = RLTools.RLgetCurrentISO8601(),
-                    insightlyId = insightlyId
-                )
-
-                val client = OkHttpClient()
-                val mediaType = "application/json".toMediaType()
-                val body = Gson().toJson(requestApi).toRequestBody(mediaType)
-                val request = Request.Builder()
-                    .url(RLConstants.UPDATE_USER_INSIGHTLY)
-                    .post(body)
-                    .addHeader("Content-Type", "application/json")
-                    .build()
-
-                val response = client.newCall(request).execute()
-                val responseBody = response.body?.string()
-
-                // Log response on background thread
-                RLTools.RlLogDPrint(TAG, "Insightly Response: $responseBody")
-                // Deserialize JSON response
-                val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
-
-                // If UI update needed, switch to Main Thread
-                CoroutineScope(Dispatchers.Main).launch {
-                    // Handle UI updates if required (e.g., Toast message)
-                    if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
-                        // Show success message in UI
-                        RLupdateUserInsightlyMoengageApiCall(cardData)
-                    }
-                }
-
-            } catch (e: Exception) {
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG, "Insightly Error: ${e.localizedMessage}")
-            }
-        }
-    }
-
     private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val requestApi = RLInsightlyMoengageApiPayload(
-                    email=cardData.userModel!!.emailId,
+                    email=cardData.emailId,
                     uid= currentUser,
                     device_type= "Android",
-                    Is_basic_data_added= cardData.userModel!!.isBasicDataAdded,
+                    Is_basic_data_added= cardData.isBasicDataAdded,
                     your_way= RLTools.RLgetCurrentISO8601())
+
+                RLTools.RlLogDPrint(TAG, "Insightly Moengage requestApi: $requestApi")
 
                 val client = OkHttpClient()
                 val mediaType = "application/json".toMediaType()
@@ -897,12 +845,19 @@ class RLFragSessionComplete : RLBaseFragment(){
                 val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
                 // If UI update needed, switch to Main Thread
                 CoroutineScope(Dispatchers.Main).launch {
-                    // Handle UI updates if required (e.g., Toast message)
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogDPrint(TAG, "Moengage Insert Success: ${response}")
-                    RLBottomHideShowSet(true)
-                    (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                    (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                    if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
+                        // Show success message in UI
+                        // Handle UI updates if required (e.g., Toast message)
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
+                        RLBottomHideShowSet(true)
+                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+
+                    }else{
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
+                    }
 
                 }
 
@@ -911,11 +866,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                 RLTools.RlLogEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
             }
         }
-    }
-
-    fun createRequestBody(value: String): RequestBody {
-        return RequestBody.create("text/plain".toMediaTypeOrNull(), value)
-       // return RequestBody.create("application/json".toMediaTypeOrNull(), value)
     }
 
 }

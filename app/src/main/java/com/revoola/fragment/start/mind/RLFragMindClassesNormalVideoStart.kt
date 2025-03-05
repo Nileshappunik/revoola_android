@@ -49,6 +49,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit=""
+    private var displayImage = ""
+    private var displayName = ""
+    private var  joiningDate: Long = 0
+    private var emailId=""
+    private var isBasicDataAdded=true
 
     var arrHr:MutableList<Int> = mutableListOf()
 
@@ -125,7 +130,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             val cardData = RLSessionDataTransferModel()
 
             cardData.VIDEODATA=data
-            cardData.CLASS_TYPE=RLConstants.MIND
+            cardData.classType=RLConstants.MIND
             cardData.SENSOR=RLConstants.NO_SENSOR
 
             cardData.arrHr=arrHr
@@ -143,10 +148,15 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             cardData.RFMHR=RFMHR
             cardData.RestingHR=RestingHR
             cardData.appUnit=appUnit
+            cardData.displayImage = displayImage
+            cardData.displayName =displayName
+            cardData.joiningDate= joiningDate
+            cardData.emailId = emailId
+            cardData.isBasicDataAdded = isBasicDataAdded
 
             bundle.putSerializable("cardData",cardData)
 
-            bundle.putString("VIDEODATA",data)
+            /*bundle.putString("VIDEODATA",data)
             bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
             bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)
 
@@ -156,7 +166,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             bundle.putInt("avgHr",0)
             bundle.putInt("maxHr",0)
             bundle.putInt("minHr",0)
-            bundle.putDouble("rms",rms.toDouble())
+            bundle.putDouble("rms",rms.toDouble())*/
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
 
         }
@@ -303,6 +313,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
                 appUnit=userData.appUnit
+                displayImage=userData.displayImage
+                displayName=userData.displayName
+                joiningDate=userData.joiningDate
+                emailId=userData.emailId
+                isBasicDataAdded=userData.isBasicDataAdded
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }

@@ -14,7 +14,6 @@ import com.revoola.model.RLInsightlyMoEngageResponse
 import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
-import com.revoola.model.RLOverviewApiPayload
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverviewGraphResponse
 import com.revoola.model.RLRequestDetail_dataset

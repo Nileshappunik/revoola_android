@@ -69,10 +69,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(
-            RLMainViewModel::class.java)
-
-
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
@@ -182,11 +179,9 @@ class RLFragEditChallenges : RLBaseFragment() {
             challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
             if (payLoad!=null){
-               // RLTools.RlLogEPrint(TAG,"Payload: $payLoad")
-                RLTools.RlLogEPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
-                RLshowAlertDialog(payLoad.toString())
-              //  val cardRequesrData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
-               // RLInsertApiCall(cardRequesrData)
+                RLTools.RlLogDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
+                val cardRequestData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
+                RLInsertApiCall(cardRequestData)
             }
         }
 
@@ -242,100 +237,56 @@ class RLFragEditChallenges : RLBaseFragment() {
 
     private fun createGoaledChallenges(cardData:RLEditChallengeAllData,challengePayload: RLChallengePayload): Any? {
         val body: List<Map<String, Any>>?
+        val groupid_userid =if (challengePayload.groupid_userid.isEmpty()) listOf<String>(CurrentUserID) else challengePayload.groupid_userid
+       var scenario = 1
         when (cardData.CalenderType.toLowerCase()) {
-            "daily" -> {
-                body = listOf(mapOf(
-                    "goaled_challenges_new" to mapOf(
-                        "challengeadmin" to CurrentUserID,
-                        "groupid_userid" to challengePayload.groupid_userid,
-                        "groupongroup" to challengePayload.groupongroup,
-                        "group" to challengePayload.group,
-                        "metric" to challengePayload.metric,
-                        "creationdate" to challengePayload.creationdate,
-                        "startdate" to challengePayload.startdate,
-                        "enddate" to (challengePayload.enddate),
-                        "goalvalue" to challengePayload.goalvalue,
-                        "max" to challengePayload.max,
-                        "challenge_name" to challengePayload.challenge_name,
-                        "challenger" to challengePayload.challenger,
-                        "challenger_avatar" to challengePayload.displayImage,
-                        "scenario" to 1,
-                        "dwmstart" to challengePayload.startdate,
-                        "dwmend" to challengePayload.enddate,
-                        "targettype" to challengePayload.targetType
-                    )
-                ))
-            }
-            "weekly" -> {
-                body = listOf(mapOf(
-                    "goaled_challenges_new" to mapOf(
-                        "challengeadmin" to CurrentUserID,
-                        "groupid_userid" to challengePayload.groupid_userid,
-                        "groupongroup" to challengePayload.groupongroup,
-                        "group" to challengePayload.group,
-                        "metric" to challengePayload.metric,
-                        "creationdate" to challengePayload.creationdate,
-                        "startdate" to challengePayload.startdate,
-                        "enddate" to (challengePayload.enddate),
-                        "goalvalue" to challengePayload.goalvalue,
-                        "max" to challengePayload.max,
-                        "challenge_name" to challengePayload.challenge_name,
-                        "challenger" to challengePayload.challenger,
-                        "challenger_avatar" to challengePayload.displayImage,
-                        "scenario" to 2,
-                        "dwmstart" to challengePayload.startdate,
-                        "dwmend" to challengePayload.enddate,
-                        "targettype" to challengePayload.targetType
-                    )
-                ))
-            }
-            "monthly" -> {
-                body = listOf(mapOf(
-                    "goaled_challenges_new" to mapOf(
-                        "challengeadmin" to CurrentUserID,
-                        "groupid_userid" to challengePayload.groupid_userid,
-                        "groupongroup" to challengePayload.groupongroup,
-                        "group" to challengePayload.group,
-                        "metric" to challengePayload.metric,
-                        "creationdate" to challengePayload.creationdate,
-                        "startdate" to challengePayload.startdate,
-                        "enddate" to challengePayload.enddate,
-                        "goalvalue" to challengePayload.goalvalue,
-                        "max" to challengePayload.max,
-                        "challenge_name" to challengePayload.challenge_name,
-                        "challenger" to challengePayload.challenger,
-                        "challenger_avatar" to challengePayload.displayImage,
-                        "scenario" to 3,
-                        "dwmstart" to challengePayload.startdate,
-                        "dwmend" to challengePayload.enddate,
-                        "targettype" to challengePayload.targetType
-                    )
-                ))
-            }
-            "custom" -> {
-                body = listOf(mapOf(
-                    "goaled_challenges_new" to mapOf(
-                        "challengeadmin" to CurrentUserID,
-                        "groupid_userid" to challengePayload.groupid_userid,
-                        "groupongroup" to challengePayload.groupongroup,
-                        "group" to challengePayload.group,
-                        "metric" to challengePayload.metric,
-                        "creationdate" to challengePayload.creationdate,
-                        "startdate" to challengePayload.startdate,
-                        "enddate" to challengePayload.enddate,
-                        "goalvalue" to challengePayload.goalvalue,
-                        "max" to challengePayload.max,
-                        "challenge_name" to challengePayload.challenge_name,
-                        "challenger" to challengePayload.challenger,
-                        "challenger_avatar" to challengePayload.displayImage,
-                        "scenario" to 0,
-                        "targettype" to challengePayload.targetType
-                    )
-                ))
-            }
-            else -> {
-                body = null
-            }
+            "daily" -> scenario = 1
+            "weekly" -> scenario = 2
+            "monthly" -> scenario = 3
+            "custom" -> scenario = 0
+        }
+        if (cardData.CalenderType.toLowerCase().equals("custom")){
+            body = listOf(mapOf(
+                "goaled_challenges_new" to mapOf(
+                    "challengeadmin" to CurrentUserID,
+                    "groupid_userid" to groupid_userid,
+                    "groupongroup" to challengePayload.groupongroup,
+                    "group" to challengePayload.group,
+                    "metric" to challengePayload.metric,
+                    "creationdate" to challengePayload.creationdate,
+                    "startdate" to challengePayload.startdate,
+                    "enddate" to challengePayload.enddate,
+                    "goalvalue" to challengePayload.goalvalue,
+                    "max" to challengePayload.max,
+                    "challenge_name" to challengePayload.challenge_name,
+                    "challenger" to challengePayload.challenger,
+                    "challenger_avatar" to challengePayload.displayImage,
+                    "scenario" to scenario,
+                    "targettype" to challengePayload.targetType
+                )
+            ))
+        }else{
+            body = listOf(mapOf(
+                "goaled_challenges_new" to mapOf(
+                    "challengeadmin" to CurrentUserID,
+                    "groupid_userid" to groupid_userid,
+                    "groupongroup" to challengePayload.groupongroup,
+                    "group" to challengePayload.group,
+                    "metric" to challengePayload.metric,
+                    "creationdate" to challengePayload.creationdate,
+                    "startdate" to challengePayload.startdate,
+                    "enddate" to (challengePayload.enddate),
+                    "goalvalue" to challengePayload.goalvalue,
+                    "max" to challengePayload.max,
+                    "challenge_name" to challengePayload.challenge_name,
+                    "challenger" to challengePayload.challenger,
+                    "challenger_avatar" to challengePayload.displayImage,
+                    "scenario" to scenario,
+                    "dwmstart" to challengePayload.startdate,
+                    "dwmend" to challengePayload.enddate,
+                    "targettype" to challengePayload.targetType
+                )
+            ))
         }
         if (body == null) {
             return null
@@ -353,22 +304,22 @@ class RLFragEditChallenges : RLBaseFragment() {
                     try {
                         if (response.type.equals("success")) {
                             RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "Challenges Insert Success= " + response.type)
+                            RLTools.RlLogDPrint(TAG, "Challenges Insert Success= ${response.text}")
                             RLBaseProgress.RLhideProgressDialog()
                             (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false,null, false)
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "Challenges Insert Fail= " + response.type)
+                            RLTools.RlLogEPrint(TAG, "Challenges Insert Fail= ${response.text}")
                         }
                     } catch (e: Exception) {
                         RLBaseProgress.RLhideProgressDialog()
                         e.printStackTrace()
-                        RLTools.RlLogDPrint(TAG, "Challenges Insert Catch= " + e.message)
+                        RLTools.RlLogEPrint(TAG, "Challenges Insert Catch= ${e.message}" )
 
                     }
                 }.onFailure { error ->
                     RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogDPrint(TAG, "Challenges Insert Error= " + error.message)
+                    RLTools.RlLogEPrint(TAG, "Challenges Insert Error= ${error.message}" )
                 }
             }
         }
