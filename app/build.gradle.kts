@@ -157,6 +157,7 @@ dependencies {
     //5 Image Select to Gallery
     implementation ("io.github.ParkSangGwon:tedimagepicker:1.2.7")
 
+
     //google login
     //implementation("com.google.android.gms:play-services-auth:19.0.0")
     implementation("com.google.android.gms:play-services-auth:21.   3.0")

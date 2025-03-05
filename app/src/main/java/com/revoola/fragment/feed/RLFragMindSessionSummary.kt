@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.feed.adapter.RLFeedSessionSummryListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragMindSessionSummaryBinding
@@ -19,6 +21,7 @@ import com.revoola.enumclass.RLTypeOfMetrics
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -60,7 +63,18 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
+       // RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivBack.setOnClickListener {
+            RLcloseScreen(isSessionComplete)
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+                RLcloseScreen(isSessionComplete)
+            }
+        })
+
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.sessionsummerys))
         fragBinding.inlayTop.ivDescription.setText("")
@@ -71,6 +85,16 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
 
         RLsummaryDataSet()
+    }
+
+    private fun RLcloseScreen(isSessionComplete:Boolean){
+        if (isSessionComplete){
+            RLBottomHideShowSet(true)
+            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+        }else{
+            RLcloseFragment()
+        }
     }
 
     private fun RLsummaryDataSet() {
@@ -122,6 +146,8 @@ class RLFragMindSessionSummary : RLBaseFragment() {
 
 
     }
+
+
 
     private fun RLsummaryListDataSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.feed.adapter.RLFeedSessionSummryListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragSessionSummaryBinding
@@ -27,6 +29,7 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -72,10 +75,18 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
+        val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
        // RLonBackPresAct(fragBinding.ivBack)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLcloseFragment()
+            RLcloseScreen(isSessionComplete)
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+                RLcloseScreen(isSessionComplete)
+            }
+        })
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
@@ -92,6 +103,17 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         RLsummaryDataSet()
         RLClickToSetUI()
     }
+
+    private fun RLcloseScreen(isSessionComplete:Boolean){
+        if (isSessionComplete){
+            RLBottomHideShowSet(true)
+            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+        }else{
+            RLcloseFragment()
+        }
+    }
+
     private fun RLClickToSetUI() {
         fragBinding.inlayTitle.layoutSummary.setOnClickListener {
             fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppMainColor))
@@ -639,7 +661,15 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         fragBinding.intoTabLayout.visibility=View.VISIBLE
         fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
        // val imageList = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
-        val imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
+        val imageListOriginal = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
+
+        var imageList:MutableList<String> = mutableListOf()
+        if (cardData.user_images.isEmpty()){
+            imageList =imageListOriginal.toMutableList()
+        }else{
+            imageList = cardData.user_images.extractImageUrls().toMutableList()
+            imageList.add("CHART")
+        }
 
         RLTools.RLheightsetViewPager( fragBinding.viewPagerImage)
         val viewPagerAdapter = RLImagePagerAdapter(activity, imageList)
@@ -729,6 +759,14 @@ class RLFragBodySessionSummary : RLBaseFragment() {
         }
 
     }
+
+    fun String.extractImageUrls(): List<String> {
+        return this.replace("\\", "")
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+    }
+
     private fun RLSummryListSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)

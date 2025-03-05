@@ -42,6 +42,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Part
 
 class RLMainRepository(private val apiService: RLNetworkService) {
 
@@ -348,8 +349,23 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLInsertYourWayOverviewData(request: Map<String, RequestBody>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertYourWayOverviewData(request).enqueue(object : Callback<RLYourWayApiResponse> {
+    fun RLInsertClassSessionData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        apiService.RLInsertClassSessionData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
+            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLInsertYourWayOverviewData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        apiService.RLInsertYourWayOverviewData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
             override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

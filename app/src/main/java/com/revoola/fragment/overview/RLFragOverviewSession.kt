@@ -471,8 +471,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampTo = endDay.toEpochSecond()
 
         //val imageUrl="${RLConstants.BASE_URL}getResponse_v2.php?q=overviewGraphChartHTML&user=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type=$type"
-        val imageUrl=RLConstants.BASE_URL+"getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
-       //RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
+        val imageUrl=RLConstants.BASE_URL+"_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+       RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
         fragBinding.webView.loadUrl(imageUrl)
     }
     private fun RLallactivitydialogopen() {

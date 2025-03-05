@@ -1,11 +1,16 @@
 package com.revoola.fragment.start.yourway
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,10 +31,12 @@ import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.model.RLClassLeaderboard
 import com.revoola.model.RLInsightlyApiPayload
 import com.revoola.model.RLInsightlyMoEngageResponse
 import com.revoola.model.RLInsightlyMoengageApiPayload
+import com.revoola.model.RLTextOverview
 import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.utils.RLPrefManager
@@ -46,6 +53,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.Serializable
 import java.util.Base64
@@ -58,6 +66,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private var displayImage =""
     private var displayName =""
     private var visibilityflagforthatsession:Int =0
+    private val MAX_IMAGE_SELECTION = 5
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
 
@@ -85,7 +94,11 @@ class RLFragSessionComplete : RLBaseFragment(){
         val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }
@@ -94,6 +107,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         fragBinding.edtSessionName.setText("${cardData.yourWayType} Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             // Handle checked change
+            RLBottomHideShowSet(true)
+            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
         }
 
         fragBinding.layPrivacy.setOnClickListener {
@@ -127,6 +143,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
         fragBinding.txtAddPhoto.setOnClickListener {
             RLchooseFromGallery()
+            //openImagePicker()
         }
         fragBinding.imgCancle.setOnClickListener {
             RLBottomHideShowSet(true)
@@ -145,6 +162,10 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun safeNumber(value: Double?): Double {
         return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
+    }
+
+    private fun safeIntNumber(value: Int?): Int {
+        return if (value == null || value < 0 ) 0 else value
     }
 
     private fun RLMakeSensorData(cardData: RLSessionDataTransferModel) {
@@ -633,42 +654,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.switchCompat.visibility=View.GONE
         }
     }
-    private fun RLchooseFromGallery() {
-        TedImagePicker.with(requireContext())
-            .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
-            .showCameraTile(false)
-            .startMultiImage { uriList ->
-                // Handle the selected images here
-
-                for (uri in uriList) {
-                    imgUriList.add(uri)
-                }
-                if (imgUriList.size>0){
-                    RLimageListVisible(true)
-                }else{
-                    RLimageListVisible(false)
-                }
-                fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-               val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-                   imgUriList.remove(uri)
-                   if (imgUriList.size>0){
-                       RLimageListVisible(true)
-                   }else{
-                       RLimageListVisible(false)
-                   }
-                }
-                fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
-            }
-    }
-    private fun RLimageListVisible(isVisible: Boolean){
-        if (isVisible){
-            fragBinding.rvSelectedImages.visibility=View.VISIBLE
-            fragBinding.txtAddPhoto.visibility=View.GONE
-        }else{
-            fragBinding.rvSelectedImages.visibility=View.GONE
-            fragBinding.txtAddPhoto.visibility=View.VISIBLE
-        }
-    }
 
     private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): String {
         val classLeaderboard = RLClassLeaderboard(
@@ -759,13 +744,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
         requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
 
-        // Handle user images
-        val userImages = emptyList<String>() //myOverviewThumbnails["userImage"] as? List<String>
-        userImages.forEachIndexed { index, base64Image ->
-            val imageRequestBody = base64ToRequestBody(base64Image)
-            requestBodyMap["userImage[$index]"] = imageRequestBody
-        }
-
         // Handle map image
         val mapImage = ""// myOverviewThumbnails["mapImage"] as? String
         if (!mapImage.isNullOrEmpty()) {
@@ -786,12 +764,11 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
         if (RLApiClientRetrofit.RLisConnected()) {
-            //  val dataMap  = createOverviewPayload(cardData,currentTimestamp)
             val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
-
+            val images=getUserImages()
             RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
             //Insert Api Call
-            viewModel.RLInsertYourWayOverviewData(dataMap) { result ->
+            viewModel.RLInsertYourWayOverviewData(dataMap,images) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
@@ -850,9 +827,10 @@ class RLFragSessionComplete : RLBaseFragment(){
                         // Handle UI updates if required (e.g., Toast message)
                         RLBaseProgress.RLhideProgressDialog()
                         RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
-                        RLBottomHideShowSet(true)
-                        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                        (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        RLAllProcessDone(cardData)
+                       // RLBottomHideShowSet(true)
+                       // (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+                       // (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
 
                     }else{
                         RLBaseProgress.RLhideProgressDialog()
@@ -867,65 +845,186 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
         }
     }
+    private fun getUserImages(): List<MultipartBody.Part> {
+        val imageParts = mutableListOf<MultipartBody.Part>()
+        imgUriList.forEachIndexed { index, uri ->
+            val imageFile = RLTools.RLGetFileFromUri(requireContext(), uri)
+            val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val imagePart = MultipartBody.Part.createFormData("userImage[]", imageFile.name, requestFile)
+            imageParts.add(imagePart)
+        }
+        return imageParts
+    }
 
+    private fun RLAllProcessDone(cardData: RLSessionDataTransferModel){
+        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+        // Convert to a single comma-separated string
+        var imgString: String=""
+        if (imgUriList.isNotEmpty()){
+            imgString = imgUriList.joinToString(separator = ",") { it.toString() }
+        }
+
+        val  modelData= RLTextOverview(
+            avatar =cardData.displayImage,
+            username =cardData.displayName,
+            first_name =cardData.displayName,
+            ID =  0,
+            userid =  currentUser,
+            className ="${cardData.classType} Session",
+            classType =cardData.classType,
+            timestamp =currentTimestamp,
+            short_timestamp= currentTimestamp,
+            timestamp_local=currentTimestamp,
+            imageLinkSmall ="",
+            totalREV =safeNumber(cardData.totalRev),
+            totalTime= cardData.totalTime,
+            burntCalories= safeNumber(cardData.burntCalories).toString(),
+            totalRMM= "0",
+            totalRMS ="0",
+            maxRevPercentage= safeNumber(cardData.maxRevPercentage),
+            avgRevPercentage= safeNumber(cardData.avgRevPercentage).toString(),
+            zone1Seconds= "0",
+            zone2Seconds ="0",
+            zone3Seconds ="0",
+            zone4Seconds ="0",
+            zone5Seconds ="0",
+            zone6Seconds ="0",
+            zone7Seconds ="0",
+            medals ="0",
+            medals_gold =0,
+            medals_silver =0,
+            medals_bronze =0,
+            awards ="0",
+            visibilityFlagForThatSession =visibilityflagforthatsession,
+            bmo =2,
+            instructor ="",
+            duration ="",
+            rideTitle ="",
+            mainTitle ="",
+            originalClassDate ="",
+            videoKey ="",
+            goal ="all",
+            avatarKudos ="",
+            avatar_comments = "",
+            total_kudos =0,
+            total_comments =0,
+            elevation =safeNumber(cardData.totalElevation).toInt(),
+            power =0,
+            hr =safeIntNumber(cardData.avgHr),
+            steps =safeIntNumber(cardData.totalSteps),
+            distance= safeNumber(cardData.distance),
+            hrm= if (cardData.SENSOR.equals(RLConstants.HEART_SENSOR)) 1 else 0,
+            class_level ="",
+            average_speed= safeNumber(cardData.avgSpeed),
+            map_image ="",
+            user_images =imgString,
+            isDeleted =0,
+            dems = "",
+            spike_steps = "",
+            spike_timestamp = "",
+            share_map =0,
+            from_third_party_source =0,
+            map_url = "",
+            dom =0,
+            rhr =0,
+            mhr =0,
+            avgHr= safeIntNumber(cardData.avgHr),
+            notes = fragBinding.edtAddNotes.text.toString(),
+            source ="",
+            isKudos= 0)
+
+        val bundle = Bundle()
+        bundle.putSerializable(RLConstants.CardData, modelData)
+        bundle.putString(RLConstants.FeedSelectTag, "FRIENDS")
+        bundle.putBoolean("isSessionComplete", true)
+        (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
+    }
+
+    private fun RLchooseFromGallery() {
+        try {
+            TedImagePicker.with(requireContext())
+                .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
+                .showCameraTile(false)
+                .startMultiImage { uriList ->
+                    // Handle the selected images here
+                    for (uri in uriList) {
+                        imgUriList.add(uri)
+                    }
+                    if (imgUriList.size>0){
+                        RLimageListVisible(true)
+                    }else{
+                        RLimageListVisible(false)
+                    }
+                    fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+                        imgUriList.remove(uri)
+                        if (imgUriList.size>0){
+                            RLimageListVisible(true)
+                        }else{
+                            RLimageListVisible(false)
+                        }
+                    }
+                    fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
+                }
+        }catch (e:Exception){
+            RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
+        }
+    }
+    private fun RLimageListVisible(isVisible: Boolean){
+        if (isVisible){
+            fragBinding.rvSelectedImages.visibility=View.VISIBLE
+            fragBinding.txtAddPhoto.visibility=View.GONE
+        }else{
+            fragBinding.rvSelectedImages.visibility=View.GONE
+            fragBinding.txtAddPhoto.visibility=View.VISIBLE
+        }
+    }
+
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
+        imagePickerLauncher.launch(Intent.createChooser(intent, "Select Images"))
+    }
+    // Launcher for image selection
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Handle multiple image selection
+            val clipData = result.data?.clipData
+            val singleImage = result.data?.data
+            when {
+                // Multiple images selected
+                clipData != null -> {
+                    for (i in 0 until minOf(clipData.itemCount, MAX_IMAGE_SELECTION - imgUriList.size)) {
+                        val imageUri = clipData.getItemAt(i).uri
+                        if (!imgUriList.contains(imageUri)) {
+                            imgUriList.add(imageUri)
+                        }
+                    }
+                }
+                // Single image selected
+                singleImage != null -> {
+                    if (!imgUriList.contains(singleImage) && imgUriList.size < MAX_IMAGE_SELECTION) {
+                        imgUriList.add(singleImage)
+                    }
+                }
+            }
+            if (imgUriList.size>0){
+                RLimageListVisible(true)
+            }else{
+                RLimageListVisible(false)
+            }
+            fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+                imgUriList.remove(uri)
+                if (imgUriList.size>0){
+                    RLimageListVisible(true)
+                }else{
+                    RLimageListVisible(false)
+                }
+            }
+            fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
+        }
+    }
 }
-
-/*if (imgUriList.size>0){
-               RLuploadImagesToFirebase(imgUriList)
-           }
-
-
-//SELECTED IMAGE SENT TO SERVER
-   private fun RLuploadImagesToFirebase(imageUris: List<Uri>) {
-       val storageReference = FirebaseStorage.getInstance().reference
-       val databaseReference = FirebaseDatabase.getInstance().reference.child("live")
-
-       for (uri in imageUris) {
-           val fileName = System.currentTimeMillis().toString() + ".jpg"
-           val fileReference = storageReference.child("uploads/$fileName")
-
-           fileReference.putFile(uri)
-               .addOnSuccessListener { taskSnapshot ->
-                   fileReference.downloadUrl.addOnSuccessListener { downloadUri ->
-                       RLsaveImageUrlToDatabase(downloadUri.toString(), databaseReference)
-                   }
-               }
-               .addOnFailureListener { exception ->
-                   // Handle any errors
-                   RLcommonToast( "Upload failed: ${exception.message}")
-               }
-       }
-   }
-   private fun RLsaveImageUrlToDatabase(downloadUrl: String, databaseReference: DatabaseReference) {
-       val imageId = databaseReference.push().key // Generate a unique ID for each image
-       imageId?.let {
-           databaseReference.child(it).setValue(downloadUrl)
-               .addOnCompleteListener { task ->
-                   if (task.isSuccessful) {
-                       RLBottomHideShowSet(true)
-                       (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                       (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-                       RLcommonToast("Image uploaded successfully!")
-                   } else {
-                       RLcommonToast("Failed to upload image URL to database.")
-                   }
-               }
-       }
-   }
-   private fun RLuploadImageToFirebaseStorage(imageUri: Uri, text: String) {
-       val storageRef = FirebaseStorage.getInstance().reference
-       val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
-
-       imageRef.putFile(imageUri)
-           .addOnSuccessListener { taskSnapshot ->
-               // Get the URL of the uploaded image
-               imageRef.downloadUrl.addOnSuccessListener { uri ->
-                   val imageUrl = uri.toString()
-                   // Once we have the image URL, save it with the text to the database
-
-               }
-           }
-           .addOnFailureListener { e ->
-              RLTools.RlLogEPrint("FirebaseStorage", "Image upload failed:- $e")
-           }
-   }*/

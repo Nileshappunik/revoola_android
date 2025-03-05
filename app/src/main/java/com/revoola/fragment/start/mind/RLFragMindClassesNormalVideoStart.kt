@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.VideoView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
@@ -71,6 +72,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_normal_video_start, container) as RlFragMindClassesNormalVideoStartBinding
         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesNormalVideoStart" )
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+            }
+        })
         RLuisetup()
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -156,18 +162,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
             bundle.putSerializable("cardData",cardData)
 
-            /*bundle.putString("VIDEODATA",data)
-            bundle.putString(RLConstants.CLASS_TYPE,RLConstants.MIND)
-            bundle.putString(RLConstants.HEART_SENSOR, RLConstants.NO_SENSOR)
-
-            bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
-            bundle.putString("totalTime",totalTime)
-            bundle.putString("videoID",videoID)
-            bundle.putInt("avgHr",0)
-            bundle.putInt("maxHr",0)
-            bundle.putInt("minHr",0)
-            bundle.putDouble("rms",rms.toDouble())*/
-            (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
+            (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
 
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {

@@ -10,6 +10,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
@@ -171,7 +172,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString().trim()
-
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }

@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
@@ -138,6 +139,11 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_speed_video_start, container) as RlFragBodyClassesSpeedVideoStartBinding
         com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragBodyClassesSpeedVideoStart" )
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+            }
+        })
         RLuisetup()
         @Suppress("DEPRECATION")
         requireActivity().window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -452,56 +458,8 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
 
         bundle.putSerializable("cardData",cardData)
 
-//        bundle.putString("VIDEODATA",data)
-//        bundle.putString(RLConstants.CLASS_TYPE, RLConstants.BODY)
-//        bundle.putString(RLConstants.HEART_SENSOR, RLConstants.SPEED_SENSOR)
-//        bundle.putString("videoID",videoID)
-//
-//        bundle.putString("totalTime",(totalTime?:"0"))
-//        bundle.putDouble("avgRevPercentage",RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00))
-//        bundle.putDouble("burntCalories",RLYourWayCalvulation.noNanValueDouble(burntCalories?:0.00))
-//        bundle.putDouble("distance",RLYourWayCalvulation.noNanValueDouble(distance?:0.00))
-//        bundle.putDouble("maxRevPercentage",RLYourWayCalvulation.noNanValueDouble(maxRevPercentage?:0.00))
-//        bundle.putDouble("minRevPercentage",RLYourWayCalvulation.noNanValueDouble(minRevPercentage?:0.00))
-//        bundle.putDouble("revPercentage",RLYourWayCalvulation.noNanValueDouble(revPercentage?:0.00))
-//        bundle.putDouble("totalRev",RLYourWayCalvulation.noNanValueDouble(totalRev?:0.00))
-//        bundle.putInt("maxSpeed",maxSpeed?:0)
-//        bundle.putInt("maxHeartRate",maxHeartrate?:0)
-//        bundle.putInt("maxCadence",maxCadence?:0)
-//        bundle.putInt("maxBurntCalories",maxBurntCalories?:0)
-//        bundle.putInt("minHeartrate",minHeartrate?:0)
-//
-//        bundle.putDouble("avgBurntCalories",avgBurntCalories?:0.0)
-//        bundle.putDouble("avgCadence",avgCadence?:0.0)
-//        bundle.putInt("avgHr",avgHr?:0)
-//        bundle.putDouble("avgSpeed",avgSpeed?:0.0)
-//
-//        bundle.putDouble("maxSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00))
-//        bundle.putDouble("maxSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00))
-//        bundle.putDouble("avgSpeedForOneKm",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneKm?:0.00))
-//        bundle.putDouble("avgSpeedForOneMile",RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneMile?:0.00))
-//
-//
-//
-//        bundle.putDoubleArray(RLYourWayArrayType.arrBurntCalories.toString(),arrBurntCalories.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrCadence.toString(),arrCadence.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrDistance.toString(),arrDistance.toDoubleArray())
-//        bundle.putIntegerArrayList(RLYourWayArrayType.arrHr.toString(),ArrayList(arrHr))
-//        bundle.putIntegerArrayList(RLYourWayArrayType.arrPower.toString(),ArrayList(arrPower))
-//        bundle.putIntegerArrayList(RLYourWayArrayType.arrPowerFromDevice.toString(),ArrayList(arrPowerFromDevice))
-//
-//
-//
-//        bundle.putDoubleArray(RLYourWayArrayType.arrRevPercentage.toString(),arrRevPercentage.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrRevSecond.toString(),arrRevSecond.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrSpeed.toString(),arrSpeed.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrCumDistance.toString(),arrCumDistance.toDoubleArray())
-//        bundle.putDoubleArray(RLYourWayArrayType.arrCumSpeed.toString(),arrCumSpeed.toDoubleArray())
-//
-//        bundle.putIntegerArrayList(RLYourWayArrayType.arrAvgRevPercentage.toString(),ArrayList(arrAvgRevPercentage))
-//        bundle.putDoubleArray(RLYourWayArrayType.arrMaxRevPercentage.toString(),arrMaxRevPercentage.toDoubleArray())
 
-        (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, true, null, false)
+        (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
     }
 
     private fun RLUserDataGet() {

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.revoola.RLBaseFragment
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import com.revoola.R
@@ -160,6 +161,12 @@ class RLFragSensorProgress : RLBaseFragment(){
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_sensor_progress, container) as RlFragSensorProgressBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+            }
+        })
         RLuisetup()
         return fragBinding.root
     }

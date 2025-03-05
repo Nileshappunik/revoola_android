@@ -111,7 +111,13 @@ interface RLNetworkService {
 
     @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
-    fun RLInsertYourWayOverviewData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>): Call<RLYourWayApiResponse>
+    fun RLInsertClassSessionData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
+
+     @Multipart
+    @POST(RLConstants.mpfIfCWxBL_insert)
+    fun RLInsertYourWayOverviewData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
+
+
 
      @POST(RLConstants.insertJSONApi)
     fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLYourWayApiResponse>

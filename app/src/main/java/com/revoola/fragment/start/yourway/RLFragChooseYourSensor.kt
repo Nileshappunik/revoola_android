@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -86,7 +87,6 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
         fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment, "BLEFragment")
         RLuisetup()
-
         return fragBinding.root
     }
 
@@ -226,15 +226,15 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,true)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
             }
 
@@ -249,13 +249,13 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
             }
 
@@ -270,13 +270,13 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
             }
 

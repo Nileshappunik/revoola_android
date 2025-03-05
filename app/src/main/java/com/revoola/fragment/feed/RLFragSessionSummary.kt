@@ -1,20 +1,25 @@
 package com.revoola.fragment.feed
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
+import com.revoola.utils.RLPrefManager
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.feed.adapter.RLFeedSessionSummryListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragSessionSummaryBinding
@@ -27,6 +32,7 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -57,30 +63,35 @@ class RLFragSessionSummary : RLBaseFragment() {
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_summary, container) as RlFragSessionSummaryBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragSessionSummary" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionSummary" )
+        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
+        val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
        // RLonBackPresAct(fragBinding.ivBack)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLcloseFragment()
+            RLcloseScreen(isSessionComplete)
         }
-
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+                RLcloseScreen(isSessionComplete)
+            }
+        })
+
         fragBinding.inlayTop.recyclerTitle.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(cardData.className.toString())
@@ -90,9 +101,21 @@ class RLFragSessionSummary : RLBaseFragment() {
         }else{
             classType = cardData.classType!!
         }
+
         RLsummaryDataSet()
         RLClickToSetUI()
     }
+
+    private fun RLcloseScreen(isSessionComplete:Boolean){
+        if (isSessionComplete){
+            RLBottomHideShowSet(true)
+            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+        }else{
+            RLcloseFragment()
+        }
+    }
+
     private fun RLClickToSetUI() {
         fragBinding.inlayTitle.layoutSummary.setOnClickListener {
             fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppMainColor))
@@ -727,12 +750,15 @@ class RLFragSessionSummary : RLBaseFragment() {
         RLSummryListSet(rideListWithoutHr)
     }
 
+
+
     private fun RLsummaryDataSet() {
         fragBinding.relaySummary.visibility=View.VISIBLE
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.GONE
         //var imagelink=RLTools.RLgetImage(classType)
         val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
+
        /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
             imagelink=cardData.imageLinkSmall
         }else if (!cardData.map_image.isNullOrEmpty()){
@@ -746,8 +772,19 @@ class RLFragSessionSummary : RLBaseFragment() {
         fragBinding.viewPagerImage.visibility=View.VISIBLE
         fragBinding.intoTabLayout.visibility=View.VISIBLE
         fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
-       // val imageList = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
-        val imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
+        val imageListOriginal = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
+
+        var imageList:MutableList<String> = mutableListOf()
+        if (cardData.user_images.isEmpty()){
+            imageList=imageListOriginal.toMutableList()
+        }else{
+
+            imageList = cardData.user_images.extractImageUrls().toMutableList()
+            imageList.add("CHART")
+            imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+        }
+
+         //imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
 
         RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
         val viewPagerAdapter = RLImagePagerAdapter(activity,imageList)
@@ -892,6 +929,13 @@ class RLFragSessionSummary : RLBaseFragment() {
             }
         }*/
 
+    }
+
+    fun String.extractImageUrls(): List<String> {
+        return this.replace("\\", "")
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
     }
     private fun RLSummryListSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set

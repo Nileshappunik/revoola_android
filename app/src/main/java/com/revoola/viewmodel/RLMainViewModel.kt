@@ -114,10 +114,13 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertYourWayData(request, callback)
     }
-    fun RLInsertYourWayOverviewData(request: Map<String, RequestBody>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        mainRepository.RLInsertYourWayOverviewData(request, callback)
+    fun RLInsertClassSessionData(request: Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        mainRepository.RLInsertClassSessionData(request,images, callback)
     }
 
+    fun RLInsertYourWayOverviewData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        mainRepository.RLInsertYourWayOverviewData(request,images, callback)
+    }
 
     fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertChallenges(request, callback)

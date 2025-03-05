@@ -724,6 +724,18 @@ object RLTools {
         return returnValue
     }
 
+     fun RLGetLinkImage(classType:String):String{
+        when (classType) {
+            RLYourWayName.Workout.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+            RLYourWayName.Pilates.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+            RLYourWayName.Ride.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+            RLYourWayName.Run.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_run.png"
+            RLYourWayName.Walk.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+            RLYourWayName.Yoga.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+            else -> return "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+        }
+    }
+
     fun RlVerifyFeedZoneName(REVPer: Double): EffortZoneFeedModel {
         val roundedREVPer = REVPer.roundToInt()
 

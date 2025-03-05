@@ -221,6 +221,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                         val bundle = Bundle()
                         bundle.putSerializable(RLConstants.CardData, cardData)
                         bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                        bundle.putBoolean("isSessionComplete", false)
                         (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
                     }
                     1->{
@@ -228,6 +229,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                         val bundle = Bundle()
                         bundle.putSerializable(RLConstants.CardData, cardData)
                         bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                        bundle.putBoolean("isSessionComplete", false)
                         (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, true)
                     }
                     2->{
@@ -235,6 +237,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                         val bundle = Bundle()
                         bundle.putSerializable(RLConstants.CardData, cardData)
                         bundle.putString(RLConstants.FeedSelectTag, selectTag)
+                        bundle.putBoolean("isSessionComplete", false)
                         (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
                     }
 

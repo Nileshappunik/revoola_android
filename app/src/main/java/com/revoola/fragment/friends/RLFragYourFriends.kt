@@ -32,7 +32,7 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 class RLFragYourFriends : RLBaseFragment() {
     val TAG: String = RLFragYourFriends::class.java.simpleName
     lateinit var fragBinding: RlFragYourFriendsBinding
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
 
@@ -56,14 +56,10 @@ class RLFragYourFriends : RLBaseFragment() {
         RLonBackPresAct(fragBinding.toolbar.ivBack)
         currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
         return fragBinding.root
     }
@@ -74,7 +70,7 @@ class RLFragYourFriends : RLBaseFragment() {
             fragBinding.viewlablelright.setBackgroundResource(R.color.AppWhiteColor)
             fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppMainColor))
             fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppBlackColor))
-            if (RLApiClientRetrofit.RLisConnected()) {
+            if (apiClientRetrofit.RLisConnected()) {
                 RLyouFollowApiCall()
             } else {
                 RLshowDialogFullscreen()
@@ -86,7 +82,7 @@ class RLFragYourFriends : RLBaseFragment() {
             fragBinding.viewlableleft.setBackgroundResource(R.color.AppWhiteColor)
             fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppMainColor))
             fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppBlackColor))
-            if (RLApiClientRetrofit.RLisConnected()) {
+            if (apiClientRetrofit.RLisConnected()) {
                 RLfollowingYouApiCall()
             } else {
                 RLshowDialogFullscreen()
@@ -99,13 +95,13 @@ class RLFragYourFriends : RLBaseFragment() {
 
         val reDirecDeepLinkPage=requireArguments().getBoolean("reDirecDeepLinkPage")
         if (reDirecDeepLinkPage){
-            if (RLApiClientRetrofit.RLisConnected()) {
+            if (apiClientRetrofit.RLisConnected()) {
                 RLSearchFollowApiCall()
             } else {
                 RLshowDialogFullscreen()
             }
         }else{
-            if (RLApiClientRetrofit.RLisConnected()) {
+            if (apiClientRetrofit.RLisConnected()) {
                 RLyouFollowApiCall()
             } else {
                 RLshowDialogFullscreen()
@@ -162,11 +158,7 @@ class RLFragYourFriends : RLBaseFragment() {
     }
 
     private fun RLfollowingYouApiCall() {
-        val request = listOf(
-            RLSetget_followersrequest(
-            search_user = RLSetget_followers(get_followers = currentUser,limit = 100, index=0)
-            )
-        )
+        val request = listOf(RLSetget_followersrequest(search_user = RLSetget_followers(get_followers = currentUser,limit = 100, index=0)))
         RLTools.RlLogDPrint(TAG,"setfollowingYoudata= "+request)
 
         viewModel.RLfriendsFollowingYou(request) { result ->
