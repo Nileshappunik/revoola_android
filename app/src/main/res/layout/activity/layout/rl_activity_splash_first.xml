@@ -9,14 +9,11 @@
         android:paddingRight="10dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tempText"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/steps_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:visibility="gone"
-            android:layout_margin="20dp"/>
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/logo"

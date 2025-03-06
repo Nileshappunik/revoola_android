@@ -8,6 +8,8 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     kotlin("android")
+    id ("kotlin-kapt")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -200,6 +202,10 @@ dependencies {
     implementation ("androidx.health.connect:connect-client:1.1.0-alpha11")
 
     //Samsung Health Connect
+    implementation (files("libs/samsung-health-data-api-1.0.0-b2.aar"))
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
+
+
    // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
    // testImplementation("io.mockk:mockk:1.13.5")
     //implementation("com.samsung.android.sdk.healthdata:health-data:1.6.1")
