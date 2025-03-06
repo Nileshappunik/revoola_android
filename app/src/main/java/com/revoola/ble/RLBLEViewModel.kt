@@ -56,6 +56,7 @@ class BLEViewModel(private val bleRepository: BLERepository) : ViewModel() {
             bleRepository.startScan()
             _bluetoothState.value = BluetoothState.Enabled
         } else {
+            // Bluetooth is OFF, request user to enable it
             _bluetoothState.value = BluetoothState.Disabled
         }
     }

@@ -27,6 +27,7 @@ import com.revoola.moengage.push.RLGeofenceHitListener
 import com.revoola.commonobject.RLTools
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
+import com.revoola.healthconnect.HealthConnectManager
 import com.revoola.utils.RLConstants
 
 class MyApp : Application() {

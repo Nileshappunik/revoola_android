@@ -25,9 +25,14 @@ import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.UUID
 
 class RLFragYourGroup : RLBaseFragment() {
     val TAG: String = RLFragYourGroup::class.java.simpleName
@@ -36,7 +41,7 @@ class RLFragYourGroup : RLBaseFragment() {
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var isGroup:Boolean=true
-
+    private var selectUserdata: List<RLuserData> = mutableListOf()
     
     private val binding by lazy {
         RlFragYourGroupBinding.inflate(layoutInflater)
@@ -133,7 +138,7 @@ class RLFragYourGroup : RLBaseFragment() {
         }
     }
     private fun RLresponsehandlefriendsApi(userdata: List<RLuserData>) {
-        var selectUserdata: List<RLuserData> = mutableListOf()
+         selectUserdata = emptyList()
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourgroup.layoutManager = linearLayoutManager
 
@@ -200,6 +205,28 @@ class RLFragYourGroup : RLBaseFragment() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+
+    private fun createGroupPayload(groupName: String): Map<String, RequestBody> {
+        val requestBodyMap = mutableMapOf<String, RequestBody>()
+        // Add text fields as form data
+        requestBodyMap["data[create_group][group_name]"] = createRequestBody(groupName)
+        requestBodyMap["data[create_group][group_id]"] = createRequestBody(currentUser+generateUniqueKey())
+        requestBodyMap["data[create_group][child_user][$currentUser]"] = createRequestBody("1")
+
+        // Add selected friends
+        for (friend in selectUserdata) {
+            if (friend.userid != currentUser) {
+                requestBodyMap["data[create_group][child_user][${friend.userid}]"] = createRequestBody("0")
+            }
+        }
+        return requestBodyMap
+    }
+    fun generateUniqueKey(): String {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 32)
     }
 
 

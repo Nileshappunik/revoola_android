@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.ParcelUuid
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.wearable.Wearable
@@ -249,7 +250,6 @@ class BLERepository(private val context: Context) {
             _bleFlow.value = RLBLEResult.RLError("Missing required permissions")
             return
         }
-
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
             val settings = ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -265,9 +265,12 @@ class BLERepository(private val context: Context) {
         }
     }
 
+
     fun stopScan() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
-            bluetoothLeScanner.stopScan(scanCallback)
+           if (bluetoothLeScanner!=null){
+               bluetoothLeScanner.stopScan(scanCallback)
+           }
         }
     }
 
@@ -299,68 +302,21 @@ class BLERepository(private val context: Context) {
             _bleFlow.value = RLBLEResult.RLError("Scan failed with error code: $errorCode")
         }
     }
+    
     // Add a method to check Bluetooth state
     fun isBluetoothEnabled(): Boolean {
-        return bluetoothAdapter?.isEnabled == true
+        return bluetoothAdapter.isEnabled
     }
 
     // Add a method to request Bluetooth enable
     fun requestBluetoothEnable(activity: Activity) {
-        if (bluetoothAdapter?.isEnabled == false) {
+        if (!isBluetoothEnabled()) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
                 activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+            } else {
+                _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
             }
-        }
-    }
-
-    private fun setupCharacteristicNotifications_Old(gatt: BluetoothGatt) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_CONNECT permission")
-            return
-        }
-
-        try {
-            // Get services
-            val services = gatt.services
-
-            for (service in services) {
-                when (service.uuid) {
-                    HEART_RATE_SERVICE_UUID -> {
-                        // Get Heart Rate Measurement characteristic
-                        val characteristic = service.getCharacteristic(HEART_RATE_SERVICE_UUID)
-                        characteristic?.let {
-                            // Enable notifications
-                            gatt.setCharacteristicNotification(it, true)
-
-                            // Configure the characteristic notification
-                            val descriptor = it.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
-                            descriptor?.let { desc ->
-                                desc.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                                gatt.writeDescriptor(desc)
-                            }
-                        }
-                    }
-
-                    SPEED_SERVICE_UUID -> {
-                        // Get CSC Measurement characteristic
-                       val characteristic = service.getCharacteristic(SPEED_SERVICE_UUID)
-                        characteristic?.let {
-                            // Enable notifications
-                            gatt.setCharacteristicNotification(it, true)
-
-                            // Configure the characteristic notification
-                            val descriptor = it.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG)
-                            descriptor?.let { desc ->
-                                desc.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                                gatt.writeDescriptor(desc)
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            _bleFlow.value = RLBLEResult.RLError("Failed to setup notifications: ${e.message}")
         }
     }
 
@@ -530,6 +486,8 @@ class BLERepository(private val context: Context) {
             )
         }
     }
+
+
 }
 
 

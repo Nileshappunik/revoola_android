@@ -1,26 +1,25 @@
 package com.revoola.activity
 
+import android.app.Activity
 import android.app.UiModeManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import com.revoola.R
-import com.revoola.commonobject.RLTools
 import com.revoola.fragment.guest.RLWelcomeDialog
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+
 
 class RLSplashFirstActivity : AppCompatActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
+    private fun RLDialogShow(){ RLWelcomeDialog().show(supportFragmentManager, "RLWelcomeDialog") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -39,6 +38,7 @@ class RLSplashFirstActivity : AppCompatActivity() {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
 
+
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, RLSplashActivityRL::class.java)
             startActivity(intent)
@@ -51,9 +51,6 @@ class RLSplashFirstActivity : AppCompatActivity() {
 
 
 
-     private fun RLDialogShow(){
-     RLWelcomeDialog().show(supportFragmentManager, "RLWelcomeDialog")
-     }
 
 
 }

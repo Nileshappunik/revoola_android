@@ -9,6 +9,7 @@ plugins {
     id("com.google.firebase.crashlytics") version "3.0.2" apply false
     kotlin("android") version "1.9.10" apply false
 
+
 }
 
 /*allprojects {

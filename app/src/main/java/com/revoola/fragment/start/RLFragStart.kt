@@ -10,7 +10,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
 import android.view.Window
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
@@ -31,6 +34,7 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.RLHealthConnectBottomSheet
+import com.revoola.healthconnect.HealthConnectManager
 import com.revoola.permission.RLHealthConnectManager
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.delay
@@ -39,6 +43,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 class RLFragStart : RLBaseFragment() {
     val TAG: String = RLFragStart::class.java.simpleName
@@ -64,8 +70,6 @@ class RLFragStart : RLBaseFragment() {
         return fragBinding.root
     }
 
-
-
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
         RLfetchUserDetails()
         fragBinding.inlayTop.ivBack.visibility=View.GONE
@@ -90,7 +94,8 @@ class RLFragStart : RLBaseFragment() {
             }
         })
         fragBinding.inlayTop.ivhelp.setOnClickListener {
-            RLshowHelpDialog()
+            getHealth()
+           // RLshowHelpDialog()
         }
 
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
@@ -183,6 +188,57 @@ class RLFragStart : RLBaseFragment() {
         }
 
         dialog.show()
+    }
+
+    //health connect
+
+    private lateinit var healthConnectManager: HealthConnectManager
+    private lateinit var healthConnectClient: HealthConnectClient
+
+    private val permissionsLauncher = registerForActivityResult(
+        PermissionController.createRequestPermissionResultContract()
+    ) { granted ->
+        if (granted.containsAll(HealthConnectManager.PERMISSIONS)) {
+            RLTools.RlLogDPrint(TAG, "Permissions granted.")
+            readStepsData()
+        } else {
+            RLTools.RlLogEPrint(TAG, "Permissions denied.")
+        }
+    }
+
+    private fun getHealth(){
+        healthConnectManager = HealthConnectManager(requireContext())
+        lifecycleScope.launch {
+            healthConnectClient = healthConnectManager.getHealthConnectClient()
+                ?: run {
+                    Toast.makeText(requireContext(), "No provider found!", Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+
+            val granted = healthConnectClient.permissionController.getGrantedPermissions()
+            if (!granted.containsAll(HealthConnectManager.PERMISSIONS)) {
+                permissionsLauncher.launch(HealthConnectManager.PERMISSIONS)
+            } else {
+                readStepsData()
+            }
+        }
+    }
+
+    private fun readStepsData() {
+        fragBinding.tempText.setText("Start Step")
+        lifecycleScope.launch {
+            val stepsRecords = healthConnectManager.readStepsData(
+                healthConnectClient,
+                Instant.now().minus(1, ChronoUnit.DAYS),
+                Instant.now()
+            )
+
+            for (record in stepsRecords) {
+                val step = "Steps: ${record.count}, Start: ${record.startTime}, End: ${record.endTime}"
+                fragBinding.tempText.setText(step)
+               RLTools.RlLogDPrint(TAG, step)
+            }
+        }
     }
 
 }

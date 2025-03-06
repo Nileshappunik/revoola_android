@@ -50,7 +50,8 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION_CODE)
         } else {
             // Permission is already granted, so fetch the contacts
-            fetchContacts()
+            //fetchContacts()
+            fetchEmailContacts()
         }
     }
 
@@ -59,7 +60,8 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         when (requestCode) {
             CONTACTS_PERMISSION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    fetchContacts()
+                    //fetchContacts()
+                    fetchEmailContacts()
                 }
             }
         }
@@ -106,5 +108,45 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             })
         }
     }
+    private fun fetchEmailContacts() {
+        val contentResolver = requireContext().contentResolver
+        val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null)
+
+        if (cursor != null && cursor.count > 0) {
+            while (cursor.moveToNext()) {
+                val contactId = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts._ID))
+                val contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME))
+
+                // Query email addresses instead of phone numbers
+                val emailCursor = contentResolver.query(
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "${ContactsContract.CommonDataKinds.Email.CONTACT_ID} = ?", arrayOf(contactId), null)
+
+                if (emailCursor != null) {
+                    while (emailCursor.moveToNext()) {
+                        val email = emailCursor.getString(emailCursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.ADDRESS))
+                        contactsList.add(RLContactModel(contactName ?: "N/A", email ?: "N/A"))
+                    }
+                    emailCursor.close()
+                }
+            }
+            cursor.close()
+
+            // Set up RecyclerView with fetched email contacts
+            fragBinding.listSyncContacts.layoutManager = LinearLayoutManager(requireContext())
+            val contactsAdapter = RLContactsAdapter(activity, contactsList)
+            fragBinding.listSyncContacts.adapter = contactsAdapter
+
+            fragBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    contactsAdapter.RLfilter(s.toString())
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
+    }
+
 
 }

@@ -198,7 +198,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 }else{
                     imageListVisible(false)
                 }
-                fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
+                    requireContext(),
+                    LinearLayoutManager.HORIZONTAL, false)
                 val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
                     imgUriList.remove(uri)
                     if (imgUriList.size>0){

@@ -1,10 +1,16 @@
 package com.revoola.fragment.start.yourway
 
+import android.Manifest
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,10 +46,14 @@ import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
+import com.revoola.permission.RLPermissionManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
+import com.zhihu.matisse.Matisse
+import com.zhihu.matisse.MimeType
+import com.zhihu.matisse.engine.impl.GlideEngine
 import gun0912.tedimagepicker.builder.TedImagePicker
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -66,9 +77,12 @@ class RLFragSessionComplete : RLBaseFragment(){
     private var displayImage =""
     private var displayName =""
     private var visibilityflagforthatsession:Int =0
-    private val MAX_IMAGE_SELECTION = 5
+    private val MAX_IMAGES = 5
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
+
+    // Callback for when images are processed
+    var onImagesProcessed: ((List<Uri>) -> Unit)? = null
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
@@ -143,7 +157,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
         fragBinding.txtAddPhoto.setOnClickListener {
             RLchooseFromGallery()
-            //openImagePicker()
         }
         fragBinding.imgCancle.setOnClickListener {
             RLBottomHideShowSet(true)
@@ -493,21 +506,11 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun RLFirebaseEntry(
-        deviceRecordedDataMap: HashMap<String, Double>,
-        elevationDataMap: HashMap<String, Any>,
-        gpxDataMap: HashMap<String, String>,
-        gpx_TDataMap: HashMap<String, Any>,
-        gpx_T_ServerDataMap: HashMap<String, Any>,
-        gpx_T_Server_NDataMap: HashMap<String, Any>,
-        locationDataMap: HashMap<String, Any>,
-        ghostDataMap: HashMap<String, Any>,
-        summaryDataMap: HashMap<String, Serializable?>,
-        detailsDataMap: HashMap<String, Any?>,
-        graphDataMap: HashMap<String, Any>,
-        cardData: RLSessionDataTransferModel,
-        currentTimestamp: String
-    ) {
+    private fun RLFirebaseEntry(deviceRecordedDataMap: HashMap<String, Double>,
+        elevationDataMap: HashMap<String, Any>,gpxDataMap: HashMap<String, String>,gpx_TDataMap: HashMap<String, Any>,
+        gpx_T_ServerDataMap: HashMap<String, Any>,gpx_T_Server_NDataMap: HashMap<String, Any>,locationDataMap: HashMap<String, Any>,
+        ghostDataMap: HashMap<String, Any>,summaryDataMap: HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
+        graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModel,currentTimestamp: String) {
         //Firebase  Entry
         val databaseManager = RLDatabaseManagerWrite()
 
@@ -942,30 +945,37 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     private fun RLchooseFromGallery() {
         try {
-            TedImagePicker.with(requireContext())
-                .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
-                .showCameraTile(false)
-                .startMultiImage { uriList ->
-                    // Handle the selected images here
-                    for (uri in uriList) {
-                        imgUriList.add(uri)
-                    }
-                    if (imgUriList.size>0){
-                        RLimageListVisible(true)
-                    }else{
-                        RLimageListVisible(false)
-                    }
-                    fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                    val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-                        imgUriList.remove(uri)
-                        if (imgUriList.size>0){
+            if (isAdded) {
+                TedImagePicker.with(requireContext())
+                    .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
+                    //.showCameraTile(false)
+                    .startMultiImage { uriList ->
+                        // Handle the selected images here
+                        for (uri in uriList) {
+                            imgUriList.add(uri)
+                        }
+                        if (imgUriList.size > 0) {
                             RLimageListVisible(true)
-                        }else{
+                        } else {
                             RLimageListVisible(false)
                         }
+                        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+                            imgUriList.remove(uri)
+                            if (imgUriList.size > 0) {
+                                RLimageListVisible(true)
+                            } else {
+                                RLimageListVisible(false)
+                            }
+                        }
+                        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
                     }
-                    fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
-                }
+
+            }
         }catch (e:Exception){
             RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
         }
@@ -980,51 +990,56 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        imagePickerLauncher.launch(Intent.createChooser(intent, "Select Images"))
-    }
-    // Launcher for image selection
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // Handle multiple image selection
-            val clipData = result.data?.clipData
-            val singleImage = result.data?.data
-            when {
-                // Multiple images selected
-                clipData != null -> {
-                    for (i in 0 until minOf(clipData.itemCount, MAX_IMAGE_SELECTION - imgUriList.size)) {
-                        val imageUri = clipData.getItemAt(i).uri
-                        if (!imgUriList.contains(imageUri)) {
-                            imgUriList.add(imageUri)
-                        }
-                    }
-                }
-                // Single image selected
-                singleImage != null -> {
-                    if (!imgUriList.contains(singleImage) && imgUriList.size < MAX_IMAGE_SELECTION) {
-                        imgUriList.add(singleImage)
-                    }
-                }
+    private fun RLchooseFromGalleryNew() {
+        try {
+            if (isAdded) {
+                Matisse.from(this)
+                    .choose(MimeType.ofImage())
+                    .countable(true)
+                    .maxSelectable(5)
+                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                    .thumbnailScale(0.85f)
+                    .imageEngine(GlideEngine())  // Requires implementation
+                    .forResult(500)
+
             }
-            if (imgUriList.size>0){
+        }catch (e:Exception){
+            RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
+        }
+    }
+
+    // Handle in onActivityResult
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 500 && resultCode == Activity.RESULT_OK) {
+            val uris = Matisse.obtainResult(data)
+            handleSelectedImages(uris)
+        }
+    }
+
+    private fun handleSelectedImages(uriList: List<Uri>) {
+        for (uri in uriList) {
+            imgUriList.add(uri)
+        }
+        if (imgUriList.size > 0) {
+            RLimageListVisible(true)
+        } else {
+            RLimageListVisible(false)
+        }
+        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+            imgUriList.remove(uri)
+            if (imgUriList.size > 0) {
                 RLimageListVisible(true)
-            }else{
+            } else {
                 RLimageListVisible(false)
             }
-            fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-                imgUriList.remove(uri)
-                if (imgUriList.size>0){
-                    RLimageListVisible(true)
-                }else{
-                    RLimageListVisible(false)
-                }
-            }
-            fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
         }
+        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
     }
+
 }

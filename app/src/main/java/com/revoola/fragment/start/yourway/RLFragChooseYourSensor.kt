@@ -1,13 +1,17 @@
 package com.revoola.fragment.start.yourway
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -143,8 +147,8 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
                 }
             }
         }
-        // Start scanning when the fragment is created
         viewModel.startScanning()
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Add the Bluetooth state collector first

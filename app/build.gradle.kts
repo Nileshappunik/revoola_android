@@ -117,9 +117,11 @@ dependencies {
 
     //facebook login
     implementation("com.facebook.android:facebook-android-sdk:17.0.0")
+    implementation("androidx.compose.runtime:runtime-android:1.7.8")
 
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testImplementation("org.testng:testng:6.9.6")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit-ktx:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -156,6 +158,9 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     //5 Image Select to Gallery
     implementation ("io.github.ParkSangGwon:tedimagepicker:1.2.7")
+    // 5 Image Select to Gallery
+    implementation ("com.github.zhihu:Matisse:0.5.3-beta3")
+
 
 
     //google login
@@ -190,6 +195,14 @@ dependencies {
     //view model
     implementation ("androidx.fragment:fragment-ktx:1.6.2")
     implementation ("androidx.activity:activity-ktx:1.8.2")
+
+    //Health Connect
+    implementation ("androidx.health.connect:connect-client:1.1.0-alpha11")
+
+    //Samsung Health Connect
+   // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+   // testImplementation("io.mockk:mockk:1.13.5")
+    //implementation("com.samsung.android.sdk.healthdata:health-data:1.6.1")
 
 }
 

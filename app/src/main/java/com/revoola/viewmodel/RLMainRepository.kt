@@ -380,6 +380,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun RLInsertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+        apiService.RLInsertGroupData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
+            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
 
     fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         apiService.RLInsertChallenges(request).enqueue(object : Callback<RLYourWayApiResponse> {
