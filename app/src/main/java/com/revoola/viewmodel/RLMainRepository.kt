@@ -1,6 +1,8 @@
 package com.revoola.viewmodel
 import com.revoola.api.RLNetworkService
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.friends.model.EmailFilterApiResponse
+import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.start.challenges.RLFragEditChallenges
 import com.revoola.model.RLChallengePayload
 import com.revoola.model.RLChallengesApiPayload
@@ -248,6 +250,21 @@ class RLMainRepository(private val apiService: RLNetworkService) {
                 }
             }
             override fun onFailure(call: Call<RLYourFriendsModel>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLFindOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
+        apiService.RLFindOnRevoolaEmailFilter(request).enqueue(object : Callback<EmailFilterApiResponse> {
+            override fun onResponse(call: Call<EmailFilterApiResponse>, response: Response<EmailFilterApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<EmailFilterApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

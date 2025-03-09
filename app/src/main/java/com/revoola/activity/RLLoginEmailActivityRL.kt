@@ -102,7 +102,6 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         return true
     }
 
-
     fun RLloginapicall() {
         authManager = RLAuthManager()
         authManager.RlloginUser(emailID, password) { user, exception ->
@@ -130,6 +129,7 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                         RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.login_email,emailID)
                         RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.login_password,password)
                        RLTools.RlLogEPrint(TAG, "User does not exist: ${exception.message}")
+                        startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         // Handle case where password is incorrect

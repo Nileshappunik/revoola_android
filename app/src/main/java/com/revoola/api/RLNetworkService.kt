@@ -1,6 +1,8 @@
 package com.revoola.api
 
 
+import com.revoola.fragment.friends.model.EmailFilterApiResponse
+import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.model.RLChallengePayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
@@ -83,6 +85,9 @@ interface RLNetworkService {
     fun RLsearch_user_Data_DeepLink(@Body request: List<RLsearch_userrequest>): Call<RLYourFriendsModel>
 
     @POST(RLConstants.URL_V3)
+    fun RLFindOnRevoolaEmailFilter(@Body request: List<RLEmailFilterRequestModel>): Call<EmailFilterApiResponse>
+
+    @POST(RLConstants.URL_V3)
     fun RLfriendsFollowingYou(@Body request: List<RLSetget_followersrequest>): Call<RLYourFriendsModel>
 
     @POST(RLConstants.URL_V3)
@@ -120,8 +125,6 @@ interface RLNetworkService {
      @Multipart
     @POST(RLConstants.insertGroup)
     fun RLInsertGroupData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
-
-
 
      @POST(RLConstants.insertJSONApi)
     fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLYourWayApiResponse>

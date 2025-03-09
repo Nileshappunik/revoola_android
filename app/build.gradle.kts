@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.kotlin.cli.jvm.main
-
 
 plugins {
     id("com.android.application")

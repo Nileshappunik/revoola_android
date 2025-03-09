@@ -15,6 +15,7 @@ import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RLFirebaseManager
 import com.revoola.databinding.RlActivityVerificationCodeBinding
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -162,7 +163,7 @@ class RLVerificationCodeActivityRL : RLBaseActivity()  {
 
     }
     private fun RlLoginSuccessful(userId:String){
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(this, com.revoola.utils.RLPrefManager.current_user,userId)
+       RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,userId)
         startActivity(Intent(this@RLVerificationCodeActivityRL, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",true))
         finish()
     }

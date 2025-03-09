@@ -1,50 +1,28 @@
 package com.revoola.activity
 
-import android.app.Activity
 import android.app.UiModeManager
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.TextView
-import androidx.databinding.DataBindingUtil
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.moengage.core.internal.logger.LOG_LEVEL_TO_TYPE_MAPPING
+import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.base.RLBaseActivity
-import com.revoola.commonobject.RLTools
-import com.revoola.databinding.RlActivityLoginBinding
-import com.revoola.databinding.RlActivitySplashBinding
 import com.revoola.databinding.RlActivitySplashFirstBinding
 import com.revoola.fragment.guest.RLWelcomeDialog
 import com.revoola.healthconnect.domain.AppConstants
 import com.revoola.healthconnect.domain.AppConstants.currentDate
-import com.revoola.healthconnect.domain.AppConstants.minimumDate
 import com.revoola.healthconnect.domain.HealthMainViewModel
 import com.revoola.healthconnect.domain.HealthViewModelFactory
 import com.revoola.healthconnect.domain.StepAdapter
 import com.revoola.healthconnect.domain.showToast
-import com.samsung.android.sdk.health.data.data.AggregatedData
-import com.samsung.android.sdk.health.data.helper.SdkVersion
-import com.samsung.android.sdk.health.data.permission.AccessType
-import com.samsung.android.sdk.health.data.permission.Permission
-import com.samsung.android.sdk.health.data.request.DataTypes
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-
 
 class RLSplashFirstActivity : RLBaseActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
@@ -71,14 +49,14 @@ class RLSplashFirstActivity : RLBaseActivity() {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
+      /*  Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, RLSplashActivityRL::class.java)
             startActivity(intent)
             finish()
 
-        }, 2000)
+        }, 2000)*/
 
-       // RLSamsungHealth()
+        RLSamsungHealth()
     }
 
     private fun RLSamsungHealth() {
@@ -90,7 +68,6 @@ class RLSplashFirstActivity : RLBaseActivity() {
         collectResponse()
         healthMainViewModel.connectToSamsungHealth(this)
     }
-
     private fun collectResponse() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -108,7 +85,6 @@ class RLSplashFirstActivity : RLBaseActivity() {
             }
         }
     }
-
     private fun RlgetStep() {
         healthMainViewModel.readStepData(startDate)
         setStepDataObservers()
@@ -120,6 +96,10 @@ class RLSplashFirstActivity : RLBaseActivity() {
         /**  Update steps UI */
         healthMainViewModel.totalStepCountData.observe(this) {
            stepAdapter.updateList(it)
+        }
+
+        healthMainViewModel.exerciseData.observe(this){
+            Log.e(TAG,"MODEL: ${Gson().toJson(it)}")
         }
 
         healthMainViewModel.dailyHeartRate.observe(this) {

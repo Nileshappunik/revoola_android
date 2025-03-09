@@ -25,7 +25,11 @@ import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.friends.model.RLCreateGroupModel
+import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.model.RLUserDataParcelable
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -51,10 +55,10 @@ class RLFragYourGroup : RLBaseFragment() {
          RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragYourGroup" )
+        RLPrefManager.RLSetSomeStringValue(activity,RLPrefManager.current_fragment,"RLFragYourGroup" )
         fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
         RLonBackPresAct(fragBinding.toolbar.ivBack)
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        currentUser= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -103,11 +107,30 @@ class RLFragYourGroup : RLBaseFragment() {
 
         fragBinding.txtInviteyourfriend.setOnClickListener {
             if (isGroup){
-                (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
+                (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, false)
             }
         }
         fragBinding.tvCreateClick.setOnClickListener {
            //Friend CREATE IMPLEMENT
+            val bundle=Bundle()
+            val cardData=RLCreateGroupModel()
+            val selectFriendList: List<RLUserDataParcelable> = selectUserdata.map {
+                RLUserDataParcelable(
+                    first_name = it.first_name,
+                    last_name = it.last_name,
+                    userid = it.userid,
+                    username = it.username,
+                    avatar = it.avatar,
+                    myid = it.myid,
+                    myidstatus = it.myidstatus,
+                    theirid = it.theirid,
+                    theiridstatus = it.theiridstatus,
+                    isSelected = it.isSelected
+                )
+            }
+            cardData.selectFriendList=selectFriendList
+            bundle.putParcelable("cardData",cardData)
+            (context as RLMainActivityRL).RLloadFrag(RLFragCreateGroup().newInstance(bundle), TAG, true,null, false)
 
         }
     }
@@ -206,28 +229,10 @@ class RLFragYourGroup : RLBaseFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-    private fun createRequestBody(value: String): RequestBody {
-        return value.toRequestBody("text/plain".toMediaTypeOrNull())
-    }
 
-    private fun createGroupPayload(groupName: String): Map<String, RequestBody> {
-        val requestBodyMap = mutableMapOf<String, RequestBody>()
-        // Add text fields as form data
-        requestBodyMap["data[create_group][group_name]"] = createRequestBody(groupName)
-        requestBodyMap["data[create_group][group_id]"] = createRequestBody(currentUser+generateUniqueKey())
-        requestBodyMap["data[create_group][child_user][$currentUser]"] = createRequestBody("1")
 
-        // Add selected friends
-        for (friend in selectUserdata) {
-            if (friend.userid != currentUser) {
-                requestBodyMap["data[create_group][child_user][${friend.userid}]"] = createRequestBody("0")
-            }
-        }
-        return requestBodyMap
-    }
-    fun generateUniqueKey(): String {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-    }
+
+
 
 
 

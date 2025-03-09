@@ -1,6 +1,8 @@
 package com.revoola.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.revoola.fragment.friends.model.EmailFilterApiResponse
+import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.model.RLChallengePayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
@@ -88,6 +90,9 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLsearch_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
         mainRepository.RLsearch_user_Data_DeepLink(request, callback)
     }
+    fun RLFindOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
+        mainRepository.RLFindOnRevoolaEmailFilter(request, callback)
+    }
 
     fun RLfriendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
         mainRepository.RLfriendsFollowingYou(request, callback)
@@ -121,7 +126,7 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun RLInsertYourWayOverviewData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertYourWayOverviewData(request,images, callback)
     }
-    fun RLInsertGroupData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
+    fun RLInsertGroupData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images:List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
         mainRepository.RLInsertGroupData(request,images, callback)
     }
 
