@@ -1,10 +1,8 @@
 package com.revoola.viewmodel
 import com.revoola.api.RLNetworkService
-import com.revoola.commonobject.RLTools
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
-import com.revoola.fragment.start.challenges.RLFragEditChallenges
-import com.revoola.model.RLChallengePayload
+import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
@@ -12,9 +10,6 @@ import com.revoola.model.RLFeedModel
 import com.revoola.model.RLGetGroupMemberModel
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.model.RLGroupModel
-import com.revoola.model.RLInsightlyApiPayload
-import com.revoola.model.RLInsightlyMoEngageResponse
-import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
 import com.revoola.model.RLOverviewGraphDataRequest
@@ -29,11 +24,10 @@ import com.revoola.model.RLSetgoaled_challenges_request_single
 import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetsearch_userrequest
-import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLYourWayApiPayload
-import com.revoola.model.RLYourWayApiResponse
+import com.revoola.model.RLInsertCommonApiResponse
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -44,7 +38,6 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.Part
 
 class RLMainRepository(private val apiService: RLNetworkService) {
 
@@ -351,62 +344,79 @@ class RLMainRepository(private val apiService: RLNetworkService) {
     }
 
     //Innsert Api
-    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertYourWayData(request).enqueue(object : Callback<RLYourWayApiResponse> {
-            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertYourWayData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
                 } else {
                     callback(Result.failure(Throwable(response.message().toString())))
                 }
             }
-            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
-
-    }
-    fun RLInsertClassSessionData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertClassSessionData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
-            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
-                if (response.isSuccessful) {
-                    callback(Result.success(response.body()!!))
-                } else {
-                    callback(Result.failure(Throwable(response.message().toString())))
-                }
-            }
-            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
-
-    }
-    fun RLInsertYourWayOverviewData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertYourWayOverviewData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
-            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
-                if (response.isSuccessful) {
-                    callback(Result.success(response.body()!!))
-                } else {
-                    callback(Result.failure(Throwable(response.message().toString())))
-                }
-            }
-            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })
 
     }
 
-    fun RLInsertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertGroupData(request,images).enqueue(object : Callback<RLYourWayApiResponse> {
-            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+    //Innsert Api
+    fun RLInsertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertFriendsData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
                 } else {
                     callback(Result.failure(Throwable(response.message().toString())))
                 }
             }
-            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLInsertClassSessionData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertClassSessionData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+    fun RLInsertYourWayOverviewData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertYourWayOverviewData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun RLInsertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertGroupData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })
@@ -414,16 +424,16 @@ class RLMainRepository(private val apiService: RLNetworkService) {
     }
 
 
-    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLYourWayApiResponse>) -> Unit) {
-        apiService.RLInsertChallenges(request).enqueue(object : Callback<RLYourWayApiResponse> {
-            override fun onResponse(call: Call<RLYourWayApiResponse>, response: Response<RLYourWayApiResponse>) {
+    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.RLInsertChallenges(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
                 } else {
                     callback(Result.failure(Throwable(response.message().toString())))
                 }
             }
-            override fun onFailure(call: Call<RLYourWayApiResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })

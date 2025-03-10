@@ -7,6 +7,6 @@ import com.revoola.commonobject.RLTools
 
 class RLLogoutCompleteListener: OnLogoutCompleteListener {
     override fun logoutComplete(data: LogoutData) {
-       RLTools.RlLogEPrint("RLLogoutCompleteListener","logoutComplete() $data")
+       RLTools.RlLogEPrint("MoengageTag","RLLogoutCompleteListener : logoutComplete() $data")
     }
 }

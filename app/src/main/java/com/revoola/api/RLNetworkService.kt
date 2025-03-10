@@ -3,7 +3,7 @@ package com.revoola.api
 
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
-import com.revoola.model.RLChallengePayload
+import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
@@ -11,9 +11,6 @@ import com.revoola.model.RLFeedModel
 import com.revoola.model.RLGetGroupMemberModel
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.model.RLGroupModel
-import com.revoola.model.RLInsightlyApiPayload
-import com.revoola.model.RLInsightlyMoEngageResponse
-import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLNotificationModel
 import com.revoola.model.RLOverViewModel
 import com.revoola.model.RLOverviewGraphDataRequest
@@ -28,11 +25,10 @@ import com.revoola.model.RLSetgoaled_challenges_request_single
 import com.revoola.model.RLSetoverview_thumbRequest
 import com.revoola.model.RLSetoverview_thumbRequest_you
 import com.revoola.model.RLSetsearch_userrequest
-import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLYourWayApiPayload
-import com.revoola.model.RLYourWayApiResponse
+import com.revoola.model.RLInsertCommonApiResponse
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -112,22 +108,24 @@ interface RLNetworkService {
 
     //Insert Api
     @POST(RLConstants.insertJSONApi)
-    fun RLInsertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLYourWayApiResponse>
+    fun RLInsertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLInsertCommonApiResponse>
 
     @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
-    fun RLInsertClassSessionData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
+    fun RLInsertClassSessionData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
-    fun RLInsertYourWayOverviewData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
+    fun RLInsertYourWayOverviewData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @Multipart
     @POST(RLConstants.insertGroup)
-    fun RLInsertGroupData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLYourWayApiResponse>
+    fun RLInsertGroupData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @POST(RLConstants.insertJSONApi)
-    fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLYourWayApiResponse>
+    fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLInsertCommonApiResponse>
 
-
+    //Friends Insert
+    @POST(RLConstants.insertJSONApi)
+    fun RLInsertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
 }

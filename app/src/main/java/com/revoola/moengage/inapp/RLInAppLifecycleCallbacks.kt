@@ -7,10 +7,10 @@ import com.revoola.commonobject.RLTools
 class RLInAppLifecycleCallbacks: InAppLifeCycleListener {
 
     override fun onDismiss(inAppData: InAppData) {
-       RLTools.RlLogEPrint("TAG"," onDismiss() Data: $inAppData"  )
+       RLTools.RlLogEPrint("MoengageTag"," onDismiss() Data: $inAppData"  )
     }
 
     override fun onShown(inAppData: InAppData) {
-       RLTools.RlLogEPrint("TAG"," onShown() Data: $inAppData" )
+       RLTools.RlLogEPrint("MoengageTag"," onShown() Data: $inAppData" )
     }
 }

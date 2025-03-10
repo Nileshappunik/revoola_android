@@ -23,6 +23,7 @@ import com.revoola.fragment.more.RLFragMore
 import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.fragment.start.RLFragStart
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.moengage.core.Properties
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.moengage.inapp.MoEInAppHelper
 import com.revoola.databasefirebase.RLAuthManager
@@ -61,7 +62,9 @@ class RLMainActivityRL  : RLBaseActivity() {
         networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
+        // Call this when a user completes a specific action
     }
+
 
     fun RLCheckAllPermission(){
         //All Permission

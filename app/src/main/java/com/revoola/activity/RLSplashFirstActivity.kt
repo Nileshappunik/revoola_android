@@ -2,9 +2,12 @@ package com.revoola.activity
 
 import android.app.UiModeManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -12,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.moe.pushlibrary.MoEHelper
 import com.revoola.R
 import com.revoola.base.RLBaseActivity
 import com.revoola.databinding.RlActivitySplashFirstBinding
@@ -23,6 +27,7 @@ import com.revoola.healthconnect.domain.HealthViewModelFactory
 import com.revoola.healthconnect.domain.StepAdapter
 import com.revoola.healthconnect.domain.showToast
 import kotlinx.coroutines.launch
+
 
 class RLSplashFirstActivity : RLBaseActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
@@ -49,15 +54,16 @@ class RLSplashFirstActivity : RLBaseActivity() {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
 
-      /*  Handler(Looper.getMainLooper()).postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, RLSplashActivityRL::class.java)
             startActivity(intent)
             finish()
 
-        }, 2000)*/
+        }, 2000)
 
-        RLSamsungHealth()
+        //RLSamsungHealth()
     }
+
 
     private fun RLSamsungHealth() {
         healthMainViewModel = ViewModelProvider(this, HealthViewModelFactory(this))[HealthMainViewModel::class.java]

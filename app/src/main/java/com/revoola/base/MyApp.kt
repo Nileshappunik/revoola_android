@@ -1,6 +1,11 @@
 package com.revoola.base
 
+import android.app.Activity
+import android.app.ActivityManager
 import android.app.Application
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
@@ -8,10 +13,14 @@ import com.google.firebase.inappmessaging.model.MessageType
 import com.moengage.core.DataCenter
 import com.moengage.core.MoECoreHelper
 import com.moengage.core.MoEngage
+import com.moengage.core.Properties
+import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.moengage.core.config.FcmConfig
+import com.moengage.core.config.MoEngageEnvironmentConfig
 import io.branch.referral.Branch
 import com.moengage.core.config.NotificationConfig
 import com.moengage.core.config.PushKitConfig
+import com.moengage.core.model.environment.MoEngageEnvironment
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.geofence.MoEGeofenceHelper
 import com.moengage.inapp.MoEInAppHelper
@@ -29,6 +38,9 @@ import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
 import com.revoola.healthconnect.HealthConnectManager
 import com.revoola.utils.RLConstants
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.Date
 
 class MyApp : Application() {
 
@@ -48,10 +60,6 @@ class MyApp : Application() {
         // Initialize Branch SDK
         Branch.getAutoInstance(this)
 
-
-        // Initialize MoEngage SDK
-        RLMoEngageInit()
-
         // Initialize RevenueCat using Purchases.Builder
         val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.Revenuecat_Api_Key).build()
         // Initialize RevenueCat with your API key
@@ -63,85 +71,73 @@ class MyApp : Application() {
                 RLTools.RlLogEPrint("FirebaseMessage","Firebase Message:- $inAppMessage")
             }
         }
+
+        // Initialize MoEngage SDK
+        RLInitializeMoEngage()
+
+        // Register activity lifecycle callbacks
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
+                MoEInAppHelper.getInstance().showInApp(activity)
+            }
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        })
+
     }
 
-    private fun scxConfigureMoEngage() {
-        // Notification Runtime Permission Check
-        val isGranted= RLTools.ScxhasNotificationPermission(this)
+    private fun RLInitializeMoEngage() {
+        // Check notification permissions once
+        val isGranted = RLTools.ScxhasNotificationPermission(this)
         MoEPushHelper.getInstance().pushPermissionResponse(this, isGranted)
-        if (isGranted){
+
+        if (isGranted) {
             MoEPushHelper.getInstance().setUpNotificationChannels(this)
-        }else{
+        } else {
             MoEPushHelper.getInstance().updatePushPermissionRequestCount(this, 555)
             MoEPushHelper.getInstance().requestPushPermission(this)
             MoEPushHelper.getInstance().navigateToSettings(this)
         }
 
-
-        val moEngageuser = MoEngage.Builder(this,  getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1).build()
-        MoEngage.initialiseDefaultInstance(moEngageuser)
-
-         // Push Configure MoEngage
-        val moEngage = MoEngage.Builder(this,  getString(R.string.moengage_app_key))
-            .configureNotificationMetaData(NotificationConfig(R.drawable.ic_notifications, R.mipmap.ic_launcher))
+        // Initialize MoEngage SDK with complete configuration
+        val moEngage = MoEngage.Builder(this, getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1)
+            .configureNotificationMetaData(
+                NotificationConfig(
+                    smallIcon = R.drawable.ic_notifications,
+                    largeIcon = R.drawable.ic_notifications,
+                    notificationColor = R.color.AppMainColor,
+                    isMultipleNotificationInDrawerEnabled = true,
+                    isBuildingBackStackEnabled = true,
+                    isLargeIconDisplayEnabled = true))
+            .configureFcm(FcmConfig(true))
+            .configurePushKit(PushKitConfig(true))
             .build()
-        // Initialize MoEngage
+
+        // Initialize MoEngage ONCE
         MoEngage.initialiseDefaultInstance(moEngage)
 
-    }
-
-    private fun RLMoEngageInit(){
-        // Initialize MoEngage SDK
-        val moEngage = MoEngage.Builder(this,getString(R.string.moengage_app_key), DataCenter.DATA_CENTER_1)
-                .configureNotificationMetaData(
-                    NotificationConfig(
-                        smallIcon = R.drawable.ic_notifications,
-                        largeIcon = R.drawable.ic_notifications,
-                        notificationColor = R.color.AppMainColor,
-                        isMultipleNotificationInDrawerEnabled = true,
-                        isBuildingBackStackEnabled = true,
-                        isLargeIconDisplayEnabled = true))
-                .configureFcm(FcmConfig(true))
-                .configurePushKit(PushKitConfig(true))
-                .build()
-        MoEngage.initialiseDefaultInstance(moEngage = moEngage)
-        // register for application background listener
+        // Set up all listeners
         MoECoreHelper.addAppBackgroundListener(RLApplicationBackgroundListener())
-        // register for logout complete listener
         MoECoreHelper.addLogoutCompleteListener(RLLogoutCompleteListener())
         setupPushCallbacks()
         setupInAppCallbacks()
 
         // Register Geofence Hit Listener
         MoEGeofenceHelper.getInstance().addListener(RLGeofenceHitListener())
-
-        // Enables geofence monitoring, required Only for Location-Triggered campaigns
         MoEGeofenceHelper.getInstance().startGeofenceMonitoring(this)
-
-        // Notification Runtime Permission Check
-        val isGranted= RLTools.ScxhasNotificationPermission(this)
-        MoEPushHelper.getInstance().pushPermissionResponse(this, isGranted)
-        if (isGranted){
-            MoEPushHelper.getInstance().setUpNotificationChannels(this)
-        }else{
-            MoEPushHelper.getInstance().updatePushPermissionRequestCount(this, 555)
-            MoEPushHelper.getInstance().requestPushPermission(this)
-            MoEPushHelper.getInstance().navigateToSettings(this)
-        }
-
     }
-
     private fun setupPushCallbacks() {
-        // callback for notification events and notification customisation point.
+        //Callback for notification events and notification customisation point
         MoEPushHelper.getInstance().registerMessageListener(RLCustomPushMessageListener())
-        // Callback for Firebase Token
+        //Callback for Firebase Token
         MoEFireBaseHelper.getInstance().addTokenListener { token ->
-           RLTools.RlLogEPrint("setupPushCallbacks","fcm token: ${token.pushToken}")
             MoEFireBaseHelper.getInstance().passPushToken(applicationContext,token.pushToken)
         }
-
     }
-
     private fun setupInAppCallbacks() {
         // callback for in-app campaign click
         MoEInAppHelper.getInstance().setClickActionListener(RLClickActionCallback())
@@ -152,13 +148,15 @@ class MyApp : Application() {
         //Display InApp
         MoEInAppHelper.getInstance().showInApp(this)
         //Display Nudges
-         MoEInAppHelper.getInstance().showNudge(this)
+        MoEInAppHelper.getInstance().showNudge(this)
+
         //Reset Context
         // MoEInAppHelper.getInstance().resetInAppContext()
         //Handling Configuration change
         // MoEInAppHelper.getInstance().onConfigurationChanged()
 
     }
+
 }
 
 

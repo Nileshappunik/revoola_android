@@ -599,8 +599,8 @@ class RLFragSensorProgress : RLBaseFragment(){
                 rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
                     elevation?.let {
                         RLTools.RlLogDPrint(TAG,"elevation: ${it} m")
-                        val elevation=RLYourWayCalvulation.RlGetValueDouble(it.toString())
-                        elevationMeter=elevation
+                        val elevatation=RLYourWayCalvulation.RlGetValueDouble(it.toString())
+                        elevationMeter=elevatation
                     }
                 })
 

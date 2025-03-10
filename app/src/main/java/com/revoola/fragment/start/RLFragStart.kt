@@ -94,8 +94,8 @@ class RLFragStart : RLBaseFragment() {
             }
         })
         fragBinding.inlayTop.ivhelp.setOnClickListener {
-            getHealth()
-           // RLshowHelpDialog()
+            //getHealth()
+            RLshowHelpDialog()
         }
 
         RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)

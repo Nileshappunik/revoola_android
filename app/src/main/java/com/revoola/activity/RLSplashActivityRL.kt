@@ -109,15 +109,14 @@ class RLSplashActivityRL : RLBaseActivity() {
     }
 
     private fun RLSetUsernameToFirebase(userId:String){
+        RLBaseProgress.RLhideProgressDialog()
         //Firebase To Fetch UserData
         RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
                 val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
-                RLBaseProgress.RLhideProgressDialog()
                 if (userData.isBasicDataAdded){
-
                     startActivity(Intent(this, RLMainActivityRL::class.java))
                     finish()
                 }else{

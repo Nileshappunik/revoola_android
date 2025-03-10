@@ -71,7 +71,7 @@ data class RLInsightlyResponseItem(
 )
 
 
-data class RLYourWayApiResponse(
+data class RLInsertCommonApiResponse(
     @SerializedName("type") val type: String,
     @SerializedName("text") val text: String
 )

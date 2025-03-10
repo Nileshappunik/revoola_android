@@ -77,7 +77,7 @@ android {
 
 dependencies {
 
-    //Moengage SDK for Use InApp purchase and PushNotification
+    //MoEngage SDK for Use InApp purchase and PushNotification
     // core moengage features
     implementation(moengage.core)
     // optionally add this to use the cards feature
@@ -100,6 +100,8 @@ dependencies {
     implementation(moengage.inboxUi)
     // optionally add this if you are using the core module of Inbox
     implementation(moengage.inboxCore)
+   /* // MoEngage Analytics (Required for event tracking)
+    implementation("com.moengage:moe-android-sdk:13.05.00")*/
 
 
     //RevenueCat
@@ -160,8 +162,6 @@ dependencies {
     implementation ("io.github.ParkSangGwon:tedimagepicker:1.2.7")
     // 5 Image Select to Gallery
     implementation ("com.github.zhihu:Matisse:0.5.3-beta3")
-
-
 
     //google login
     //implementation("com.google.android.gms:play-services-auth:19.0.0")

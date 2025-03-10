@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.gson.Gson
+import com.moengage.inapp.MoEInAppHelper
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
@@ -82,6 +83,11 @@ open class  RLBaseActivity: AppCompatActivity() {
                 callback(null) // Return null in case of an error
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MoEInAppHelper.getInstance().showInApp(this)
     }
 
 
