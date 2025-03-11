@@ -1,29 +1,22 @@
 package com.revoola.fragment.start.yourway
 
-import android.Manifest
 import android.app.Activity
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -35,23 +28,20 @@ import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.revoola.RLBaseProgress
 import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.model.RLClassLeaderboard
-import com.revoola.model.RLFulllVideoModel
 import com.revoola.model.RLGetElevationResponseModel
-import com.revoola.model.RLInsightlyApiPayload
 import com.revoola.model.RLInsightlyMoEngageResponse
 import com.revoola.model.RLInsightlyMoengageApiPayload
-import com.revoola.model.RLInsightlyMoengageBodyApiPayload
 import com.revoola.model.RLTextOverview
-import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
-import com.revoola.permission.RLPermissionManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -63,6 +53,7 @@ import gun0912.tedimagepicker.builder.TedImagePicker
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import android.util.Base64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,9 +64,10 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.Serializable
 import java.text.SimpleDateFormat
-import java.util.Base64
+//import java.util.Base64
 import java.util.Date
 import java.util.Locale
 
@@ -90,9 +82,13 @@ class RLFragSessionComplete : RLBaseFragment(){
     private val MAX_IMAGES = 5
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-
-    // Callback for when images are processed
-    var onImagesProcessed: ((List<Uri>) -> Unit)? = null
+    ////////////////////////////////////////////////////////////////////
+    private var server1Url="http://demsworld.revoola.com:10000/api/v1/lookup"
+    private var server2Url="http://demsworld.revoola.com:10000/api/v1/lookup"
+    private var elevationData: Map<String, Any>? = null
+    private var gpxTServerData: Map<String, Any>? = null
+    private var gpxTserverNData: Map<String, Any>? = null
+    private var locationData: Map<String, Any>? = null
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
@@ -127,6 +123,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         return fragBinding.root
     }
     private fun RLuisetup() {
+        RLfetchServerUrl()
         val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
         fragBinding.edtSessionName.setText("${cardData.yourWayType} Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
@@ -179,11 +176,27 @@ class RLFragSessionComplete : RLBaseFragment(){
                 RLBaseProgress.RLShowProgressDialog(requireActivity())
             }
             RLMakeSensorData(cardData)
+            //val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+           // convertLatLongOBj(cardData,currentTimestamp)
         }
-        //convertLatLongOBj(cardData)
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Firebase To Fetch Server Data
+    fun RLfetchServerUrl() {
+        // Firebase to fetch user data
+        val path = RevoolaFirebasePath.worldUrlGetDataPath()
+        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+            if (data != null) {
+                val jason = Gson().toJson(data)
+                val type = object : TypeToken<Map<String, String>>() {}.type
+                val responseMap: Map<String, String> = Gson().fromJson(jason, type)
+                 server1Url = responseMap["server1"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
+                 server2Url = responseMap["server2"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
+            }
+        }
     }
 
-    private fun convertLatLongOBj(cardData:RLSessionDataTransferModel){
+    private fun convertLatLongOBj(cardData:RLSessionDataTransferModel,currentTimestamp: String){
         val latLongList = mutableListOf<Map<String, Double>>()
         cardData.arrDataLocation.forEach {locationData->
             latLongList.add(mapOf("latitude" to locationData.latitude, "longitude" to locationData.longitude))
@@ -191,16 +204,17 @@ class RLFragSessionComplete : RLBaseFragment(){
         val objOfLatLong = JSONObject().apply {
             put("locations", JSONArray(latLongList))
         }
-        RLupdateUserInsightlyMoengageApiCall(objOfLatLong,cardData)
+        RLGetElevationServer1ApiCall(objOfLatLong,cardData,currentTimestamp)
+
     }
-    private fun RLupdateUserInsightlyMoengageApiCall(objOfLatLong:JSONObject,cardData:RLSessionDataTransferModel) {
+    private fun RLGetElevationServer1ApiCall(objOfLatLong:JSONObject,cardData:RLSessionDataTransferModel,currentTimestamp: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 RLTools.RlLogDPrint(TAG, "getElevation requestApi: $objOfLatLong")
                 val requestBody = objOfLatLong.toString().toRequestBody("application/json".toMediaTypeOrNull())
                 val client = OkHttpClient()
                 val request = Request.Builder()
-                    .url(RLConstants.getElevation)
+                    .url(server1Url)
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .build()
@@ -215,10 +229,50 @@ class RLFragSessionComplete : RLBaseFragment(){
                 CoroutineScope(Dispatchers.Main).launch {
                     if (apiResponse.results.isNotEmpty() && apiResponse.results.size > 0) {
                         // Show success message in UI
-                        RLGetElevationResponse(apiResponse,cardData)
+                        RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
+                        RLHandleElevationResponse(apiResponse,cardData,currentTimestamp,1)
+                    }else{
+                        RLTools.RlLogEPrint(TAG, "getElevation Error: ${apiResponse}")
+                        RLGetElevationServer2ApiCall(objOfLatLong,cardData,currentTimestamp)
+                    }
+                }
+
+            } catch (e: Exception) {
+                RLBaseProgress.RLhideProgressDialog()
+                RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
+            }
+        }
+    }
+    private fun RLGetElevationServer2ApiCall(objOfLatLong:JSONObject,cardData:RLSessionDataTransferModel,currentTimestamp: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                RLTools.RlLogDPrint(TAG, "getElevation requestApi: $objOfLatLong")
+                val requestBody = objOfLatLong.toString().toRequestBody("application/json".toMediaTypeOrNull())
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                    .url(server2Url)
+                    .post(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+
+                // Log response on background thread
+                RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
+                val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
+                // If UI update needed, switch to Main Thread
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (apiResponse.results.isNotEmpty() && apiResponse.results.size > 0) {
+                        // Show success message in UI
+                        RLHandleElevationResponse(apiResponse,cardData,currentTimestamp,2)
                         RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
                     }else{
-                        RLBaseProgress.RLhideProgressDialog()
+                        elevationData = mapOf(
+                            "data" to "",
+                            "status" to true,
+                            "remark" to "android",
+                            "server" to 0)
                         RLTools.RlLogEPrint(TAG, "getElevation Error: ${apiResponse}")
                     }
 
@@ -230,17 +284,23 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
         }
     }
-
-    private fun RLGetElevationResponse(apiResponse: RLGetElevationResponseModel,cardData:RLSessionDataTransferModel) {
+    private fun RLHandleElevationResponse(apiResponse: RLGetElevationResponseModel, cardData:RLSessionDataTransferModel, currentTimestamp: String, server:Int) {
         val elevationResponseData =apiResponse.results
-        val wKey = (System.currentTimeMillis() / 1000)
-        var newDate = wKey - cardData.totalTime.toLong()
+        val latitudeArray = mutableListOf<Double>()
+        val longitudeArray = mutableListOf<Double>()
+        val elevationArray = mutableListOf<Double>()
+
+        val wKey = currentTimestamp.toInt()
+        val newDate = wKey - cardData.totalTime.toLong()
         var gpxString = ""
         apiResponse.results.forEach { resultData->
             val elevation=resultData.elevation
             val latitude=resultData.latitude
             val longitude=resultData.longitude
             val timestamp = Date(newDate * 1000L)
+            latitudeArray.add(latitude)
+            longitudeArray.add(longitude)
+            elevationArray.add(elevation.toDouble())
             val isoTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             gpxString += """
                     <trkpt lat="$latitude" lon="$longitude">
@@ -249,24 +309,174 @@ class RLFragSessionComplete : RLBaseFragment(){
                     </trkpt>
                 """.trimIndent()
         }
-        val gpxTDemsData = JSONObject().apply {
-            put("classDate", wKey)
-            put("gpxString", gpxString)
-            put("remark", "android")
-        }
 
-        val elevationData1: Map<String, Any> = mapOf(
+        gpxTServerData = mapOf(
+            "classDate" to wKey,
+            "gpxString" to gpxString,
+            "remark" to "android"
+        )
+        elevationData = mapOf(
             "data" to elevationResponseData,
             "status" to true,
             "remark" to "android",
-            "server" to 1
+            "server" to server
         )
 
-        setGpxTServer(wKey, gpxTDemsData)
-        setElevation(wKey, elevationData1)
-
+        RLGenerateDataForElevationAndGPX(cardData,currentTimestamp,elevationArray,latitudeArray,longitudeArray)
+       // setGpxTServer(wKey, gpxTDemsData)
+        //setElevation(wKey, elevationData1)
     }
-    fun setElevation(key: Any, data: Map<String, Any>) {
+    private fun RLGenerateDataForElevationAndGPX(cardData:RLSessionDataTransferModel, currentTimestamp: String,
+        elevationArray: MutableList<Double>,
+        latitudeArray: MutableList<Double>,
+        longitudeArray: MutableList<Double>) {
+        val wKey =currentTimestamp.toLong()
+        val retVal = RLCreateNormalisedElevation(elevationArray,latitudeArray,longitudeArray)
+        var newDate = wKey - cardData.totalTime.toInt()
+        var gpxStringT = ""
+        var genDistance = 0.0
+        var genElevation = 0.0
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+
+        val elevationList: List<Double> = retVal["_elevationList"]!!
+        val latitudeList: List<Double> = retVal["_latitudeList"]!!
+        val longitudeList: List<Double> = retVal["_longitudeList"]!!
+
+        elevationList.forEachIndexed  { index, value ->
+            newDate += 1
+            val timestamp = Date(newDate * 1000L)
+            val timeISO = dateFormat.format(timestamp)
+
+            if (index > 0) {
+                val elevationDiffrent = value - elevationList[index - 1]
+                val pastLatitude = latitudeList.get(index - 1)
+                val currentLatitude = latitudeList[index]
+                val pastLongitude = longitudeList[index - 1]
+                val currentLongitude = longitudeList[index]
+
+                val distance = 3443.8985 *
+                        Math.acos(
+                            Math.sin(Math.toRadians(pastLatitude)) * Math.sin(Math.toRadians(currentLatitude)) +
+                                    Math.cos(Math.toRadians(pastLatitude)) * Math.cos(Math.toRadians(currentLatitude)) *
+                                    Math.cos(Math.toRadians(currentLongitude) - Math.toRadians(pastLongitude))
+                        ) * 1.852
+
+                if (distance > 0 && distance < 0.022) {
+                    genDistance += distance
+                }
+
+                if (elevationDiffrent > 0) {
+                    genElevation += elevationDiffrent
+                }
+            }
+
+            gpxStringT += """
+            <trkpt lat="${latitudeList[index]}" lon="${longitudeList[index]}">
+                <ele>$value}</ele>
+                <time>$timeISO</time>
+            </trkpt>
+        """.trimIndent()
+        }
+
+        if (genElevation > 0) {
+            cardData.demsElevation = genElevation
+        }
+
+        gpxTserverNData = mapOf(
+            "classDate" to wKey,
+            "gpxString" to gpxStringT,
+            "generatedDistance" to genDistance,
+            "generatedElevation" to genElevation,
+            "remark" to "android"
+        )
+        RLConvertToMapUrl(cardData,currentTimestamp)
+        //setGpxTServerNormalised(wKey, gpxTserverNData)
+    }
+    private fun RLCreateNormalisedElevation(elevationArray: MutableList<Double>,
+                                            latitudeArray: MutableList<Double>,
+                                            longitudeArray: MutableList<Double>): Map<String, List<Double>>{
+        val elevationList = mutableListOf<Double>()
+        val latitudeList = mutableListOf<Double>()
+        val longitudeList = mutableListOf<Double>()
+
+        var normised17 = 0.0
+        var normised17Lat = 0.0
+        var normised17Long = 0.0
+        var lastVal = 0.0
+        var lastValLat = 0.0
+        var lastValLong = 0.0
+
+        if (elevationArray.size > 16) {
+            elevationArray.forEachIndexed { index, value ->
+                if (index > 16) {
+                    val normised17Value = normised17 - lastVal + value
+                    normised17 = normised17Value
+                    lastVal = elevationArray[index - 16]
+                    elevationList.add(normised17Value / 17)
+
+                    val normised17LatValue = normised17Lat - lastValLat + latitudeArray[index]
+                    normised17Lat = normised17LatValue
+                    lastValLat = latitudeArray[index - 16]
+                    latitudeList.add(normised17LatValue / 17)
+
+                    val normised17LongValue = normised17Long - lastValLong + longitudeArray[index]
+                    normised17Long = normised17LongValue
+                    lastValLong = longitudeArray[index - 16]
+                    longitudeList.add(normised17LongValue / 17)
+
+                } else if (index == 16) {
+                    elevationList.add(value)
+                    normised17 = elevationList.sum()
+                    lastVal = elevationArray[0]
+
+                    latitudeList.add(latitudeArray[index])
+                    normised17Lat = latitudeList.sum()
+                    lastValLat = latitudeArray[0]
+
+                    longitudeList.add(longitudeArray[index])
+                    normised17Long = longitudeList.sum()
+                    lastValLong = longitudeArray[0]
+
+                } else {
+                    elevationList.add(value)
+                    latitudeList.add(latitudeArray[index])
+                    longitudeList.add(longitudeArray[index])
+                }
+            }
+        } else {
+            elevationList.addAll(elevationArray)
+            latitudeList.addAll(latitudeArray)
+            longitudeList.addAll(longitudeArray)
+        }
+
+        return mapOf(
+            "_elevationList" to elevationList,
+            "_latitudeList" to latitudeList,
+            "_longitudeList" to longitudeList
+        )
+    }
+
+    private fun setGpxTServerNormalised(key: Any, data: Map<String, Any>) {
+        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
+        val currentUser =RLAuthManager().RlgetCurrentUser()
+
+        if (currentUser != null) {
+            val uid = currentUser.uid
+            val dbRef = database.getReference("proposedstructure/dataForTesting/$uid/gpx_T_Server_N/$key")
+
+            dbRef.updateChildren(data)
+                .addOnSuccessListener {
+                    Log.d("Firebase", "Elevation Data Updated Successfully in Normalized GPX")
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Firebase", "Error updating elevation data: ${exception.message}")
+                }
+        } else {
+            Log.e("Firebase", "User not authenticated")
+        }
+    }
+    private fun setElevation(key: Any, data: Map<String, Any>) {
         val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
         val currentUser = RLAuthManager().RlgetCurrentUser()
 
@@ -285,8 +495,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             Log.e("Firebase", "User not authenticated")
         }
     }
-
-    fun setGpxTServer(key: Any, data: Any) {
+    private fun setGpxTServer(key: Any, data: Any) {
         Log.d("setGpxTServer", "------setGpxTServer----- $data")
 
         val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
@@ -307,7 +516,171 @@ class RLFragSessionComplete : RLBaseFragment(){
             Log.e("Firebase", "User not authenticated")
         }
     }
+    private fun setLocationData(key: String, data: Map<String, Any?>) {
+        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
+        val currentUserId = RLAuthManager().RlgetCurrentUser()?.uid
 
+        if (currentUserId != null) {
+            val ref = database.getReference("proposedstructure/dataForTesting/$currentUserId/location_data/$key")
+
+            ref.setValue(data)
+                .addOnSuccessListener {
+                    println("Data successfully saved.")
+                }
+                .addOnFailureListener { error ->
+                    println("Error saving data: ${error.message}")
+                }
+        } else {
+            println("User is not authenticated.")
+        }
+    }
+
+
+    private fun RLConvertToMapUrl(cardData:RLSessionDataTransferModel,currentTimestamp:String) {
+        val arrLocationDetails = cardData.arrLocationDetails
+        val paths = mutableListOf<String>()
+        var lastLng = 0.0
+        var lastLat = 0.0
+
+        var lastStatus = 0
+        var divider = arrLocationDetails.size / 400
+
+        if (divider < 1) {
+            divider = 1
+        } else {
+            divider = divider.toInt()
+        }
+        arrLocationDetails.forEachIndexed { index, locationData ->
+            if (index % divider == 0 || arrLocationDetails.size < 100) {
+                val lat =locationData.lat
+                val lng = locationData.long
+                val state = locationData.state
+                if (state == lastStatus && paths.isNotEmpty()) {
+                    paths[paths.size - 1] += "|${lat.format(6)},${lng.format(6)}"
+                } else {
+                    val color = when (state) {
+                        0 -> "0xF177A0FF"
+                        1 -> "0xFFCF2FFF"
+                        2 -> "0x2CAE2CFF"
+                        3 -> "0x0099DAFF"
+                        4 -> "0xFE6902FF"
+                        5 -> "0x9900CCFF"
+                        6 -> "0xED4541FF"
+                        7 -> "0xED4541FF"
+                        else -> "0xF177A0FF"
+                    }
+                    var path = ""
+                    path = if (path.isNotEmpty()) {
+                        "path=color:$color|weight:5|${lastLat.format(6)},${lastLng.format(6)}|${lat.format(6)},${lng.format(6)}"
+                    } else {
+                        "path=color:$color|weight:5|${lat.format(6)},${lng.format(6)}"
+                    }
+                    paths.add(path)
+                    lastStatus = state
+                }
+                lastLng = lng
+                lastLat = lat
+            }
+
+        }
+        val joinedPaths = paths.joinToString("&")
+        val googleMapUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths&key=AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
+        val saveGraphUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths"
+        RLGetMapApiCall(googleMapUrl,saveGraphUrl,currentTimestamp,cardData)
+    }
+    fun Double.format(digits: Int) = "%.${digits}f".format(this)
+    private fun RLGetMapApiCall(googleMapUrl: String,saveGraphUrl:String,currentTimestamp:String,cardData:RLSessionDataTransferModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+
+                val formattedUrl = if (googleMapUrl.startsWith("http://")) {
+                    googleMapUrl.replace("http://", "https://")
+                } else {
+                    googleMapUrl
+                }
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                    .url(formattedUrl)
+                    .build()
+
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful){
+                    response.body?.let { responseBody ->
+                        val inputStream = responseBody.byteStream()
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        // Convert Bitmap to Base64
+                        val byteArrayOutputStream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                        val byteArray = byteArrayOutputStream.toByteArray()
+                        val base64Data = "data:image/jpeg;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
+                        // Save or process the Base64 data
+                        locationData = mapOf(
+                            "grapg_data" to base64Data,
+                            "grapg_url" to (saveGraphUrl ?: "")
+                        )
+                    }
+                    sendDataToFirebase(cardData,currentTimestamp)
+                }
+            } catch (e: Exception) {
+                RLBaseProgress.RLhideProgressDialog()
+                RLTools.RlLogEPrint(TAG, "getMap Exception: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    // Function to send data to Firebase
+    private fun sendDataToFirebase(cardData: RLSessionDataTransferModel,currentTimestamp:String) {
+        val userId: String = currentUser
+        // Creating the HashMap structure
+        val connectivityDataMap = hashMapOf(
+            "cadence" to cardData.arrCadence,
+            "connection" to cardData.arrConnection,
+            "hr" to cardData.arrHr,
+            "power" to cardData.arrPower,
+            "remark" to "android",
+            "speed" to cardData.arrSpeed
+        )
+
+        val deviceRecordedDataMap = hashMapOf(
+            "distance" to cardData.distance,
+            "elevation" to cardData.totalElevation
+        )
+
+        val gpxDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "gpxString" to cardData.gpxStringBuilder,
+            "remark" to "android"
+        )
+
+        val gpxTDataMap = hashMapOf(
+            "classDate" to currentTimestamp,
+            "elevation" to cardData.totalElevation,
+            "gpxString" to cardData.gpxStringBuilder,
+            "remark" to "android"
+        )
+
+        // Complete Data Structure
+        val dataMap = hashMapOf(
+            "connectivity" to mapOf(currentTimestamp to connectivityDataMap),
+            "deviceRecordedData" to mapOf(currentTimestamp to deviceRecordedDataMap),
+            "elevation" to mapOf(currentTimestamp to elevationData),
+            "gpx" to mapOf(currentTimestamp to gpxDataMap),
+            "gpx_T" to mapOf(currentTimestamp to gpxTDataMap),
+            "gpx_T_Server" to mapOf(currentTimestamp to gpxTServerData),
+            "gpx_T_Server_N" to mapOf(currentTimestamp to gpxTserverNData),
+            "location" to mapOf(currentTimestamp to locationData)
+        )
+        RLTools.RlLogEPrint(TAG, "currentTimestamp: $currentTimestamp")
+        // Writing Data to Firebase
+        RLDatabaseManagerWrite().RlWriteDataForTestingData(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataMap) { success, error ->
+            if (success) {
+                RLTools.RlLogDPrint(TAG,"Successful DataForTesting Entry")
+            }else {
+                RLTools.RlLogEPrint(TAG,"Error DataForTesting Entry:- $error")
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private fun safeNumber(value: Double?): Double {
         return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
     }
@@ -641,6 +1014,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
+
+
     private fun RLFirebaseEntry(deviceRecordedDataMap: HashMap<String, Double>,
         elevationDataMap: HashMap<String, Any>,gpxDataMap: HashMap<String, String>,gpx_TDataMap: HashMap<String, Any>,
         gpx_T_ServerDataMap: HashMap<String, Any>,gpx_T_Server_NDataMap: HashMap<String, Any>,locationDataMap: HashMap<String, Any>,
@@ -896,7 +1271,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     // Convert Base64 image to RequestBody
     private fun base64ToRequestBody(base64String: String): RequestBody {
-        val decodedBytes = Base64.getDecoder().decode(base64String.split(",")[1])
+        val decodedBytes = java.util.Base64.getDecoder().decode(base64String.split(",")[1])
         return decodedBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
     }
     private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {

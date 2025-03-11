@@ -60,6 +60,8 @@ class RLSessionDataTransferModel : Serializable {
     var avgSpeedForOneKm:  Double = 0.0
     var avgSpeedForOneMile:  Double = 0.0
 
+    var demsElevation:  Double = 0.0
+
     var arrConnection: MutableList<Boolean> = mutableListOf()
     var arrBurntCalories:MutableList<Double> = mutableListOf()
     var arrCadence:MutableList<Double> = mutableListOf()

@@ -558,7 +558,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
         val elevationpoint= RLElevationPoint(RLYourWayCalvulation.noNanValueDouble(elevationMeter?:0.00),RLYourWayCalvulation.noNanValueDouble(latitude?:0.00), RLYourWayCalvulation.noNanValueDouble(longitude?:0.00))
         arrDataLocation.add(elevationpoint)
-        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber?:0.00),RLYourWayCalvulation.noNanValueDouble(speedNumber?:0.00),RLYourWayCalvulation.noNanValueDouble(latitude?:0.00),0.0, RLYourWayCalvulation.noNanValueDouble(longitude?:0.00),RLYourWayCalvulation.noNanValueDouble(elevationMeter?:0.00))
+        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber?:0.00),RLYourWayCalvulation.noNanValueDouble(speedNumber?:0.00),RLYourWayCalvulation.noNanValueDouble(latitude?:0.00),RLTools.RLGetState(0), RLYourWayCalvulation.noNanValueDouble(longitude?:0.00),RLYourWayCalvulation.noNanValueDouble(elevationMeter?:0.00))
         arrLocationDetails.add(locationDetails)
 
         arrAvgCadence.add(RLYourWayCalvulation.noNanValueDouble(arrCadence.average()?:0.00))

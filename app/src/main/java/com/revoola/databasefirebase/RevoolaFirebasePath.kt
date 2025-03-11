@@ -6,6 +6,10 @@ object RevoolaFirebasePath {
 
     const val basePath ="proposedstructure"
 
+    fun dataForTestingDataPath(currentUser:String):String{
+        return "/$basePath/dataForTesting/$currentUser"
+    }
+
     fun deviceRecordedDataPath(currentUser:String):String{
         return "/$basePath/dataForTesting/$currentUser/deviceRecordedData"
     }
@@ -76,6 +80,10 @@ object RevoolaFirebasePath {
 
     fun classLeaderBoardsDataPath(viedoId:String):String{
         return "/$basePath/revoolaClassLeaderBoards/$viedoId"
+    }
+
+    fun worldUrlGetDataPath():String{
+        return "/$basePath/codeSection/demsSettings/world"
     }
 
 }

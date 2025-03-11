@@ -335,6 +335,28 @@ object RLTools {
             }
         }
     }
+    fun RLGetState(rev: Int): Int {
+        return when {
+            rev <= 30 -> 0
+            rev <= 50 -> 1
+            rev <= 60 -> 2
+            rev <= 70 -> 3
+            rev <= 80 -> 4
+            rev <= 90 -> 5
+            rev <= 100 -> 6
+            else -> 7
+        }
+    }
+    fun RLLogLarge(tag: String, message: String) {
+        val maxLogSize = 4000
+        var start = 0
+
+        while (start < message.length) {
+            val end = minOf(start + maxLogSize, message.length)
+            Log.d(tag, message.substring(start, end))
+            start = end
+        }
+    }
 
     fun isInternetAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

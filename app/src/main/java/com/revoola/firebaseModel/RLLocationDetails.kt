@@ -7,14 +7,14 @@ data class RLLocationDetails(
     val deviceSpeed: Double,
     val speed: Double,
     val lat: Double,
-    val state: Double,
+    val state: Int,
     val long: Double,
     val elevation: Double) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readDouble(),
         parcel.readDouble(),
         parcel.readDouble(),
-        parcel.readDouble(),
+        parcel.readInt(),
         parcel.readDouble(),
         parcel.readDouble()
     ) {
@@ -28,7 +28,7 @@ data class RLLocationDetails(
         parcel.writeDouble(deviceSpeed)
         parcel.writeDouble(speed)
         parcel.writeDouble(lat)
-        parcel.writeDouble(state)
+        parcel.writeInt(state)
         parcel.writeDouble(long)
         parcel.writeDouble(elevation)
     }

@@ -363,7 +363,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 arrDataLocation.add(dataclass)
             }
             if (arrLocationDetails.isNullOrEmpty()){
-                val dataclass= RLLocationDetails(0.00,0.00,0.00,0.00,0.00,0.00)
+                val dataclass= RLLocationDetails(0.00,0.00,0.00,0,0.00,0.00)
                 arrLocationDetails.add(dataclass)
             }
 
@@ -592,7 +592,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
         val elevationpoint= RLElevationPoint(RLYourWayCalvulation.noNanValueDouble(elevationMeter),RLYourWayCalvulation.noNanValueDouble(latitude), RLYourWayCalvulation.noNanValueDouble(longitude))
         arrDataLocation.add((elevationpoint))
-        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(latitude),0.0, RLYourWayCalvulation.noNanValueDouble(longitude),RLYourWayCalvulation.noNanValueDouble(elevationMeter))
+        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(latitude),RLTools.RLGetState(revPercentage.roundToInt()), RLYourWayCalvulation.noNanValueDouble(longitude),RLYourWayCalvulation.noNanValueDouble(elevationMeter))
         arrLocationDetails.add(locationDetails)
 
         arrAvgCadence.add(RLYourWayCalvulation.noNanValueDouble(arrCadence.average()))

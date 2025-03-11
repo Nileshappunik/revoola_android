@@ -3,6 +3,7 @@ package com.revoola.databasefirebase
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.revoola.commonobject.RLTools
 
 class RLDatabaseManagerWrite {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -72,6 +73,20 @@ class RLDatabaseManagerWrite {
                 }
         }
     }
+
+    fun RlWriteDataForTestingData(path: String, dataMap: Map<String,Any>, callback: (Boolean, Exception?) -> Unit) {
+        dataMap.forEach { (category, entry) ->
+            database.child(path).child(category).updateChildren(entry as Map<String, Any>)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        callback(true, null)
+                    } else {
+                        callback(false, task.exception)
+                    }
+                }
+        }
+    }
+
 
     fun RlGuestUpdateUserWrite(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
