@@ -63,7 +63,8 @@ package com.revoola.utils
         const val insertJSONApi = "_stuff/insertJSON.php"
         const val mpfIfCWxBL_insert = "my_overview_thumb/mpfIfCWxBL_insert.php"
         const val insertGroup = "_stuff/_groups/mpfIfCWxBL_insert.php"
-
+        //MAP KEY AND API
+        const val mapKey = "AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
 
         //MOENGAGE URL
         const val UPDATE_USER_INSIGHTLY = "https://us-central1-rideathome-9080e.cloudfunctions.net/insightly-updateAccount"

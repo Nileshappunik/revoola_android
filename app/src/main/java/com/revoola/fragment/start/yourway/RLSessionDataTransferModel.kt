@@ -1,5 +1,6 @@
 package com.revoola.fragment.start.yourway
 
+import android.graphics.Bitmap
 import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.firebaseModel.RLElevationPoint
@@ -10,8 +11,13 @@ import java.io.Serializable
 class RLSessionDataTransferModel : Serializable {
     var yourWayType: String =""
     var totalTime: String ="0"
-    var gpxStringBuilder: String ="0"
+    var gpxStringBuilder: String =""
+    var gpxTServerNString: String =""
+    var gpxTServerString: String =""
     var SENSOR: String =""
+
+    var generatedDistance: Double = 0.0
+    var generatedElevation: Int = -1
 
 
     var wsWeight="60"
@@ -30,6 +36,8 @@ class RLSessionDataTransferModel : Serializable {
     var VIDEODATA=""
     var classType=""
     var videoID: String =""
+    var mapGeneratedUrl: String =""
+    var mapBitmapImage: Bitmap?=null
     //var CLASS_TYPE: String =""
     var avgHr: Int =0
     var rms: Double =0.0
@@ -60,7 +68,7 @@ class RLSessionDataTransferModel : Serializable {
     var avgSpeedForOneKm:  Double = 0.0
     var avgSpeedForOneMile:  Double = 0.0
 
-    var demsElevation:  Double = 0.0
+    var demsElevation:  Int = -1
 
     var arrConnection: MutableList<Boolean> = mutableListOf()
     var arrBurntCalories:MutableList<Double> = mutableListOf()

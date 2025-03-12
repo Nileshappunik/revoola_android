@@ -248,10 +248,13 @@ class RLFragSensorProgress : RLBaseFragment(){
         }
         fragBinding.layStop.setOnClickListener {
             val bundle: Bundle = Bundle()
-            val cardData = RLSessionDataTransferModel()
+            //val cardData = RLSessionDataTransferModel()
+            val cardData = RLSessionDataTransferModelNew()
             cardData.yourWayType=yourWayType
             cardData.totalTime=totalTime
             cardData.gpxStringBuilder=gpxStringBuilder.toString()
+            cardData.gpxTServerString=gpxStringBuilder.toString()
+            cardData.gpxTServerNString=gpxStringBuilder.toString()
             if (yourWayType.toLowerCase().equals("ride") && isSpeedSensorConnect){
                 cardData.SENSOR = RLConstants.SPEED_SENSOR
             }else{
@@ -311,8 +314,8 @@ class RLFragSensorProgress : RLBaseFragment(){
             cardData.emailId = emailId
             cardData.isBasicDataAdded = isBasicDataAdded
 
-
-            bundle.putSerializable("cardData",cardData)
+            //bundle.putSerializable("cardData",cardData)
+            bundle.putParcelable("cardData",cardData)
             try {
                 timerManager.RLstop()
                 viewModel.stopNotifications()

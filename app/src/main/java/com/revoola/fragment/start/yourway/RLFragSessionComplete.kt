@@ -7,7 +7,10 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -54,41 +57,58 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import android.util.Base64
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.database.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.io.Serializable
+import java.net.URL
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 //import java.util.Base64
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
-    lateinit var fragBinding: RlFragSessionCompleteBinding
+    private lateinit var fragBinding: RlFragSessionCompleteBinding
+    private lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
     var imgUriList = mutableListOf<Uri>()
     var currentUser =""
     private var displayImage =""
     private var displayName =""
     private var visibilityflagforthatsession:Int =0
-    private val MAX_IMAGES = 5
-    lateinit var RLApiClientRetrofit: RLApiClientRet
-    private lateinit var viewModel: RLMainViewModel
-    ////////////////////////////////////////////////////////////////////
+    private var shareMap:Int =1
+    private val REQUEST_CODE_CHOOSE_IMAGE = 500
     private var server1Url="http://demsworld.revoola.com:10000/api/v1/lookup"
     private var server2Url="http://demsworld.revoola.com:10000/api/v1/lookup"
-    private var elevationData: Map<String, Any>? = null
-    private var gpxTServerData: Map<String, Any>? = null
-    private var gpxTserverNData: Map<String, Any>? = null
-    private var locationData: Map<String, Any>? = null
+    private var mapBitmapImage: Bitmap? = null
+    private var mapImageUri: Uri? = null
+    private lateinit var cardData: RLSessionDataTransferModelNew
+    private val httpClient by lazy { OkHttpClient() }
+
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSessionComplete()
@@ -99,6 +119,13 @@ class RLFragSessionComplete : RLBaseFragment(){
         RlFragSessionCompleteBinding.inflate(layoutInflater)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Retrieve the Parcelable object from the Bundle
+        arguments?.let {
+            cardData = it.getParcelable("cardData")!! // Use !! only if you're sure it's not null
+        }
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
@@ -124,13 +151,13 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
     private fun RLuisetup() {
         RLfetchServerUrl()
-        val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
         fragBinding.edtSessionName.setText("${cardData.yourWayType} Session")
         fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
-            // Handle checked change
-            RLBottomHideShowSet(true)
-            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+            if (isChecked){
+                shareMap = 1
+            }else{
+                shareMap = 0
+            }
         }
 
         fragBinding.layPrivacy.setOnClickListener {
@@ -176,13 +203,19 @@ class RLFragSessionComplete : RLBaseFragment(){
                 RLBaseProgress.RLShowProgressDialog(requireActivity())
             }
             RLMakeSensorData(cardData)
-            //val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-           // convertLatLongOBj(cardData,currentTimestamp)
         }
+        val yourWayType = cardData.yourWayType.toLowerCase()
+        if (yourWayType.equals("walk")||yourWayType.equals("run")||yourWayType.equals("ride")){
+            //Generate DemsElevation , generatedDistance , generatedElevation
+            RLConvertLatLongOBj(cardData)
+            //Generate MAP URL
+            RLConvertToMapUrl(cardData)
+        }
+
     }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //Firebase To Fetch Server Data
-    fun RLfetchServerUrl() {
+    private fun RLfetchServerUrl() {
         // Firebase to fetch user data
         val path = RevoolaFirebasePath.worldUrlGetDataPath()
         RLDatabaseManagerRead().RlreadData(path) { data, error ->
@@ -196,7 +229,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun convertLatLongOBj(cardData:RLSessionDataTransferModel,currentTimestamp: String){
+    //Generate DemsElevation , generatedDistance , generatedElevation
+    private fun RLConvertLatLongOBj(cardData:RLSessionDataTransferModelNew){
         val latLongList = mutableListOf<Map<String, Double>>()
         cardData.arrDataLocation.forEach {locationData->
             latLongList.add(mapOf("latitude" to locationData.latitude, "longitude" to locationData.longitude))
@@ -204,93 +238,93 @@ class RLFragSessionComplete : RLBaseFragment(){
         val objOfLatLong = JSONObject().apply {
             put("locations", JSONArray(latLongList))
         }
-        RLGetElevationServer1ApiCall(objOfLatLong,cardData,currentTimestamp)
-
+        lifecycleScope.launch {
+            RLGetElevationServer1ApiCall(objOfLatLong,cardData)
+        }
     }
-    private fun RLGetElevationServer1ApiCall(objOfLatLong:JSONObject,cardData:RLSessionDataTransferModel,currentTimestamp: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private suspend fun RLGetElevationServer1ApiCall(objOfLatLong: JSONObject, cardData: RLSessionDataTransferModelNew) {
+        withContext(Dispatchers.IO) {
             try {
-                RLTools.RlLogDPrint(TAG, "getElevation requestApi: $objOfLatLong")
-                val requestBody = objOfLatLong.toString().toRequestBody("application/json".toMediaTypeOrNull())
-                val client = OkHttpClient()
+                RLTools.RlLogDPrint(TAG, "getElevation Request: $objOfLatLong")
+
+                val requestBody = objOfLatLong.toString()
+                    .toRequestBody("application/json".toMediaTypeOrNull())
+
                 val request = Request.Builder()
                     .url(server1Url)
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .build()
 
-                val response = client.newCall(request).execute()
-                val responseBody = response.body?.string()
-
-                // Log response on background thread
-                RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
-                val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
-                // If UI update needed, switch to Main Thread
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (apiResponse.results.isNotEmpty() && apiResponse.results.size > 0) {
-                        // Show success message in UI
-                        RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
-                        RLHandleElevationResponse(apiResponse,cardData,currentTimestamp,1)
-                    }else{
-                        RLTools.RlLogEPrint(TAG, "getElevation Error: ${apiResponse}")
-                        RLGetElevationServer2ApiCall(objOfLatLong,cardData,currentTimestamp)
+                httpClient.newCall(request).execute().use { response ->
+                    val responseBody = response.body?.string()
+                    if (!response.isSuccessful || responseBody.isNullOrEmpty()) {
+                        RLTools.RlLogEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
+                        RLGetElevationServer2ApiCall(objOfLatLong, cardData)
+                        return@use
+                    }
+                    RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
+                    val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
+                    withContext(Dispatchers.Main) {
+                        if (apiResponse.results.isNotEmpty()) {
+                            RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
+                            RLHandleElevationResponse(apiResponse, cardData, 1)
+                        } else {
+                            RLTools.RlLogEPrint(TAG, "getElevation Error: Empty Response")
+                            RLGetElevationServer2ApiCall(objOfLatLong, cardData)
+                        }
                     }
                 }
-
             } catch (e: Exception) {
-                RLBaseProgress.RLhideProgressDialog()
+                RLGetElevationServer2ApiCall(objOfLatLong, cardData)
                 RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
             }
         }
     }
-    private fun RLGetElevationServer2ApiCall(objOfLatLong:JSONObject,cardData:RLSessionDataTransferModel,currentTimestamp: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private suspend fun RLGetElevationServer2ApiCall(objOfLatLong: JSONObject, cardData: RLSessionDataTransferModelNew) {
+        withContext(Dispatchers.IO) {
             try {
-                RLTools.RlLogDPrint(TAG, "getElevation requestApi: $objOfLatLong")
+                RLTools.RlLogDPrint(TAG, "getElevation Request: $objOfLatLong")
                 val requestBody = objOfLatLong.toString().toRequestBody("application/json".toMediaTypeOrNull())
-                val client = OkHttpClient()
                 val request = Request.Builder()
                     .url(server2Url)
                     .post(requestBody)
                     .addHeader("Content-Type", "application/json")
                     .build()
 
-                val response = client.newCall(request).execute()
-                val responseBody = response.body?.string()
-
-                // Log response on background thread
-                RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
-                val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
-                // If UI update needed, switch to Main Thread
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (apiResponse.results.isNotEmpty() && apiResponse.results.size > 0) {
-                        // Show success message in UI
-                        RLHandleElevationResponse(apiResponse,cardData,currentTimestamp,2)
-                        RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
-                    }else{
-                        elevationData = mapOf(
-                            "data" to "",
-                            "status" to true,
-                            "remark" to "android",
-                            "server" to 0)
-                        RLTools.RlLogEPrint(TAG, "getElevation Error: ${apiResponse}")
+                httpClient.newCall(request).execute().use { response ->
+                    val responseBody = response.body?.string()
+                    if (!response.isSuccessful || responseBody.isNullOrEmpty()) {
+                        RLTools.RlLogEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
+                        return@use
                     }
 
-                }
+                    RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
 
+                    val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
+
+                    withContext(Dispatchers.Main) {
+                        if (apiResponse.results.isNotEmpty()) {
+                            RLHandleElevationResponse(apiResponse, cardData, 2)
+                            RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
+                        } else {
+                            RLTools.RlLogEPrint(TAG, "getElevation Error: Empty Response")
+                        }
+                    }
+                }
             } catch (e: Exception) {
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
+                withContext(Dispatchers.Main) {
+                    RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
+                }
             }
         }
     }
-    private fun RLHandleElevationResponse(apiResponse: RLGetElevationResponseModel, cardData:RLSessionDataTransferModel, currentTimestamp: String, server:Int) {
-        val elevationResponseData =apiResponse.results
+
+    private fun RLHandleElevationResponse(apiResponse: RLGetElevationResponseModel, cardData:RLSessionDataTransferModelNew, server:Int) {
         val latitudeArray = mutableListOf<Double>()
         val longitudeArray = mutableListOf<Double>()
         val elevationArray = mutableListOf<Double>()
-
-        val wKey = currentTimestamp.toInt()
+        val wKey  = (System.currentTimeMillis() / 1000)
         val newDate = wKey - cardData.totalTime.toLong()
         var gpxString = ""
         apiResponse.results.forEach { resultData->
@@ -310,92 +344,10 @@ class RLFragSessionComplete : RLBaseFragment(){
                 """.trimIndent()
         }
 
-        gpxTServerData = mapOf(
-            "classDate" to wKey,
-            "gpxString" to gpxString,
-            "remark" to "android"
-        )
-        elevationData = mapOf(
-            "data" to elevationResponseData,
-            "status" to true,
-            "remark" to "android",
-            "server" to server
-        )
-
-        RLGenerateDataForElevationAndGPX(cardData,currentTimestamp,elevationArray,latitudeArray,longitudeArray)
-       // setGpxTServer(wKey, gpxTDemsData)
-        //setElevation(wKey, elevationData1)
+        cardData.gpxTServerString=gpxString
+        RLGenerateDataForElevationAndGPX(cardData,wKey,elevationArray,latitudeArray,longitudeArray)
     }
-    private fun RLGenerateDataForElevationAndGPX(cardData:RLSessionDataTransferModel, currentTimestamp: String,
-        elevationArray: MutableList<Double>,
-        latitudeArray: MutableList<Double>,
-        longitudeArray: MutableList<Double>) {
-        val wKey =currentTimestamp.toLong()
-        val retVal = RLCreateNormalisedElevation(elevationArray,latitudeArray,longitudeArray)
-        var newDate = wKey - cardData.totalTime.toInt()
-        var gpxStringT = ""
-        var genDistance = 0.0
-        var genElevation = 0.0
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-
-        val elevationList: List<Double> = retVal["_elevationList"]!!
-        val latitudeList: List<Double> = retVal["_latitudeList"]!!
-        val longitudeList: List<Double> = retVal["_longitudeList"]!!
-
-        elevationList.forEachIndexed  { index, value ->
-            newDate += 1
-            val timestamp = Date(newDate * 1000L)
-            val timeISO = dateFormat.format(timestamp)
-
-            if (index > 0) {
-                val elevationDiffrent = value - elevationList[index - 1]
-                val pastLatitude = latitudeList.get(index - 1)
-                val currentLatitude = latitudeList[index]
-                val pastLongitude = longitudeList[index - 1]
-                val currentLongitude = longitudeList[index]
-
-                val distance = 3443.8985 *
-                        Math.acos(
-                            Math.sin(Math.toRadians(pastLatitude)) * Math.sin(Math.toRadians(currentLatitude)) +
-                                    Math.cos(Math.toRadians(pastLatitude)) * Math.cos(Math.toRadians(currentLatitude)) *
-                                    Math.cos(Math.toRadians(currentLongitude) - Math.toRadians(pastLongitude))
-                        ) * 1.852
-
-                if (distance > 0 && distance < 0.022) {
-                    genDistance += distance
-                }
-
-                if (elevationDiffrent > 0) {
-                    genElevation += elevationDiffrent
-                }
-            }
-
-            gpxStringT += """
-            <trkpt lat="${latitudeList[index]}" lon="${longitudeList[index]}">
-                <ele>$value}</ele>
-                <time>$timeISO</time>
-            </trkpt>
-        """.trimIndent()
-        }
-
-        if (genElevation > 0) {
-            cardData.demsElevation = genElevation
-        }
-
-        gpxTserverNData = mapOf(
-            "classDate" to wKey,
-            "gpxString" to gpxStringT,
-            "generatedDistance" to genDistance,
-            "generatedElevation" to genElevation,
-            "remark" to "android"
-        )
-        RLConvertToMapUrl(cardData,currentTimestamp)
-        //setGpxTServerNormalised(wKey, gpxTserverNData)
-    }
-    private fun RLCreateNormalisedElevation(elevationArray: MutableList<Double>,
-                                            latitudeArray: MutableList<Double>,
-                                            longitudeArray: MutableList<Double>): Map<String, List<Double>>{
+    private fun RLCreateNormalisedElevation(elevationArray: MutableList<Double>,latitudeArray: MutableList<Double>,longitudeArray: MutableList<Double>): Map<String, List<Double>>{
         val elevationList = mutableListOf<Double>()
         val latitudeList = mutableListOf<Double>()
         val longitudeList = mutableListOf<Double>()
@@ -456,87 +408,65 @@ class RLFragSessionComplete : RLBaseFragment(){
             "_longitudeList" to longitudeList
         )
     }
+    private fun RLGenerateDataForElevationAndGPX(cardData:RLSessionDataTransferModelNew, wKey: Long,elevationArray: MutableList<Double>,latitudeArray: MutableList<Double>, longitudeArray: MutableList<Double>) {
+        val retVal = RLCreateNormalisedElevation(elevationArray,latitudeArray,longitudeArray)
+        var newDate = wKey - cardData.totalTime.toInt()
+        var gpxStringT = ""
+        var genDistance = 0.0
+        var genElevation = 0.0
 
-    private fun setGpxTServerNormalised(key: Any, data: Map<String, Any>) {
-        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
-        val currentUser =RLAuthManager().RlgetCurrentUser()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
 
-        if (currentUser != null) {
-            val uid = currentUser.uid
-            val dbRef = database.getReference("proposedstructure/dataForTesting/$uid/gpx_T_Server_N/$key")
+        val elevationList: List<Double> = retVal["_elevationList"]!!
+        val latitudeList: List<Double> = retVal["_latitudeList"]!!
+        val longitudeList: List<Double> = retVal["_longitudeList"]!!
 
-            dbRef.updateChildren(data)
-                .addOnSuccessListener {
-                    Log.d("Firebase", "Elevation Data Updated Successfully in Normalized GPX")
+        elevationList.forEachIndexed  { index, value ->
+            newDate += 1
+            val timestamp = Date(newDate * 1000L)
+            val timeISO = dateFormat.format(timestamp)
+
+            if (index > 0) {
+                val elevationDiffrent = value - elevationList[index - 1]
+                val pastLatitude = latitudeList.get(index - 1)
+                val currentLatitude = latitudeList[index]
+                val pastLongitude = longitudeList[index - 1]
+                val currentLongitude = longitudeList[index]
+
+                val distance = 3443.8985 *
+                        Math.acos(
+                            Math.sin(Math.toRadians(pastLatitude)) * Math.sin(Math.toRadians(currentLatitude)) +
+                                    Math.cos(Math.toRadians(pastLatitude)) * Math.cos(Math.toRadians(currentLatitude)) *
+                                    Math.cos(Math.toRadians(currentLongitude) - Math.toRadians(pastLongitude))
+                        ) * 1.852
+
+                if (distance > 0 && distance < 0.022) {
+                    genDistance += distance
                 }
-                .addOnFailureListener { exception ->
-                    Log.e("Firebase", "Error updating elevation data: ${exception.message}")
+
+                if (elevationDiffrent > 0) {
+                    genElevation += elevationDiffrent
                 }
-        } else {
-            Log.e("Firebase", "User not authenticated")
+            }
+
+            gpxStringT += """
+            <trkpt lat="${latitudeList[index]}" lon="${longitudeList[index]}">
+                <ele>$value}</ele>
+                <time>$timeISO</time>
+            </trkpt>
+        """.trimIndent()
         }
-    }
-    private fun setElevation(key: Any, data: Map<String, Any>) {
-        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
-        val currentUser = RLAuthManager().RlgetCurrentUser()
 
-        if (currentUser != null) {
-            val uid = currentUser.uid
-            val dbRef = database.getReference("proposedstructure/dataForTesting/$uid/elevation/$key")
-
-            dbRef.updateChildren(data)
-                .addOnSuccessListener {
-                    Log.d("Firebase", "----elevation:: Data Updated Successfully")
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("Firebase", "-----setElevation in Firebase---- ${exception.message}")
-                }
-        } else {
-            Log.e("Firebase", "User not authenticated")
+        if (genElevation > 0) {
+            cardData.demsElevation = genElevation.roundToInt()
         }
-    }
-    private fun setGpxTServer(key: Any, data: Any) {
-        Log.d("setGpxTServer", "------setGpxTServer----- $data")
-
-        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
-        val currentUser = RLAuthManager().RlgetCurrentUser()
-
-        if (currentUser != null) {
-            val uid = currentUser.uid
-            val dbRef = database.getReference("proposedstructure/dataForTesting/$uid/gpx_T_Server/$key")
-
-            dbRef.updateChildren(data as Map<String, Any>)
-                .addOnSuccessListener {
-                    Log.d("Firebase", "Elevation Data Updated Successfully")
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("Firebase", "Error updating elevation data: ${exception.message}")
-                }
-        } else {
-            Log.e("Firebase", "User not authenticated")
-        }
-    }
-    private fun setLocationData(key: String, data: Map<String, Any?>) {
-        val database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/")
-        val currentUserId = RLAuthManager().RlgetCurrentUser()?.uid
-
-        if (currentUserId != null) {
-            val ref = database.getReference("proposedstructure/dataForTesting/$currentUserId/location_data/$key")
-
-            ref.setValue(data)
-                .addOnSuccessListener {
-                    println("Data successfully saved.")
-                }
-                .addOnFailureListener { error ->
-                    println("Error saving data: ${error.message}")
-                }
-        } else {
-            println("User is not authenticated.")
-        }
+        cardData.generatedDistance = genDistance
+        cardData.generatedElevation = genElevation.roundToInt()
+        cardData.gpxTServerNString = gpxStringT
     }
 
-
-    private fun RLConvertToMapUrl(cardData:RLSessionDataTransferModel,currentTimestamp:String) {
+    //Generate MAP URL
+    private fun RLConvertToMapUrl(cardData:RLSessionDataTransferModelNew) {
         val arrLocationDetails = cardData.arrLocationDetails
         val paths = mutableListOf<String>()
         var lastLng = 0.0
@@ -583,104 +513,58 @@ class RLFragSessionComplete : RLBaseFragment(){
             }
 
         }
-        val joinedPaths = paths.joinToString("&")
-        val googleMapUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths&key=AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
-        val saveGraphUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths"
-        RLGetMapApiCall(googleMapUrl,saveGraphUrl,currentTimestamp,cardData)
+        var joinedPaths = paths.joinToString("&")
+        val mapKey = RLConstants.mapKey
+
+        var googleMapUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths&key=$mapKey"
+
+        if (googleMapUrl.length > 15000) {
+            val removeParts = (joinedPaths.length - 15000) / 140
+            joinedPaths = paths.dropLast(removeParts + 1).joinToString("&")
+            googleMapUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths&key=$mapKey"
+        }
+        val mapImageUrl = "http://maps.googleapis.com/maps/api/staticmap?size=400x400&maptype=roadmap&$joinedPaths"
+        lifecycleScope.launch {
+            RLGetMapApiCall(googleMapUrl,mapImageUrl,cardData)
+        }
     }
-    fun Double.format(digits: Int) = "%.${digits}f".format(this)
-    private fun RLGetMapApiCall(googleMapUrl: String,saveGraphUrl:String,currentTimestamp:String,cardData:RLSessionDataTransferModel) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
+    private suspend fun RLGetMapApiCall(googleMapUrl: String, saveGraphUrl: String, cardData: RLSessionDataTransferModelNew) {
+        withContext(Dispatchers.IO) {
             try {
+                val formattedUrl = googleMapUrl.replace("http://", "https://")
+                RLTools.RlLogDPrint(TAG, "getMap Request: $formattedUrl")
 
-                val formattedUrl = if (googleMapUrl.startsWith("http://")) {
-                    googleMapUrl.replace("http://", "https://")
-                } else {
-                    googleMapUrl
-                }
-                val client = OkHttpClient()
-                val request = Request.Builder()
-                    .url(formattedUrl)
-                    .build()
+                val request = Request.Builder().url(formattedUrl).build()
 
-                val response = client.newCall(request).execute()
-                if (response.isSuccessful){
-                    response.body?.let { responseBody ->
-                        val inputStream = responseBody.byteStream()
-                        val bitmap = BitmapFactory.decodeStream(inputStream)
-                        // Convert Bitmap to Base64
-                        val byteArrayOutputStream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                        val byteArray = byteArrayOutputStream.toByteArray()
-                        val base64Data = "data:image/jpeg;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP)
-                        // Save or process the Base64 data
-                        locationData = mapOf(
-                            "grapg_data" to base64Data,
-                            "grapg_url" to (saveGraphUrl ?: "")
-                        )
+                httpClient.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        response.body?.byteStream()?.use { inputStream ->
+                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                            mapBitmapImage = bitmap
+                            // Convert Bitmap to Base64
+                            val byteArrayOutputStream = ByteArrayOutputStream()
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                            val base64Data = "data:image/jpeg;base64,"+Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.NO_WRAP)
+                            cardData.mapGeneratedUrl = base64Data
+                            RLTools.RlLogDPrint(TAG, "Map Successful Create")
+                        }
+                    } else {
+                        RLTools.RlLogEPrint(TAG, "getMap Error: ${response.message}")
+                        cardData.mapGeneratedUrl = saveGraphUrl
                     }
-                    sendDataToFirebase(cardData,currentTimestamp)
                 }
+            } catch (e: IOException) {
+                RLTools.RlLogEPrint(TAG, "getMap Network Exception: ${e.localizedMessage}")
+                cardData.mapGeneratedUrl = saveGraphUrl
             } catch (e: Exception) {
-                RLBaseProgress.RLhideProgressDialog()
                 RLTools.RlLogEPrint(TAG, "getMap Exception: ${e.localizedMessage}")
+                cardData.mapGeneratedUrl = saveGraphUrl
             }
         }
     }
 
-    // Function to send data to Firebase
-    private fun sendDataToFirebase(cardData: RLSessionDataTransferModel,currentTimestamp:String) {
-        val userId: String = currentUser
-        // Creating the HashMap structure
-        val connectivityDataMap = hashMapOf(
-            "cadence" to cardData.arrCadence,
-            "connection" to cardData.arrConnection,
-            "hr" to cardData.arrHr,
-            "power" to cardData.arrPower,
-            "remark" to "android",
-            "speed" to cardData.arrSpeed
-        )
-
-        val deviceRecordedDataMap = hashMapOf(
-            "distance" to cardData.distance,
-            "elevation" to cardData.totalElevation
-        )
-
-        val gpxDataMap = hashMapOf(
-            "classDate" to currentTimestamp,
-            "gpxString" to cardData.gpxStringBuilder,
-            "remark" to "android"
-        )
-
-        val gpxTDataMap = hashMapOf(
-            "classDate" to currentTimestamp,
-            "elevation" to cardData.totalElevation,
-            "gpxString" to cardData.gpxStringBuilder,
-            "remark" to "android"
-        )
-
-        // Complete Data Structure
-        val dataMap = hashMapOf(
-            "connectivity" to mapOf(currentTimestamp to connectivityDataMap),
-            "deviceRecordedData" to mapOf(currentTimestamp to deviceRecordedDataMap),
-            "elevation" to mapOf(currentTimestamp to elevationData),
-            "gpx" to mapOf(currentTimestamp to gpxDataMap),
-            "gpx_T" to mapOf(currentTimestamp to gpxTDataMap),
-            "gpx_T_Server" to mapOf(currentTimestamp to gpxTServerData),
-            "gpx_T_Server_N" to mapOf(currentTimestamp to gpxTserverNData),
-            "location" to mapOf(currentTimestamp to locationData)
-        )
-        RLTools.RlLogEPrint(TAG, "currentTimestamp: $currentTimestamp")
-        // Writing Data to Firebase
-        RLDatabaseManagerWrite().RlWriteDataForTestingData(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful DataForTesting Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error DataForTesting Entry:- $error")
-            }
-        }
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private fun safeNumber(value: Double?): Double {
         return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
     }
@@ -689,9 +573,19 @@ class RLFragSessionComplete : RLBaseFragment(){
         return if (value == null || value < 0 ) 0 else value
     }
 
-    private fun RLMakeSensorData(cardData: RLSessionDataTransferModel) {
+    private fun RLMakeSensorData(cardData: RLSessionDataTransferModelNew) {
 
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+        val remark ="android"
+
+        val connectivityDataMap = hashMapOf(
+            RevoolaKeys.cadence to cardData.arrCadence,
+            RevoolaKeys.connection to cardData.arrConnection,
+            RevoolaKeys.hr to cardData.arrHr,
+            RevoolaKeys.power to cardData.arrPower,
+            RevoolaKeys.remark to remark,
+            RevoolaKeys.speed to cardData.arrSpeed
+        )
 
         val deviceRecordedDataMap = hashMapOf(
             RevoolaKeys.distance to cardData.distance,
@@ -714,19 +608,19 @@ class RLFragSessionComplete : RLBaseFragment(){
 
         val gpx_T_ServerDataMap = hashMapOf<String,Any>(
             RevoolaKeys.classDate to currentTimestamp,
-            RevoolaKeys.generatedDisntace to cardData.distance,
-            RevoolaKeys.generatedDisntace_T to 0,
-            RevoolaKeys.generatedElevation to -1,
-            RevoolaKeys.generatedElevation_T to 0,
-            RevoolaKeys.gpxString to cardData.gpxStringBuilder,
+            RevoolaKeys.generatedDisntace to cardData.generatedDistance,
+            RevoolaKeys.generatedDisntace_T to cardData.generatedDistance,
+            RevoolaKeys.generatedElevation to cardData.generatedElevation,
+            RevoolaKeys.generatedElevation_T to cardData.generatedElevation,
+            RevoolaKeys.gpxString to cardData.gpxTServerString,
             RevoolaKeys.remark to "android",
             RevoolaKeys.statusForElevationUpdate to true)
 
         val gpx_T_Server_NDataMap = hashMapOf<String,Any>(
             RevoolaKeys.classDate to currentTimestamp,
-            RevoolaKeys.generatedDisntace_T to 0,
-            RevoolaKeys.generatedElevation_T to 0,
-            RevoolaKeys.gpxString to cardData.gpxStringBuilder,
+            RevoolaKeys.generatedDisntace_T to cardData.generatedDistance,
+            RevoolaKeys.generatedElevation_T to cardData.generatedElevation,
+            RevoolaKeys.gpxString to cardData.gpxTServerNString,
             RevoolaKeys.remark to "android")
 
         val locationDataMap = hashMapOf(
@@ -737,6 +631,18 @@ class RLFragSessionComplete : RLBaseFragment(){
             RevoolaKeys.locationDic to cardData.arrLocationDetails,//ARRAY
             RevoolaKeys.speedDic to cardData.arrSpeed,//ARRAY
             RevoolaKeys.totalRev to cardData.totalRev)
+
+        //Complete Data Structure Data For Testing
+        val dataForTestingDataMap = hashMapOf<String,Any>(
+            RevoolaKeys.connectivity to mapOf(currentTimestamp to connectivityDataMap),
+            RevoolaKeys.deviceRecordedData to mapOf(currentTimestamp to deviceRecordedDataMap),
+            RevoolaKeys.elevation to mapOf(currentTimestamp to elevationDataMap),
+            RevoolaKeys.gpx to mapOf(currentTimestamp to gpxDataMap),
+            RevoolaKeys.gpx_T to mapOf(currentTimestamp to gpx_TDataMap),
+            RevoolaKeys.gpx_T_Server to mapOf(currentTimestamp to gpx_T_ServerDataMap),
+            RevoolaKeys.gpx_T_Server_N to mapOf(currentTimestamp to gpx_T_Server_NDataMap),
+            RevoolaKeys.location to mapOf(currentTimestamp to locationDataMap)
+        )
 
         val ghostDataMap = hashMapOf(
             RevoolaKeys.restingHrUsedForCalculation_Last to cardData.RFMHR,
@@ -786,7 +692,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             RevoolaKeys.className to  fragBinding.edtSessionName.text.toString(),
             RevoolaKeys.classNote to  fragBinding.edtAddNotes.text.toString(),
             RevoolaKeys.classType to  cardData.yourWayType,
-            RevoolaKeys.demsElevation to  -1,
+            RevoolaKeys.demsElevation to  cardData.demsElevation,
             RevoolaKeys.distance to  cardData.distance,
             RevoolaKeys.goal to  "",
             RevoolaKeys.isClass to  false,
@@ -838,7 +744,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             RevoolaKeys.arrSpeed to cardData.arrSpeed,
             RevoolaKeys.remark to "android",
         )
-
         when (cardData.SENSOR){
             RLConstants.HEART_SENSOR->{
                 val detailsDataMap = hashMapOf(
@@ -868,12 +773,12 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.className to  fragBinding.edtSessionName.text.toString(),
                     RevoolaKeys.classNote to  fragBinding.edtAddNotes.text.toString(),
                     RevoolaKeys.classType to  cardData.yourWayType,
-                    RevoolaKeys.demsElevation to -1,
+                    RevoolaKeys.demsElevation to cardData.demsElevation,
                     RevoolaKeys.distance to cardData.distance,
                     RevoolaKeys.goal to "",
                     RevoolaKeys.isClass to false,
                     RevoolaKeys.isPowerDeviceConnected to false,
-                    RevoolaKeys.mapGeneratedUrl to "",
+                    RevoolaKeys.mapGeneratedUrl to cardData.mapGeneratedUrl,
                     RevoolaKeys.maxRevPercentage to cardData.maxRevPercentage,
                     RevoolaKeys.minRevPercentage to cardData.minRevPercentage,
                     RevoolaKeys.remark to "android",
@@ -894,8 +799,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone6 to cardData.zoneDataDetail[RevoolaKeys.Zone6],
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
-                RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapHeart,cardData,currentTimestamp)
+                RLFirebaseEntry(dataForTestingDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapHeart,cardData,currentTimestamp)
             }
             RLConstants.SPEED_SENSOR->{
                 val detailsDataMap = hashMapOf(
@@ -923,12 +827,12 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.className to  fragBinding.edtSessionName.text.toString(),
                     RevoolaKeys.classNote to  fragBinding.edtAddNotes.text.toString(),
                     RevoolaKeys.classType to  cardData.yourWayType,
-                    RevoolaKeys.demsElevation to -1,
+                    RevoolaKeys.demsElevation to cardData.demsElevation,
                     RevoolaKeys.distance to cardData.distance,
                     RevoolaKeys.goal to "",
                     RevoolaKeys.isClass to false,
                     RevoolaKeys.isPowerDeviceConnected to false,
-                    RevoolaKeys.mapGeneratedUrl to "",
+                    RevoolaKeys.mapGeneratedUrl to cardData.mapGeneratedUrl,
                     RevoolaKeys.maxRevPercentage to cardData.maxRevPercentage,
                     RevoolaKeys.minRevPercentage to cardData.minRevPercentage,
                     RevoolaKeys.remark to "android",
@@ -949,8 +853,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone6 to cardData.zoneDataDetail[RevoolaKeys.Zone6],
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
-                RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
+                RLFirebaseEntry(dataForTestingDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
 
             }
             RLConstants.NO_SENSOR->{
@@ -981,12 +884,12 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.className to  fragBinding.edtSessionName.text.toString(),
                     RevoolaKeys.classNote to  fragBinding.edtAddNotes.text.toString(),
                     RevoolaKeys.classType to  cardData.yourWayType,
-                    RevoolaKeys.demsElevation to -1,
+                    RevoolaKeys.demsElevation to cardData.demsElevation,
                     RevoolaKeys.distance to cardData.distance,
                     RevoolaKeys.goal to "",
                     RevoolaKeys.isClass to false,
                     RevoolaKeys.isPowerDeviceConnected to false,
-                    RevoolaKeys.mapGeneratedUrl to "",
+                    RevoolaKeys.mapGeneratedUrl to cardData.mapGeneratedUrl,
                     RevoolaKeys.maxRevPercentage to cardData.maxRevPercentage,
                     RevoolaKeys.minRevPercentage to cardData.minRevPercentage,
                     RevoolaKeys.remark to "android",
@@ -1007,82 +910,22 @@ class RLFragSessionComplete : RLBaseFragment(){
                     RevoolaKeys.Zone6 to cardData.zoneDataDetail[RevoolaKeys.Zone6],
                     RevoolaKeys.Zone7 to cardData.zoneDataDetail[RevoolaKeys.Zone7]
                 )
-                RLFirebaseEntry(deviceRecordedDataMap,elevationDataMap,gpxDataMap,gpx_TDataMap,gpx_T_ServerDataMap,
-                    gpx_T_Server_NDataMap,locationDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
+                RLFirebaseEntry(dataForTestingDataMap,ghostDataMap,summaryDataMap,detailsDataMap,graphDataMapSpeedAndNoSensor,cardData,currentTimestamp)
 
             }
         }
     }
 
-
-
-    private fun RLFirebaseEntry(deviceRecordedDataMap: HashMap<String, Double>,
-        elevationDataMap: HashMap<String, Any>,gpxDataMap: HashMap<String, String>,gpx_TDataMap: HashMap<String, Any>,
-        gpx_T_ServerDataMap: HashMap<String, Any>,gpx_T_Server_NDataMap: HashMap<String, Any>,locationDataMap: HashMap<String, Any>,
+    private fun RLFirebaseEntry(dataForTestingDataMap: HashMap<String, Any>,
         ghostDataMap: HashMap<String, Any>,summaryDataMap: HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
-        graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModel,currentTimestamp: String) {
-        //Firebase  Entry
-        val databaseManager = RLDatabaseManagerWrite()
+        graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModelNew,currentTimestamp: String) {
 
-
-        /* databaseManager.RlWriteData(RevoolaFirebasePath.connectivityDataPath(currentUser),connectivityDataMap) { success, error ->
+        // Writing DataForTesting Data to Firebase
+        RLDatabaseManagerWrite().RlWriteDataForTestingData(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataForTestingDataMap) { success, error ->
             if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful dataForTesting connectivity Entry")
+                RLTools.RlLogDPrint(TAG,"Successful DataForTesting Entry")
             }else {
-               RLTools.RlLogEPrint(TAG,"Error dataForTesting connectivity Entry:- $error")
-            }
-        }*/
-
-        databaseManager.RlWriteData(RevoolaFirebasePath.deviceRecordedDataPath(currentUser),deviceRecordedDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful deviceRecordedData Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error deviceRecordedData Entry:- $error")
-            }
-        }
-        databaseManager.RlWriteData(RevoolaFirebasePath.elevationDataPath(currentUser),elevationDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful elevation Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error elevation Entry:- $error")
-            }
-        }
-        databaseManager.RlWriteData(RevoolaFirebasePath.gpxDataPath(currentUser),gpxDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx Entry:- $error")
-            }
-        }
-
-        databaseManager.RlWriteData(RevoolaFirebasePath.gpx_TDataPath(currentUser),gpx_TDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T Entry:- $error")
-            }
-        }
-
-        databaseManager.RlWriteData(RevoolaFirebasePath.gpx_T_ServerDataPath(currentUser),gpx_T_ServerDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server Entry:- $error")
-            }
-        }
-
-        databaseManager.RlWriteData(RevoolaFirebasePath.gpx_T_Server_NDataPath(currentUser),gpx_T_Server_NDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful dataForTesting gpx_T_Server_N Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error dataForTesting gpx_T_Server_N Entry:- $error")
-            }
-        }
-        databaseManager.RlWriteData(RevoolaFirebasePath.locationDataPath(currentUser),locationDataMap) { success, error ->
-            if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful  location Entry")
-            }else {
-                RLTools.RlLogEPrint(TAG,"Error  location Entry:- $error")
+                RLTools.RlLogEPrint(TAG,"Error DataForTesting Entry:- $error")
             }
         }
 
@@ -1168,7 +1011,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String): String {
+    private fun createPayload(cardData: RLSessionDataTransferModelNew, currentTimestamp: String): String {
         val classLeaderboard = RLClassLeaderboard(
             userId = currentUser,
             classId = "",
@@ -1190,11 +1033,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         // Convert to JSON String
         return Gson().toJson(apiPayload)
     }
-    private fun RLInsertApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
+    private fun RLInsertApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
         if (RLApiClientRetrofit.RLisConnected()) {
             val jsonPayload = createPayload(cardData,currentTimestamp)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
-
 
             RLTools.RlLogDPrint(TAG,"YourWay Insert Request: $request")
             //Insert Api Call
@@ -1223,25 +1065,49 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     }
 
-    private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModel, currentTimestamp: String): Map<String, RequestBody> {
+    private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModelNew, currentTimestamp: String): Map<String, RequestBody> {
         val requestBodyMap = mutableMapOf<String, RequestBody>()
 
         // Add text fields as form data
         requestBodyMap["data[myOverviewThumbnails][userid]"] = createRequestBody(currentUser)
-        requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody("${cardData.yourWayType} Session")
+        requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody(fragBinding.edtSessionName.text.toString())
         requestBodyMap["data[myOverviewThumbnails][classType]"] = createRequestBody(cardData.yourWayType)
         requestBodyMap["data[myOverviewThumbnails][timestamp]"] = createRequestBody(currentTimestamp)
         requestBodyMap["data[myOverviewThumbnails][timestamp_local]"] = createRequestBody(currentTimestamp)
+        requestBodyMap["data[myOverviewThumbnails][imageLinkSmall]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][totalREV]"] = createRequestBody(safeNumber(cardData.totalRev).toString())
         requestBodyMap["data[myOverviewThumbnails][totalTime]"] = createRequestBody(cardData.totalTime.toString())
 
         val burntCalories = safeNumber(cardData.burntCalories) ?: 0
+
         requestBodyMap["data[myOverviewThumbnails][burntCalories]"] = createRequestBody(burntCalories.toString())
 
         requestBodyMap["data[myOverviewThumbnails][totalRMM]"] = createRequestBody("0")
         requestBodyMap["data[myOverviewThumbnails][totalRMS]"] = createRequestBody("0")
         requestBodyMap["data[myOverviewThumbnails][maxRevPercentage]"] = createRequestBody(safeNumber(cardData.maxRevPercentage).toString())
         requestBodyMap["data[myOverviewThumbnails][avgRevPercentage]"] = createRequestBody(safeNumber(cardData.avgRevPercentage).toString())
+
+        requestBodyMap["data[myOverviewThumbnails][zone1Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone1]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone2Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone2]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone3Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone3]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone4Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone4]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone5Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone5]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone6Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone6]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][zone7Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds).toString())
+        requestBodyMap["data[myOverviewThumbnails][medals]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][awards]"] = createRequestBody("0")
+
+        requestBodyMap["data[myOverviewThumbnails][share_map]"] = createRequestBody(safeIntNumber(shareMap).toString())
+        requestBodyMap["data[myOverviewThumbnails][originalClassDate]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][videoKey]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][elevation]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
+        requestBodyMap["data[myOverviewThumbnails][power]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
+        requestBodyMap["data[myOverviewThumbnails][steps]"] = createRequestBody(safeIntNumber(cardData.totalSteps).toString())
+        requestBodyMap["data[myOverviewThumbnails][distance]"] = createRequestBody(safeNumber(cardData.distance).toString())
+        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][class_level]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
 
         requestBodyMap["data[myOverviewThumbnails][visibilityflagforthatsession]"] = createRequestBody(visibilityflagforthatsession.toString())
         requestBodyMap["data[myOverviewThumbnails][bmo]"] = createRequestBody("2")
@@ -1256,25 +1122,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
         requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
 
-        // Handle map image
-        val mapImage = ""// myOverviewThumbnails["mapImage"] as? String
-        if (!mapImage.isNullOrEmpty()) {
-            val mapImageRequestBody = base64ToRequestBody(mapImage)
-            requestBodyMap["mapImage"] = mapImageRequestBody
-        }
-
         return requestBodyMap
     }
-    // Convert text to RequestBody
-    private fun createRequestBody(value: String): RequestBody {
-        return value.toRequestBody("text/plain".toMediaTypeOrNull())
-    }
-    // Convert Base64 image to RequestBody
-    private fun base64ToRequestBody(base64String: String): RequestBody {
-        val decodedBytes = java.util.Base64.getDecoder().decode(base64String.split(",")[1])
-        return decodedBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
-    }
-    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String) {
+    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
         if (RLApiClientRetrofit.RLisConnected()) {
             val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
             val images=getUserImages()
@@ -1304,8 +1154,11 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
 
     }
-
-    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModel) {
+    // Convert text to RequestBody
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModelNew) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val requestApi = RLInsightlyMoengageApiPayload(
@@ -1365,15 +1218,55 @@ class RLFragSessionComplete : RLBaseFragment(){
             val imagePart = MultipartBody.Part.createFormData("userImage[]", imageFile.name, requestFile)
             imageParts.add(imagePart)
         }
-        return imageParts
+        if (mapBitmapImage!=null){
+            val imageFile = RLsaveBitmapToFile(mapBitmapImage!!)
+            if (imageFile!=null){
+                val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                val imagePart = MultipartBody.Part.createFormData("mapImage", imageFile.name, requestFile)
+                imageParts.add(imagePart)
+                mapImageUri = Uri.fromFile(imageFile)
+                return imageParts
+            }else{
+                return imageParts
+            }
+        }else{
+            return imageParts
+        }
+    }
+    private fun RLsaveBitmapToFile(bitmap: Bitmap): File? {
+        try {
+            // Create a file to save the bitmap
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+            // Write the bitmap data to the file
+            val outputStream = FileOutputStream(imageFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            return imageFile
+        } catch (e: IOException) {
+            e.printStackTrace()
+            RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
+            return null
+        }
     }
 
-    private fun RLAllProcessDone(cardData: RLSessionDataTransferModel){
+    private fun RLAllProcessDone(cardData: RLSessionDataTransferModelNew){
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         // Convert to a single comma-separated string
         var imgString: String=""
         if (imgUriList.isNotEmpty()){
             imgString = imgUriList.joinToString(separator = ",") { it.toString() }
+        }
+        if (mapImageUri!=null){
+            if (imgString.isNotEmpty()) {
+                // If imgString is not empty, append a comma and then mapImageUri
+                imgString += ",${mapImageUri.toString()}"
+            } else {
+                // If imgString is empty, just assign mapImageUri.toString()
+                imgString = mapImageUri.toString()
+            }
         }
 
         val  modelData= RLTextOverview(
@@ -1382,7 +1275,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             first_name =cardData.displayName,
             ID =  0,
             userid =  currentUser,
-            className ="${cardData.classType} Session",
+            className =fragBinding.edtSessionName.text.toString(),
             classType =cardData.classType,
             timestamp =currentTimestamp,
             short_timestamp= currentTimestamp,
@@ -1452,39 +1345,34 @@ class RLFragSessionComplete : RLBaseFragment(){
         (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
     }
 
+  //Below All Code ImagePicker
+    private fun RLHandleSelectedImageList(imgUriList:MutableList<Uri>){
+        if (imgUriList.size > 0) {
+            RLimageListVisible(true)
+        } else {
+            RLimageListVisible(false)
+        }
+        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+            imgUriList.remove(uri)
+            if (imgUriList.size > 0) {
+                RLimageListVisible(true)
+            } else {
+                RLimageListVisible(false)
+            }
+        }
+        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
+    }
     private fun RLchooseFromGallery() {
         try {
-            if (isAdded) {
-                TedImagePicker.with(requireContext())
-                    .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
-                    //.showCameraTile(false)
-                    .startMultiImage { uriList ->
-                        // Handle the selected images here
-                        for (uri in uriList) {
-                            imgUriList.add(uri)
-                        }
-                        if (imgUriList.size > 0) {
-                            RLimageListVisible(true)
-                        } else {
-                            RLimageListVisible(false)
-                        }
-                        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
-                            requireContext(),
-                            LinearLayoutManager.HORIZONTAL,
-                            false
-                        )
-                        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-                            imgUriList.remove(uri)
-                            if (imgUriList.size > 0) {
-                                RLimageListVisible(true)
-                            } else {
-                                RLimageListVisible(false)
-                            }
-                        }
-                        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
-                    }
-
-            }
+            Matisse.from(this)
+                .choose(MimeType.ofImage())
+                .countable(true)
+                .maxSelectable(5)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .thumbnailScale(0.85f)
+                .imageEngine(GlideEngine())  // Requires implementation
+                .forResult(REQUEST_CODE_CHOOSE_IMAGE)
         }catch (e:Exception){
             RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
         }
@@ -1498,57 +1386,17 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.txtAddPhoto.visibility=View.VISIBLE
         }
     }
-
-    private fun RLchooseFromGalleryNew() {
-        try {
-            if (isAdded) {
-                Matisse.from(this)
-                    .choose(MimeType.ofImage())
-                    .countable(true)
-                    .maxSelectable(5)
-                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
-                    .thumbnailScale(0.85f)
-                    .imageEngine(GlideEngine())  // Requires implementation
-                    .forResult(500)
-
-            }
-        }catch (e:Exception){
-            RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
-        }
-    }
-
     // Handle in onActivityResult
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 500 && resultCode == Activity.RESULT_OK) {
-            val uris = Matisse.obtainResult(data)
-            handleSelectedImages(uris)
-        }
-    }
-    private fun handleSelectedImages(uriList: List<Uri>) {
-        for (uri in uriList) {
-            imgUriList.add(uri)
-        }
-        if (imgUriList.size > 0) {
-            RLimageListVisible(true)
-        } else {
-            RLimageListVisible(false)
-        }
-        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
-        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-            imgUriList.remove(uri)
-            if (imgUriList.size > 0) {
-                RLimageListVisible(true)
-            } else {
-                RLimageListVisible(false)
+        if (requestCode == REQUEST_CODE_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
+            val uriList = Matisse.obtainResult(data)
+            // Handle the selected images here
+            for (uri in uriList) {
+                imgUriList.add(uri)
             }
+            RLHandleSelectedImageList(imgUriList)
         }
-        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
     }
-
 
 }

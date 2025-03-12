@@ -2,18 +2,23 @@ package com.revoola.services
 
 import android.Manifest
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.Build
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.revoola.utils.RLConstants
 import com.google.android.gms.location.*
+import com.revoola.commonobject.RLTools
 
 class RLLocationRepository(val application: Application) : SensorEventListener  {
 
@@ -77,47 +82,22 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                    // lastLocation = location
                     startTime = System.currentTimeMillis()
                     val newLocation = locationResult.locations.last()
-                   // RLTools.RlLogDPrint("RLFragSensorProgress", "Speed: ${location.speed} m/s")
-                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Elevation: ${location.altitude} m")
-                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Distance: ${location.distanceTo(lastLocation!!)} m")
-                  //  RLTools.RlLogDPrint("RLFragSensorProgress", "Cadence: ${calculateCadence(location.speed)}")
-                    // Convert speed to km/h
                     val speedKmh = location.speed * 3.6
-                 //   RLTools.RlLogDPrint("RLFragSensorProgress", "Speed (km/h): $speedKmh")
-
-
                     _speedData.postValue(speedKmh.toFloat())
                     _paceData.postValue(calculatePace(location.speed).toDouble())
                     _elevationMeter.postValue(location.altitude)
-
-
                     // Calculate distance between lastLocation and newLocation
                     if (lastLocation != null) {
                         val distanceInMeters = lastLocation!!.distanceTo(newLocation)
                         totalDistance += distanceInMeters // Accumulate distance
                     }
-
                     // Update lastLocation
                     lastLocation = newLocation
-
                     // Convert distance to kilometers
                     val distanceInKm = totalDistance / 1000
 
                     // Post distance data
                     _distanceData.postValue(distanceInKm.toDouble())
-
-
-                    //OLd Code
-                  /*  //Distance Count
-                    val distanceInKm = RLGetDistance(
-                        location.latitude,
-                        location.longitude,
-                        newLocation.latitude,
-                        newLocation.longitude,
-                        "K")
-                   // RLTools.RlLogDPrint("RLFragSensorProgress", "Distance: ${distanceInKm} Km")
-                    _distanceData.postValue(distanceInKm.toDouble())*/
-
                     _locationData.postValue(location)
 
                     val distance = location.distanceTo(lastLocation!!)
@@ -134,12 +114,6 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
                         startTime = currentTime
                     }
 
-                    // Call the calories calculation function
-                   // val durationInMinutes = (currentTime - startTime) / 60000.0 // Convert ms to minutes
-                   // val caloriesBurned = RlCalculateCalories(location.speed.toDouble(), weightInKg, durationInMinutes)
-                   // totalCaloriesBurned = totalCaloriesBurned + caloriesBurned
-                   // _caloriesBurnedData.postValue(totalCaloriesBurned.toDouble())
-
                 }
             }
         }
@@ -147,9 +121,11 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
             return
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+
         stepSensor?.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
+
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -168,33 +144,6 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         sensorManager.unregisterListener(this)
     }
-    private fun RlCalculateCalories(speed: Double, weightInKg: Double, durationInMinutes: Double): Double {
-        val metValue = when {
-            speed > 8 -> 7.5 // Running (high speed)
-            speed > 4 -> 5.0 // Jogging (moderate speed)
-            else -> 3.8 // Walking
-        }
-        return metValue * weightInKg * (durationInMinutes / 60)
-    }
-
-    private fun RLGetDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double, unit: String): Double {
-        val radlat1 = Math.PI * lat1 / 180
-        val radlat2 = Math.PI * lat2 / 180
-        val theta = lon1 - lon2
-        val radtheta = Math.PI * theta / 180
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta)
-
-        dist = Math.acos(dist)
-        dist = dist * 180 / Math.PI
-        dist *= 60 * 1.1515
-
-        when (unit) {
-            "K" -> dist *= 1.609344  // Convert miles to kilometers
-            "N" -> dist *= 0.8684    // Convert miles to nautical miles
-        }
-
-        return dist
-    }
 
     private fun calculatePace(speed: Float): Int {
         // Cadence is typically measured in revolutions per minute (RPM)
@@ -204,5 +153,6 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
         val cadence = (speed / strideLength) * 60
         return cadence.toInt()
     }
+
 
 }

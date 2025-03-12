@@ -31,7 +31,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 //import com.revoola.BuildConfig
 import com.revoola.R
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLDatabaseManagerWrite

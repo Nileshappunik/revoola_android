@@ -297,11 +297,14 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
             val bundle: Bundle = Bundle()
 
-            val cardData = RLSessionDataTransferModel()
+            //val cardData = RLSessionDataTransferModel()
+            val cardData = RLSessionDataTransferModelNew()
 
             cardData.yourWayType = yourWayType
             cardData.totalTime = totalTime?:"0"
             cardData.gpxStringBuilder = gpxStringBuilder.toString()?:""
+            cardData.gpxTServerString=gpxStringBuilder.toString()?:""
+            cardData.gpxTServerNString=gpxStringBuilder.toString()?:""
 
             cardData.SENSOR = RLConstants.HEART_SENSOR
             cardData.avgRevPercentage = RLYourWayCalvulation.noNanValueDouble(avgRevPercentage?:0.00)
@@ -383,9 +386,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.emailId = emailId
             cardData.isBasicDataAdded = isBasicDataAdded
 
-            bundle.putSerializable("cardData",cardData)
-
-
+            //bundle.putSerializable("cardData",cardData)
+            bundle.putParcelable("cardData",cardData)
             (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
@@ -589,6 +591,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         fragBinding.inlayCalories.txtProgressTimeNumber.setText(totalCaloriesBurnedValue.toString())
 
         fragBinding.inlayClimbed.txtProgressTimeNumber.setText(RLYourWayCalvulation.getClimbData(totalElevation,appUnit))
+
 
         val elevationpoint= RLElevationPoint(RLYourWayCalvulation.noNanValueDouble(elevationMeter),RLYourWayCalvulation.noNanValueDouble(latitude), RLYourWayCalvulation.noNanValueDouble(longitude))
         arrDataLocation.add((elevationpoint))

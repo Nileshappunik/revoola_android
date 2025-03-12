@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.revoola.R
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databinding.RlActivitySplashBinding
 import com.revoola.utils.RLPrefManager
 import com.google.android.gms.tasks.OnCompleteListener
@@ -29,7 +29,6 @@ class RLSplashActivityRL : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
-
         RLRemoteConfig()
         RLBaseProgress.RLShowProgressDialog(this)
         val userId= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")
@@ -46,7 +45,6 @@ class RLSplashActivityRL : RLBaseActivity() {
                 RLGuestUser()
             }
         }else{
-            RLTools.RlLogEPrint(TAG,"USer: $userId")
             if (RLPrefManager.RLGetGuestUser(this)){
                 RLBaseProgress.RLhideProgressDialog()
                 startActivity(Intent(this, RLMainActivityRL::class.java))
@@ -109,13 +107,13 @@ class RLSplashActivityRL : RLBaseActivity() {
     }
 
     private fun RLSetUsernameToFirebase(userId:String){
-        RLBaseProgress.RLhideProgressDialog()
         //Firebase To Fetch UserData
         RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
                 val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                RLBaseProgress.RLhideProgressDialog()
                 if (userData.isBasicDataAdded){
                     startActivity(Intent(this, RLMainActivityRL::class.java))
                     finish()
@@ -123,6 +121,8 @@ class RLSplashActivityRL : RLBaseActivity() {
                     startActivity(Intent(this, RLSignUpNameActivityRL::class.java).putExtra("IsNewUser",false))//.putExtra("EmailId",emailId).putExtra("Password",password))
                     finish()
                 }
+            }else{
+                RLBaseProgress.RLhideProgressDialog()
             }
         }
 

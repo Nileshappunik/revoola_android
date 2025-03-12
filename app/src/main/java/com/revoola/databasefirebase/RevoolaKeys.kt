@@ -18,6 +18,10 @@ object RevoolaKeys {
     const val classNote = "classNote"
     const val classType = "classType"
     const val distance = "distance"
+    const val cadence = "cadence"
+    const val connection = "connection"
+    const val hr = "hr"
+    const val power = "power"
     const val imageLinkSmall =  "imageLinkSmall"
     const val isClass = "isClass"
     const val isPowerDeviceConnected = "isPowerDeviceConnected"
@@ -34,6 +38,7 @@ object RevoolaKeys {
     const val minHr = "minHr"
     const val minRevPercentage = "minRevPercentage"
     const val remark = "remark"
+    const val speed = "speed"
     const val revPercentage = "revPercentage"
     const val rms = "rms"
     const val timestamp = "timestamp"
@@ -107,6 +112,14 @@ object RevoolaKeys {
     const val flagImage = "flagImage"
     const val flagName = "flagName"
     const val MaxHrUsedForCalculation = "maxHrUsedForCalculation"
+
+
+    const val connectivity = "connectivity"
+    const val deviceRecordedData = "deviceRecordedData"
+    const val gpx = "gpx"
+    const val gpx_T = "gpx_T"
+    const val gpx_T_Server = "gpx_T_Server"
+    const val gpx_T_Server_N = "gpx_T_Server_N"
 
 
 

@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
 import com.revoola.databinding.RlActivityMainBinding
 import com.revoola.fragment.feed.RLFragFeed

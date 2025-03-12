@@ -2,7 +2,7 @@ package com.revoola.firebaseModel
 
 import android.os.Parcel
 import android.os.Parcelable
-
+import java.io.Serializable
 
 data class RLElevationPoint(val elevation: Double,
                              val latitude: Double,

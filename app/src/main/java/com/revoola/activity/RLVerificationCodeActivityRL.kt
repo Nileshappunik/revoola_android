@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 //import com.revoola.BuildConfig
 import com.revoola.R
 import com.revoola.api.RLApiClientRet
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RLFirebaseManager

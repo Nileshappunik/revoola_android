@@ -204,9 +204,5 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
 
 
-   // implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-   // testImplementation("io.mockk:mockk:1.13.5")
-    //implementation("com.samsung.android.sdk.healthdata:health-data:1.6.1")
-
 }
 

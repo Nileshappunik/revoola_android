@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import com.revoola.R
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databinding.RlActivitySignUpNameBinding
 import com.revoola.utils.RLPrefManager

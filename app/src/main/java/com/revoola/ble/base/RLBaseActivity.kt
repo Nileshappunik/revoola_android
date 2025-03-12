@@ -1,4 +1,4 @@
-package com.revoola.base
+package com.revoola.ble.base
 
 import android.R
 import android.app.Activity
@@ -89,7 +89,6 @@ open class  RLBaseActivity: AppCompatActivity() {
         super.onResume()
         MoEInAppHelper.getInstance().showInApp(this)
     }
-
 
     // Register All permission request launcher at the class level
     val RLRequestPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->

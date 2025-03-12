@@ -18,7 +18,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.moe.pushlibrary.MoEHelper
 import com.revoola.R
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databinding.RlActivitySplashFirstBinding

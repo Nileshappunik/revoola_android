@@ -8,7 +8,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.revoola.R
-import com.revoola.base.RLBaseActivity
+import com.revoola.ble.base.RLBaseActivity
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlActivityForgotPasswordBinding
 import com.revoola.commonobject.RLTools
