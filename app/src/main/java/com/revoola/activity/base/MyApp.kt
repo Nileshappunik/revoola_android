@@ -1,4 +1,4 @@
-package com.revoola.ble.base
+package com.revoola.activity.base
 
 import android.app.Activity
 import android.app.ActivityManager

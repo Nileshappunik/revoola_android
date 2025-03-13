@@ -321,8 +321,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.maxCadence = maxCadence?:0
             cardData.maxBurntCalories = maxBurntCalories?:0
             cardData.minHeartRate = minHeartrate?:0
-
-
+            cardData.avgSpeed = arrSpeed.average()?:0.0
+            cardData.hrm = 1
 
             cardData.maxSpeedForOneKm = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneKm?:0.00)
             cardData.maxSpeedForOneMile = RLYourWayCalvulation.noNanValueDouble(maxSpeedForOneMile?:0.00)
@@ -566,7 +566,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         CumDistance=CumDistance+distance
         arrCumDistance.add(RLYourWayCalvulation.noNanValueDouble(CumDistance))
         arrCumSpeed.add(RLYourWayCalvulation.noNanValueDouble(CumSpeed))
-        distance=CumDistance
+
 
         if (elevationMeter > 0) {
             val relativeAltitude = elevationMeter

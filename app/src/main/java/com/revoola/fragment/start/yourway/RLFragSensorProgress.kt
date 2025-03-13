@@ -108,7 +108,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var totalElevation=0.0
     private var CumDistance =0.0
     private var CumSpeed =0.0
-    private var distance:Double=0.0
+    //private var distance:Double=0.0
     private var burntCalories:Double=0.0
     private var totalRev:Double=0.0
     //UserBasic Data Get Value
@@ -270,12 +270,14 @@ class RLFragSensorProgress : RLBaseFragment(){
             cardData.avgSpeedForOneMile=RLYourWayCalvulation.noNanValueDouble(avgSpeedForOneMile?:0.00)
 
             cardData.arrConnection=arrConnection
+            cardData.avgSpeed = arrSpeed.average()?:0.0
 
             cardData.totalSteps = stepsNumber?:0
-            cardData.distance = RLYourWayCalvulation.noNanValueDouble(distance?:0.00)
+            cardData.distance = RLYourWayCalvulation.noNanValueDouble(distanceNumber?:0.00)
             cardData.maxSpeed = maxSpeed?:0
             cardData.maxCadence = maxCadence?:0
             cardData.maxBurntCalories = maxBurntCalories?:0
+            cardData.hrm = 0
 
             cardData.arrBurntCalories=arrBurntCalories
             cardData.arrCadence=arrCadence
@@ -552,7 +554,6 @@ class RLFragSensorProgress : RLBaseFragment(){
         CumDistance=CumDistance+distanceNumber
         arrCumDistance.add(RLYourWayCalvulation.noNanValueDouble(CumDistance?:0.00))
         arrCumSpeed.add(RLYourWayCalvulation.noNanValueDouble(CumSpeed?:0.00))
-        distance=CumDistance
         if (yourWayType.equals("Ride")&& !isSpeedSensor){
             fragBinding.inlayDistance.txtProgressTimeNumber.setText(RLYourWayCalvulation.getClimbData(totalElevation,appUnit))
         }else{
@@ -567,7 +568,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         arrAvgCadence.add(RLYourWayCalvulation.noNanValueDouble(arrCadence.average()?:0.00))
         arrMaxCadence.add(maxCadence)
 
-        val distancevalue= (distance?: 0.0) * 1000
+        val distancevalue= (distanceNumber?: 0.0) * 1000
         val  totalElevation =totalElevation?: 0.0
 
         //Calculation AssumedRev
@@ -822,14 +823,14 @@ class RLFragSensorProgress : RLBaseFragment(){
                 avgPowerFromDevice = 0,
                 avgSpeed = arrSpeed.average()?:0.0,
                 burntCalories = burntCalories?:0.0,
-                distance = distance?:0.0,
+                distance = distanceNumber?:0.0,
                 remark = "android",
                 seconds = totalTime.toInt()?:0,
                 totalRev = totalRev?:0.0
             )
             val newZoneDataDetail = RLZoneDataDetails(
                 burntCalories = burntCalories?:0.0,
-                distance = distance?:0.0,
+                distance = distanceNumber?:0.0,
                 remark = "android",
                 seconds = totalTime.toInt()?:0,
                 totalRev = totalRev?:0.0

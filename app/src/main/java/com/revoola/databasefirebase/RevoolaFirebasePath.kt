@@ -10,36 +10,6 @@ object RevoolaFirebasePath {
         return "/$basePath/dataForTesting/$currentUser"
     }
 
-    fun deviceRecordedDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/deviceRecordedData"
-    }
-
-    fun elevationDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/elevation"
-    }
-    fun locationDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/location"
-    }
-    fun gpxDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/gpx"
-    }
-
-    fun gpx_TDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/gpx_T"
-    }
-
-    fun gpx_T_ServerDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/gpx_T_Server"
-    }
-
-    fun gpx_T_Server_NDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/gpx_T_Server_N"
-    }
-
-     fun connectivityDataPath(currentUser:String):String{
-        return "/$basePath/dataForTesting/$currentUser/connectivity"
-    }
-
     fun ghostLastForClassDataPath(currentUser:String):String{
         return "/$basePath/revoolaUserSettings/$currentUser/ghostForClass/lastForClass"
     }
@@ -84,6 +54,10 @@ object RevoolaFirebasePath {
 
     fun worldUrlGetDataPath():String{
         return "/$basePath/codeSection/demsSettings/world"
+    }
+
+    fun sessionSummaryDataPathRead(currentUser:String,timeStamp:String):String{
+        return "/$basePath/revoolaUserSessionSummaryData/$currentUser/$timeStamp"
     }
 
 }

@@ -15,10 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.gms.wearable.Wearable
 import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.utils.RLPrefManager
 import com.revoola.R
+import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.feed.adapter.RLFeedSessionSummryListAdapter
 import com.revoola.api.RLApiClientRet
@@ -32,10 +34,18 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerRead
+import com.revoola.databasefirebase.RevoolaFirebasePath
+import com.revoola.firebaseModel.RLAssumedCalories
+import com.revoola.firebaseModel.RLSessionSummaryDataModel
 import com.revoola.fragment.overview.RLFragOverviewSession
+import com.revoola.model.RLRevoolaUsersSettingsModel
+import com.revoola.model.RLWatchModel
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
+import com.revoola.watch.RLWearDataSync
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.roundToInt
@@ -46,9 +56,11 @@ class RLFragSessionSummary : RLBaseFragment() {
     lateinit var cardData: RLTextOverview
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var currentUser:String=""
-    var classType=""
-    var selectTag=""
+    private var currentUser:String=""
+    private var classType=""
+    private var selectTag=""
+    private var fireBaseCardData: RLSessionSummaryDataModel?=null
+    private var userCardData: RLRevoolaUsersSettingsModel?=null
 
     private val binding by lazy {
         RlFragSessionSummaryBinding.inflate(layoutInflater)
@@ -59,7 +71,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_summary, container) as RlFragSessionSummaryBinding
@@ -70,7 +82,6 @@ class RLFragSessionSummary : RLBaseFragment() {
         val apiService = RLApiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-
         RLuisetup()
         return fragBinding.root
     }
@@ -83,7 +94,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
-
+        RLfetchFirebaseData()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -105,7 +116,6 @@ class RLFragSessionSummary : RLBaseFragment() {
         RLsummaryDataSet()
         RLClickToSetUI()
     }
-
     private fun RLcloseScreen(isSessionComplete:Boolean){
         if (isSessionComplete){
             RLBottomHideShowSet(true)
@@ -115,7 +125,184 @@ class RLFragSessionSummary : RLBaseFragment() {
             RLcloseFragment()
         }
     }
+    private fun RLsummaryDataSet() {
+        fragBinding.relaySummary.visibility=View.VISIBLE
+        fragBinding.relayAnalysis.visibility=View.GONE
+        fragBinding.relayEffort.visibility=View.GONE
+        //var imagelink=RLTools.RLgetImage(classType)
+        val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
 
+        /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
+             imagelink=cardData.imageLinkSmall
+         }else if (!cardData.map_image.isNullOrEmpty()){
+             imagelink=cardData.map_image
+         }else{
+             imagelink=RLTools.RLgetImage(classType)
+         }*/
+        Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
+
+        fragBinding.testImage.visibility=View.GONE
+        fragBinding.viewPagerImage.visibility=View.VISIBLE
+        fragBinding.intoTabLayout.visibility=View.VISIBLE
+        fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
+        val imageListOriginal = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
+
+        var imageList:MutableList<String> = mutableListOf()
+        if (cardData.user_images.isEmpty()){
+            imageList=imageListOriginal.toMutableList()
+        }else{
+
+            imageList = cardData.user_images.extractImageUrls().toMutableList()
+            imageList.add("CHART")
+            imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+        }
+
+        //imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
+
+        RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
+        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList)
+        fragBinding.viewPagerImage.adapter = viewPagerAdapter
+
+
+        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
+
+        //Main Data List Set
+        val rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+        val danceHiitListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLdaytimeget(cardData.elevation.toInt())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+        val yogaListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLdaytimeget(cardData.elevation.toInt())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+        val pilatesListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+
+
+        val rideListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+        val walkRunListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
+            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
+            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+        val workoutYogaPilatesListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
+            RLTypeOfMetrics.Effort to RLMetricData(cardData.totalREV.roundToInt().toString()),
+            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
+            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
+            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
+            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
+        )
+
+        if (classType.toLowerCase().equals("ride")){
+            RLgetWayName(RLYourWayName.Ride)
+        }else if (classType.toLowerCase().equals("run")){
+            RLgetWayName(RLYourWayName.Run)
+        }else if (classType.toLowerCase().equals("walk")){
+            RLgetWayName(RLYourWayName.Walk)
+        }else if (classType.toLowerCase().equals("pilates")){
+            RLgetWayName(RLYourWayName.Pilates)
+        }else if (classType.toLowerCase().equals("warm")){
+            RLgetWayName(RLYourWayName.Warm)
+        }else if (classType.toLowerCase().equals("workout")){
+            RLgetWayName(RLYourWayName.Workout)
+        }else if (classType.toLowerCase().equals("dance")){
+            RLgetWayName(RLYourWayName.Dance)
+        }else if (classType.toLowerCase().equals("hiit")){
+            RLgetWayName(RLYourWayName.Hiit)
+        }else if (classType.toLowerCase().equals("yoga")){
+            RLgetWayName(RLYourWayName.Yoga)
+        }else{
+            RLgetWayName(RLYourWayName.Yoga)
+        }
+
+        /*if (cardData.hrm==0){
+            //WITHOUT HR
+            if( classType.toLowerCase().equals("dance")||classType.toLowerCase().equals("hiit")||classType.toLowerCase().equals("run")||classType.toLowerCase().equals("walk")){
+                RLSummryListSet(danceHiitListWithoutHr)
+            }else if (classType.toLowerCase().equals("yoga")){
+                RLSummryListSet(yogaListWithoutHr)
+            }else if (classType.toLowerCase().equals("pilates")){
+                RLSummryListSet(pilatesListWithoutHr)
+            }else if (classType.toLowerCase().equals("ride")){
+                RLSummryListSet(rideListWithoutHr)
+            }else{
+                RLSummryListSet(rideListWithoutHr)
+            }
+
+        }else{
+            //WITH HR
+            if( classType.toLowerCase().equals("walk")|| classType.toLowerCase().equals("run")){
+                RLSummryListSet(walkRunListWithHr)
+            }else if( classType.toLowerCase().equals("ride")){
+                RLSummryListSet(rideListWithHr)
+            } else if( classType.toLowerCase().equals("workout")||classType.toLowerCase().equals("yoga")||classType.toLowerCase().equals("pilates")){
+                RLSummryListSet(workoutYogaPilatesListWithHr)
+            }else{
+                RLSummryListSet(rideListWithHr)
+            }
+        }*/
+
+    }
     private fun RLClickToSetUI() {
         fragBinding.inlayTitle.layoutSummary.setOnClickListener {
             fragBinding.inlayTitle.txtSummary.setTextColor(resources.getColor(R.color.AppMainColor))
@@ -395,7 +582,7 @@ class RLFragSessionSummary : RLBaseFragment() {
                             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
                             RLTypeOfMetrics.Cadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
-                            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
                             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
                             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
                             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
@@ -410,9 +597,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                             RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                             RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
                             RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                             RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
                             RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                             RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
@@ -446,9 +633,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                             RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                             RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
                             RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                             RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                             RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
                             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
@@ -482,12 +669,11 @@ class RLFragSessionSummary : RLBaseFragment() {
                             RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                             RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
                             RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
+                            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
                             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-                        )
+                            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString()))
                     }
                 }
             }
@@ -501,9 +687,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                      RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                      RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                      RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
+                     RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                      RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
                      RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                      RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
@@ -521,9 +707,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                      RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                      RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                      RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
                      RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                      RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                      RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
                      RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
@@ -541,9 +727,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                      RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                      RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                      RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
                      RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                      RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
                      RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                      RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
@@ -560,9 +746,9 @@ class RLFragSessionSummary : RLBaseFragment() {
                      RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
                      RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
                      RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.elevation.toDouble())),
                      RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
+                     RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.average_speed.toDouble())),
                      RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
                      RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
                      RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
@@ -750,188 +936,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         RLSummryListSet(rideListWithoutHr)
     }
 
-
-
-    private fun RLsummaryDataSet() {
-        fragBinding.relaySummary.visibility=View.VISIBLE
-        fragBinding.relayAnalysis.visibility=View.GONE
-        fragBinding.relayEffort.visibility=View.GONE
-        //var imagelink=RLTools.RLgetImage(classType)
-        val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
-
-       /* if (!cardData.imageLinkSmall.isNullOrEmpty()){
-            imagelink=cardData.imageLinkSmall
-        }else if (!cardData.map_image.isNullOrEmpty()){
-            imagelink=cardData.map_image
-        }else{
-            imagelink=RLTools.RLgetImage(classType)
-        }*/
-        Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
-
-        fragBinding.testImage.visibility=View.GONE
-        fragBinding.viewPagerImage.visibility=View.VISIBLE
-        fragBinding.intoTabLayout.visibility=View.VISIBLE
-        fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
-        val imageListOriginal = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
-
-        var imageList:MutableList<String> = mutableListOf()
-        if (cardData.user_images.isEmpty()){
-            imageList=imageListOriginal.toMutableList()
-        }else{
-
-            imageList = cardData.user_images.extractImageUrls().toMutableList()
-            imageList.add("CHART")
-            imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
-        }
-
-         //imageList = listOf(imagelink, "CHART", RLTools.RLFeedSetImage(cardData,currentUser,selectTag))
-
-        RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
-        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList)
-        fragBinding.viewPagerImage.adapter = viewPagerAdapter
-
-
-        val totlaaward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
-
-        //Main Data List Set
-        val rideListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-        val danceHiitListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-        val yogaListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-        val pilatesListWithoutHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-
-
-        val rideListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.AvgCadence to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
-            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-        val walkRunListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Steps to RLMetricData(RLTools.RLformatCommas(cardData.steps.toDouble())),
-            RLTypeOfMetrics.Distance to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.Climbed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgPace to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgSpeed to RLMetricData(RLTools.RLformatCommas(cardData.distance.toDouble())),
-            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
-            RLTypeOfMetrics.Effort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-        val workoutYogaPilatesListWithHr:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
-            RLTypeOfMetrics.Effort to RLMetricData(cardData.totalREV.roundToInt().toString()),
-            RLTypeOfMetrics.ActiveCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
-            RLTypeOfMetrics.AvgHeartRate to RLMetricData(cardData.avgHr.toString()),
-            RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
-            RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
-            RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())
-        )
-
-        if (classType.toLowerCase().equals("ride")){
-            RLgetWayName(RLYourWayName.Ride)
-        }else if (classType.toLowerCase().equals("run")){
-            RLgetWayName(RLYourWayName.Run)
-        }else if (classType.toLowerCase().equals("walk")){
-            RLgetWayName(RLYourWayName.Walk)
-        }else if (classType.toLowerCase().equals("pilates")){
-            RLgetWayName(RLYourWayName.Pilates)
-        }else if (classType.toLowerCase().equals("warm")){
-            RLgetWayName(RLYourWayName.Warm)
-        }else if (classType.toLowerCase().equals("workout")){
-            RLgetWayName(RLYourWayName.Workout)
-        }else if (classType.toLowerCase().equals("dance")){
-            RLgetWayName(RLYourWayName.Dance)
-        }else if (classType.toLowerCase().equals("hiit")){
-            RLgetWayName(RLYourWayName.Hiit)
-        }else if (classType.toLowerCase().equals("yoga")){
-            RLgetWayName(RLYourWayName.Yoga)
-        }else{
-            RLgetWayName(RLYourWayName.Yoga)
-        }
-
-        /*if (cardData.hrm==0){
-            //WITHOUT HR
-            if( classType.toLowerCase().equals("dance")||classType.toLowerCase().equals("hiit")||classType.toLowerCase().equals("run")||classType.toLowerCase().equals("walk")){
-                RLSummryListSet(danceHiitListWithoutHr)
-            }else if (classType.toLowerCase().equals("yoga")){
-                RLSummryListSet(yogaListWithoutHr)
-            }else if (classType.toLowerCase().equals("pilates")){
-                RLSummryListSet(pilatesListWithoutHr)
-            }else if (classType.toLowerCase().equals("ride")){
-                RLSummryListSet(rideListWithoutHr)
-            }else{
-                RLSummryListSet(rideListWithoutHr)
-            }
-
-        }else{
-            //WITH HR
-            if( classType.toLowerCase().equals("walk")|| classType.toLowerCase().equals("run")){
-                RLSummryListSet(walkRunListWithHr)
-            }else if( classType.toLowerCase().equals("ride")){
-                RLSummryListSet(rideListWithHr)
-            } else if( classType.toLowerCase().equals("workout")||classType.toLowerCase().equals("yoga")||classType.toLowerCase().equals("pilates")){
-                RLSummryListSet(workoutYogaPilatesListWithHr)
-            }else{
-                RLSummryListSet(rideListWithHr)
-            }
-        }*/
-
-    }
-
-    fun String.extractImageUrls(): List<String> {
+    private fun String.extractImageUrls(): List<String> {
         return this.replace("\\", "")
             .split(",")
             .map { it.trim() }
@@ -976,10 +981,81 @@ class RLFragSessionSummary : RLBaseFragment() {
 
         }
     }
-
     override fun onPause() {
         super.onPause()
         RLBottomHideShowSet(true)
     }
 
+    private fun RLfetchFirebaseData() {
+        //User Data Fetch to Firebase
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                userCardData =userData
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
+
+        // Firebase to fetch Session Summary data
+        val path = RevoolaFirebasePath.sessionSummaryDataPathRead(cardData.userid,cardData.timestamp)
+        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                fireBaseCardData = gson.fromJson(jsonObject, RLSessionSummaryDataModel::class.java)
+            } else {
+               RLTools.RlLogEPrint(TAG,"Session Summary Empty Data")
+            }
+        }
+    }
+
+    fun getValueForTitle(title: String): String {
+        if (userCardData!=null && fireBaseCardData != null){
+            val isImperial = RLTools.RLGetIsImperial(userCardData!!.appUnit)
+            return when (title) {
+                "Total Time" -> RLTools.RLformatTime(fireBaseCardData!!.totalTime.toInt(),true)
+                "Effort" -> fireBaseCardData!!.totalRev.toString()
+                "Avg Heart Rate" -> if (!checkShowHeartRate()) fireBaseCardData!!.avgHr.toString() else "--"
+                "Cadence" -> fireBaseCardData!!.avgCadence.toString()
+                "Active Calories" -> (fireBaseCardData!!.totalPower ?: 0).toString()
+                "Boosts" -> if (cardData.total_kudos != 0) cardData.total_kudos.toString() else "0"
+                "Comments" -> if (cardData.total_comments != 0) cardData.total_comments.toString() else "0"
+                "Awards" -> {
+                    val totalAwards = cardData.medals_bronze + cardData.medals_silver + cardData.medals_gold
+                    if (totalAwards != 0) totalAwards.toString() else "0"
+                }
+                "Steps" -> fireBaseCardData!!.totalSteps.toString()
+                "Distance" -> if (!isImperial) fireBaseCardData!!.distance.toString() else (fireBaseCardData?.distance?:0 * 0.621371).toString()
+                "Climbed" -> {
+                    val elevation = if (!isImperial) {
+                        if (fireBaseCardData!!.demsElevation == -1) "Pending" else (fireBaseCardData?.demsElevation?:-1).toString()
+                    } else {
+                        if (fireBaseCardData!!.demsElevation == -1) "Pending" else (fireBaseCardData?.demsElevation?:-1 * 3.28084).toString()
+                    }
+                    elevation.toString()
+                }
+                "Avg Pace" -> if (!isImperial) RLTools.RLformatTime((fireBaseCardData?.avgSpeedForOneKm?:0.0).toInt(),true) else  RLTools.RLformatTime((fireBaseCardData?.avgSpeedForOneMile?:0.0).toInt(),true)
+                "Avg Speed" -> if (!isImperial) calculateAvgSpeed((fireBaseCardData?.totalTime?:0).toDouble(), fireBaseCardData?.distance?:0.0).toString() else (calculateAvgSpeed((fireBaseCardData?.totalTime?:0).toDouble(), fireBaseCardData?.distance?:0.0) * 0.62137119223733).toString()
+                "Assumed Effort" -> fireBaseCardData!!.totalRev.toString()
+                "Assumed Calories" -> (fireBaseCardData!!.burntCalories ?: 0).toString()
+                else -> "0"
+            }
+        }else{
+            return "0"
+        }
+    }
+
+    private fun checkShowHeartRate(): Boolean {
+        if (!userCardData?.currentGroup.isNullOrEmpty() && userCardData?.currentGroup!!.contains("schooltype1")) {
+            return false
+        }
+        return true
+    }
+
+
+    // Helper function to calculate average speed (assuming it exists)
+    private fun calculateAvgSpeed(totalTime: Double, distance: Double): Double {
+        // Add your calculation logic here
+        return distance / totalTime
+    }
 }

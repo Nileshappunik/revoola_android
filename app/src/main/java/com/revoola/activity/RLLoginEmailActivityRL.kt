@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.revoola.ble.base.RLBaseActivity
+import com.revoola.activity.base.RLBaseActivity
 import com.revoola.R
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead

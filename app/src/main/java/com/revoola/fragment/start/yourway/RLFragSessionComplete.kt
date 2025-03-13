@@ -574,7 +574,6 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
 
     private fun RLMakeSensorData(cardData: RLSessionDataTransferModelNew) {
-
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         val remark ="android"
 
@@ -676,9 +675,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         )
 
         val summaryDataMap = hashMapOf(
-            RevoolaKeys.arrBurntCalories to safeNumber(cardData.arrBurntCalories.average()),
-            RevoolaKeys.arrCadence to safeNumber(cardData.arrCadence.average()),
-            RevoolaKeys.arrHr to safeNumber(cardData.arrHr.average()),
+            RevoolaKeys.avgBurntCalories to safeNumber(cardData.arrBurntCalories.average()),
+            RevoolaKeys.avgCadence to safeNumber(cardData.arrCadence.average()),
+            RevoolaKeys.avgHr to safeNumber(cardData.arrHr.average()),
             RevoolaKeys.avgPower to  0,
             RevoolaKeys.avgPowerFromDevice to  0,
             RevoolaKeys.avgRevPercentage to safeNumber(cardData.arrRevPercentage.average()),
@@ -1019,7 +1018,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             timestampLocal = currentTimestamp,
             totalRev = cardData.totalRev,
             visibilityFlagForThatSession = visibilityflagforthatsession,
-            discipline = cardData.yourWayType,
+            discipline = cardData.yourWayType.toLowerCase(),
             duration = cardData.totalTime,
             calories = cardData.burntCalories,
             bmo = 2,
@@ -1067,11 +1066,11 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModelNew, currentTimestamp: String): Map<String, RequestBody> {
         val requestBodyMap = mutableMapOf<String, RequestBody>()
-
+        // hrm -> 1 (is hr sensor is connected), 0 (if not connected)
         // Add text fields as form data
         requestBodyMap["data[myOverviewThumbnails][userid]"] = createRequestBody(currentUser)
         requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody(fragBinding.edtSessionName.text.toString())
-        requestBodyMap["data[myOverviewThumbnails][classType]"] = createRequestBody(cardData.yourWayType)
+        requestBodyMap["data[myOverviewThumbnails][classType]"] = createRequestBody(cardData.yourWayType.toLowerCase())
         requestBodyMap["data[myOverviewThumbnails][timestamp]"] = createRequestBody(currentTimestamp)
         requestBodyMap["data[myOverviewThumbnails][timestamp_local]"] = createRequestBody(currentTimestamp)
         requestBodyMap["data[myOverviewThumbnails][imageLinkSmall]"] = createRequestBody("")
@@ -1096,31 +1095,36 @@ class RLFragSessionComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][zone7Seconds]"] = createRequestBody(safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds).toString())
         requestBodyMap["data[myOverviewThumbnails][medals]"] = createRequestBody("0")
         requestBodyMap["data[myOverviewThumbnails][awards]"] = createRequestBody("0")
-
-        requestBodyMap["data[myOverviewThumbnails][share_map]"] = createRequestBody(safeIntNumber(shareMap).toString())
-        requestBodyMap["data[myOverviewThumbnails][originalClassDate]"] = createRequestBody("")
-        requestBodyMap["data[myOverviewThumbnails][videoKey]"] = createRequestBody("")
-        requestBodyMap["data[myOverviewThumbnails][elevation]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
-        requestBodyMap["data[myOverviewThumbnails][power]"] = createRequestBody("0")
-        requestBodyMap["data[myOverviewThumbnails][hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
-        requestBodyMap["data[myOverviewThumbnails][steps]"] = createRequestBody(safeIntNumber(cardData.totalSteps).toString())
-        requestBodyMap["data[myOverviewThumbnails][distance]"] = createRequestBody(safeNumber(cardData.distance).toString())
-        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody("0")
-        requestBodyMap["data[myOverviewThumbnails][class_level]"] = createRequestBody("")
-        requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
-
         requestBodyMap["data[myOverviewThumbnails][visibilityflagforthatsession]"] = createRequestBody(visibilityflagforthatsession.toString())
         requestBodyMap["data[myOverviewThumbnails][bmo]"] = createRequestBody("2")
         requestBodyMap["data[myOverviewThumbnails][instructor]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][duration]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][rideTitle]"] = createRequestBody("")
-        requestBodyMap["data[myOverviewThumbnails][mainTitle]"] = createRequestBody(cardData.yourWayType)
-        requestBodyMap["data[myOverviewThumbnails][goal]"] = createRequestBody("all")
+        requestBodyMap["data[myOverviewThumbnails][mainTitle]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][originalClassDate]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][videoKey]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][goal]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][medals_gold]"] = createRequestBody("0")
         requestBodyMap["data[myOverviewThumbnails][medals_silver]"] = createRequestBody("0")
         requestBodyMap["data[myOverviewThumbnails][medals_bronze]"] = createRequestBody("0")
-        requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
+        requestBodyMap["data[myOverviewThumbnails][elevation]"] = createRequestBody(safeNumber(cardData.totalElevation).toString())
+        requestBodyMap["data[myOverviewThumbnails][power]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
+        requestBodyMap["data[myOverviewThumbnails][steps]"] = createRequestBody(safeIntNumber(cardData.totalSteps).toString())
+        requestBodyMap["data[myOverviewThumbnails][distance]"] = createRequestBody(safeNumber(cardData.distance).toString())
+        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody(safeIntNumber(cardData.hrm).toString())
+        requestBodyMap["data[myOverviewThumbnails][class_level]"] = createRequestBody("")
+        requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.avgSpeed).toString())
+        requestBodyMap["data[myOverviewThumbnails][share_map]"] = createRequestBody(safeIntNumber(shareMap).toString())
         requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][map_url]"] = createRequestBody(cardData.mapGeneratedUrl)
+        requestBodyMap["data[myOverviewThumbnails][mhr]"] = createRequestBody(safeIntNumber(cardData.maxHeartRate).toString())
+        requestBodyMap["data[myOverviewThumbnails][rhr]"] =  createRequestBody(cardData.RestingHR)
+
+        requestBodyMap["data[myOverviewThumbnails][avg_hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
+        requestBodyMap["data[myOverviewThumbnails][notes]"] = createRequestBody(fragBinding.edtAddNotes.text.toString())
+        requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
+
 
         return requestBodyMap
     }
@@ -1256,17 +1260,13 @@ class RLFragSessionComplete : RLBaseFragment(){
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         // Convert to a single comma-separated string
         var imgString: String=""
+        var mapImageString: String=""
         if (imgUriList.isNotEmpty()){
             imgString = imgUriList.joinToString(separator = ",") { it.toString() }
         }
         if (mapImageUri!=null){
-            if (imgString.isNotEmpty()) {
-                // If imgString is not empty, append a comma and then mapImageUri
-                imgString += ",${mapImageUri.toString()}"
-            } else {
-                // If imgString is empty, just assign mapImageUri.toString()
-                imgString = mapImageUri.toString()
-            }
+            // If imgString is empty, just assign mapImageUri.toString()
+            mapImageString = mapImageUri.toString()
         }
 
         val  modelData= RLTextOverview(
@@ -1288,13 +1288,13 @@ class RLFragSessionComplete : RLBaseFragment(){
             totalRMS ="0",
             maxRevPercentage= safeNumber(cardData.maxRevPercentage),
             avgRevPercentage= safeNumber(cardData.avgRevPercentage).toString(),
-            zone1Seconds= "0",
-            zone2Seconds ="0",
-            zone3Seconds ="0",
-            zone4Seconds ="0",
-            zone5Seconds ="0",
-            zone6Seconds ="0",
-            zone7Seconds ="0",
+            zone1Seconds= safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone1]?.seconds).toString(),
+            zone2Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone2]?.seconds).toString(),
+            zone3Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone3]?.seconds).toString(),
+            zone4Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone4]?.seconds).toString(),
+            zone5Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone5]?.seconds).toString(),
+            zone6Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone6]?.seconds).toString(),
+            zone7Seconds =safeIntNumber(cardData.zoneDataDetail[RevoolaKeys.Zone7]?.seconds).toString(),
             medals ="0",
             medals_gold =0,
             medals_silver =0,
@@ -1318,24 +1318,24 @@ class RLFragSessionComplete : RLBaseFragment(){
             hr =safeIntNumber(cardData.avgHr),
             steps =safeIntNumber(cardData.totalSteps),
             distance= safeNumber(cardData.distance),
-            hrm= if (cardData.SENSOR.equals(RLConstants.HEART_SENSOR)) 1 else 0,
+            hrm= cardData.hrm,
             class_level ="",
             average_speed= safeNumber(cardData.avgSpeed),
-            map_image ="",
+            map_image = mapImageString,
             user_images =imgString,
             isDeleted =0,
             dems = "",
             spike_steps = "",
             spike_timestamp = "",
-            share_map =0,
+            share_map =shareMap,
             from_third_party_source =0,
-            map_url = "",
+            map_url = cardData.mapGeneratedUrl,
             dom =0,
-            rhr =0,
-            mhr =0,
+            rhr =safeIntNumber(cardData.RestingHR.toInt()),
+            mhr =cardData.maxHeartRate,
             avgHr= safeIntNumber(cardData.avgHr),
             notes = fragBinding.edtAddNotes.text.toString(),
-            source ="",
+            source ="android",
             isKudos= 0)
 
         val bundle = Bundle()

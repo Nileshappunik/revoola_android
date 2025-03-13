@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 //import com.revoola.BuildConfig
-import com.revoola.ble.base.RLBaseActivity
+import com.revoola.activity.base.RLBaseActivity
 import com.revoola.R
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlActivityLoginBinding

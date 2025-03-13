@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import com.revoola.R
-import com.revoola.ble.base.RLBaseActivity
+import com.revoola.activity.base.RLBaseActivity
 import com.revoola.databinding.RlActivitySplashBinding
 import com.revoola.utils.RLPrefManager
 import com.google.android.gms.tasks.OnCompleteListener

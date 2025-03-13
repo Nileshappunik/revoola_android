@@ -52,7 +52,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
-    //val valuesList = arrayOf("Friends", "Groups","You","Challenges")
     private val valueslist = arrayOf("FRIENDS","GROUPS","YOU","CHALLENGES")
     private var adapter : RLFeedListAdapter?=null
     private var clickyou:Boolean=false
@@ -62,7 +61,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private var  limit = 100
     private var index=0
     private var currentUser:String=""
-    private var GroupId:String="w2p8SQCvE3emjEEDo66f02eF6fG2_friends"
+    private var groupId:String=""
     private var lastfragmentopen=""
 
     private val binding by lazy {
@@ -76,6 +75,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
          lastfragmentopen= RLPrefManager.RLGetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
          currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        groupId= currentUser+"_friends"
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -107,7 +107,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             RLChallengesUISet()
         }
         else{
-            RLfirsttimeApiCall(GroupId)
+            RLfirsttimeApiCall(groupId)
             //do title
             val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
@@ -124,7 +124,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                         if (clickyou){
                             RLapicallYou()
                         }else{
-                            RLapicall(GroupId)
+                            RLapicall(groupId)
                         }
                     }
                 }catch (e:Exception){
@@ -294,7 +294,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 dialog.dismiss()
                 if (RLApiClientRetrofit.RLisConnected()) {
                     //Detail Api
-                    GroupId = selectionID
+                    groupId = selectionID
                     RLfirsttimeApiCall(selectionID)
                     RlGroupNameSetTitle(selectioncName, true)
                 }
@@ -463,7 +463,6 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             }
         }
     }
-
     private fun RLShowSuccessDialog() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setMessage("You have successfully joined the challenge.")
@@ -483,7 +482,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 fragBinding.relayListview.visibility=View.VISIBLE
                 clickyou=false
                 RlGroupNameSetTitle("GROUPS",false)
-                RLfirsttimeApiCall(GroupId)
+                RLfirsttimeApiCall(groupId)
             }
             "GROUPS"-> {
                 fragBinding.inlayFilter.visibility=View.VISIBLE
