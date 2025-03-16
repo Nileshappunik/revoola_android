@@ -45,6 +45,7 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.enumclass.RLValueName
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import java.time.ZoneId
@@ -59,8 +60,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
-    var appUnit:String=""
-   // val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED" )
+    var appUnit:String="Metric"
     val valueslist = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
@@ -259,6 +259,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.webView.visibility=View.VISIBLE
         fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppWhiteColor))
 
+
+
+
         when (valueType){
             "OVERVIEW"->{
                 (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
@@ -291,12 +294,12 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
                             RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
                         4-> { val distance =RLTools.RLConvertDistanceData(carddate.total_distance.toDouble()?:0.0,appUnit)
-                            dataList.add(RLSessionitemset("DISTANCE (miles)",distance,R.drawable.ic_distance))}
+                            dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",distance,R.drawable.ic_distance))}
                             //RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))}
                         5-> dataList.add(RLSessionitemset("STEPS",
                             RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
                         6-> {val climbed =RLTools.RLGetClimbData(carddate.total_elevation.toDouble()?:0.0,appUnit)
-                            dataList.add(RLSessionitemset("CLIMBED (feet)",climbed,R.drawable.ic_climb))}
+                            dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",climbed,R.drawable.ic_climb))}
                         7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
                 }
@@ -321,11 +324,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                             RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
                         5-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
                             RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
-                        6-> dataList.add(RLSessionitemset("DISTANCE (miles)",
+                        6-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
                             RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
                         7-> dataList.add(RLSessionitemset("STEPS",
                             RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        8-> dataList.add(RLSessionitemset("CLIMBED (feet)",carddate.total_elevation.toString(),R.drawable.ic_climb))
+                        8-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",carddate.total_elevation.toString(),R.drawable.ic_climb))
                         9-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
                 }
@@ -384,11 +387,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                             RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
                             RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
-                        4-> dataList.add(RLSessionitemset("DISTANCE (miles)",
+                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
                             RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",
                             RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        6-> dataList.add(RLSessionitemset("CLIMBED (ft)",
+                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",
                             RLTools.RLformatCommas(carddate.total_elevation.toDouble()?:0.0),R.drawable.ic_climb))
                         7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
@@ -417,14 +420,14 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> dataList.add(RLSessionitemset("MAX DISTANCE (miles)",
+                        0-> dataList.add(RLSessionitemset("MAX DISTANCE (${RLGetKmMiles("km","miles")})",
                             RLTools.RLformatCommas(carddate.max_distance_per_session.toDouble()?:0.0),R.drawable.ic_distance))
-                        1-> dataList.add(RLSessionitemset("AVG DISTANCE (miles)",
+                        1-> dataList.add(RLSessionitemset("AVG DISTANCE (${RLGetKmMiles("km","miles")})",
                             RLTools.RLformatCommas(carddate.avg_distance_per_session.toDouble()?:0.0),R.drawable.ic_distance))
-                        2-> dataList.add(RLSessionitemset("CLIMBED (ft)",
+                        2-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",
                             RLTools.RLformatCommas(carddate.total_elevation.toDouble()?:0.0),R.drawable.ic_climb))
-                        3-> dataList.add(RLSessionitemset("DISTANCE (miles)",
-                            RLTools.RLformatCommas(carddate.max_daily_distance.toDouble()?:0.0),R.drawable.ic_distance))
+                        3-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
+                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
                     }
                 }
             }
@@ -435,11 +438,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 totaldisplayitem = 4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (ft)",
+                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (${RLGetKmMiles("m","feet")})",
                             RLTools.RLformatCommas(carddate.max_elevation_per_session.toDouble()?:0.0),R.drawable.ic_climb))
-                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (ft)",
+                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (${RLGetKmMiles("m","feet")})",
                             RLTools.RLformatCommas(carddate.avg_elevation_per_session.toDouble()?:0.0),R.drawable.ic_climb))
-                        2-> dataList.add(RLSessionitemset("DISTANCE (miles)",
+                        2-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
                             RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
                         3-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
                     }
@@ -448,6 +451,12 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
         adapterdata.RLsetList(dataList,isTextColorSetWhite)
     }
+
+    private fun RLGetKmMiles(km:String,miles:String):String{
+        val isImperial = RLTools.RLGetIsImperial(appUnit)
+        return if (isImperial) miles else km
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun RLwebviewurlload(type:String){
 

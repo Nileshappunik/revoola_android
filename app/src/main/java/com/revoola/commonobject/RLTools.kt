@@ -1400,7 +1400,12 @@ object RLTools {
         }
 
         if (time.isEmpty()) {
-            time = "00min"
+            if (isSec){
+                time = "00s"
+            }else{
+                time = "00min"
+            }
+
         }
 
         return time
@@ -1652,17 +1657,30 @@ object RLTools {
         return sdfr.format(c.time).toString()
     }
 
-     fun RLformatCommas(number: Double): String {
-         val decimalPlaces=2
-      /*  val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-         val integerPart = number.roundToInt()
-         val formattedInteger = numberFormat.format(integerPart)
-        return formattedInteger*/
+    fun RLformatCommasInt(number: Double): String {
+          val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+           val integerPart = number.roundToInt()
+           val formattedInteger = numberFormat.format(integerPart)
+          return formattedInteger
+    }
+    fun RLformatCommasInt(number: Int): String {
+        val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+        val integerPart = number
+        val formattedInteger = numberFormat.format(integerPart)
+        return formattedInteger
+    }
 
+
+     fun RLformatCommasOLd(number: Double): String {
          val formatter = NumberFormat.getInstance(Locale.getDefault())
          formatter.maximumFractionDigits = 2
          formatter.minimumFractionDigits = 0
-         return formatter.format(number?:0)
+         return formatter.format(number?:0.00)
+    }
+
+    fun RLformatCommas(number: Double): String {
+        val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
+        return formatter.format(number)
     }
 
     fun RLnumberToUUID(number: Int): UUID {

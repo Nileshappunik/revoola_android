@@ -154,14 +154,18 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             if (isAdded){RLBaseProgress.RLShowProgressDialog(requireActivity())}
             if ((cardData.classType).equals(RLConstants.BODY)){
                 if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
+                    cardData.hrm=1
                     RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
                 }else  {
+                    cardData.hrm=0
                     RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
                 }
             }else{
                 if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
+                    cardData.hrm=1
                     RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
                 }else  {
+                    cardData.hrm=0
                     RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
                 }
 
@@ -341,8 +345,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                  )
             }
             "NO_SENSOR"->{
-
-                 sessionUserSessionDetailData = hashMapOf(
+                sessionUserSessionDetailData = hashMapOf(
                     "MaxHrUsedForCalculation" to cardData.RFMHR,
                     "MaxHrUsedForCalculation_Last" to cardData.RFMHR,
                     "RestingHrUsedForCalculation" to cardData.RestingHR,
@@ -869,7 +872,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
    private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): Map<String, RequestBody> {
         val requestBodyMap = mutableMapOf<String, RequestBody>()
-
+       // hrm -> 1 (is hr sensor is connected), 0 (if not connected)
         // Add text fields as form data
         requestBodyMap["data[myOverviewThumbnails][userid]"] = createRequestBody(currentUser)
         requestBodyMap["data[myOverviewThumbnails][className]"] = createRequestBody(videoCardData.rideTitle)
@@ -920,7 +923,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][hr]"] = createRequestBody(safeIntNumber(cardData.avgHr).toString())
         requestBodyMap["data[myOverviewThumbnails][steps]"] = createRequestBody(safeIntNumber(cardData.totalSteps).toString())
         requestBodyMap["data[myOverviewThumbnails][distance]"] = createRequestBody(safeNumber(cardData.distance).toString())
-        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody("0")
+        requestBodyMap["data[myOverviewThumbnails][hrm]"] = createRequestBody(safeIntNumber(cardData.hrm).toString())
         requestBodyMap["data[myOverviewThumbnails][class_level]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.avgSpeed).toString())
         requestBodyMap["data[myOverviewThumbnails][imageLinkSmall]"] = createRequestBody(videoCardData.imageLinkrectangleV2)
@@ -1124,7 +1127,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             bundle.putSerializable(RLConstants.CardData, modelData)
             bundle.putString(RLConstants.FeedSelectTag, "FRIENDS")
             bundle.putBoolean("isSessionComplete", true)
-            (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, false, null, true)
+            //(context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, false, null, true)
+            (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
 
         }else{
             //Mind

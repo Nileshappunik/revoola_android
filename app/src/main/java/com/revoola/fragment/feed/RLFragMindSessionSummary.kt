@@ -143,12 +143,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             //WITH HR
             RLsummaryListDataSet(dataListWithHR)
         }
-
-
     }
-
-
-
     private fun RLsummaryListDataSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)

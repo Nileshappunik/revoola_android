@@ -23,7 +23,8 @@ class RLCalenderListAdapter(
     private val dates: List<RLDateInfoModel>,
     private var selectionDate:Date?,
     private val onDateSelected: (Date) -> Unit
-    ) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    ) :RecyclerView.Adapter<RecyclerView.ViewHolder>()
+{
     val TAG = "RLCalenderAdapter"
     private var selectedPosition = -1
 

@@ -334,7 +334,8 @@ class RELDynamicLinkManager private   constructor() {
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     bundle.putString(RLConstants.FeedSelectTag, selectTag)
                     bundle.putBoolean("isSessionComplete", false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
+                   // (context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
                 }
                 1->{
                     //MIND

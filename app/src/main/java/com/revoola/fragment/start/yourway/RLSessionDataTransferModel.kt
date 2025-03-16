@@ -45,6 +45,7 @@ class RLSessionDataTransferModel : Serializable {
     var avgRevPercentage: Double = 0.0
     var burntCalories: Double = 0.0
     var distance: Double = 0.0
+    var hrm: Int = 0
     var maxRevPercentage: Double = 0.0
     var minRevPercentage: Double = 0.0
     var revPercentage: Double = 0.0
