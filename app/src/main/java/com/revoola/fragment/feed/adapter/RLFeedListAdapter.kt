@@ -1,7 +1,6 @@
 package com.revoola.fragment.feed.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
@@ -20,11 +19,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
-import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
 import com.revoola.databinding.RlLayoutFeedListBinding
-import com.revoola.fragment.feed.RLFragBodySessionSummary
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.feed.RLFragTenChallengeSummary
@@ -32,12 +29,10 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
-import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges
-import com.revoola.model.RLtrigger_inapp_referrer_goaled_challenges_Request
-import com.revoola.viewmodel.RLMainViewModel
 import kotlin.math.roundToInt
 
-class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val selectTag:String,private val onItemClicked: (RLTextOverview) -> Unit) :
+class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
+                        val selectTag:String,val appUnit:String,private val onItemClicked: (RLTextOverview) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLFeedListAdapter"
     private var isLoadingAdded = false
@@ -92,28 +87,29 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                 RLcommonDataSet(cardData, layoutBinding,position+1)
                 layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
                 layoutBinding.bigChallengesLayout.visibility=View.GONE
+                val isImperial = RLTools.RLGetIsImperial(appUnit)
                 when(cardData.from_third_party_source){
                     0->{
                         when(cardData.bmo){
                             0->{
                                 //BODY
-                                RLbodyClassesBodySet(cardData, layoutBinding)
+                                RLbodyClassesBodySet(cardData, layoutBinding,isImperial)
                             }
                             1->{
                                 //MIND
-                                RLmindClassBodySet(cardData, layoutBinding)
+                                RLmindClassBodySet(cardData, layoutBinding,isImperial)
                             }
                             2->{
                                 //OTHER Your Way
-                                RLotherClassesBodySet(cardData, layoutBinding)
+                                RLotherClassesBodySet(cardData, layoutBinding,isImperial)
                             }
                         }
                     }
                     1->{ // 3rd party card
-                        RLthirdPartyOneBodySet(cardData, layoutBinding)
+                        RLthirdPartyOneBodySet(cardData, layoutBinding,isImperial)
                     }
                     2->{ // Metric Card
-                        RLthirdPartyTwoBodySet(cardData, layoutBinding)
+                        RLthirdPartyTwoBodySet(cardData, layoutBinding,isImperial)
                     }
                     101->{
                         //Big Challenges Join Session
@@ -122,7 +118,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
                         RLBigChallengesJoinBodySet(cardData, layoutBinding)
                     }
                      else -> {// >10 Challenges
-                        RLthirdPartyTenBodySet(cardData, layoutBinding,position+1)
+                        RLthirdPartyTenBodySet(cardData, layoutBinding,position+1,isImperial)
 
                     }
                 }
@@ -134,6 +130,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             }
         }
     }
+
     private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
         RLTools.RLheightsetimageview(layoutBinding.imgMain)
         //RLTools.RLheightsetimageview(layoutBinding.imgMainBigChallenges)
@@ -295,7 +292,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             }
         }*/
     }
-    private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, pos:Int){
+    private fun RLthirdPartyTenBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        pos: Int,
+        isImperial: Boolean
+    ){
         layoutBinding.txtOrganizer.visibility=View.VISIBLE
         layoutBinding.txtOrganizerName.visibility=View.VISIBLE
         layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
@@ -424,7 +426,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.layoutAward.visibility=View.GONE
 
     }
-    private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLthirdPartyTwoBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        isImperial: Boolean
+    ){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
         layoutBinding.layTime.txtTime.setText(R.string.step)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()))
@@ -435,7 +441,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
 
         layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
-        layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancemiles)
+        if (isImperial) {
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancemiles)
+        }else{
+            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancekm)
+        }
+
         layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
 
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
@@ -453,7 +464,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.blanckView1.visibility=View.VISIBLE
 
     }
-    private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLthirdPartyOneBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        isImperial: Boolean
+    ){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()).toString())
@@ -474,7 +489,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()).toString())
 
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
-            layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
+            if (isImperial){
+                layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
+            }else{
+                layoutBinding.laySteps.txtTime.setText(R.string.distancekm)
+            }
+
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance).toString())
 
 
@@ -498,7 +518,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.imgThreedot.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
-    private fun RLotherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLotherClassesBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        isImperial: Boolean
+    ){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()?:0))
@@ -521,7 +545,12 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
 
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
-            layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
+            if (isImperial){
+                layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
+            }else{
+                layoutBinding.laySteps.txtTime.setText(R.string.distancekm)
+            }
+
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()?:0.0))
 
         }else{
@@ -532,8 +561,6 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
             layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
             //layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppZone4Color))
 
-
-
             layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
             layoutBinding.laySteps.txtTime.setText(R.string.calorie)
             layoutBinding.laySteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble().toInt().toDouble()?:0.0))
@@ -543,7 +570,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
-    private fun RLbodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+    private fun RLbodyClassesBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        isImperial: Boolean
+    ){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
@@ -575,7 +606,11 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,val s
 
 
     }
-    private fun RLmindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding) {
+    private fun RLmindClassBodySet(
+        cardData: RLTextOverview,
+        layoutBinding: RlLayoutFeedListBinding,
+        isImperial: Boolean
+    ) {
 
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_mind_read)
         layoutBinding.layTime.txtTime.setText(R.string.mindfulminutes)

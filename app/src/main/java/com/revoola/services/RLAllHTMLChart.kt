@@ -1,54 +1,86 @@
 package com.revoola.services
 
+import com.revoola.commonobject.RLTools
+import com.revoola.model.RLZoneChartData
 import org.json.JSONArray
 
 object RLAllHTMLChart {
-
     fun RLgetEffortChartHtml(jsondata: String) : String {
         val webdata:String="""
-            <!DOCTYPE html>
-        <meta charset="utf-8">
-        <title>Line Chart</title>
-        <style> /* set the CSS */
+           <!DOCTYPE html>
+<meta charset="utf-8">
+<title>Line Chart</title>
+<style>
+    /* set the CSS */
 
-                body { font: 30px Arial;background-color: #FFFFFFFF;}
+    body {
+        font: 30px Arial;
+        background-color: #FFFFFFFF;
+    }
 
-                path {
-                            stroke: steelblue;
-                            stroke-width: 2;
-                            fill: none;
-                        }
+    path {
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
+    }
 
-                        .axis path,
-                        .axis line {
-                            fill: none;
-                            stroke: grey;
-                            stroke-width: 1;
-                            shape-rendering: crispEdges;
-                        }
-                .axis RLText{
-                  fill: grey;
-                  color: grey;
-                }
-                        .line {
-                            fill: none;
-                            stroke: url(#line-gradient);
-                            stroke-width: 3px;
-                        }
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
 
-                    .dot {
-                            fill: url(#line-gradient);
-                        }
+    .axis text {
+        fill: grey;
+        color: grey;
+    }
 
-                        </style>
-                <body>
-                <div id="lineChart"></div>
+    .line {
+        fill: none;
+        stroke: url(#line-gradient);
+        stroke-width: 3px;
+    }
+
+    .dot {
+        fill: url(#line-gradient);
+    }
+</style>
+<body>
+    <div id="lineChart"></div>
 
 
-                <!-- load the d3.js library -->
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    </script>
 
-                <script>
+    <!-- load the d3.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+
+
+    <script type="text/javascript">
+          
+                var data = $jsondata
+                 function changeData(newdata) {
+                    try {
+                        data = newdata;
+                        console.log("dynemic data: " + newdata);
+                         d3.select("#lineChart").selectAll(".line").remove();
+                        // Parse and update the new data
+                        var data = JSON.parse(data);
+                        data.forEach(function(d) {
+                            d.time = +d.time / 60;
+                            d.effort = +d.effort;
+                        });
+                        x.domain([d3.min(data, function(d) { return +d.time; }), d3.max(data, function(d) { return +d.time; })]);
+                        y.domain([0, 100]);
+                        // Re-add the line path with the new data
+                        svg.append("path").attr("class", "line").attr("d", valueline(data));
+
+                     } catch (error) {
+                        console.error("Error parsing JSON: " + error);
+
+                     }
+                 }//FUnction Close
 
                 // Set the dimensions of the canvas / graph
                 var margin = {top: 100, right: 20, bottom: 100, left: 50},
@@ -64,12 +96,13 @@ object RLAllHTMLChart {
                     .orient("bottom").outerTickSize(0).innerTickSize(-height, 0, 0).ticks(6);
                 var yAxis = d3.svg.axis().scale(y)
                     .orient("left").ticks(5).outerTickSize(0).innerTickSize(-width, 0, 0).ticks(10);
-
+                
+              
                 // Define the line
                 var valueline = d3.svg.line().interpolate("linear")
                     .x(function(d) { return x(d.time); })
                     .y(function(d) { return y(d.effort); });
-                    
+
                 // Adds the svg canvas
                 var svg = d3.select("#lineChart")
                     .append("svg")
@@ -81,79 +114,81 @@ object RLAllHTMLChart {
 
 
 
-                    var data = JSON.parse('$jsondata');
-                    data.forEach(function(d) {
-                            d.time = +d.time/60;
-                            d.effort = +d.effort;
-                        });
-                
-                        // Scale the range of the data
-                        x.domain([d3.min(data, function(d) { return +d.time; }), d3.max(data, function(d) { return +d.time; })]);
-                        y.domain([0, 100]);
-                
-                        svg.append("linearGradient")
-                            .attr("id", "line-gradient")
-                            .attr("gradientUnits", "userSpaceOnUse")
-                            .attr("x1", 0).attr("y1", y(0))
-                            .attr("x2", 0).attr("y2", y(100))
-                        .selectAll("stop")
-                            .data([
-                                {offset: "0%", color: "rgb(241, 119, 160)"},
-                                {offset: "29.99%", color: "rgb(241, 119, 160)"},
-                                {offset: "30%", color: "rgb(255, 207, 47)"},
-                                {offset: "49.99%", color: "rgb(255, 207, 47)"},
-                                {offset: "50%", color: "rgb(44, 174, 44)"},
-                                {offset: "59.99%", color: "rgb(44, 174, 44)"},
-                                {offset: "60%", color: "rgb(0, 153, 218)"},
-                                {offset: "69.99%", color: "rgb(0, 153, 218)"},
-                                {offset: "70%", color: "rgb(254, 105, 02)"},
-                                {offset: "79.99%", color: "rgb(254, 105, 02)"},
-                                {offset: "80%", color: "rgb(153, 0, 204)"},
-                                {offset: "89.99%", color: "rgb(153, 0, 204)"},
-                                {offset: "90%", color: "rgb(237, 69, 65)"},
-                                {offset: "99.99%", color: "rgb(237, 69, 65)"}
-                            ])
-                        .enter().append("stop")
-                            .attr("offset", function(d) { return d.offset; })
-                            .attr("stop-color", function(d) { return d.color; });
-                
-                        // Add the valueline path.
-                        svg.append("path")
-                            .attr("class", "line")
-                            .attr("d", valueline(data));
-                
-                        // Add the X Axis
-                        var xx = svg.append("g")
-                            .attr("class", "x axis")
-                            .attr("transform", "translate(0," + height + ")")
-                            .call(xAxis);
-                
-                        // Add the Y Axis
-                        var yx = svg.append("g")
-                            .attr("class", "y axis")
-                            .call(yAxis);
-                        
-                            xx.selectAll("line").remove();
-                            
-                            yx.selectAll("line").style("opacity", 0.6);
-                            yx.selectAll("RLText").attr("x", -5);
-                
-                            var last = svg.selectAll(".y .tick RLText")[0].length;
-                
-                            svg.selectAll(".y .tick RLText")[0].forEach(function(d, i){
-                            if (i==last-1){
-                                return;
-                            }
-                            if(i%2!=0)
-                                d3.select(d).style("display", "none")
-                            });
-                
-                            svg.append("RLText").attr("x", (width/2)-100).attr("y", height+80).style("font-size", 40).style("fill", "grey").RLText("MINUTES");
-                            svg.append("RLText").attr("x", 0).attr("y", -20).style("font-size", 40).style("fill", "grey").RLText("EFFORT%");
+
+        data.forEach(function(d) {
+            d.time = +d.time/60;
+            d.effort = +d.effort;
+        });
+
+        // Scale the range of the data
+        x.domain([d3.min(data, function(d) { return +d.time; }), d3.max(data, function(d) { return +d.time; })]);
+        y.domain([0, 100]);
+
+        svg.append("linearGradient")
+            .attr("id", "line-gradient")
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", 0).attr("y1", y(0))
+            .attr("x2", 0).attr("y2", y(100))
+        .selectAll("stop")
+            .data([
+                {offset: "0%", color: "rgb(241, 119, 160)"},
+                {offset: "29.99%", color: "rgb(241, 119, 160)"},
+                {offset: "30%", color: "rgb(255, 207, 47)"},
+                {offset: "49.99%", color: "rgb(255, 207, 47)"},
+                {offset: "50%", color: "rgb(44, 174, 44)"},
+                {offset: "59.99%", color: "rgb(44, 174, 44)"},
+                {offset: "60%", color: "rgb(0, 153, 218)"},
+                {offset: "69.99%", color: "rgb(0, 153, 218)"},
+                {offset: "70%", color: "rgb(254, 105, 02)"},
+                {offset: "79.99%", color: "rgb(254, 105, 02)"},
+                {offset: "80%", color: "rgb(153, 0, 204)"},
+                {offset: "89.99%", color: "rgb(153, 0, 204)"},
+                {offset: "90%", color: "rgb(237, 69, 65)"},
+                {offset: "99.99%", color: "rgb(237, 69, 65)"}
+            ])
+        .enter().append("stop")
+            .attr("offset", function(d) { return d.offset; })
+            .attr("stop-color", function(d) { return d.color; });
+
+        // Add the valueline path.
+        svg.append("path")
+            .attr("class", "line")
+            .attr("d", valueline(data));
+
+        // Add the X Axis
+        var xx = svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        // Add the Y Axis
+        var yx = svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+            xx.selectAll("line").remove();
+
+            yx.selectAll("line").style("opacity", 0.6);
+            yx.selectAll("text").attr("x", -5);
+
+            var last = svg.selectAll(".y .tick text")[0].length;
+
+            svg.selectAll(".y .tick text")[0].forEach(function(d, i){
+            if (i==last-1){
+                return;
+            }
+            if(i%2!=0)
+                d3.select(d).style("display", "none")
+            });
+
+            svg.append("text").attr("x", (width/2)-100).attr("y", height+80).style("font-size", 40).style("fill", "grey").text("MINUTES");
+            svg.append("text").attr("x", 0).attr("y", -20).style("font-size", 40).style("fill", "grey").text("EFFORT%");
 
     </script>
-    </body>
-</html>           
+
+</body>
+</html>
+       
 """.trimIndent()
         return webdata
     }
@@ -1162,7 +1197,9 @@ object RLAllHTMLChart {
         """.trimIndent()
 
     }
-    fun RLGetNewZoneChartHtml(): String{
+
+
+    fun RLGetNewZoneChartHtml(zoneData: List<RLZoneChartData>, efforZoneBgrClr: String): String{
         return """
             <!DOCTYPE html>
             <html lang="en">
@@ -1171,7 +1208,8 @@ object RLAllHTMLChart {
                 <title>Stacked Effort Zone Bar Chart</title>
                 <script src="https://d3js.org/d3.v6.min.js"></script>
                 <style>
-                    body { font: 12px Arial; background-color: #FFFFFF; }
+                   /* body { font: 12px Arial; background-color: #FFFFFF; }*/
+                    body { font: 12px Arial; background-color: $efforZoneBgrClr; }
                     .axis { font-size:40px }
                     .axis path, .axis line { fill: none; stroke: black; shape-rendering: crispEdges; }
                 </style>
@@ -1180,7 +1218,7 @@ object RLAllHTMLChart {
             <div id="chart"></div>
             <script>
             document.addEventListener("DOMContentLoaded", function() {
-                var data = [
+                var dataOld = [
                     { zone: "Zone1", value: 1829, color: "rgb(241, 119, 160)" },
                     { zone: "Zone2", value: 2345, color: "rgb(255, 207, 47)" },
                     { zone: "Zone3", value: 1230, color: "rgb(44, 174, 44)" },
@@ -1189,6 +1227,7 @@ object RLAllHTMLChart {
                     { zone: "Zone6", value: 680, color: "rgb(153, 0, 204)" },
                     { zone: "Zone7", value: 120, color: "rgb(237, 69, 65)" }
                 ];
+                 var data = ${RLTools.RLZoneDataToJson(zoneData)};
 
                 var margin = { top: 20, right: 20, bottom: 40, left: 30 }, // Reduced left margin
                 width = window.innerWidth - margin.left - margin.right,

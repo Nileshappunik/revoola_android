@@ -63,14 +63,13 @@ data class RLTextOverview(val avatar: String,
                           val spike_timestamp: String?,
                           val share_map: Int,
                           val from_third_party_source: Int,
-                          val map_url: String?,
                           val dom: Int,
                           val rhr: Int?,
                           val mhr: Int?,
                           val avgHr: Int?,
                           val notes: String?,
                           val source: String,
-                          val isKudos: Int ) : Serializable
+                          val isKudos: Int, val map_url: String? ) : Serializable
 
 data class RLTextOverviewOld(
     val avatar: String = "",

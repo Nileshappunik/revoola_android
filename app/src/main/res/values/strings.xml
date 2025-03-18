@@ -314,7 +314,7 @@
     <string name="gpssatellitesfound">GPS(Satellites found)</string>
     <string name="inprogress">IN PROGRESS</string>
     <string name="cadencerpm">CADENCE(RPM)</string>
-    <string name="distancekm">DISTANCE(MILES)</string>
+    <string name="distancekm">DISTANCE(Km)</string>
     <string name="speedkmh">SPEED(MPH)</string>
     <string name="paceperkm">PACE(PER MILES)</string>
     <string name="heartratebpm">HEART RATE(BPM)</string>

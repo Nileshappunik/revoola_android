@@ -60,4 +60,8 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaUserSessionSummaryData/$currentUser/$timeStamp"
     }
 
+    fun sessionDetailDataPathRead(currentUser:String,timeStamp:String):String{
+        return "/$basePath/revoolaUserSessionDetailData/$currentUser/$timeStamp"
+    }
+
 }

@@ -1117,7 +1117,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][average_speed]"] = createRequestBody(safeNumber(cardData.avgSpeed).toString())
         requestBodyMap["data[myOverviewThumbnails][share_map]"] = createRequestBody(safeIntNumber(shareMap).toString())
         requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
-        requestBodyMap["data[myOverviewThumbnails][map_url]"] = createRequestBody(cardData.mapGeneratedUrl)
+        requestBodyMap["data[myOverviewThumbnails][map_url]"] = createRequestBody("")
         requestBodyMap["data[myOverviewThumbnails][mhr]"] = createRequestBody(safeIntNumber(cardData.maxHeartRate).toString())
         requestBodyMap["data[myOverviewThumbnails][rhr]"] =  createRequestBody(cardData.RestingHR)
 

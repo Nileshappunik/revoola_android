@@ -56,7 +56,12 @@ import android.content.pm.PackageManager
 import android.view.Window
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.revoola.model.RLZoneChartData
 import com.revoola.utils.RLConstants
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.time.temporal.TemporalAdjusters
@@ -758,6 +763,10 @@ object RLTools {
         }
     }
 
+    fun RLTransformRound(value: Double): Int {
+        return Math.round(value).toInt()
+    }
+
     fun RlVerifyFeedZoneName(REVPer: Double): EffortZoneFeedModel {
         val roundedREVPer = REVPer.roundToInt()
 
@@ -1019,6 +1028,18 @@ object RLTools {
             "Metric" -> false
             else -> false
         }
+    }
+
+    fun RLZoneDataToJson(zoneData: List<RLZoneChartData>): JSONArray {
+        val jsonArray = JSONArray()
+        for (zone in zoneData) {
+            val jsonObject = JSONObject()
+            jsonObject.put("zone", zone.zone)
+            jsonObject.put("value", zone.seconds)
+            jsonObject.put("color", zone.color)
+            jsonArray.put(jsonObject)
+        }
+        return jsonArray
     }
 
     fun RLToTimeLabel(secs: Int?): String {
@@ -1410,6 +1431,46 @@ object RLTools {
 
         return time
     }
+
+    fun RLformatTimeNoMS(secs: Int, isSec: Boolean): String {
+        val secNum = secs
+        val hours = secNum / 3600
+        val minutes = (secNum / 60) % 60
+        val seconds = secNum % 60
+
+        var time = ""
+
+        // If hours are greater than 0, add hours to the time string
+        if (hours > 0) {
+            time += "${hours}:"
+        }
+
+        // Add minutes to the time string, ensuring a leading zero if the minutes are less than 10
+        if (minutes > 0 || hours > 0) {
+            time += if (minutes < 10) {
+                "0${minutes}:"
+            } else {
+                "${minutes}:"
+            }
+        }
+
+        // If seconds should be shown (isSec), always display seconds even if hours > 0
+        if (isSec) {
+            time += if (seconds < 10) {
+                "0${seconds}"
+            } else {
+                "${seconds}"
+            }
+        }
+
+        // If no time components were added (for 0 seconds), set the time to 0
+        if (time.isEmpty()) {
+            time = "0"
+        }
+
+        return time
+    }
+
 
     fun RLconvertTimestampToDAte(timestamp: Long): String {
         try {

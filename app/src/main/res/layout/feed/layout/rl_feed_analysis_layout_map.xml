@@ -28,6 +28,15 @@
             android:textColor="@color/AppBlackColor"
             android:textSize="28sp" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycle_analysisPace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_below="@+id/webView_analysis"
+            android:layout_marginTop="10dp"
+            android:nestedScrollingEnabled="false" />
+
         <WebView
             android:id="@+id/webView_analysis"
             android:layout_width="match_parent"

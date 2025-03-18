@@ -1,5 +1,6 @@
 package com.revoola.fragment.feed.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,17 @@ import com.revoola.R
 import com.revoola.databinding.RlItemPageBinding
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.commonobject.RLTools
-import org.json.JSONArray
-import org.json.JSONObject
+import com.revoola.model.EffortZoneFeedModel
+import com.revoola.model.RLZoneChartData
 
-class RLImagePagerAdapter(val context: FragmentActivity?, private val imageList: List<String>) :PagerAdapter(){
+class RLImagePagerAdapter(
+    val context: FragmentActivity?, private val imageList: List<String>,
+    private val zoneData: List<RLZoneChartData>,
+    private val ZoneTextData: EffortZoneFeedModel,
+    private val effort: String,
+    private val effortScore: String,
+    private val maxEffort: String
+) :PagerAdapter(){
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view === `object` as RelativeLayout
@@ -33,18 +41,24 @@ class RLImagePagerAdapter(val context: FragmentActivity?, private val imageList:
         }
         Glide.with(context!!).load(imageList.get(position)).into(layoutbinding.imageView)
 
+        //Chart Set
+
         layoutbinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
-        layoutbinding.inlayChart.layEffortZone.txtNumber.setText(R.string.cardio)
-        layoutbinding.inlayChart.layEffortZone.txtNumber.setTextColor(context.getColor(R.color.AppMainColor))
+        layoutbinding.inlayChart.layEffortZone.txtNumber.setText(ZoneTextData.efforZoneText)
+        layoutbinding.inlayChart.layEffortZone.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+        layoutbinding.inlayChart.layAll.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        layoutbinding.inlayChart.relayChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        layoutbinding.inlayChart.webViewChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        val efforZoneBgrClr =  ZoneTextData.efforZoneBgrClr
 
         layoutbinding.inlayChart.layEffort.txtName.setText("EFFORT %")
-        layoutbinding.inlayChart.layEffort.txtNumber.setText("57%")
+        layoutbinding.inlayChart.layEffort.txtNumber.setText(effort)
 
         layoutbinding.inlayChart.layEffortScore.txtName.setText("EFFORT SCORE")
-        layoutbinding.inlayChart.layEffortScore.txtNumber.setText("468")
+        layoutbinding.inlayChart.layEffortScore.txtNumber.setText(effortScore)
 
         layoutbinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
-        layoutbinding.inlayChart.layMaxEffort.txtNumber.setText("84%")
+        layoutbinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
 
         RLTools.RLheightsetdisplaywebview(layoutbinding.inlayChart.webViewChart,context)
         layoutbinding.inlayChart.webViewChart.webViewClient = WebViewClient()
@@ -56,9 +70,8 @@ class RLImagePagerAdapter(val context: FragmentActivity?, private val imageList:
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
 
-        val jsonArray = createJsonArray()
         layoutbinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
-            RLAllHTMLChart.RLGetNewZoneChartHtml1(jsonArray), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLGetNewZoneChartHtml(zoneData,efforZoneBgrClr), "text/html", "UTF-8", null)
 
         container.addView(layoutbinding.root)
         return layoutbinding.root
@@ -72,28 +85,6 @@ class RLImagePagerAdapter(val context: FragmentActivity?, private val imageList:
         return imageList.size
     }
 
-    fun createJsonArray(): JSONArray {
-        val data = listOf(
-            mapOf("zone" to "Zone1", "value" to 1829, "color" to "rgb(241, 119, 160)"),
-            mapOf("zone" to "Zone2", "value" to 2345, "color" to "rgb(255, 207, 47)"),
-            mapOf("zone" to "Zone3", "value" to 1230, "color" to "rgb(44, 174, 44)"),
-            mapOf("zone" to "Zone4", "value" to 2310, "color" to "rgb(0, 153, 218)"),
-            mapOf("zone" to "Zone5", "value" to 560, "color" to "rgb(254, 105, 02)"),
-            mapOf("zone" to "Zone6", "value" to 680, "color" to "rgb(153, 0, 204)"),
-            mapOf("zone" to "Zone7", "value" to 120, "color" to "rgb(237, 69, 65)")
-        )
 
-        val jsonArray = JSONArray()
-
-        for (item in data) {
-            val jsonObject = JSONObject()
-            jsonObject.put("zone", item["zone"])
-            jsonObject.put("value", item["value"])
-            jsonObject.put("color", item["color"])
-            jsonArray.put(jsonObject)
-        }
-
-        return jsonArray
-    }
 
 }

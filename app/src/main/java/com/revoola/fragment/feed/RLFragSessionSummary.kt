@@ -1,7 +1,7 @@
 package com.revoola.fragment.feed
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,13 +36,18 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.enumclass.RLValueName
 import com.revoola.firebaseModel.RLSessionSummaryDataModel
+import com.revoola.firebaseModel.RLSessionDetailDataModel
 import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.model.RLRevoolaUsersSettingsModel
+import com.revoola.model.RLZoneChartData
+import com.revoola.model.RLZoneChartScoreData
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.roundToInt
 
 class RLFragSessionSummary : RLBaseFragment() {
@@ -55,6 +60,7 @@ class RLFragSessionSummary : RLBaseFragment() {
     private var classType=""
     private var selectTag=""
     private var fireBaseCardData: RLSessionSummaryDataModel?=null
+    private var fireBaseDetailCardData: RLSessionDetailDataModel?=null
     private var userCardData: RLRevoolaUsersSettingsModel?=null
 
     private val binding by lazy {
@@ -91,6 +97,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
+        RLTools.RLLogLarge(TAG,"cardData: ${Gson().toJson(cardData)}")
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{
@@ -120,8 +127,18 @@ class RLFragSessionSummary : RLBaseFragment() {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
-
-        // Firebase to fetch Session Summary data
+        // Firebase to fetch Session Summary Graph Data
+        val graphPath = RevoolaFirebasePath.sessionDetailDataPathRead(cardData.userid,cardData.timestamp)
+        RLDatabaseManagerRead().RlreadData(graphPath) { data, error ->
+            if (data != null) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(data)
+                fireBaseDetailCardData = gson.fromJson(jsonObject, RLSessionDetailDataModel::class.java)
+            } else {
+                RLTools.RlLogEPrint(TAG,"Session Summary Graph Empty Data")
+            }
+        }
+        // Firebase to fetch Session Summary Data
         val path = RevoolaFirebasePath.sessionSummaryDataPathRead(cardData.userid,cardData.timestamp)
         RLDatabaseManagerRead().RlreadData(path) { data, error ->
             if (data != null) {
@@ -137,6 +154,7 @@ class RLFragSessionSummary : RLBaseFragment() {
             }
         }
 
+
     }
 
     //Summery Ui SetUp
@@ -146,25 +164,61 @@ class RLFragSessionSummary : RLBaseFragment() {
         fragBinding.relayEffort.visibility=View.GONE
 
         val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
-        Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
+        if (isAdded) Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
 
+
+        var imageList:MutableList<String> = mutableListOf()
+        val imageListOriginal = listOf(imagelink, RLTools.RLgetImage(classType))
         fragBinding.testImage.visibility=View.GONE
         fragBinding.viewPagerImage.visibility=View.VISIBLE
         fragBinding.intoTabLayout.visibility=View.VISIBLE
         fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
-        val imageListOriginal = listOf(imagelink, "CHART", RLTools.RLgetImage(classType))
 
-        var imageList:MutableList<String> = mutableListOf()
-        if (cardData.user_images.isEmpty()){
-            imageList=imageListOriginal.toMutableList()
-        }else{
+        val zoneDataList = listOf(
+            RLZoneChartData("Zone1", fireBaseCardData?.zone1?.seconds?:0, "rgb(241, 119, 160)"),
+            RLZoneChartData("Zone2", fireBaseCardData?.zone2?.seconds?:0, "rgb(255, 207, 47)"),
+            RLZoneChartData("Zone3", fireBaseCardData?.zone3?.seconds?:0, "rgb(44, 174, 44)"),
+            RLZoneChartData("Zone4", fireBaseCardData?.zone4?.seconds?:0, "rgb(0, 153, 218)"),
+            RLZoneChartData("Zone5", fireBaseCardData?.zone5?.seconds?:0, "rgb(254, 105, 02)"),
+            RLZoneChartData("Zone6", fireBaseCardData?.zone6?.seconds?:0, "rgb(153, 0, 204)"),
+            RLZoneChartData("Zone7", fireBaseCardData?.zone7?.seconds?:0, "rgb(237, 69, 65)")
+        )
 
-            imageList = cardData.user_images.extractImageUrls().toMutableList()
-            imageList.add("CHART")
-            imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+        val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+        val effort =RLGetValueForTitle(RLValueName.AvgEffort)
+        val effortScore:String =RLGetValueForTitle(RLValueName.Effort)
+        val maxEffort = RLGetValueForTitle(RLValueName.MaxEffort)
+
+
+        when (cardData.bmo){
+             0->{ //Body Image Set
+                 if (cardData.user_images.isEmpty()){
+                     imageList=imageListOriginal.toMutableList()
+                 }else{
+                     imageList = cardData.user_images.extractImageUrls().toMutableList()
+                     imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+                 }
+             }
+            2->{ //Your Way Image Set
+                if (cardData.map_image.isEmpty() && cardData.user_images.isNotEmpty()){
+                    imageList = cardData.user_images.extractImageUrls().toMutableList()
+                    imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+                }else if (cardData.map_image.isNotEmpty() && cardData.user_images.isNotEmpty()){
+                    imageList = cardData.user_images.extractImageUrls().toMutableList()
+                    imageList.add(cardData.map_image)
+                    imageList.add(RLTools.RLGetLinkImage(cardData.classType?.toLowerCase().toString()))
+                }else{
+                    imageList=imageListOriginal.toMutableList()
+                }
+            }
         }
+
+        if (cardData.hrm==1){
+            imageList.add("CHART")
+        }
+
         RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
-        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList)
+        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList,zoneDataList,ZoneTextData,effort,effortScore,maxEffort)
         fragBinding.viewPagerImage.adapter = viewPagerAdapter
 
         when (classType.toLowerCase()){
@@ -552,11 +606,13 @@ class RLFragSessionSummary : RLBaseFragment() {
             val avgSpeedForOneMile =RLTools.RLformatTime(convertToInt(fireBaseCardData?.avgSpeedForOneMile?:0),true)
             val avgHeartRate = RLTools.RLformatCommasInt(fireBaseCardData?.avgHr?:0.0)
             val maxHeartRate = RLTools.RLformatCommasInt(fireBaseCardData?.maxHr?:0)
+            val avgSpeed = RLCalculateAvgSpeed(isImperial)
+
             return when (title) {
                 RLValueName.TotalTime -> RLTools.RLformatTime(fireBaseCardData!!.totalTime.toInt(),true)
-                RLValueName.Effort  -> RLTools.RLformatCommasInt(fireBaseCardData!!.totalRev?:0.0)
+                RLValueName.Effort  -> RLTools.RLformatCommasInt(cardData.totalREV.roundToInt())
                 RLValueName.AvgHeartRate  -> if (!checkShowHeartRate()) avgHeartRate else avgHeartRate
-                RLValueName.ActiveCalories  -> RLTools.RLformatCommasInt(convertToInt(fireBaseCardData!!.totalPower ?: 0))
+                RLValueName.ActiveCalories  -> RLTools.RLformatCommasInt(convertToInt(cardData.power ?: 0))
                 RLValueName.Boosts  -> if (cardData.total_kudos != 0) cardData.total_kudos.toString() else "0"
                 RLValueName.Comments  -> if (cardData.total_comments != 0) cardData.total_comments.toString() else "0"
                 RLValueName.Awards  -> {
@@ -564,7 +620,7 @@ class RLFragSessionSummary : RLBaseFragment() {
                     if (totalAwards != 0) totalAwards.toString() else "0"
                 }
                 RLValueName.Steps  -> RLTools.RLformatCommasInt(fireBaseCardData!!.totalSteps?:0)
-                RLValueName.Distance  -> if (!isImperial) RLTools.RLformatCommas(fireBaseCardData!!.distance?:0.0) else RLTools.RLformatCommas(fireBaseCardData?.distance?:0 * 0.621371)
+                RLValueName.Distance  -> if (!isImperial) RLTools.RLformatCommas(cardData.distance?:0.0) else RLTools.RLformatCommas(cardData.distance * 0.621371)
                 RLValueName.Climbed  -> {
                     val demsElevation:Int = convertToInt(fireBaseCardData!!.demsElevation?:-1)
                     val elevation = if (!isImperial) {
@@ -575,8 +631,8 @@ class RLFragSessionSummary : RLBaseFragment() {
                     elevation.toString()
                 }
                 RLValueName.AvgPace  -> if (!isImperial) avgSpeedForOneKm else  avgSpeedForOneMile
-                RLValueName.AvgSpeed  ->    RLTools.RLformatCommas(cardData.average_speed?:0.0)
-                RLValueName.MaxSpeed  ->    RLTools.RLformatCommas(fireBaseCardData?.maxSpeed?:0.0)
+                RLValueName.AvgSpeed  ->   avgSpeed
+                RLValueName.MaxSpeed  ->    RLCalculateMaxSpeed(isImperial)
                 RLValueName.AssumedEffort  -> RLTools.RLformatCommasInt(fireBaseCardData!!.totalRev?:0.0)
                 RLValueName.AssumedCalories  -> RLTools.RLformatCommasInt(fireBaseCardData!!.burntCalories ?: 0.0)
                 RLValueName.AvgCadence  ->  RLTools.RLformatCommasInt(fireBaseCardData!!.avgCadence?:0.0)
@@ -584,12 +640,99 @@ class RLFragSessionSummary : RLBaseFragment() {
                 RLValueName.AvgEffort -> convertToInt(cardData.avgRevPercentage).toString()+"%"
                 RLValueName.MaxEffort -> convertToInt(cardData.maxRevPercentage).toString()+"%"
 
+                RLValueName.MinElevation -> RLCalculateMaxAndMinElevation(isImperial,false)
+                RLValueName.MaxElevation -> RLCalculateMaxAndMinElevation(isImperial,true)
+
+                RLValueName.Completed -> if (isImperial) fireBaseDetailCardData?.speedForOneMile?.size.toString() else fireBaseDetailCardData?.speedForOneKm?.size.toString()
+                RLValueName.AvaragePace -> RLCalculateAvaragePace(isImperial)
+                RLValueName.Slowtest -> RLCalculateSlowtestAndFasttestPace(isImperial,false)
+                RLValueName.Fasttest -> RLCalculateSlowtestAndFasttestPace(isImperial,true)
+
                 else -> "0"
             }
         }
         else{
             return "0"
         }
+
+    }
+
+    private fun RLCalculateAvaragePace(isImperial: Boolean):String{
+        if (isImperial){
+           val time =  fireBaseDetailCardData?.speedForOneMile?.average()?:0.0
+           return RLTools.RLformatTimeNoMS(time.toInt(),true)
+        } else {
+            val time =  fireBaseDetailCardData?.speedForOneKm?.average()?:0.0
+            return   RLTools.RLformatTimeNoMS(time.toInt(),true)
+        }
+
+    }
+
+    private fun RLCalculateMaxAndMinElevation(isImperial: Boolean,isMax:Boolean):String{
+        if (isImperial){
+            if (isMax){
+                val elevation =  (fireBaseDetailCardData?.arrElevation?.max()?:0.0) * 3.28084
+                RLTools.RlLogEPrint(TAG,"elevationMAx: ${fireBaseDetailCardData?.arrElevation?.max()?:0.0}")
+                return RLTools.RLformatCommasInt(elevation.toInt())
+            }else{
+                val elevation =  (fireBaseDetailCardData?.arrElevation?.min()?:0.0) * 3.28084
+                RLTools.RlLogEPrint(TAG,"elevationMin: ${fireBaseDetailCardData?.arrElevation?.min()?:0.0}")
+                return RLTools.RLformatCommasInt(elevation.toInt())
+            }
+
+        }else{
+            if (isMax){
+                val elevation =  (fireBaseDetailCardData?.arrElevation?.max()?:0.0)
+                return RLTools.RLformatCommasInt(elevation.toInt())
+            }else{
+                val elevation =  (fireBaseDetailCardData?.arrElevation?.min()?:0.0)
+                return RLTools.RLformatCommasInt(elevation.toInt())
+            }
+        }
+    }
+
+    private fun RLCalculateSlowtestAndFasttestPace(isImperial: Boolean,isFastest:Boolean):String{
+        if (isImperial){
+            if (isFastest){
+                val time =  fireBaseDetailCardData?.speedForOneMile?.min()?:0.0
+                return RLTools.RLformatTimeNoMS(time.toInt(),true)
+            }else{
+                val time =  fireBaseDetailCardData?.speedForOneMile?.max()?:0.0
+                return RLTools.RLformatTimeNoMS(time.toInt(),true)
+            }
+
+        } else {
+            if (isFastest){
+                val time =  fireBaseDetailCardData?.speedForOneKm?.min()?:0.0
+                return RLTools.RLformatTimeNoMS(time.toInt(),true)
+            }else{
+                val time =  fireBaseDetailCardData?.speedForOneKm?.max()?:0.0
+                return RLTools.RLformatTimeNoMS(time.toInt(),true)
+            }
+        }
+    }
+
+
+    private  fun RLCalculateMaxSpeed(isImperial: Boolean): String {
+        val maxSpeed:Double = fireBaseDetailCardData?.arrSpeed?.takeIf { it.isNotEmpty() }?.maxOrNull() ?: 0.0
+        if (isImperial) {
+            return String.format("%.2f", maxSpeed / 1.609) // Convert to miles per hour if imperial
+        }
+        return String.format("%.2f", maxSpeed) // Return speed in km/h
+    }
+
+    private  fun RLCalculateAvgSpeed(isImperial: Boolean): String {
+        val totalTime = fireBaseCardData?.totalTime?:0
+        var  distance = fireBaseCardData?.distance?:0.0
+        if (isImperial){
+            distance = distance * 0.621371
+        }
+        val tempTime = totalTime / 3600 // Convert time to hours
+        val tempAvgSpeed = distance / tempTime // Speed in km/h
+        if (isImperial) {
+            return String.format("%.2f", tempAvgSpeed / 1.609) // Convert to miles per hour if imperial
+        }
+        return String.format("%.2f", tempAvgSpeed) // Return speed in km/h
     }
 
     //Click Wise Ui SetUp
@@ -634,7 +777,6 @@ class RLFragSessionSummary : RLBaseFragment() {
         fragBinding.relaySummary.visibility=View.GONE
         fragBinding.relayAnalysis.visibility=View.VISIBLE
         fragBinding.relayEffort.visibility=View.GONE
-
         if (cardData.hrm==0){
             //Without HR Sensor
             fragBinding.includeEffort.relativeCard.visibility=View.GONE
@@ -642,30 +784,70 @@ class RLFragSessionSummary : RLBaseFragment() {
             fragBinding.includePace.relativeCard.visibility=View.GONE
             fragBinding.includeSpeed.relativeCard.visibility=View.GONE
             fragBinding.txtWithouthrmessageAnalysis.visibility=View.VISIBLE
-        }else{
-            //With HR Sensor
-            if( classType.toLowerCase().equals("run")){
-                fragBinding.includeElevation.relativeCard.visibility=View.VISIBLE
-                fragBinding.includePace.relativeCard.visibility=View.VISIBLE
-                fragBinding.includeSpeed.relativeCard.visibility=View.VISIBLE
-                fragBinding.includeEffort.relativeCard.visibility=View.VISIBLE
-                fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
-                RLanalysisEffortUISetup()
-                RLanalysisPaceUISetup()
-                RLanalysisSpeedUISetup()
-                RLanalysisElevationUISetup()
-            }else if(classType.toLowerCase().equals("walk")|| classType.toLowerCase().equals("yoga")||classType.toLowerCase().equals("pilates")||classType.toLowerCase().equals("workout")||classType.toLowerCase().equals("ride")){
-                fragBinding.includeEffort.relativeCard.visibility=View.VISIBLE
-                fragBinding.includeElevation.relativeCard.visibility=View.GONE
-                fragBinding.includePace.relativeCard.visibility=View.GONE
-                fragBinding.includeSpeed.relativeCard.visibility=View.GONE
-                fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
-                RLanalysisEffortUISetup()
+            if( classType.toLowerCase() in listOf("ride", "run", "walk")){
+                val isSpeedGraph = fireBaseDetailCardData?.arrSpeed?.any { convertToInt(it) > 0 } == true
+                if (isSpeedGraph){
+                    fragBinding.includeSpeed.relativeCard.visibility=View.VISIBLE
+                    fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
+                    RLanalysisSpeedUISetup()
+                }
+                val isPaceGraph = fireBaseDetailCardData?.speedForOneKm?.any { convertToInt(it) > 0 } == true
+                if (isPaceGraph){
+                    fragBinding.includePace.relativeCard.visibility=View.VISIBLE
+                    fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
+                    RLanalysisPaceUISetup()
+                }
+
             }
         }
+        else{
+            //With HR Sensor
+            fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
+            fragBinding.includeEffort.relativeCard.visibility=View.GONE
+            fragBinding.includeElevation.relativeCard.visibility=View.GONE
+            fragBinding.includePace.relativeCard.visibility=View.GONE
+            fragBinding.includeSpeed.relativeCard.visibility=View.GONE
+
+            if(cardData.bmo ==2 ){
+                // Your Way Map
+                if( classType.toLowerCase() in listOf("ride", "run", "walk") && !fireBaseDetailCardData?.arrElevation.isNullOrEmpty()){
+                    val elevation = if (fireBaseCardData?.demsElevation == 0.0 && fireBaseCardData?.totalElevation != 0.0) {
+                        fireBaseCardData?.totalElevation
+                    } else {
+                        fireBaseCardData?.demsElevation
+                    } ?: 0.0
+
+                    if (convertToInt(elevation) > 5 || elevation == -1.0) {
+                        fragBinding.includeElevation.relativeCard.visibility=View.VISIBLE
+                        RLanalysisElevationUISetup()
+                    }
+                }
+            }
+
+            val isEffortGraph = fireBaseDetailCardData?.arrRevPercentage?.any { convertToInt(it) > 0 } == true
+            if (isEffortGraph){
+                fragBinding.includeEffort.relativeCard.visibility=View.VISIBLE
+                RLanalysisEffortUISetup()
+            }
+
+            if( classType.toLowerCase() in listOf("ride", "run", "walk")){
+                val isSpeedGraph = fireBaseDetailCardData?.arrSpeed?.any { convertToInt(it) > 0 } == true
+                if (isSpeedGraph){
+                    fragBinding.includeSpeed.relativeCard.visibility=View.VISIBLE
+                    RLanalysisSpeedUISetup()
+                }
+                val isPaceGraph = fireBaseDetailCardData?.speedForOneKm?.any { convertToInt(it) > 0 } == true
+                if (isPaceGraph){
+                    fragBinding.includePace.relativeCard.visibility=View.VISIBLE
+                    RLanalysisPaceUISetup()
+                }
+            }
+
+
+        }
     }
+    //Effort Chart
     private fun RLanalysisEffortUISetup(){
-        RLTools.RlLogDPrint(TAG,"NU")
         val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
             RLTypeOfMetrics.EffortScore to RLMetricData(RLGetValueForTitle(RLValueName.Effort)),
             RLTypeOfMetrics.EffortZone to RLMetricData("CALM"),
@@ -692,16 +874,19 @@ class RLFragSessionSummary : RLBaseFragment() {
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeEffort.recycleAnalysis.adapter = adapterdata
 
-        fragBinding.includeEffort.txtTitleAnalysis.setOnClickListener {
-            RLinjectDataIntoWebView(RLConstants.EFFORT)
-        }
+        RLinjectDataIntoWebView(RLConstants.EFFORT)
+
     }
+    //Pace Chart
     private fun RLanalysisPaceUISetup(){
-        var dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.completed to RLMetricData("0"),
-            RLTypeOfMetrics.Averagepace to RLMetricData("0"),
-            RLTypeOfMetrics.Slowtest to RLMetricData("0"),
-            RLTypeOfMetrics.Fasttest to RLMetricData("0")
+        val isImperial = RLTools.RLGetIsImperial(userCardData?.appUnit?:"Metric")
+        val completed = if (isImperial) RLTypeOfMetrics.completed else  RLTypeOfMetrics.completedKm
+
+        val dataList:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            completed to RLMetricData(RLGetValueForTitle(RLValueName.Completed)),
+            RLTypeOfMetrics.Averagepace to RLMetricData(RLGetValueForTitle(RLValueName.AvaragePace)),
+            RLTypeOfMetrics.Slowtest to RLMetricData(RLGetValueForTitle(RLValueName.Slowtest)),
+            RLTypeOfMetrics.Fasttest to RLMetricData(RLGetValueForTitle(RLValueName.Fasttest))
         )
 
         fragBinding.includePace.imgTitleAnalysis.setImageResource(R.drawable.ic_pace)
@@ -717,15 +902,15 @@ class RLFragSessionSummary : RLBaseFragment() {
         fragBinding.includePace.webViewAnalysis.loadUrl("file:///android_asset/chart-android-pace.html")
 
         //Main list set
+        fragBinding.includePace.recycleAnalysisPace.visibility=View.VISIBLE
         val glinearLayoutManager = GridLayoutManager(activity, 2)
-        fragBinding.includePace.recycleAnalysis.layoutManager = glinearLayoutManager
+        fragBinding.includePace.recycleAnalysisPace.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
-        fragBinding.includePace.recycleAnalysis.adapter = adapterdata
+        fragBinding.includePace.recycleAnalysisPace.adapter = adapterdata
 
-        fragBinding.includePace.txtTitleAnalysis.setOnClickListener {
-            RLinjectDataIntoWebView(RLConstants.PACE)
-        }
+        RLinjectDataIntoWebView(RLConstants.PACE)
     }
+    //Speed Chart
     private fun RLanalysisSpeedUISetup(){
         val isImperial = RLTools.RLGetIsImperial(userCardData?.appUnit?:"Metric")
         val Averagespeed = if (isImperial) RLTypeOfMetrics.Averagespeed else  RLTypeOfMetrics.AveragespeedKm
@@ -756,20 +941,19 @@ class RLFragSessionSummary : RLBaseFragment() {
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeSpeed.recycleAnalysis.adapter = adapterdata
 
-        fragBinding.includeSpeed.txtTitleAnalysis.setOnClickListener {
-            RLinjectDataIntoWebView(RLConstants.SPEED)
-        }
+        RLinjectDataIntoWebView(RLConstants.SPEED)
     }
+    //Elevation Chart
     private fun RLanalysisElevationUISetup(){
         val isImperial = RLTools.RLGetIsImperial(userCardData?.appUnit?:"Metric")
-        val Totalclimbed = if (isImperial) RLTypeOfMetrics.Totalclimbed else  RLTypeOfMetrics.TotalclimbedM
+        val Totalclimbed = if (isImperial) RLTypeOfMetrics.Totalelevation else  RLTypeOfMetrics.TotalelevationM
         val Minelevation = if (isImperial) RLTypeOfMetrics.Minelevation else  RLTypeOfMetrics.MinelevationM
         val Maxelevation = if (isImperial) RLTypeOfMetrics.Maxelevation else  RLTypeOfMetrics.MaxelevationM
 
-        var dataList: List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            Totalclimbed to RLMetricData(cardData.elevation.toString()),
-            Minelevation to RLMetricData("0"),
-            Maxelevation to RLMetricData("0")
+        val  dataList: List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
+            Totalclimbed to RLMetricData(RLGetValueForTitle(RLValueName.Climbed)),
+            Minelevation to RLMetricData(RLGetValueForTitle(RLValueName.MinElevation)),
+            Maxelevation to RLMetricData(RLGetValueForTitle(RLValueName.MaxElevation))
         )
 
         fragBinding.includeElevation.imgTitleAnalysis.setImageResource(R.drawable.ic_climb)
@@ -792,36 +976,41 @@ class RLFragSessionSummary : RLBaseFragment() {
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.includeElevation.recycleAnalysis.adapter = adapterdata
 
-        fragBinding.includeElevation.txtTitleAnalysis.setOnClickListener {
-            RLinjectDataIntoWebView(RLConstants.ELEVATION)
-        }
-
+        RLinjectDataIntoWebView(RLConstants.ELEVATION)
 
     }
-    private fun RLinjectDataIntoWebView(maptype:String) {
+    //Insert Data All Chart
+    private fun RLinjectDataIntoWebView(mapType:String) {
+        val arrCumDistance = fireBaseDetailCardData?.arrCumDistance!!
+        val arrElevation = fireBaseDetailCardData?.arrElevation!!
+        val arrSpeed = fireBaseDetailCardData?.arrSpeed!!
+        val speedForPace = fireBaseDetailCardData?.speedForOneKm!!
+
         // Inject JSON data into WebView's JavaScript context
-        if (maptype.equals(RLConstants.EFFORT)) {
+        if (mapType.equals(RLConstants.EFFORT)) {
+            val revData = fireBaseDetailCardData?.arrRevPercentage
             val jsonArray: JSONArray = JSONArray()
-            val time = arrayListOf(0, 7, 11, 16, 21, 26, 31, 36, 46, 61)
-            val effort = arrayListOf(15.5, 20.7, 22.5, 23.3, 27.6, 28.5, 31.1, 32.8, 43.2, 53.5)
-            for (i in 0 until 10) {
-                val jsonObject: JSONObject = JSONObject()
-                jsonObject.put("time", time[i])
-                jsonObject.put("effort", effort[i])
-                jsonArray.put(jsonObject)
+            revData?.forEachIndexed { index, value ->
+                if (value != null) {
+                    val jsonObject: JSONObject = JSONObject()
+                    jsonObject.put("time", index)
+                    jsonObject.put("effort", value)
+                    jsonArray.put(jsonObject)
+                }
             }
             fragBinding.includeEffort.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetEffortChartHtml(jsonArray.toString()), "text/html", "UTF-8", null)
-        }else if(maptype.equals(RLConstants.ELEVATION)) {
-            val cumDistance = listOf(0.005296782793065954, 0.17643476423982488, 0.32406591625405773, 0.4900312010503477, 0.6886913564745826, 0.8554970494682735, 0.9942858127871057, 1.1225646445024045, 1.2667188760567833, 1.4243537519381972)
-            val elevation = listOf(62.0, 68.2, 77.6, 74.8, 69.1, 68.3, 71.2, 71.2, 70.9, 68.7)
-            fragBinding.includeElevation.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetElevationHtml( cumDistance.toString(),elevation.toString()), "text/html", "UTF-8", null)
-        }else if(maptype.equals(RLConstants.SPEED)) {
-            val cumDistance = listOf(0.005296782793065954, 0.17643476423982488, 0.32406591625405773, 0.4900312010503477, 0.6886913564745826, 0.8554970494682735, 0.9942858127871057, 1.1225646445024045, 1.2667188760567833, 1.4243537519381972)
-            val elevation = listOf(62.0, 68.2, 77.6, 74.8, 69.1, 68.3, 71.2, 71.2, 70.9, 68.7)
-            val speed = listOf(1.1917761284398396, 13.271195141645485, 16.3731288772218, 25.100697267202097, 30.414623993580445, 23.07914084016237, 19.85637565717453, 22.02540041430026, 21.509108339338717, 22.04665020256577)
+        }else if(mapType.equals(RLConstants.ELEVATION)) {
+            val cumDistance = arrCumDistance
+            val elevation =  arrElevation
+           fragBinding.includeElevation.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetElevationHtml( cumDistance.toString(),elevation.toString()), "text/html", "UTF-8", null)
+        }else if(mapType.equals(RLConstants.SPEED)) {
+            val speed= arrSpeed
+            val cumDistance= arrCumDistance
+            val elevation= arrElevation
+
             fragBinding.includeSpeed.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetSpeedHtml( cumDistance.toString(),elevation.toString(),speed.toString()), "text/html", "UTF-8", null)
-        }else if(maptype.equals(RLConstants.PACE)) {
-            val timeData = listOf(225, 165, 135, 132, 124, 131)
+        }else if(mapType.equals(RLConstants.PACE)) {
+            val timeData =speedForPace
             fragBinding.includePace.webViewAnalysis.loadDataWithBaseURL(null, RLAllHTMLChart.RLgetPaceChartHtml( timeData.toString()), "text/html", "UTF-8", null)
 
         }
@@ -829,24 +1018,42 @@ class RLFragSessionSummary : RLBaseFragment() {
 
     //Effort Ui SetUp
     private fun RLeffortDataSet(){
-        val dataList: List<String> = listOf("Calm","Warm","Cardio","Fat Burn","Endurance","Power","Peak")
+        val dataList: List<RLZoneChartScoreData> = listOf(
+            RLZoneChartScoreData("Calm", fireBaseCardData?.zone1?.seconds?:0, fireBaseCardData?.zone1?.totalRev?:0.0),
+            RLZoneChartScoreData("Warm", fireBaseCardData?.zone2?.seconds?:0, fireBaseCardData?.zone2?.totalRev?:0.0),
+            RLZoneChartScoreData("Cardio", fireBaseCardData?.zone3?.seconds?:0, fireBaseCardData?.zone3?.totalRev?:0.0),
+            RLZoneChartScoreData("Fat Burn", fireBaseCardData?.zone4?.seconds?:0, fireBaseCardData?.zone4?.totalRev?:0.0),
+            RLZoneChartScoreData("Endurance", fireBaseCardData?.zone5?.seconds?:0, fireBaseCardData?.zone5?.totalRev?:0.0),
+            RLZoneChartScoreData("Power", fireBaseCardData?.zone6?.seconds?:0, fireBaseCardData?.zone6?.totalRev?:0.0),
+            RLZoneChartScoreData("Peek", fireBaseCardData?.zone7?.seconds?:0, fireBaseCardData?.zone7?.totalRev?:0.0)
+        )
         fragBinding.relaySummary.visibility=View.GONE
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.VISIBLE
-       
+
+        val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
 
         fragBinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
-        fragBinding.inlayChart.layEffortZone.txtNumber.setText(R.string.cardio)
-        fragBinding.inlayChart.layEffortZone.txtNumber.setTextColor(resources.getColor(R.color.AppMainColor))
+        fragBinding.inlayChart.layEffortZone.txtNumber.setText(ZoneTextData.efforZoneText)
+        fragBinding.inlayChart.layEffortZone.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+        fragBinding.inlayChart.layAll.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        fragBinding.inlayChart.relayChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        fragBinding.inlayChart.webViewChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        val efforZoneBgrClr =  ZoneTextData.efforZoneBgrClr
+
+        val effort =RLGetValueForTitle(RLValueName.AvgEffort)
+        val effortScore:String =RLGetValueForTitle(RLValueName.Effort)
+        val maxEffort = RLGetValueForTitle(RLValueName.MaxEffort)
+
 
         fragBinding.inlayChart.layEffort.txtName.setText("EFFORT %")
-        fragBinding.inlayChart.layEffort.txtNumber.setText("57%")
+        fragBinding.inlayChart.layEffort.txtNumber.setText(effort)
 
         fragBinding.inlayChart.layEffortScore.txtName.setText("EFFORT SCORE")
-        fragBinding.inlayChart.layEffortScore.txtNumber.setText("468")
+        fragBinding.inlayChart.layEffortScore.txtNumber.setText(effortScore)
 
         fragBinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
-        fragBinding.inlayChart.layMaxEffort.txtNumber.setText("84%")
+        fragBinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
 
         RLTools.RLheightsetdisplaywebview(fragBinding.inlayChart.webViewChart,activity)
         fragBinding.inlayChart.webViewChart.webViewClient = WebViewClient()
@@ -857,15 +1064,24 @@ class RLFragSessionSummary : RLBaseFragment() {
         webSettings.domStorageEnabled = true
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
+        val zoneDataList = listOf(
+            RLZoneChartData("Zone1", fireBaseCardData?.zone1?.seconds?:0, "rgb(241, 119, 160)"),
+            RLZoneChartData("Zone2", fireBaseCardData?.zone2?.seconds?:0, "rgb(255, 207, 47)"),
+            RLZoneChartData("Zone3", fireBaseCardData?.zone3?.seconds?:0, "rgb(44, 174, 44)"),
+            RLZoneChartData("Zone4", fireBaseCardData?.zone4?.seconds?:0, "rgb(0, 153, 218)"),
+            RLZoneChartData("Zone5", fireBaseCardData?.zone5?.seconds?:0, "rgb(254, 105, 02)"),
+            RLZoneChartData("Zone6", fireBaseCardData?.zone6?.seconds?:0, "rgb(153, 0, 204)"),
+            RLZoneChartData("Zone7", fireBaseCardData?.zone7?.seconds?:0, "rgb(237, 69, 65)")
+        )
+
 
         fragBinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
-            RLAllHTMLChart.RLGetNewZoneChartHtml(), "text/html", "UTF-8", null)
-
+            RLAllHTMLChart.RLGetNewZoneChartHtml(zoneDataList,efforZoneBgrClr), "text/html", "UTF-8", null)
 
         //Main list set
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleEffort.layoutManager = linearLayoutManager
-        val adapterdata = RLFeedSessionEffortListAdapter(activity, dataList)
+        val adapterdata = RLFeedSessionEffortListAdapter(activity, dataList,fireBaseCardData?.totalTime?:0)
         fragBinding.recycleEffort.adapter = adapterdata
 
         if (cardData.hrm==0){

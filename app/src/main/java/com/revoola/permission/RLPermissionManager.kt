@@ -39,7 +39,8 @@ object RLPermissionManager {
         )
     } else {
         arrayOf(
-            Manifest.permission.BLUETOOTH_SCAN
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH
         )
     }
 

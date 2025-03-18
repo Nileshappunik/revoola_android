@@ -8,6 +8,8 @@ import com.revoola.commonobject.RLTools
 class RLDatabaseManagerWrite {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val d2_database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/").reference
+
+
     fun RLLIVEUSERSEMAILWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(RLConstants.LIVE).child(RLConstants.LIVE_USERS_EMAIL).child(userId).setValue(data)
             .addOnCompleteListener { task ->

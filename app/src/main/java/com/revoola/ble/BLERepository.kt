@@ -259,6 +259,7 @@ class BLERepository(private val context: Context) {
                 ScanFilter.Builder().setServiceUuid(ParcelUuid(HEART_RATE_SERVICE_UUID)).build(),
                 ScanFilter.Builder().setServiceUuid(ParcelUuid(SPEED_SERVICE_UUID)).build())
             bluetoothLeScanner.startScan(filters, settings, scanCallback)
+            //bluetoothLeScanner.startScan(scanCallback)
 
         } else {
             _bleFlow.value = RLBLEResult.RLError("Missing BLUETOOTH_SCAN permission")

@@ -65,7 +65,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
     private fun RLuisetup() {
         val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
        // RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        fragBinding.inlayTop.ivBack.setOnClickListener {
+        fragBinding.ivBack.setOnClickListener {
             RLcloseScreen(isSessionComplete)
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -75,10 +75,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             }
         })
 
-        fragBinding.inlayTop.ivhelp.visibility=View.GONE
-        fragBinding.inlayTop.ivTitle.setText(getString(R.string.sessionsummerys))
-        fragBinding.inlayTop.ivDescription.setText("")
-
+        fragBinding.ivTitle.setText(getString(R.string.sessionsummerys))
 
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
@@ -130,7 +127,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
             //RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLdaytimeget(cardData.totalTime.toInt())),
             RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
             RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.power.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totlaaward.toString())

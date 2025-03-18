@@ -22,8 +22,12 @@ object  RLValueName {
     const val AvgCadence="Avg Cadence"
     const val AvgEffort="Avg Effort"
     const val MaxEffort="Max Effort"
-    const val MAXCLIMBED="MAX CLIMBED"
-    const val AVGCLIMBED="MAX AVG"
+    const val MaxElevation="Max Elevation"
+    const val MinElevation="Min Elevation"
+    const val Completed="Completed"
+    const val AvaragePace="Avarage Pace"
+    const val Slowtest="Slowtest"
+    const val Fasttest="Fasttest"
 
 }
 

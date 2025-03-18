@@ -63,6 +63,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private var currentUser:String=""
     private var groupId:String=""
     private var lastfragmentopen=""
+    var appUnit:String="Metric"
 
     private val binding by lazy {
         RlFragFeedBinding.inflate(layoutInflater)
@@ -97,6 +98,14 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.feedsmall))
         fragBinding.inlayTop.ivDescription.setText("")
+
+        RLFirebaseToFetchUserData { userData ->
+            if (userData != null) {
+                appUnit =userData.appUnit
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+            }
+        }
 
         if (lastfragmentopen.equals("RLFragChallengeSummary")){
             //CHALLENGES view back event get
@@ -320,7 +329,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         //main list
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvItemFeed.layoutManager = linearLayoutManager
-        adapter = RLFeedListAdapter(activity,currentUser,currentState){ clickedItem ->
+        adapter = RLFeedListAdapter(activity,currentUser,currentState,appUnit){ clickedItem ->
             RlJoinChallengesApiCall(clickedItem)
         }
         fragBinding.rvItemFeed.adapter = adapter
@@ -510,7 +519,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                     isLoading = false
                     val linearLayoutManager = LinearLayoutManager(activity)
                     fragBinding.rvItemFeed.layoutManager = linearLayoutManager
-                    adapter = RLFeedListAdapter(activity,currentUser,currentState){ clickedItem ->
+                    adapter = RLFeedListAdapter(activity,currentUser,currentState,appUnit){ clickedItem ->
                         RlJoinChallengesApiCall(clickedItem)
                     }
                     fragBinding.rvItemFeed.adapter = adapter
