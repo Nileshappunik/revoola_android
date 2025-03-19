@@ -46,7 +46,7 @@ enum class RLTypeOfMetrics (val title: String, val image: Int, val showright:Boo
     ActiveCalories("ACTIVE CALORIES", R.drawable.fd_calories_green,false),
     AssumedCalories("ASSUMED CALORIES", R.drawable.fd_calories_green,false),
     MindfulMinutes("MINDFUL MINUTES", R.drawable.ic_mind_read,false),
-    Relaxation("RELAXATION", R.drawable.ic_mind_read,false),
+    AssumeRelaxation("ASSUMED RELAXATION", R.drawable.ic_mind_read,false),
     Cadence("CADENCE(rpm)", R.drawable.ic_cadence,false),
     AvgCadence("AVG CADENCE(rpm)", R.drawable.ic_cadence,false)
 }

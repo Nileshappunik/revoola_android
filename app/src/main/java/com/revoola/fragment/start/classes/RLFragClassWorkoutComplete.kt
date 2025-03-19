@@ -27,7 +27,6 @@ import com.revoola.RLBaseProgress
 import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
-import com.revoola.fragment.feed.RLFragBodySessionSummary
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModel

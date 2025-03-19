@@ -57,6 +57,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import android.util.Base64
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
@@ -202,7 +203,8 @@ class RLFragSessionComplete : RLBaseFragment(){
             if(isAdded){
                 RLBaseProgress.RLShowProgressDialog(requireActivity())
             }
-            RLMakeSensorData(cardData)
+            val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+            RLMakeSensorData(cardData,currentTimestamp)
         }
         val yourWayType = cardData.yourWayType.toLowerCase()
         if (yourWayType.equals("walk")||yourWayType.equals("run")||yourWayType.equals("ride")){
@@ -573,8 +575,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         return if (value == null || value < 0 ) 0 else value
     }
 
-    private fun RLMakeSensorData(cardData: RLSessionDataTransferModelNew) {
-        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+    private fun RLMakeSensorData(cardData: RLSessionDataTransferModelNew,currentTimestamp:String) {
+
         val remark ="android"
 
         val connectivityDataMap = hashMapOf(
@@ -925,6 +927,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 RLTools.RlLogDPrint(TAG,"Successful DataForTesting Entry")
             }else {
                 RLTools.RlLogEPrint(TAG,"Error DataForTesting Entry:- $error")
+                printToast(TAG,"Error DataForTesting Entry:- $error")
             }
         }
 
@@ -939,6 +942,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
                 } else {
                     RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
+                    printToast("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                 }
             }
 
@@ -951,12 +955,13 @@ class RLFragSessionComplete : RLBaseFragment(){
 
                 } else {
                     RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
+                    printToast("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                 }
             }
 
         //Entry Summery
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
-        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        val entryIdSummery = currentTimestamp
         entryIdSummery.let {
             databaseRefSummery.child(it).setValue(summaryDataMap)
                 .addOnCompleteListener { task ->
@@ -965,13 +970,14 @@ class RLFragSessionComplete : RLBaseFragment(){
 
                     } else {
                         RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
+                        printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                     }
                 }
         }
 
         //entry Graph Data
         val databaseRefGraph = FirebaseDatabase.getInstance().getReference( RevoolaFirebasePath.graphDataPath(currentUser))
-        val entryIdGraph = (System.currentTimeMillis() / 1000).toString()
+        val entryIdGraph = currentTimestamp
         entryIdGraph.let {
             databaseRefGraph.child(it).setValue(graphDataMap)
                 .addOnCompleteListener { task ->
@@ -979,13 +985,14 @@ class RLFragSessionComplete : RLBaseFragment(){
                         RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
                         RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
+                        printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                     }
                 }
         }
 
         //entry session detail data
         val databaseRef = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.detailDataPath(currentUser))
-        val entryId = (System.currentTimeMillis() / 1000).toString()
+        val entryId = currentTimestamp
         entryId.let {
             databaseRef.child(it).setValue(detailsDataMap)
                 .addOnCompleteListener { task ->
@@ -994,6 +1001,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                         RLInsertApiCall(cardData,currentTimestamp)
                     } else {
                         RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
+                        printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
                 }
         }
@@ -1008,6 +1016,13 @@ class RLFragSessionComplete : RLBaseFragment(){
             fragBinding.txtShareMap.visibility=View.GONE
             fragBinding.switchCompat.visibility=View.GONE
         }
+    }
+
+    private fun printToast(TAG:String,Message:String){
+        if (isAdded){
+           // Toast.makeText(requireContext(),Message,Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun createPayload(cardData: RLSessionDataTransferModelNew, currentTimestamp: String): String {
@@ -1048,16 +1063,19 @@ class RLFragSessionComplete : RLBaseFragment(){
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
                             RLTools.RlLogEPrint(TAG, "YourWay Insert Fail: ${response.text}")
+                            printToast(TAG, "YourWay Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
                         RLBaseProgress.RLhideProgressDialog()
                         e.printStackTrace()
                         RLTools.RlLogEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
+                        printToast(TAG, "YourWay Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
                     RLBaseProgress.RLhideProgressDialog()
                     RLTools.RlLogEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
+                    printToast(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
                 }
             }
         }
@@ -1139,20 +1157,23 @@ class RLFragSessionComplete : RLBaseFragment(){
                     try {
                         if (response.type.equals("success")) {
                             RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
-                            RLupdateUserInsightlyMoengageApiCall(cardData)
+                            RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
                             RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
+                            printToast(TAG, "Overview Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
                         RLBaseProgress.RLhideProgressDialog()
                         e.printStackTrace()
                         RLTools.RlLogEPrint(TAG, "Overview Insert Catch: ${e.message}" )
+                        printToast(TAG, "Overview Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
                     RLBaseProgress.RLhideProgressDialog()
                     RLTools.RlLogEPrint(TAG, "Overview Insert Error: ${error.message}" )
+                    printToast(TAG, "Overview Insert Error: ${error.message}" )
                 }
             }
         }
@@ -1162,7 +1183,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private fun createRequestBody(value: String): RequestBody {
         return value.toRequestBody("text/plain".toMediaTypeOrNull())
     }
-    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModelNew) {
+    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModelNew,currentTimestamp:String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val requestApi = RLInsightlyMoengageApiPayload(
@@ -1196,7 +1217,8 @@ class RLFragSessionComplete : RLBaseFragment(){
                         // Handle UI updates if required (e.g., Toast message)
                         RLBaseProgress.RLhideProgressDialog()
                         RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
-                        RLAllProcessDone(cardData)
+                        printToast(TAG, "Success")
+                        RLAllProcessDone(cardData,currentTimestamp)
                        // RLBottomHideShowSet(true)
                        // (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
                        // (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
@@ -1204,6 +1226,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                     }else{
                         RLBaseProgress.RLhideProgressDialog()
                         RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
+                        printToast(TAG, "Moengage Error: ${apiResponse.response[0].status}")
                     }
 
                 }
@@ -1256,8 +1279,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun RLAllProcessDone(cardData: RLSessionDataTransferModelNew){
-        val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
+    private fun RLAllProcessDone(cardData: RLSessionDataTransferModelNew,currentTimestamp:String){
+
         // Convert to a single comma-separated string
         var imgString: String=""
         var mapImageString: String=""

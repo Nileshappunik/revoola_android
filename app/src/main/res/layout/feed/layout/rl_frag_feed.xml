@@ -62,11 +62,10 @@
                 android:id="@+id/inlay_filter"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/filter_margin_end"
-                android:layout_marginBottom="@dimen/filter_margin_bottom"
-                android:src="@drawable/ic_filter" />
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="32dp" />
 
             <TextView
                 android:id="@+id/btnAddFriend1"

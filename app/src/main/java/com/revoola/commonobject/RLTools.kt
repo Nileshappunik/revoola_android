@@ -644,9 +644,12 @@ object RLTools {
        }else if (typename.toLowerCase().equals("challenge-monthly-duration")){
            return R.drawable.fd_active_time_green
        }
-
        else if( typename.toLowerCase().equals("yoga")){
            return R.drawable.ic_yoga
+       } else if( typename.toLowerCase().equals("warm")){
+           return R.drawable.ic_warmup
+       } else if( typename.toLowerCase().equals("hiit")){
+           return R.drawable.ic_hiit
        }else if( typename.toLowerCase().equals("pilates")){
            return R.drawable.ic_pilates
        }else if( typename.toLowerCase().equals("ride")){
@@ -655,6 +658,18 @@ object RLTools {
            return R.drawable.ic_power
        }else if( typename.toLowerCase().equals("workout")){
            return R.drawable.ic_workout
+       }else if( typename.toLowerCase().equals("mindful movement")){
+           return R.drawable.ic_move
+       }else if( typename.toLowerCase().equals("relax")){
+           return R.drawable.ic_relax
+       }else if( typename.toLowerCase().equals("sleep")){
+           return R.drawable.ic_speeed
+       }else if( typename.toLowerCase().equals("focus")){
+           return R.drawable.ic_focus
+       }else if( typename.toLowerCase().equals("energise")){
+           return R.drawable.ic_power
+       }else if( typename.toLowerCase().equals("happiness")){
+           return R.drawable.ic_sun
        }else{
            return R.drawable.ic_dance
        }

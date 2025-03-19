@@ -131,6 +131,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         }
     }
 
+    //All Card Common Value Like UserImage Title Click Event
     private fun RLcommonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
         RLTools.RLheightsetimageview(layoutBinding.imgMain)
         //RLTools.RLheightsetimageview(layoutBinding.imgMainBigChallenges)
@@ -292,12 +293,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             }
         }*/
     }
-    private fun RLthirdPartyTenBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        pos: Int,
-        isImperial: Boolean
-    ){
+    //When ThirdParty >10 Challenges Card
+    private fun RLthirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, pos: Int, isImperial: Boolean){
         layoutBinding.txtOrganizer.visibility=View.VISIBLE
         layoutBinding.txtOrganizerName.visibility=View.VISIBLE
         layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
@@ -426,11 +423,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.layoutAward.visibility=View.GONE
 
     }
-    private fun RLthirdPartyTwoBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        isImperial: Boolean
-    ){
+    private fun RLthirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
         layoutBinding.layTime.txtTime.setText(R.string.step)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()))
@@ -464,11 +457,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.blanckView1.visibility=View.VISIBLE
 
     }
-    private fun RLthirdPartyOneBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        isImperial: Boolean
-    ){
+    private fun RLthirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()).toString())
@@ -518,11 +507,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.imgThreedot.visibility=View.GONE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
-    private fun RLotherClassesBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        isImperial: Boolean
-    ){
+    //when ThirdParty 0 and Bom 1 YourWay Card
+    private fun RLotherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toDouble().roundToInt()?:0))
@@ -570,11 +556,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
     }
-    private fun RLbodyClassesBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        isImperial: Boolean
-    ){
+    private fun RLbodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
         layoutBinding.layTime.txtTime.setText(R.string.time)
         layoutBinding.layTime.txtTimeNumber.setText(RLTools.RLdaytimeget(cardData.totalTime.toInt()))
@@ -606,11 +588,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
 
 
     }
-    private fun RLmindClassBodySet(
-        cardData: RLTextOverview,
-        layoutBinding: RlLayoutFeedListBinding,
-        isImperial: Boolean
-    ) {
+    private fun RLmindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean) {
 
         layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_mind_read)
         layoutBinding.layTime.txtTime.setText(R.string.mindfulminutes)
@@ -626,6 +604,20 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.laySteps.relativeCard.visibility=View.GONE
 
     }
+
+
+    //When ThirdParty  101 then Big Challenges Card Show
+    @SuppressLint("NewApi")
+    private fun RLBigChallengesJoinBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
+        Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMainBigChallenges)
+        layoutBinding.bigChallengesTitle.setText(cardData.mainTitle)
+        layoutBinding.bigChallengesDescription.text = Html.fromHtml(cardData.className, Html.FROM_HTML_MODE_LEGACY)
+        layoutBinding.ButtonJoinChallenge.setOnClickListener {
+            onItemClicked(cardData)
+        }
+    }
+
+    //Alert AND Delete Dialog
     private fun RLshowAlertDialog() {
         val sucDialog: Dialog = Dialog(context!!)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -660,15 +652,6 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         }
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    @SuppressLint("NewApi")
-    private fun RLBigChallengesJoinBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
-        Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMainBigChallenges)
-        layoutBinding.bigChallengesTitle.setText(cardData.mainTitle)
-        layoutBinding.bigChallengesDescription.text = Html.fromHtml(cardData.className, Html.FROM_HTML_MODE_LEGACY)
-        layoutBinding.ButtonJoinChallenge.setOnClickListener {
-            onItemClicked(cardData)
-        }
     }
 
 }

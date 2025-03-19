@@ -9,14 +9,68 @@
         android:layout_height="match_parent"
         android:background="@color/AppWhiteColor">
 
-        <include
+        <RelativeLayout
             android:id="@+id/inlayTop"
-            layout="@layout/rl_layout_common_start_top"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_centerVertical="true"
+                app:tint="@color/AppMainColor"
+                android:src="@drawable/ic_arrow_back_ios"/>
+
+            <LinearLayout
+                android:id="@+id/linear_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toEndOf="@+id/ivBack"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/iv_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/omnes_regular"
+                    android:layout_marginEnd="10dp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="@color/AppBlackColor"
+                    android:textSize="14sp"/>
+
+
+                <TextView
+                    android:id="@+id/iv_Description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/omnes_regular"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp"
+                    android:textAllCaps="true"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@color/AppBlackColor"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
 
         <include
             android:id="@+id/inlay_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:layout_below="@+id/inlayTop"
             layout="@layout/rl_frag_session_summary_title"/>
 
@@ -115,7 +169,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_below="@+id/include_speed"
-                            layout="@layout/rl_feed_analysis_layout_map"/>
+                            layout="@layout/rl_feed_analysis_pace_map"/>
                     </RelativeLayout>
                 </ScrollView>
                 <TextView

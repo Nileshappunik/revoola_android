@@ -7,7 +7,6 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
-import com.revoola.fragment.feed.RLFragBodySessionSummary
 import com.revoola.fragment.feed.RLFragChallengeSummary
 import com.revoola.fragment.feed.RLFragFeed
 import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView

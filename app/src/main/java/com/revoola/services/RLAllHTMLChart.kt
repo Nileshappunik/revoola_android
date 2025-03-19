@@ -192,7 +192,7 @@ object RLAllHTMLChart {
 """.trimIndent()
         return webdata
     }
-    fun RLgetElevationHtml(arrCumDistance:String, arrElevation:String): String{
+    fun RLgetElevationHtml(arrCumDistance:String, arrElevation:String,metersLabel:String,kmsLabel:String): String{
         return """
             <!DOCTYPE html>
             <head>
@@ -211,11 +211,11 @@ object RLAllHTMLChart {
                         stroke: grey;
                         stroke-width: 1.5;
                     }
-                    .yaxis RLText{
+                    .yaxis text{
                         font-size: 30px;
                         fill: grey;
                     }
-                    .xaxis RLText{
+                    .xaxis text{
                         font-size: 30px;
                         fill: grey;
                     }
@@ -273,12 +273,12 @@ object RLAllHTMLChart {
                         .attr("class", "xaxis")
                           .attr("transform", "translate(0," + height + ")")
                           .call(d3.axisBottom(x).ticks(8).tickSizeOuter([0]))
-                        svg.append("RLText")
+                        svg.append("text")
                           .attr("x", width/2)
                           .attr("y", height+58)
                           .attr("font-size", 30)
                         .style("font-family", "omnes-pro, sans-serif")
-                          .RLText("KM's")
+                          .text("$kmsLabel")
                     
                         let minimum = d3.min(data, function (d) { return +d.arrElevation; });
                         let maximum = d3.max(data, function (d) { return +d.arrElevation; });
@@ -295,13 +295,13 @@ object RLAllHTMLChart {
                         svg.append("g")
                         .attr("class", "yaxis")
                           .call(d3.axisLeft(y).ticks(9).tickSizeInner([-width]).tickSizeOuter([0]));
-                        svg.append("RLText")
+                        svg.append("text")
                             .attr("y", -5)
 
                             .attr("x", -31)
                             .attr("font-size", 30)
             .style("font-family", "omnes-pro, sans-serif")
-                            .RLText("METERS");
+                            .text("$metersLabel");
                         // Add the area
                         svg.append("path")
                           .datum(data)
@@ -320,7 +320,7 @@ object RLAllHTMLChart {
             </html>
         """.trimIndent()
     }
-    fun RLgetSpeedHtml(arrCumDistance:String, arrElevation:String, arrCumSpeed:String): String {
+    fun RLgetSpeedHtml(arrCumDistance: String, arrElevation: String, arrCumSpeed: String, kmhLabel: String, kmsLabel: String): String {
         return """
                     <!DOCTYPE html>
                     <head>
@@ -383,10 +383,10 @@ object RLAllHTMLChart {
                                 svg.append('path').data([data]).attr('d', elivationArea).attr('fill', 'rgb(228, 235, 230)').attr('opacity', 0.6);
                                     //svg.append('path').attr('d', speedLine(data)).attr('stroke', 'rgba(0, 188, 212, 0.47)').attr('stroke-width', 3).attr('fill', 'none');
                                     svg.append('path').data([data]).attr('d', speedArea).attr('fill', 'rgba(0, 188, 212, 0.47)').attr('opacity', 0.6);
-                                    svg.append("RLText").attr("x", width/2).attr("y", height - 5 ).style("font-size", 34).style("font-family", "omnes-pro, sans-serif").RLText("KM's");
+                                    svg.append("text").attr("x", width/2).attr("y", height - 5 ).style("font-size", 34).style("font-family", "omnes-pro, sans-serif").text("$kmsLabel");/*("KM's"); ("KMH"); */
                                     
-                                const y1Axis = svg.append('g').attr("class", "axis").style("font-size", 34).attr('transform', `translate(`+ margin.left +`, 0)`).call(d3.axisLeft(y2Scale).ticks(5).tickSizeOuter([0]).tickSizeInner([0]).tickPadding(10)).append("RLText")
-                                  .attr("x", 40).attr("y", 1).attr("dy", "0.71em").attr("fill", "#000").style("font-size", 34).style("font-family", "omnes-pro, sans-serif").RLText("KMH");
+                                const y1Axis = svg.append('g').attr("class", "axis").style("font-size", 34).attr('transform', `translate(`+ margin.left +`, 0)`).call(d3.axisLeft(y2Scale).ticks(5).tickSizeOuter([0]).tickSizeInner([0]).tickPadding(10)).append("text")
+                                  .attr("x", 40).attr("y", 1).attr("dy", "0.71em").attr("fill", "#000").style("font-size", 34).style("font-family", "omnes-pro, sans-serif").text("$kmhLabel");
                                 
                               </script>
                             </body>
@@ -411,7 +411,7 @@ object RLAllHTMLChart {
                                         stroke: #c0c0bb
                                     }
 
-                                    .tick RLText {
+                                    .tick text{
                                         fill: #8e8883;
                                         font-size: 32pt;
                                         font-family: sans-serif
@@ -525,7 +525,7 @@ object RLAllHTMLChart {
 
                                         yAxisG.call(yAxis);
                                         yAxisG.selectAll(".tick line").remove();
-                                        xAxisG.selectAll(".tick RLText").remove();
+                                        xAxisG.selectAll(".tick text").remove();
 
                                         function toTimeString(seconds) {
                                             return getReadableTime(seconds);
@@ -536,14 +536,14 @@ object RLAllHTMLChart {
                                         })
                                         
                                         g.selectAll("label").data(timeAxisData)
-                                          .enter().append("RLText")
+                                          .enter().append("text")
                                             .attr("class", "label")
                                             .attr("y", d => yScale(yValue(d))+40)
                                             .attr("x", +innerWidthA+15)
                                             .attr("font-size", 32)
                                             .attr("font-family", 'sans-serif')
                                             .attr("fill", "#8E8883")
-                                            .RLText(function (d) {
+                                            .text(function (d) {
                                                 return d.time;
                                             });
                                       var totaltimeofcompkilo = 0;
