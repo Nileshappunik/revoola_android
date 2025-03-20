@@ -24,6 +24,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="LONGEST SESSION"
+                android:singleLine="true"
+
                 android:layout_toEndOf="@+id/imgsessionimage"
                 android:textColor="@color/AppBlackColor"
                 android:textSize="12sp"/>

@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.api.RLApiClientRet
@@ -70,6 +71,8 @@ class RLFragChallengeSummary : RLBaseFragment() {
 
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLFeedChallengesModelData
 
+        RLTools.RlLogDPrint(TAG,"ChSummeryCard: ${Gson().toJson(cardData)}")
+
         fragBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
         fragBinding.txtMyride.setText(cardData.challenge_name.toUpperCase().toString())
 
@@ -94,12 +97,12 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.layRank.txtTime.setText("RANK")
 
 
-        var stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
-        var targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
+        val stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
+        val targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
 
-        var remainingDays = cardData.days_remaining ?: 0
-        var timeGone = if (remainingDays >0) remainingDays else 0
-        var totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
+        val remainingDays = cardData.days_remaining ?: 0
+        val timeGone = if (remainingDays >0) remainingDays else 0
+        val totalTime = if (cardData?.totaldays ?: 0 > 0) cardData?.totaldays ?: 0 else 0
 
         // green and Blue vertical line chart
         val webSettings: WebSettings = fragBinding.webViewChart.settings
@@ -144,7 +147,6 @@ class RLFragChallengeSummary : RLBaseFragment() {
         val htmlText=RLAllHTMLChart.RLgetIndividualStepsChartHtml(jasonArray)
         fragBinding.webViewStepChart.loadDataWithBaseURL(null,htmlText, "text/html", "UTF-8", null)
 
-
         //both Api call Chart and Ranking
         RLRankingDataGetApi(cardData.challengeid)
         RLStepDataGetApi(cardData.challengeid,cardData.userid)
@@ -152,12 +154,14 @@ class RLFragChallengeSummary : RLBaseFragment() {
     }
     private fun RLRankingDataGetApi(challengeid:String){
         val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
-        val request = listOf(
-            RLSetgoaled_challenges_request(goaled_challenges = RLSetgoaled_challenges(
-                    id = challengeid,type = "users_steps", today = currentTimestamp)
-            )
-        )
+        val request = listOf(RLSetgoaled_challenges_request(
+            goaled_challenges = RLSetgoaled_challenges(
+                    id = challengeid,
+                    type = "users_steps",
+                    today = currentTimestamp)))
+
         RLTools.RlLogDPrint(TAG,"setgoaled_challenges= "+request)
+
         viewModel.RLgoaled_challenges(request) { result ->
             result.onSuccess { response ->
                 try {
@@ -180,7 +184,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
                                 }
                             }.forEach { put(it) }
                         }
-
+                        RLTools.RlLogDPrint(TAG,"RankResponse: $jsonArray")
                         RLRankingMapSet(jsonArray)
                         fragBinding.layRank.txtTimeNumber.setText("${rank.toString()} OF ${jsonArray.length()}")
                     }else {

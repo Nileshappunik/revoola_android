@@ -45,14 +45,16 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
-import com.revoola.enumclass.RLValueName
+import com.revoola.enumclass.RLValueOvName
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
+import com.revoola.model.RLTextOverview
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
+import kotlin.math.roundToInt
 
 class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     val TAG: String = RLFragOverviewSession::class.java.simpleName
@@ -260,8 +262,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppWhiteColor))
 
 
-
-
         when (valueType){
             "OVERVIEW"->{
                 (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
@@ -279,182 +279,178 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 val currentMonth= RLTools.RLgetCalculatedMonths()
                 fragBinding.txtCurrentMonth.setText(currentMonth)
                 isTextColorSetWhite=true
-
-                val award= (carddate.medals_gold ?: 0) + (carddate.medals_silver ?: 0) + (carddate.medals_bronze ?: 0)
-
+                
                 totaldisplayitem=8
                 for (i in 0 until  totaldisplayitem){
 
                     when (i){
                         0-> dataList.add(RLSessionitemset("EFFORT",
-                            RLTools.RLformatCommas(carddate.total_REV.toDouble()?:0.0),R.drawable.ic_heart))
-                        1-> dataList.add(RLSessionitemset("RELAXATION",carddate.total_rms.toString(),R.drawable.ic_mind_read))
+                            RLGetValueForTitle(RLValueOvName.Effort,carddate),R.drawable.ic_heart))
+                        1-> dataList.add(RLSessionitemset("RELAXATION",
+                            RLGetValueForTitle(RLValueOvName.Relaxation,carddate),R.drawable.ic_mind_read))
                         2-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
-                        4-> { val distance =RLTools.RLConvertDistanceData(carddate.total_distance.toDouble()?:0.0,appUnit)
-                            dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",distance,R.drawable.ic_distance))}
-                            //RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))}
+                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
+                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
+                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",
-                            RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        6-> {val climbed =RLTools.RLGetClimbData(carddate.total_elevation.toDouble()?:0.0,appUnit)
-                            dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",climbed,R.drawable.ic_climb))}
-                        7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
+                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
+                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                        7-> dataList.add(RLSessionitemset("AWARDS",
+                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
                     }
                 }
                 fragBinding.relayOverviewName.visibility=View.VISIBLE
             }
             "SESSIONS" -> {
                 RLwebviewurlload("sessions")
-                val award= (carddate.medals_gold ?: 0) + (carddate.medals_silver ?: 0) + (carddate.medals_bronze ?: 0)
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.session.toDouble()))
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Session,carddate))
                 totaldisplayitem=10
                 for (i in 0 until  totaldisplayitem){
 
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLTools.RLminutesget(carddate.max_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
+                            RLGetValueForTitle(RLValueOvName.LongestSession,carddate),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
+                            RLGetValueForTitle(RLValueOvName.AvgSession,carddate),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("EFFORT",
-                            RLTools.RLformatCommas(carddate.total_REV.toDouble()?:0.0),R.drawable.ic_heart))
-                        3-> dataList.add(RLSessionitemset("RELAXATION",carddate.total_rms.toString(),R.drawable.ic_mind_read))
+                            RLGetValueForTitle(RLValueOvName.Effort,carddate),R.drawable.ic_heart))
+                        3-> dataList.add(RLSessionitemset("RELAXATION",
+                            RLGetValueForTitle(RLValueOvName.Relaxation,carddate),R.drawable.ic_mind_read))
                         4-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
                         5-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
                         6-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
+                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
                         7-> dataList.add(RLSessionitemset("STEPS",
-                            RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        8-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",carddate.total_elevation.toString(),R.drawable.ic_climb))
-                        9-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
+                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
+                        8-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                        9-> dataList.add(RLSessionitemset("AWARDS",
+                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
                     }
                 }
 
             }
             "CALORIES" -> {
                 RLwebviewurlload("calories")
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.total_calories.toDouble()))
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.TotalCalories,carddate))
                 totaldisplayitem=6
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX CALORIES",
-                            RLTools.RLformatCommas(carddate.max_total_calories_per_session.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.MaxCalories,carddate),R.drawable.fd_calories_green))
                         1-> dataList.add(RLSessionitemset("AVG CALORIES",
-                            RLTools.RLformatCommas(carddate.avg_total_calories_per_session.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.AvgCalories,carddate),R.drawable.fd_calories_green))
                         2-> dataList.add(RLSessionitemset("MAX DAILY TOTAL",
-                            RLTools.RLformatCommas(carddate.max_daily_total_calories.toDouble()?:0.0),R.drawable.ic_max_calender_black))
+                            RLGetValueForTitle(RLValueOvName.MaxDailyTotal,carddate),R.drawable.ic_max_calender_black))
                         3-> dataList.add(RLSessionitemset("MAX DAILY ACTIVE",
-                            RLTools.RLformatCommas(carddate.max_daily_active_calories.toDouble()?:0.0),R.drawable.ic_max_calender_black))
+                            RLGetValueForTitle(RLValueOvName.MaxDailyActive,carddate),R.drawable.ic_max_calender_black))
                         4-> dataList.add(RLSessionitemset("AVG DAILY TOTAL",
-                            RLTools.RLformatCommas(carddate.avg_daily_total_calories.toDouble()?:0.0),R.drawable.ic_avg_calender_black))
+                            RLGetValueForTitle(RLValueOvName.AvgDailyTotal,carddate),R.drawable.ic_avg_calender_black))
                         5-> dataList.add(RLSessionitemset("AVG DAILY ACTIVE",
-                            RLTools.RLformatCommas(carddate.avg_daily_active_calories.toDouble()?:0.0),R.drawable.ic_avg_calender_black))
+                            RLGetValueForTitle(RLValueOvName.AvgDailyActive,carddate),R.drawable.ic_avg_calender_black))
                     }
                 }
             }
             "RELAXATION" -> {
                 RLwebviewurlload("relaxation")
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLminutesget(carddate.total_rmm.toInt()).toString())
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Relaxation,carddate))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLTools.RLminutesget(carddate.max_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
+                            RLGetValueForTitle(RLValueOvName.LongestSession,carddate),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLTools.RLminutesget(carddate.avg_time_per_session.toInt()).toString(),R.drawable.fd_active_time_green))
+                            RLGetValueForTitle(RLValueOvName.AvgSession,carddate),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("MAX RELAXATION",
-                            carddate.max_rmm_per_session.toString(),R.drawable.ic_mind_read))
+                            RLGetValueForTitle(RLValueOvName.MaxRelaxation,carddate),R.drawable.ic_mind_read))
                         3-> dataList.add(RLSessionitemset("AVG RELAXATION",
-                            carddate.avg_rmm_per_session.toString(),R.drawable.ic_mind_read))
+                            RLGetValueForTitle(RLValueOvName.AvgRelaxation,carddate),R.drawable.ic_mind_read))
                     }
                 }
             }
             "EFFORT" -> {
                 RLwebviewurlload("effort")
                 totaldisplayitem=8
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.total_REV.toDouble()))
-                val award= (carddate.medals_gold ?: 0) + (carddate.medals_silver ?: 0) + (carddate.medals_bronze ?: 0)
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Effort,carddate))
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX EFFORT",
-                            RLTools.RLformatCommas(carddate.max_REV_per_session.toDouble()?:0.0),R.drawable.ic_heart))
+                            RLGetValueForTitle(RLValueOvName.MaxEffort,carddate),R.drawable.ic_heart))
                         1-> dataList.add(RLSessionitemset("AVG EFFORT",
-                            RLTools.RLformatCommas(carddate.avg_REV_per_session.toDouble()?:0.0),R.drawable.ic_heart))
+                            RLGetValueForTitle(RLValueOvName.AvgEffort,carddate),R.drawable.ic_heart))
                         2-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLTools.RLformatCommas(carddate.total_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLTools.RLformatCommas(carddate.active_calories.toDouble()?:0.0),R.drawable.fd_calories_green))
+                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
                         4-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
+                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",
-                            RLTools.RLformatCommas(carddate.total_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
-                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",
-                            RLTools.RLformatCommas(carddate.total_elevation.toDouble()?:0.0),R.drawable.ic_climb))
-                        7-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
+                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
+                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                        7-> dataList.add(RLSessionitemset("AWARDS",
+                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
                     }
                 }
             }
             "STEPS" -> {
                 RLwebviewurlload("steps")
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.total_steps.toDouble()))
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Steps,carddate))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX STEPS",
-                            RLTools.RLformatCommas(carddate.max_steps_per_session.toDouble()?:0.0),R.drawable.fd_steps_green))
+                            RLGetValueForTitle(RLValueOvName.MaxSteps,carddate),R.drawable.fd_steps_green))
                         1-> dataList.add(RLSessionitemset("AVG STEPS",
-                            RLTools.RLformatCommas(carddate.avg_steps_per_session.toDouble()?:0.0),R.drawable.fd_steps_green))
+                            RLGetValueForTitle(RLValueOvName.AvgSteps,carddate),R.drawable.fd_steps_green))
                         2-> dataList.add(RLSessionitemset("MAX DAILY STEPS",
-                            RLTools.RLformatCommas(carddate.max_daily_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
+                            RLGetValueForTitle(RLValueOvName.MaxDailySteps,carddate),R.drawable.fd_steps_green))
                         3-> dataList.add(RLSessionitemset("AVG DAILY STEPS",
-                            RLTools.RLformatCommas(carddate.avg_daily_steps.toDouble()?:0.0),R.drawable.fd_steps_green))
+                            RLGetValueForTitle(RLValueOvName.AvgDailySteps,carddate),R.drawable.fd_steps_green))
                     }
                 }
             }
             "DISTANCE" -> {
                 RLwebviewurlload("distance")
-                fragBinding.txtTotalsessionNumber.setText(RLTools.RLformatCommas(carddate.total_distance.toDouble()))
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.DistanceNormal,carddate))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.max_distance_per_session.toDouble()?:0.0),R.drawable.ic_distance))
+                            RLGetValueForTitle(RLValueOvName.MaxDistance,carddate),R.drawable.ic_distance))
                         1-> dataList.add(RLSessionitemset("AVG DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.avg_distance_per_session.toDouble()?:0.0),R.drawable.ic_distance))
-                        2-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","feet")})",
-                            RLTools.RLformatCommas(carddate.total_elevation.toDouble()?:0.0),R.drawable.ic_climb))
+                            RLGetValueForTitle(RLValueOvName.AvgDistance,carddate),R.drawable.ic_distance))
+                        2-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
                         3-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
+                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
                     }
                 }
             }
             "CLIMBED" ->{
                 RLwebviewurlload("climbed")
-                val award= (carddate.medals_gold ?: 0) + (carddate.medals_silver ?: 0) + (carddate.medals_bronze ?: 0)
-                fragBinding.txtTotalsessionNumber.setText(carddate.total_elevation.toString())
+                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.ClimbedNormal,carddate))
                 totaldisplayitem = 4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (${RLGetKmMiles("m","feet")})",
-                            RLTools.RLformatCommas(carddate.max_elevation_per_session.toDouble()?:0.0),R.drawable.ic_climb))
-                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (${RLGetKmMiles("m","feet")})",
-                            RLTools.RLformatCommas(carddate.avg_elevation_per_session.toDouble()?:0.0),R.drawable.ic_climb))
+                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.MaxClimbed,carddate),R.drawable.ic_climb))
+                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (${RLGetKmMiles("m","ft")})",
+                            RLGetValueForTitle(RLValueOvName.AvgClimbed,carddate),R.drawable.ic_climb))
                         2-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLTools.RLformatCommas(carddate.total_distance.toDouble()?:0.0),R.drawable.ic_distance))
-                        3-> dataList.add(RLSessionitemset("AWARDS",award.toString(),R.drawable.ic_award))
+                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                        3-> dataList.add(RLSessionitemset("AWARDS",
+                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
                     }
                 }
             }
         }
         adapterdata.RLsetList(dataList,isTextColorSetWhite)
-    }
-
-    private fun RLGetKmMiles(km:String,miles:String):String{
-        val isImperial = RLTools.RLGetIsImperial(appUnit)
-        return if (isImperial) miles else km
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -744,5 +740,91 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
             }
         }
+    }
+
+    private fun RLGetValueForTitle(title: String, cardOvData: RlOverviewGraphData): String {
+        val isImperial = RLTools.RLGetIsImperial(appUnit)
+
+        return when (title) {
+            RLValueOvName.Effort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_REV))
+            RLValueOvName.MaxEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_REV_per_session))
+            RLValueOvName.AvgEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_REV_per_session))
+
+            RLValueOvName.Awards  -> {
+                val totalAwards = cardOvData.medals_bronze + cardOvData.medals_silver + cardOvData.medals_gold
+                if (totalAwards != 0) totalAwards.toString() else "0"
+            }
+            RLValueOvName.Steps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_steps))
+            RLValueOvName.MaxSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_steps_per_session))
+            RLValueOvName.AvgSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_steps_per_session))
+            RLValueOvName.MaxDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_daily_steps))
+            RLValueOvName.AvgDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_daily_steps))
+
+            RLValueOvName.Distance  -> RLConvertDistance(isImperial,cardOvData)
+            RLValueOvName.DistanceNormal  -> RLTools.RLformatCommas(convertToDouble(cardOvData.total_distance))
+            RLValueOvName.MaxDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.max_distance_per_session) )
+            RLValueOvName.AvgDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.avg_distance_per_session))
+
+            RLValueOvName.Relaxation -> RLTools.RLminutesget(convertToInt(cardOvData.total_rmm))
+            RLValueOvName.MaxRelaxation -> convertToInt(cardOvData.max_rmm_per_session).toString()
+            RLValueOvName.AvgRelaxation -> convertToInt(cardOvData.avg_rmm_per_session).toString()
+            RLValueOvName.TotalCalories -> convertToInt(cardOvData.total_calories).toString()
+            RLValueOvName.ActiveCalories -> convertToInt(cardOvData.active_calories).toString()
+
+            RLValueOvName.AvgClimbed -> convertToInt(cardOvData.avg_elevation_per_session).toString()
+            RLValueOvName.MaxClimbed -> convertToInt(cardOvData.max_elevation_per_session).toString()
+            RLValueOvName.ClimbedNormal -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_elevation))
+            RLValueOvName.Climbed  -> {
+                val demsElevation:Int = convertToInt(cardOvData.total_elevation?:-1)
+                val elevation = if (!isImperial) {
+                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt(demsElevation)
+                } else {
+                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt((demsElevation * 3.28084).toInt())
+                }
+                elevation.toString()
+            }
+            RLValueOvName.Session -> convertToInt(cardOvData.session).toString()
+            RLValueOvName.AvgSession -> RLTools.RLminutesget(convertToInt(cardOvData.avg_time_per_session))
+            RLValueOvName.LongestSession -> RLTools.RLminutesget(convertToInt(cardOvData.max_time_per_session))
+            RLValueOvName.MaxCalories -> convertToInt(cardOvData.max_total_calories_per_session).toString()
+            RLValueOvName.AvgCalories -> convertToInt(cardOvData.avg_total_calories_per_session).toString()
+            RLValueOvName.MaxDailyTotal -> convertToInt(cardOvData.max_daily_total_calories).toString()
+            RLValueOvName.MaxDailyActive -> convertToInt(cardOvData.max_daily_active_calories).toString()
+            RLValueOvName.AvgDailyTotal -> convertToInt(cardOvData.avg_daily_total_calories).toString()
+            RLValueOvName.AvgDailyActive -> convertToInt(cardOvData.avg_daily_active_calories).toString()
+            else -> "0"
+        }
+
+    }
+    private fun RLConvertDistance(isImperial: Boolean, cardOvData: RlOverviewGraphData): String {
+        val distance=convertToDouble(cardOvData.total_distance)
+        if (!isImperial) {
+            return RLTools.RLformatCommas(distance)
+        } else{
+            return  RLTools.RLformatCommas(distance * 0.621371)
+        }
+    }
+    private fun convertToInt(value: Any): Int {
+        return when (value) {
+            is Double -> value.roundToInt()
+            is Float -> value.roundToInt()
+            is Int -> value
+            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
+            else -> 0 // Default fallback for unsupported types
+        }
+    }
+    private fun convertToDouble(value: Any): Double {
+        return when (value) {
+            is Double -> if (value.isFinite()) value else 0.0
+            is Float -> if (value.isFinite()) value.toDouble() else 0.0
+            is Int -> value.toDouble()
+            is Long -> value.toDouble()
+            is String -> value.toDoubleOrNull()?.takeIf { it.isFinite() } ?: 0.0
+            else -> 0.0
+        }
+    }
+    private fun RLGetKmMiles(km:String,miles:String):String{
+        val isImperial = RLTools.RLGetIsImperial(appUnit)
+        return if (isImperial) miles else km
     }
 }

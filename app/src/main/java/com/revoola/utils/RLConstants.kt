@@ -20,6 +20,11 @@ package com.revoola.utils
         const val NO_SENSOR = "NOSENSOR"
         const val weightInKg = 70.0
 
+        //Imperial Calculation
+        const val distanceTomiles= 0.621371  // *0.621371
+        const val meterToFeet= 3.28084 // *3.28084
+        const val speedmilesperhpour= 1.609  // /1.609
+
         //Realtime Database Table Name
         const val LIVE = "live"
         const val LIVE_USERS_EMAIL = "liveUsersEmail"

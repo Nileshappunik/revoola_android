@@ -26,7 +26,7 @@
         android:text="--"
         android:fontFamily="@font/omnes_regular"
         android:textColor="@color/AppBlackColor"
-        android:textSize="12sp"/>
+        android:textSize="10sp"/>
 
     <TextView
         android:id="@+id/txt_time_number"
@@ -35,10 +35,9 @@
         android:layout_marginStart="15dp"
         android:layout_below="@+id/txt_time"
         android:layout_toEndOf="@+id/img_time"
-
         android:textStyle="bold"
         android:textColor="@color/AppBlackColor"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <View
         android:id="@+id/view_common"

@@ -1,6 +1,6 @@
 package com.revoola.enumclass
 
-import com.revoola.R
+
 
 object  RLValueName {
     const val TotalTime="Total Time"
@@ -8,6 +8,7 @@ object  RLValueName {
     const val AvgHeartRate="Avg Heart Rate"
     const val MaxHeartRate="Max Heart Rate"
     const val ActiveCalories="Active Calories"
+    const val TotalCalories="Total Calories"
     const val Boosts="Boosts"
     const val Comments="Comments"
     const val Awards="Awards"
@@ -19,6 +20,7 @@ object  RLValueName {
     const val MaxSpeed="Max Speed"
     const val AssumedEffort="AssumedEffort"
     const val AssumedCalories="AssumedCalories"
+    const val AssumedRelaxation="AssumedRelaxation"
     const val AvgCadence="Avg Cadence"
     const val AvgEffort="Avg Effort"
     const val MaxEffort="Max Effort"
@@ -28,6 +30,11 @@ object  RLValueName {
     const val AvaragePace="Avarage Pace"
     const val Slowtest="Slowtest"
     const val Fasttest="Fasttest"
+    const val Relaxation="Relaxation"
+    const val LongestSession="LongestSession"
+    const val AvgSession="AvgSession"
+    const val Session="Session"
+
 
 }
 

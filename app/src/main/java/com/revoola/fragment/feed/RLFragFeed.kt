@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -355,9 +356,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 try {
                     if (response.type.equals("success")){
                         RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        /*val gson = Gson()
-                        val jsonArray = gson.toJson(response.text)
-                       RLTools.RlLogEPrint(TAG,"Success= $jsonArray")*/
+                        RLTools.RlLogDPrint(TAG,"ChResponse: ${Gson().toJson(response.text)}")
                         if (response.text.data.isNullOrEmpty()){
                             fragBinding.inlayNoData.noDataLayout.visibility=View.VISIBLE
                         }else{

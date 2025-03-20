@@ -583,6 +583,8 @@ object RLTools {
            return R.drawable.ic_dance
        }else if( typename.toLowerCase().equals("run")){
            return R.drawable.ic_run
+       }else if( typename.toLowerCase().equals("effort")){
+           return R.drawable.ic_heart
        }else if (typename.toLowerCase().equals("challenge-effort")){
            return R.drawable.ic_heart
        }else if (typename.toLowerCase().equals("challenge-custom-effort")){
@@ -709,12 +711,11 @@ object RLTools {
     }
 
     fun RLFeedSetImage(datas: RLTextOverview, currentUserId:String, selectTag:String): String {
-        var returnValue = ""
         if (datas != null) {
             when (datas.from_third_party_source) {
                 1 -> {
                     val key = datas.className?.toLowerCase() ?: ""
-                    returnValue = when {
+                    return when {
                         key.contains("fitbit") -> "https://video.revoola.com/v2/images/v3_app_fitbit.png"
                         key.contains("strava") -> "https://video.revoola.com/v2/images/v3_app_strava.png"
                         key.contains("garmin") || key.contains("connect") -> "https://video.revoola.com/v2/images/v3_app_connect.png"
@@ -727,43 +728,44 @@ object RLTools {
                     }
                 }
                 2 -> {
-                    if (datas.source == "ios") {
-                        returnValue = "https://video.revoola.com/v2/images/v3_app_applehealth.png"
+                    if (datas.source.toLowerCase().equals("ios")) {
+                       return "https://video.revoola.com/v2/images/v3_app_applehealth.png"
                     } else {
-                        returnValue = "https://video.revoola.com/v2/images/_app_healthconnect.png"
+                       return "https://video.revoola.com/v2/images/_app_healthconnect.png"
                     }
                 }
-                else -> if (datas.from_third_party_source > 10) {
-                    returnValue = "https://video.revoola.com/v2/start/challenges_start.jpg"
-                } else {
-                    val userImages = datas.user_images?.split(",") ?: emptyList()
-                    if (userImages.isNotEmpty()&& !userImages[0].isNullOrEmpty()) {
-                        returnValue =  userImages[0]
-                    }
-                    else if (!datas.imageLinkSmall.isNullOrEmpty()) {
-                        returnValue = datas.imageLinkSmall
-                    }
-                    else if (!datas.map_image.isNullOrEmpty() &&
-                        (selectTag.toLowerCase() == "you" ||
-                                datas.userid == currentUserId ||
-                                (selectTag.toLowerCase() == "friends" && datas.share_map == 1))) {
-                        returnValue =   datas.map_image
-                    }
-                    else {
-                        when (datas.classType?.toLowerCase()) {
-                            RLYourWayName.Workout.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
-                            RLYourWayName.Pilates.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
-                            RLYourWayName.Ride.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_ride.png"
-                            RLYourWayName.Run.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_run.png"
-                            RLYourWayName.Walk.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
-                            RLYourWayName.Yoga.toString().toLowerCase() -> returnValue = "https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+                else ->{
+                    if (datas.from_third_party_source > 10) {
+                       return "https://video.revoola.com/v2/start/challenges_start.jpg"
+                    }else {
+                        val userImages = datas.user_images?.split(",") ?: emptyList()
+                        if (userImages.isNotEmpty()&& !userImages[0].isNullOrEmpty()) {
+                            return userImages[0]
+                        }
+                        else if (!datas.imageLinkSmall.isNullOrEmpty()) {
+                            return datas.imageLinkSmall
+                        }
+                        else if (!datas.map_image.isNullOrEmpty() && (selectTag.toLowerCase() == "you" ||datas.userid == currentUserId || (selectTag.toLowerCase() == "friends" && datas.share_map == 1))) {
+                            return  datas.map_image
+                        }
+                        else {
+                          return  when (datas.classType?.toLowerCase()) {
+                                RLYourWayName.Workout.toString().toLowerCase() -> "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
+                                RLYourWayName.Pilates.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
+                                RLYourWayName.Ride.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_ride.png"
+                                RLYourWayName.Run.toString().toLowerCase() -> "https://video.revoola.com/v2/images/iphone8landscape_run.png"
+                                RLYourWayName.Walk.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+                                RLYourWayName.Yoga.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
+                              else -> "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+                            }
                         }
                     }
                 }
             }
+        }else{
+            return ""
         }
 
-        return returnValue
     }
 
      fun RLGetLinkImage(classType:String):String{
@@ -1148,19 +1150,6 @@ object RLTools {
         } else {
             String.format("%02dm", minutes)
         }
-    }
-
-
-    fun RLConvertDistanceData(distance: Double?,appUnit:String): String {
-        if (!isValidValue(distance)) return "0"
-        val convertedDistance = if (RLGetIsImperial(appUnit)) distance?.div(1.609) else distance
-        return RLFormatValue("distance", convertedDistance ?: 0.0)
-    }
-
-    fun RLGetClimbData(elevation: Double?,appUnit:String): String {
-        if (!isValidValue(elevation)) return "0"
-        val convertedElevation = if (RLGetIsImperial(appUnit)) elevation?.times(3.281) else elevation
-        return convertedElevation?.toInt().toString()
     }
 
     fun RLGetDisplayMessage(joiningDate:Long,sessionCount:Int): String {

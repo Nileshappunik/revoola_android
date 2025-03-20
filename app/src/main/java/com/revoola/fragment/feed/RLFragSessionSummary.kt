@@ -826,7 +826,18 @@ class RLFragSessionSummary : RLBaseFragment() {
                     fragBinding.txtWithouthrmessageAnalysis.visibility=View.GONE
                     RLanalysisPaceUISetup()
                 }
+                if (!fireBaseDetailCardData?.arrElevation.isNullOrEmpty()){
+                    val elevation = if (fireBaseCardData?.demsElevation == 0.0 && fireBaseCardData?.totalElevation != 0.0) {
+                        fireBaseCardData?.totalElevation
+                    } else {
+                        fireBaseCardData?.demsElevation
+                    } ?: 0.0
 
+                    if (convertToInt(elevation) > 5 || elevation == -1.0) {
+                        fragBinding.includeElevation.relativeCard.visibility=View.VISIBLE
+                        RLanalysisElevationUISetup()
+                    }
+                }
             }
         }
         else{
