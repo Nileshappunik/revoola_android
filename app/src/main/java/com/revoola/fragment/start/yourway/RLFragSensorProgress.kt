@@ -122,7 +122,7 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var RestingHR="50"
     private var emailId=""
     private var isBasicDataAdded=true
-
+    private var visibilityflagforthatsession:Int = 0
 
     private var  zoneDataMapSummery: MutableMap<String, RLZoneDataSummery> = mutableMapOf()
     private var  zoneDataMapDetails: MutableMap<String, RLZoneDataDetails> = mutableMapOf()
@@ -133,10 +133,10 @@ class RLFragSensorProgress : RLBaseFragment(){
     private var longitude:Double =0.0
 
     private var classType="workout"
-    var assumedCalories= RLAssumedCalories()
-    var assumedRev= RLAssumedRev()
+    private var assumedCalories= RLAssumedCalories()
+    private var assumedRev= RLAssumedRev()
 
-    val gpxStringBuilder = StringBuilder()
+    private val gpxStringBuilder = StringBuilder()
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSensorProgress()
@@ -189,6 +189,7 @@ class RLFragSensorProgress : RLBaseFragment(){
                 RestingHR=userData.restingHr
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
+                visibilityflagforthatsession=userData.visibilityflagforthatsession
                 isImperial= RLTools.RLGetIsImperial(userData.appUnit)
                 RLwayTypeDesignSet(yourWayType)
             } else {
@@ -319,6 +320,7 @@ class RLFragSensorProgress : RLBaseFragment(){
             cardData.appUnit = appUnit
             cardData.emailId = emailId
             cardData.isBasicDataAdded = isBasicDataAdded
+            cardData.visibilityflagforthatsession = visibilityflagforthatsession
 
             //bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)
@@ -469,7 +471,6 @@ class RLFragSensorProgress : RLBaseFragment(){
             fragBinding.inlaySpeed.layMax.visibility=View.VISIBLE
 
 
-
         }else if (yourWayType.equals("Run")||yourWayType.equals("Walk")){
             fragBinding.inlayStep.imgTime.setImageResource(R.drawable.fd_steps_green)
             fragBinding.inlayStep.txtProgressTime.setText(R.string.step)
@@ -603,7 +604,7 @@ class RLFragSensorProgress : RLBaseFragment(){
         updateZoneData(1)
     }
 
-    //GPS VALU GET
+    //GPS VALUE GET
     private fun RLstepGetToGPS() {
         try {
             issGpsConnect=true
@@ -921,7 +922,6 @@ class RLFragSensorProgress : RLBaseFragment(){
 
     private fun getZoneDataMapSummery(): Map<String, RLZoneDataSummery> = zoneDataMapSummery.toMap()
     private fun getZoneDataMapDetail(): Map<String, RLZoneDataDetails> = zoneDataMapDetails.toMap()
-
     private fun initializeDefaultZonesSummery() {
         listOf(
             RevoolaKeys.Zone1,

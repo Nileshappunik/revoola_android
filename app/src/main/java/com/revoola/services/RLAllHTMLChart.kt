@@ -576,7 +576,7 @@ object RLAllHTMLChart {
                                 </html>  
         """.trimIndent()
     }
-    fun RLgetChallengeChartHtml (steps_so_far:Int,target_steps:Int,time_gone:Int,total_time:Int) : String{
+    fun RLgetChallengeChartHtml (steps_so_far:Int,target_steps:Int,time_gone:Int,total_time:Int,title:String) : String{
         return """
          <!DOCTYPE html>
          <html>
@@ -634,7 +634,7 @@ object RLAllHTMLChart {
              var yAxis = d3.axisRight(y).ticks(3).tickValues([25, 50, 75]).tickFormat(d => d + "%");
              y.domain([0, 100]);
 
-             svg.append("g").attr("transform", "translate(" + (x_mid + 60) + "," + 50 + ")")
+             svg.append("g").attr("transform", "translate(" + (x_mid + 20) + "," + 50 + ")")
                  .attr("class", "yaxis").call(yAxis);
 
              // Adjust text positions
@@ -642,7 +642,7 @@ object RLAllHTMLChart {
                  .attr("x", step_x + width / 2)
                  .attr("y", 40)
                  .attr("text-anchor", "middle")
-                 .text("STEPS");
+                 .text("$title");
 
              svg.append("text")
                  .attr("x", time_x + width / 2)
@@ -1635,7 +1635,8 @@ object RLAllHTMLChart {
             .style("font-size", name_font_size)
             .style("font-family", font_family)
             .style("text-anchor", "end") // Right-align the text
-            .text(d => formatSecondsToHHMM(parseInt(d.number2.replace(/,/g, ''), 10))); // Convert number2 to seconds and format
+             .text(d =>d.number2.toLocaleString('en-US'));
+          //  .text(d => formatSecondsToHHMM(parseInt(d.number2.replace(/,/g, ''), 10))); // Convert number2 to seconds and format
 
        
     </script>

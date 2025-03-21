@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Gender"
         android:layout_marginTop="16dp"
+        android:textAllCaps="true"
         android:fontFamily="@font/omnes_semibold_regular"
         android:textSize="18sp"
         android:textColor="@android:color/black"
@@ -25,20 +26,20 @@
         android:orientation="vertical">
 
         <RadioButton
-            android:id="@+id/radioButtonFemale"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/AppMainColor"
-            android:paddingStart="15dp"
-            android:text="Female" />
-
-        <RadioButton
             android:id="@+id/radioButtonMale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
             android:buttonTint="@color/AppMainColor"
-            android:text="Male" />
+            android:text="MALE" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFemale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/AppMainColor"
+            android:paddingStart="15dp"
+            android:text="FEMALE" />
 
         <RadioButton
             android:id="@+id/radioButtonOther"
@@ -46,7 +47,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="15dp"
             android:buttonTint="@color/AppMainColor"
-            android:text="Other" />
+            android:text="PREFER NOT TO SAY" />
 
     </RadioGroup>
 

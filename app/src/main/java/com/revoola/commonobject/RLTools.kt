@@ -571,7 +571,21 @@ object RLTools {
         }
         return ChallengeName
     }
-
+     fun RLGetMetricsName(metric:String?): String {
+        val metric = metric ?: return "STEPS"
+        return if (metric.equals("elevation", ignoreCase = true)) {
+            "CLIMBED"
+        } else {
+            metric.uppercase()
+        }
+    }
+     fun RLGetClassTypeValue(classType: String?): String {
+        return when {
+            classType?.contains("steps", ignoreCase = true) == true -> "steps"
+            classType?.contains("effort", ignoreCase = true) == true -> "effort"
+            else -> "steps"
+        }
+    }
     fun RLgeticon(typename:String): Int {
        if( typename.toLowerCase().equals("walk")){
            return R.drawable.ic_walk
@@ -585,6 +599,8 @@ object RLTools {
            return R.drawable.ic_run
        }else if( typename.toLowerCase().equals("effort")){
            return R.drawable.ic_heart
+       }else if( typename.toLowerCase().equals("elevation")){
+           return R.drawable.ic_climb
        }else if (typename.toLowerCase().equals("challenge-effort")){
            return R.drawable.ic_heart
        }else if (typename.toLowerCase().equals("challenge-custom-effort")){

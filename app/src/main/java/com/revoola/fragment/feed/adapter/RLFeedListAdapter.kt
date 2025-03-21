@@ -332,7 +332,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         val totalDays = (duration / 86400).toInt()
         val totalTime = if (totalDays ?: 0 > 0) totalDays ?: 0 else 0
 
-        val htmlText= RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime)
+        val htmlText= RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime,RLTools.RLGetMetricsName(RLTools.RLGetClassTypeValue(cardData.classType)))
 
         layoutBinding.webViewChart.loadDataWithBaseURL(null,
             htmlText, "text/html", "UTF-8", null)
@@ -387,7 +387,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             "duration"->{
                 layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_active_time_green)
                 layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+                layoutBinding.layCalories.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Steps,cardData))
 
             }
         }
@@ -396,18 +396,18 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         if (cardData.originalClassDate.equals("shared")){
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.sharedtargetcaps)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommasInt(convertToInt(cardData.goal)))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
         }else{
             layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
             layoutBinding.layAssumedeffort.txtTime.setText(R.string.individualtargetcaps)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommasInt(convertToInt(cardData.goal)))
+            layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
         }
 
         layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
         layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
-        layoutBinding.laySteps.txtTimeNumber.setText("${cardData.hrm.toString()} of ${cardData.share_map.toString()}")
+        layoutBinding.laySteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Rank,cardData))
 
         layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
@@ -680,6 +680,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
                 RLValueName.MaxEffort -> convertToInt(cardData.maxRevPercentage).toString()+"%"
                 RLValueName.ActiveCalories -> convertToInt(cardData.burntCalories).toString()
                 RLValueName.AssumedRelaxation -> RLTools.RLformatCommasInt(convertToInt(cardData.totalRMS))
+                RLValueName.Rank ->cardData.hrm.toString()+ " of " +cardData.share_map.toString()
+                RLValueName.Goal ->RLTools.RLformatCommasInt(convertToInt(cardData.goal))
                 else -> "0"
             }
 

@@ -101,8 +101,11 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.layCalories.viewCommon.visibility = View.GONE
                 layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
                 layoutBinding.laySteps.viewCommon.visibility = View.GONE
-                layoutBinding.viewBottom.visibility = View.VISIBLE
-
+                if (position == dataList.size-1){
+                    layoutBinding.viewBottom.visibility = View.GONE
+                }else{
+                    layoutBinding.viewBottom.visibility = View.VISIBLE
+                }
 
                 layoutBinding.txtUsername.setText(cardData.username.toString())
                 layoutBinding.txtMyride.setText(cardData.challenge_name.toString())
@@ -126,7 +129,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 }else{
                     layoutBinding.layTime.txtTimeNumber.setText(cardData.totaldays.toString()+" of "+cardData.totaldays.toString()+" Days")
                 }
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_steps_green)
+                layoutBinding.layCalories.imgTime.setImageResource(RLTools.RLgeticon(cardData.metric))
                 layoutBinding.layCalories.txtTime.setText("ACHIEVED SO FAR")
                 layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
 
@@ -136,7 +139,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
                 layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
-                layoutBinding.laySteps.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.length_of_challenge.toString().toDouble().roundToInt()}")
+                layoutBinding.laySteps.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.participants.toString()}")
 
                 layoutBinding.cardChalengis.setOnClickListener {
                     val bundle = Bundle()
@@ -162,7 +165,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
                 layoutBinding.webViewChart.webViewClient = WebViewClient()
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
-                    RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+                    RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime,RLTools.RLGetMetricsName(cardData.metric)), "text/html", "UTF-8", null)
 
                 layoutBinding.imgShare.setOnClickListener {
                  // RLBranchManager(context!!).RLGenerateBranchLink(cardData.challenge_name, cardData.adminfullname,cardData.avatar)

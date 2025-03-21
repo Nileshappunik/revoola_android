@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.RLBaseFragment
 import com.revoola.api.RLApiClientRet
@@ -21,6 +22,9 @@ import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLDatabaseManagerRead
+import com.revoola.enumclass.RLValueName
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -35,6 +39,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
+    var appUnit:String="Metric"
 
     private val binding by lazy {
         RlFragChallengeSummaryBinding.inflate(layoutInflater)
@@ -65,11 +70,13 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        fragBinding.inlayTop.ivhelp.setImageResource(R.drawable.ic_share)
-        fragBinding.inlayTop.ivTitle.setText(R.string.challengesummery)
-        fragBinding.inlayTop.ivDescription.setText("")
-
+        RLonBackPresAct(fragBinding.ivBack)
+        fragBinding.ivTitle.setText(R.string.challengesummery)
+        RLDatabaseManagerRead().RlAppUnitRead { data, error ->
+            if (data != null) {
+             appUnit = data.toString()
+            }
+        }
 
         var classType=""
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
@@ -89,81 +96,81 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
             "effort"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targeteffort)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.ic_heart)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_heart)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Effort,cardData))
 
             }
             "steps"->{
 
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetsteps)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.fd_steps_green)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_steps_green)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Steps,cardData))
 
             }
             "calories"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetcalories)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.fd_calories_green)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_calories_green)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.burntCalories.toDouble()))
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.ActiveCalories,cardData))
 
             }
             "distance"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetdistance)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.ic_distance)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_distance)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Distance,cardData))
 
             }
             "climbed"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targetclimbed)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.ic_climb)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.ic_climb)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.distance)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.distance.toDouble()))
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Distance,cardData))
 
             }
             "duration"->{
                 fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.ic_goal)
                 fragBinding.layTargetsteps.txtTime.setText(R.string.targettotalduration)
-                fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.goal.toDouble()).toString())
+                fragBinding.layTargetsteps.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Goal,cardData))
 
                 fragBinding.imgMyride.setImageResource(R.drawable.fd_active_time_green)
 
                 fragBinding.layDaysremaining.imgTime.setImageResource(R.drawable.fd_active_time_green)
                 fragBinding.layDaysremaining.txtTime.setText(R.string.youachived)
-                fragBinding.layDaysremaining.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.steps.toDouble()).toString())
+                fragBinding.layDaysremaining.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Steps,cardData))
 
             }
         }
 
         fragBinding.layRank.txtTime.setText(R.string.rank)
         fragBinding.layRank.imgTime.setImageResource(R.drawable.ic_ranking)
-        fragBinding.layRank.txtTimeNumber.setText(cardData.hrm.toString()+ " of " +cardData.share_map.toString())
+        fragBinding.layRank.txtTimeNumber.setText(RLGetValueForTitle(RLValueName.Rank,cardData))
 
       /*var stepsSoFar = if (cardData.actualtotal ?: 0 > 0) cardData.actualtotal ?: 0 else 0
         var targetSteps = if (cardData.totaltarget ?: 0 > 0) cardData.totaltarget ?: 0 else 0
@@ -188,7 +195,7 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewChart.webViewClient = WebViewClient()
         fragBinding.webViewChart.loadDataWithBaseURL(null,
-            RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime,RLTools.RLGetMetricsName(RLTools.RLGetClassTypeValue(cardData.classType))), "text/html", "UTF-8", null)
 
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
         webRankingSettings.javaScriptEnabled = true
@@ -205,6 +212,49 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         fragBinding.webViewRankingChart.loadDataWithBaseURL(null,htmltext, "text/html", "UTF-8", null)
         RLRankingDataGetApi(cardData.mainTitle)
 
+    }
+
+    private fun RLGetValueForTitle(title: String,cardData:RLTextOverview): String {
+        val isImperial = RLTools.RLGetIsImperial(appUnit)
+
+        return when (title) {
+            RLValueName.TotalTime -> RLTools.RLdaytimeget(convertToInt(cardData.totalTime))
+            RLValueName.Effort  -> RLTools.RLformatCommasInt(convertToInt(cardData.totalREV))
+            RLValueName.Boosts  -> if (cardData.total_kudos != 0) cardData.total_kudos.toString() else "0"
+            RLValueName.Comments  -> if (cardData.total_comments != 0) cardData.total_comments.toString() else "0"
+            RLValueName.Awards  -> {
+                val totalAwards = cardData.medals_bronze + cardData.medals_silver + cardData.medals_gold
+                if (totalAwards != 0) totalAwards.toString() else "0"
+            }
+            RLValueName.Steps  -> RLTools.RLformatCommasInt(convertToInt(cardData.steps))
+            RLValueName.Distance  -> if (!isImperial) RLTools.RLformatCommas(cardData.distance?:0.0) else RLTools.RLformatCommas(cardData.distance * 0.621371)
+            RLValueName.Climbed  -> {
+                val demsElevation:Int = convertToInt(cardData.elevation?:-1)
+                val elevation = if (!isImperial) {
+                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt(demsElevation)
+                } else {
+                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt((demsElevation * 3.28084))
+                }
+                elevation.toString()
+            }
+            RLValueName.AvgEffort -> convertToInt(cardData.avgRevPercentage).toString()+"%"
+            RLValueName.MaxEffort -> convertToInt(cardData.maxRevPercentage).toString()+"%"
+            RLValueName.ActiveCalories -> convertToInt(cardData.burntCalories).toString()
+            RLValueName.AssumedRelaxation -> RLTools.RLformatCommasInt(convertToInt(cardData.totalRMS))
+            RLValueName.Rank ->cardData.hrm.toString()+ " of " +cardData.share_map.toString()
+            RLValueName.Goal ->RLTools.RLformatCommasInt(convertToInt(cardData.goal))
+            else -> "0"
+        }
+
+    }
+    private fun convertToInt(value: Any): Int {
+        return when (value) {
+            is Double -> value.roundToInt()
+            is Float -> value.roundToInt()
+            is Int -> value
+            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
+            else -> 0 // Default fallback for unsupported types
+        }
     }
     private fun RLRankingDataGetApi(challengeid:String){
         val jasonArray=JSONArray()

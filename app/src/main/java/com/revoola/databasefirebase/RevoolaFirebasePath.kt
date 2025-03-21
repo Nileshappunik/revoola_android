@@ -64,4 +64,11 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaUserSessionDetailData/$currentUser/$timeStamp"
     }
 
+    fun basicDataPathWrite(endPoint:String):String{
+        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        return "/$basePath/revoolaUserSettings/$userId/basicData/$endPoint"
+    }
+
+
+
 }

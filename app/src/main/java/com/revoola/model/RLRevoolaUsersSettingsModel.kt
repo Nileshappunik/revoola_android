@@ -32,7 +32,7 @@ data class RLRevoolaUsersSettingsModel (val AMHR: Int,
                                         val numberOfGhost: String,
                                         val power: Int,
                                         val referUser: String,
-                                        val referalCode: String,
+                                        val referalCode: String ="",
                                         val remark: String,
                                         val restingHr: String,
                                         val totalRev: Int,
@@ -62,3 +62,6 @@ data class CurrentSubscription(
     val validDays: Int,
     val validDaysMonth: Int
 )
+
+
+

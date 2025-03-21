@@ -34,6 +34,8 @@ object  RLValueName {
     const val LongestSession="LongestSession"
     const val AvgSession="AvgSession"
     const val Session="Session"
+    const val Rank="Rank"
+    const val Goal="Goal"
 
 
 }

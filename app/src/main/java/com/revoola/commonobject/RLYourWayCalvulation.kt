@@ -143,10 +143,10 @@ object RLYourWayCalvulation {
         return clm.toString()
     }
     // check the valid value or not return 0
-    private fun isValidValue(value: Any?): Boolean {
+     fun isValidValue(value: Any?): Boolean {
         return value!= null && value!= "" &&!value.toString().matches(Regex("\\d+"))
     }
-    private fun getIsImperial(appUnit:String):Boolean {
+     fun getIsImperial(appUnit:String):Boolean {
         if (appUnit.equals("Imperial")){
             return true;
         }else if (appUnit.equals("Metric")){

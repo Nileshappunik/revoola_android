@@ -111,6 +111,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
     private var RFMHR=191
     private var RestingHR="50"
     private var appUnit:String="Metric"
+    private var visibilityflagforthatsession:Int=0
     private var isImperial:Boolean = false
     private var emailId=""
     private var isBasicDataAdded=true
@@ -198,6 +199,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 appUnit=userData.appUnit
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
+                visibilityflagforthatsession=userData.visibilityflagforthatsession
                 isImperial= RLTools.RLGetIsImperial(userData.appUnit)
                 RLwayTypeDesignSet(yourWayType)
             } else {
@@ -389,6 +391,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             cardData.appUnit = appUnit
             cardData.emailId = emailId
             cardData.isBasicDataAdded = isBasicDataAdded
+            cardData.visibilityflagforthatsession = visibilityflagforthatsession
 
             //bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)

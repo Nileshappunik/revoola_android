@@ -85,7 +85,8 @@ class RLSessionDataTransferModelNew(
     var arrLocationDetails: MutableList<RLLocationDetails> = mutableListOf(),
     var zoneDataSummery: Map<String, RLZoneDataSummery> = mapOf(),
     var zoneDataDetail: Map<String, RLZoneDataDetails> = mapOf(),
-    var hrm:Int =0
+    var hrm:Int =0,
+    var visibilityflagforthatsession:Int =0
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -164,6 +165,7 @@ class RLSessionDataTransferModelNew(
         mutableListOf<RLLocationDetails>().apply { parcel.readTypedList(this, RLLocationDetails.CREATOR) },
         parcel.readHashMap(RLZoneDataSummery::class.java.classLoader) as Map<String, RLZoneDataSummery>,
         parcel.readHashMap(RLZoneDataDetails::class.java.classLoader) as Map<String, RLZoneDataDetails>,
+        parcel.readInt(),
         parcel.readInt()
     )
 
@@ -244,6 +246,7 @@ class RLSessionDataTransferModelNew(
         parcel.writeMap(zoneDataSummery)
         parcel.writeMap(zoneDataDetail)
         parcel.writeInt(hrm)
+        parcel.writeInt(visibilityflagforthatsession)
     }
 
     override fun describeContents(): Int {

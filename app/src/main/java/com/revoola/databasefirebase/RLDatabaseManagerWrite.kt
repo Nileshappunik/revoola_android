@@ -63,6 +63,17 @@ class RLDatabaseManagerWrite {
             }
     }
 
+    fun RlWriteBasicDataUpdate(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+        database.child(path).setValue(data)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, null)
+                } else {
+                    callback(false, task.exception)
+                }
+            }
+    }
+
     fun RlWriteData(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {

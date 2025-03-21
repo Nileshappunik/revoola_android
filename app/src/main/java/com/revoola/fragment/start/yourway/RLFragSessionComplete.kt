@@ -160,6 +160,27 @@ class RLFragSessionComplete : RLBaseFragment(){
                 shareMap = 0
             }
         }
+        visibilityflagforthatsession=cardData.visibilityflagforthatsession
+        when(visibilityflagforthatsession){
+            0->{//EveryOne
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
+                fragBinding.tvShareTitle.setText(R.string.everyone)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+            }
+            1->{//Private
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
+                fragBinding.tvShareTitle.setText(R.string.privatetx)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+            }
+            2->{//Friends
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+                fragBinding.tvShareTitle.setText(R.string.friendstx)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+            }
+        }
 
         fragBinding.layPrivacy.setOnClickListener {
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
@@ -1423,3 +1444,5 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
 
 }
+
+

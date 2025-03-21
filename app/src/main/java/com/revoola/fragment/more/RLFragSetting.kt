@@ -36,6 +36,9 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.*
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLDatabaseManagerWrite
+import com.revoola.databasefirebase.RevoolaFirebasePath
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
 import java.io.File
 import java.io.FileOutputStream
@@ -49,16 +52,17 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     val TAG: String = RLFragSetting::class.java.simpleName
     lateinit var fragBinding: RlFragSettingBinding
     private val STORAGE_PERMISSION_REQUEST_CODE = 1001
-    var chooseimagefile: File? =null
-    var day: Int = 0
-    var month: Int = 0
-    var year: Int = 0
-    var myDay: Int = 0
-    var myMonth: Int = 0
-    var myYear: Int = 0
-    var Month: String = ""
-    var Day: String = ""
-    var DateTime: String = ""
+    private var chooseimagefile: File? =null
+    private var userBasicDataCard: RLRevoolaUsersSettingsModel? =null
+    private var day: Int = 0
+    private var month: Int = 0
+    private var year: Int = 0
+    private var myDay: Int = 0
+    private var myMonth: Int = 0
+    private var myYear: Int = 0
+    private var Month: String = ""
+    private var Day: String = ""
+    private var DateTime: String = ""
 
     private val binding by lazy {
         RlFragSettingBinding.inflate(layoutInflater)
@@ -70,15 +74,17 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_setting, container) as RlFragSettingBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
-        RLuisetup()
+        RlUiSetUp()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
+    //All Design Setup Like Button Click And All
+    private fun RlUiSetUp() {
         RLonBackPresAct(fragBinding.ivBack)
         //Firebase To Fetch UserData
         RLFirebaseToFetchUserData { userData ->
             if (userData != null) {
+                userBasicDataCard=userData
                 fragBinding.layFirstname.txtUsername.setText(userData.firstName)
                 fragBinding.laySurname.txtUsername.setText(userData.lastName)
                 fragBinding.layNickname.txtUsername.setText(userData.displayName)
@@ -96,12 +102,40 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }else{
                     fragBinding.radioGroup.check(R.id.radioButtonmetric)
                 }
+                when(userData.visibilityflagforthatsession){
+                    0->{//EveryOne
+                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
+                        fragBinding.layActivities.tvsharetitle.setText(R.string.everyone)
+                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+                    }
+                    1->{//Private
+                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
+                        fragBinding.layActivities.tvsharetitle.setText(R.string.privatetx)
+                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+                    }
+                    2->{//Friends
+                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
+                        fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
+                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+                    }
+                }
             } else {
                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
+
+        fragBinding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId.equals(R.id.radioButtonimperial)) {
+                RLBasicDataUpdateToFirebase("appUnit","Imperial")
+            }else {
+                RLBasicDataUpdateToFirebase("appUnit","Metric")
+            }
+        }
+
         fragBinding.layFirstname.txtusertitle.setText(R.string.firstname)
-       // fragBinding.layFirstname.txtUsername.setText("Dhruv")
         fragBinding.layFirstname.imgEdit.setOnClickListener {
             fragBinding.layFirstname.txtUsername.visibility=View.GONE
             fragBinding.layFirstname.imgEdit.visibility=View.GONE
@@ -110,16 +144,22 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             fragBinding.layFirstname.edtUsername.setText(fragBinding.layFirstname.txtUsername.text.toString())
         }
         fragBinding.layFirstname.imgDone.setOnClickListener {
-            fragBinding.layFirstname.txtUsername.visibility=View.VISIBLE
-            fragBinding.layFirstname.imgEdit.visibility=View.VISIBLE
-            fragBinding.layFirstname.imgDone.visibility=View.GONE
-            fragBinding.layFirstname.edtUsername.visibility=View.GONE
-            fragBinding.layFirstname.txtUsername.setText(fragBinding.layFirstname.edtUsername.text.toString())
+            val firstName= fragBinding.layFirstname.edtUsername.text.toString()
+            if (firstName.isNotBlank()){
+                fragBinding.layFirstname.txtUsername.visibility=View.VISIBLE
+                fragBinding.layFirstname.imgEdit.visibility=View.VISIBLE
+                fragBinding.layFirstname.imgDone.visibility=View.GONE
+                fragBinding.layFirstname.edtUsername.visibility=View.GONE
+                fragBinding.layFirstname.txtUsername.setText(firstName)
+                RLBasicDataUpdateToFirebase("firstName",firstName)
+            }else{
+                fragBinding.layFirstname.edtUsername.error = "First name cannot be empty."
+            }
+
         }
 
 
         fragBinding.laySurname.txtusertitle.setText(R.string.surname)
-       // fragBinding.laySurname.txtUsername.setText("Khatrii")
         fragBinding.laySurname.imgEdit.setOnClickListener {
             fragBinding.laySurname.txtUsername.visibility=View.GONE
             fragBinding.laySurname.imgEdit.visibility=View.GONE
@@ -128,15 +168,20 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             fragBinding.laySurname.edtUsername.setText(fragBinding.laySurname.txtUsername.text.toString())
         }
         fragBinding.laySurname.imgDone.setOnClickListener {
-            fragBinding.laySurname.txtUsername.visibility=View.VISIBLE
-            fragBinding.laySurname.imgEdit.visibility=View.VISIBLE
-            fragBinding.laySurname.imgDone.visibility=View.GONE
-            fragBinding.laySurname.edtUsername.visibility=View.GONE
-            fragBinding.laySurname.txtUsername.setText(fragBinding.laySurname.edtUsername.text.toString())
+            val surName=fragBinding.laySurname.edtUsername.text.toString()
+            if (surName.isNotBlank()){
+                fragBinding.laySurname.txtUsername.visibility=View.VISIBLE
+                fragBinding.laySurname.imgEdit.visibility=View.VISIBLE
+                fragBinding.laySurname.imgDone.visibility=View.GONE
+                fragBinding.laySurname.edtUsername.visibility=View.GONE
+                fragBinding.laySurname.txtUsername.setText(surName)
+                RLBasicDataUpdateToFirebase("lastName",surName)
+            }else{
+                fragBinding.laySurname.edtUsername.error = "Surname name cannot be empty."
+            }
         }
 
         fragBinding.layNickname.txtusertitle.setText(R.string.nickname)
-        //fragBinding.layNickname.txtUsername.setText("Dhruv90")
         fragBinding.layNickname.imgEdit.setOnClickListener {
             fragBinding.layNickname.txtUsername.visibility=View.GONE
             fragBinding.layNickname.imgEdit.visibility=View.GONE
@@ -145,11 +190,18 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             fragBinding.layNickname.edtUsername.setText(fragBinding.layNickname.txtUsername.text.toString())
         }
         fragBinding.layNickname.imgDone.setOnClickListener {
-            fragBinding.layNickname.txtUsername.visibility=View.VISIBLE
-            fragBinding.layNickname.imgEdit.visibility=View.VISIBLE
-            fragBinding.layNickname.imgDone.visibility=View.GONE
-            fragBinding.layNickname.edtUsername.visibility=View.GONE
-            fragBinding.layNickname.txtUsername.setText(fragBinding.layNickname.edtUsername.text.toString())
+            val nickName=fragBinding.layNickname.edtUsername.text.toString()
+            if (nickName.isNotBlank()){
+                fragBinding.layNickname.txtUsername.visibility=View.VISIBLE
+                fragBinding.layNickname.imgEdit.visibility=View.VISIBLE
+                fragBinding.layNickname.imgDone.visibility=View.GONE
+                fragBinding.layNickname.edtUsername.visibility=View.GONE
+                fragBinding.layNickname.txtUsername.setText(nickName)
+                RLBasicDataUpdateToFirebase("displayName",nickName)
+            }else{
+                fragBinding.layNickname.edtUsername.error = "Nickname name cannot be empty."
+            }
+
         }
 
         fragBinding.layAvatar.txtusertitle.setText(R.string.avatar)
@@ -160,46 +212,37 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         }
 
         fragBinding.layEmail.txtusertitle.setText(R.string.email)
-       // fragBinding.layEmail.txtUsername.setText("dhruvkhatri90@gmail.com")
         fragBinding.layEmail.imgEdit.visibility=View.GONE
 
         fragBinding.layGender.txtusertitle.setText(R.string.gender)
-       // fragBinding.layGender.txtUsername.setText("Male")
         fragBinding.layGender.imgEdit.setOnClickListener {
             RLshowGenderDialog()
         }
 
         fragBinding.layDateofbirth.txtusertitle.setText(R.string.dateofbirth)
-       // fragBinding.layDateofbirth.txtUsername.setText("29/08/1965")
         fragBinding.layDateofbirth.imgEdit.setOnClickListener {
-            RLdialogStartDatePicker()
+            RLdialogStartDatePicker(userBasicDataCard?.dob)
         }
 
         fragBinding.layWeight.txtusertitle.setText(R.string.weight)
-       // fragBinding.layWeight.txtUsername.setText("73 lbs")
         fragBinding.layWeight.imgEdit.setOnClickListener {
             RLshowWeightDialog()
         }
 
         fragBinding.layHeight.txtusertitle.setText(R.string.height)
-       // fragBinding.layHeight.txtUsername.setText("5 Feet 1inches")
         fragBinding.layHeight.imgEdit.setOnClickListener {
             RLshowHeightDialog()
         }
 
         fragBinding.layMaxheartrate.txtusertitle.setText(R.string.maxheartrateestimated)
-        //fragBinding.layMaxheartrate.txtUsername.setText("190")
         fragBinding.layMaxheartrate.imgEdit.setOnClickListener {
             RLshowRestingHrDialog()
         }
 
         fragBinding.layRestingheartrate.txtusertitle.setText(R.string.restingheartrate)
-       // fragBinding.layRestingheartrate.txtUsername.setText("60")
         fragBinding.layRestingheartrate.imgEdit.setOnClickListener {
             RLshowRestingHrDialog()
         }
-
-        //fragBinding.radioGroup.check(R.id.radioButtonimperial)
 
         fragBinding.layLocation.txtusertitle.setText(R.string.location)
         fragBinding.layLocation.txtUsername.visibility=View.GONE
@@ -215,18 +258,21 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             val titletxt:String=fragBinding.layActivities.tvsharetitle.text.toString()
 
             if (titletxt.uppercase().equals("PRIVATE")){
+                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",0)
                 fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
                 fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
                 fragBinding.layActivities.tvsharetitle.setText(R.string.everyone)
                 fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
 
             }else if (titletxt.uppercase().equals("FRIENDS")){
+                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",1)
                 fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
                 fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
                 fragBinding.layActivities.tvsharetitle.setText(R.string.privatetx)
                 fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
 
             }else if (titletxt.uppercase().equals("EVERYONE")){
+                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",2)
                 fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
                 fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
                 fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
@@ -267,16 +313,49 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
     }
 
-    //DATE SELECT
-    private fun RLdialogStartDatePicker() {
+    //Firebase One By One BasicData Update
+    private fun RLBasicDataUpdateToFirebase(endPoint:String,data:Any,) {
+        val firebasePath = RevoolaFirebasePath.basicDataPathWrite(endPoint)
+        // Firebase to Update BasicData
+        RLDatabaseManagerWrite().RlWriteBasicDataUpdate(firebasePath,data) { isSuccessful, error ->
+           if (isSuccessful){
+               RLTools.RlLogDPrint(TAG,"BasicData Update Successfully")
+           }else{
+               RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
+           }
+        }
+    }
+    //Calender View For BirthDate Dialog Open
+    private fun RLdialogStartDatePicker(dob: String?) {
         val calendar: Calendar = Calendar.getInstance()
-        day = calendar.get(Calendar.DAY_OF_MONTH)
-        month = calendar.get(Calendar.MONTH)
-        year = calendar.get(Calendar.YEAR)
-        val datePickerDialog = DatePickerDialog(requireContext(), this, day, month, year)
+
+        if (!dob.isNullOrEmpty()) {
+            try {
+                val parts = dob.split("/")
+                if (parts.size == 3) {
+                    val dayOfMonth = parts[0].toInt()
+                    val month = parts[1].toInt() - 1 // Month is 0-based
+                    val yearValue = parts[2].toInt()
+
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    calendar.set(Calendar.MONTH, month)
+                    calendar.set(Calendar.YEAR, yearValue)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // fallback to current date if parsing fails
+            }
+        }
+
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), this, year, month, day)
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis() - 1000
         datePickerDialog.show()
     }
+    //Calender View For BirthDate Dialog Open
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
         myYear = year
         myMonth = month + 1
@@ -297,12 +376,10 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         }
 
         DateTime = "" + Day + "/" + Month + "/" + myYear
-
+        RLBasicDataUpdateToFirebase("dob",DateTime)
         fragBinding.layDateofbirth.txtUsername.setText(DateTime).toString()
     }
-    private fun RLopentoast(messageprint: String) {
-        Toast.makeText(requireContext(),messageprint, Toast.LENGTH_SHORT).show()
-    }
+    //Height Change Dialog
     private fun RLshowHeightDialog() {
         var displayheight:String=""
         var feet:String=""
@@ -399,8 +476,6 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             }
         }
 
-
-
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
         })
@@ -413,6 +488,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    //Weight Change Dialog
     private fun RLshowWeightDialog() {
         var displayweight:String=""
         var st:String=""
@@ -569,6 +645,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    //Gender Change Dialog
     private fun RLshowGenderDialog() {
         val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -578,7 +655,21 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         val tvNo: TextView = sucDialog.findViewById(R.id.tvNo)
         val tvYes: TextView = sucDialog.findViewById(R.id.tvYes)
         val radioGroup = sucDialog.findViewById<RadioGroup>(R.id.radioGroup)
-        radioGroup.check(R.id.radioButtonFemale)
+        val gender = userBasicDataCard?.gender?:"".toLowerCase()
+        when(gender){
+            "male"->{
+                radioGroup.check(R.id.radioButtonMale)
+            }
+            "female"->{
+                radioGroup.check(R.id.radioButtonFemale)
+            }
+            "other"->{
+                radioGroup.check(R.id.radioButtonOther)
+            }
+            else-> {
+                radioGroup.check(R.id.radioButtonMale)
+            }
+        }
 
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
@@ -588,13 +679,27 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             val selectedId = radioGroup.checkedRadioButtonId
             val radioButton = sucDialog.findViewById<RadioButton>(selectedId)
             val selectedGender = radioButton.text.toString()
-            fragBinding.layGender.txtUsername.setText(selectedGender)
+            when(selectedGender){
+                "MALE"->{
+                    RLBasicDataUpdateToFirebase("gender","Male")
+                    fragBinding.layGender.txtUsername.setText("Male")
+                }
+                "FEMALE"->{
+                    RLBasicDataUpdateToFirebase("gender","Female")
+                    fragBinding.layGender.txtUsername.setText("Female")
+                }
+                "PREFER NOT TO SAY"->{
+                    RLBasicDataUpdateToFirebase("gender","Other")
+                    fragBinding.layGender.txtUsername.setText("Other")
+                }
+            }
             sucDialog.dismiss()
         })
 
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    // Max HeartRate And Base HeartRate Dialog
     private fun RLshowRestingHrDialog() {
         val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -617,54 +722,55 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    //User Image PickUp All Dialog
     private fun RLopencameragallerydialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
         AlertDialog.Builder(activity)
             .setTitle("Choose Image")
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> RLtakePhoto()
-                    1 -> RLchooseFromGallery()
+                    0 -> {
+                        //Camera Image Click
+                        if (!RlIsStoragePermissionGranted()) {
+                            // Request the permission
+                            RlRequestStoragePermission()
+                        } else {
+                            // Permission is already granted, you can proceed with your code
+                            val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            RLCameraImage.launch(pickImg)
+                        }
+                    }
+                    1 -> {
+                        //Gallery Pick Up Image
+                        val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                        RLGalleryImage.launch(pickImg)
+                    }
                 }
                 dialog.dismiss()
             }
             .show()
     }
-    private fun RLtakePhoto() {
-        if (!RLisStoragePermissionGrantedd()) {
-            // Request the permission
-            RLrequestStoragePermissionn()
-        } else {
-            // Permission is already granted, you can proceed with your code
-            val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            RLchangeImageCamera.launch(pickImg)
-        }
-    }
-    private  fun RLchooseFromGallery() {
-        val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        RLchangeImage.launch(pickImg)
-    }
-    //Image select
-    val RLchangeImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    //Gallery to Pickup User Image
+    private val RLGalleryImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imgUri= data?.data
-            chooseimagefile=RLuriToFile(requireActivity(),imgUri)
+            chooseimagefile=RlUriToFile(requireActivity(),imgUri)
             fragBinding.layAvatar.imgUser.setImageURI(imgUri)
-
         }
     }
-    val RLchangeImageCamera =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    //Camera to Click User Image
+    private val RLCameraImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            chooseimagefile=RLsaveBitmapToFile(imageBitmap)
+            chooseimagefile=RlSaveBitmapToFile(imageBitmap)
             fragBinding.layAvatar.imgUser.setImageBitmap(imageBitmap)
 
         }
     }
-    //Uri to File converter
-    fun RLuriToFile(context: FragmentActivity?, uri: Uri?): File? {
+    //UriImage  to File converter
+    private fun RlUriToFile(context: FragmentActivity?, uri: Uri?): File? {
         val projection = arrayOf(MediaStore.Images.Media.DATA)
         val cursor = context?.contentResolver?.query(uri!!, projection, null, null, null) ?: return null
         val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
@@ -673,8 +779,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         cursor.close()
         return File(filePath)
     }
-    //Bitmapimage to File converter
-    fun RLsaveBitmapToFile(bitmap: Bitmap): File? {
+    //BitmapImage to File converter
+    private fun RlSaveBitmapToFile(bitmap: Bitmap): File? {
         try {
             // Create a file to save the bitmap
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -692,12 +798,14 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             return null
         }
     }
-     fun RLisStoragePermissionGrantedd(): Boolean {
+    //Storage Permission Check
+    private fun RlIsStoragePermissionGranted(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA)
         val storagePermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
-     fun RLrequestStoragePermissionn() {
+    //Storage Permission Request
+    private fun RlRequestStoragePermission() {
         ActivityCompat.requestPermissions(requireActivity(),
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),STORAGE_PERMISSION_REQUEST_CODE)
     }
@@ -708,7 +816,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted, you can proceed with your code
                 val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                RLchangeImageCamera.launch(pickImg)
+                RLCameraImage.launch(pickImg)
             } else {
                 // Permission is denied
                 // You may want to show a message or handle the case where the RLuser denies the permission
@@ -716,5 +824,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             }
         }
     }
-
+    //Common Toast
+    private fun RLopentoast(messageprint: String) {
+        Toast.makeText(requireContext(),messageprint, Toast.LENGTH_SHORT).show()
+    }
 }

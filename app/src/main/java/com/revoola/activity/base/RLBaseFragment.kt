@@ -242,6 +242,7 @@ open class RLBaseFragment : Fragment() {
                 callback(null) // Return null in case of an error
             }
         }
+
     }
     //Firebase To Fetch AssumedCalories Data
     fun RLfetchAssumedCalories(callback: (RLAssumedCalories?) -> Unit) {

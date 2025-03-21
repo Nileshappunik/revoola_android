@@ -98,6 +98,17 @@ class RLDatabaseManagerRead {
         }
     }
 
+    fun RlAppUnitRead(callback: (Any?, Exception?) -> Unit) {
+        val path = RevoolaFirebasePath.basicDataPathWrite("appUnit")
+        database.child(path).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(task.result?.value, null)
+            } else {
+                callback(null, task.exception)
+            }
+        }
+    }
+
     fun RlHelpVideoGetDataRead(HelpType: String,callback: (Any?, Exception?) -> Unit) {
         val path =RevoolaFirebasePath.getStartedVideosDataPath(HelpType)
         database.child(path).get().addOnCompleteListener { task ->

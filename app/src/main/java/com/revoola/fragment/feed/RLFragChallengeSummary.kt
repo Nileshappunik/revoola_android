@@ -64,10 +64,9 @@ class RLFragChallengeSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        fragBinding.inlayTop.ivhelp.setImageResource(R.drawable.ic_share)
-        fragBinding.inlayTop.ivTitle.setText(R.string.challengesummery)
-        fragBinding.inlayTop.ivDescription.setText("")
+        RLonBackPresAct(fragBinding.ivBack)
+        fragBinding.ivTitle.setText(R.string.challengesummery)
+
 
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLFeedChallengesModelData
 
@@ -85,7 +84,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
             fragBinding.layStepssofar.txtTimeNumber.setText(cardData.totaldays.toString()+" of "+cardData.totaldays.toString()+" Days")
         }
 
-        fragBinding.layTargetsteps.imgTime.setImageResource(R.drawable.fd_steps_green)
+        fragBinding.layTargetsteps.imgTime.setImageResource(RLTools.RLgeticon(cardData.metric))
         fragBinding.layTargetsteps.txtTime.setText("ACHIEVED SO FAR")
         fragBinding.layTargetsteps.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
 
@@ -95,6 +94,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
 
         fragBinding.layRank.imgTime.setImageResource(R.drawable.ic_ranking)
         fragBinding.layRank.txtTime.setText("RANK")
+        fragBinding.layRank.txtTimeNumber.setText("${cardData.ranking_by_challenge.toString()} OF ${cardData.participants.toString()}")
 
 
         val stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
@@ -116,7 +116,7 @@ class RLFragChallengeSummary : RLBaseFragment() {
         fragBinding.webViewChart.isVerticalScrollBarEnabled = false
         fragBinding.webViewChart.webViewClient = WebViewClient()
         fragBinding.webViewChart.loadDataWithBaseURL(null,
-            RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime), "text/html", "UTF-8", null)
+            RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime,RLTools.RLGetMetricsName(cardData.metric)), "text/html", "UTF-8", null)
 
         //user name Image and persentage chart  Ranking Chart
         val webRankingSettings: WebSettings = fragBinding.webViewRankingChart.settings
@@ -150,14 +150,28 @@ class RLFragChallengeSummary : RLBaseFragment() {
         //both Api call Chart and Ranking
         RLRankingDataGetApi(cardData.challengeid)
         RLStepDataGetApi(cardData.challengeid,cardData.userid)
+        //Last Chart Name
+        fragBinding.txtDailystep.setText("MY DAILY ${RLTools.RLGetMetricsName(cardData.metric)}")
 
     }
+
+
     private fun RLRankingDataGetApi(challengeid:String){
+        val scenario = cardData.scenario
+        val metric = if (cardData.metric == "climbed") "elevation" else cardData.metric
+
+       val  scenarioType = when (scenario) {
+            "group_group" -> "group_group_$metric"
+            "group" -> "group_$metric"
+            "user" -> "users_$metric"
+            else -> ""
+        }
+
         val currentTimestamp = (System.currentTimeMillis() / 1000).toString()
         val request = listOf(RLSetgoaled_challenges_request(
             goaled_challenges = RLSetgoaled_challenges(
                     id = challengeid,
-                    type = "users_steps",
+                    type = scenarioType,//"users_steps",
                     today = currentTimestamp)))
 
         RLTools.RlLogDPrint(TAG,"setgoaled_challenges= "+request)
@@ -248,13 +262,11 @@ class RLFragChallengeSummary : RLBaseFragment() {
         }
 
     }
-
     private fun RLStepMapSet(jasonArray: JSONArray) {
         val htmlText=RLAllHTMLChart.RLgetIndividualStepsChartHtml(jasonArray)
         fragBinding.webViewStepChart.loadDataWithBaseURL(null,htmlText, "text/html", "UTF-8", null)
 
     }
-
     override fun onPause() {
         super.onPause()
         RLBottomHideShowSet(true)
