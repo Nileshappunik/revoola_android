@@ -21,7 +21,6 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragMindClassesNormalVideoStartBinding
-import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
@@ -29,7 +28,7 @@ import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
-import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModelNew
 import java.util.concurrent.TimeUnit
 
 class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
@@ -55,6 +54,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     private var  joiningDate: Long = 0
     private var emailId=""
     private var isBasicDataAdded=true
+    private var visibilityflagforthatsession:Int =0
 
     var arrHr:MutableList<Int> = mutableListOf()
 
@@ -133,7 +133,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 rms="0.0"
             }
             val bundle = Bundle()
-            val cardData = RLSessionDataTransferModel()
+            val cardData = RLSessionDataTransferModelNew()
 
             cardData.VIDEODATA=data
             cardData.classType=RLConstants.MIND
@@ -159,8 +159,10 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
             cardData.joiningDate= joiningDate
             cardData.emailId = emailId
             cardData.isBasicDataAdded = isBasicDataAdded
+            cardData.visibilityflagforthatsession = visibilityflagforthatsession
 
-            bundle.putSerializable("cardData",cardData)
+           // bundle.putSerializable("cardData",cardData)
+            bundle.putParcelable("cardData",cardData)
 
             (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
 
@@ -313,6 +315,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 joiningDate=userData.joiningDate
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
+                visibilityflagforthatsession=userData.visibilityflagforthatsession
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }

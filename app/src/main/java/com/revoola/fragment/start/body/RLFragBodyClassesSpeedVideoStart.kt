@@ -40,7 +40,7 @@ import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
-import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModelNew
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -67,6 +67,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     private var  joiningDate: Long = 0
     private var emailId=""
     private var isBasicDataAdded=true
+    private var visibilityflagforthatsession:Int =0
 
 
     private var distanceNumber:Double=0.0
@@ -394,7 +395,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
     //when all data set and new open then this function call
     private fun RLCompleteSessionFragmentOpen(data: String, videoID: String,VideoCardData: RLFulllVideoModel) {
         val bundle: Bundle = Bundle()
-        val cardData = RLSessionDataTransferModel()
+        val cardData = RLSessionDataTransferModelNew()
         val assumedREV=VideoCardData.assumedREV?:"0"
         totalRev=assumedREV.toDouble()
 
@@ -455,8 +456,10 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         cardData.joiningDate= joiningDate
         cardData.emailId = emailId
         cardData.isBasicDataAdded = isBasicDataAdded
+        cardData.visibilityflagforthatsession = visibilityflagforthatsession
 
-        bundle.putSerializable("cardData",cardData)
+      //  bundle.putSerializable("cardData",cardData)
+        bundle.putParcelable("cardData",cardData)
 
 
         (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
@@ -477,6 +480,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
                 joiningDate=userData.joiningDate
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
+                visibilityflagforthatsession=userData.visibilityflagforthatsession
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }

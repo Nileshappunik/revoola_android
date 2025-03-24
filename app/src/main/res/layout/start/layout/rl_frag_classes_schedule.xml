@@ -242,8 +242,7 @@
                             android:textSize="16sp"
                             android:layout_margin="10dp"
                             android:textAlignment="center"
-                            android:textAllCaps="true"
-                            android:text="WHEN DO YOU WANT TO SEHEDULE?"
+                            android:text="When would you like to schedule this session?"
                             android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppBlackColor" />
                         <View
@@ -258,7 +257,7 @@
                             android:layout_margin="10dp"
                             android:textSize="16sp"
                             android:textAlignment="center"
-                            android:text="SELECT DATE TIME"
+                            android:text="Select Date Time"
                             android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppBlackColor" />
 

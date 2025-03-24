@@ -1,5 +1,8 @@
 package com.revoola.fragment.start.classes
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
@@ -29,19 +32,19 @@ import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
-import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModelNew
 import com.revoola.model.RLClassLeaderboard
-import com.revoola.model.RLGetUserAggregatedData
-import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.model.RLInsightlyMoEngageResponse
-import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLInsightlyMoengageBodyApiPayload
 import com.revoola.model.RLTextOverview
-import com.revoola.model.RLUsernameV2
 import com.revoola.model.RLYourWayApiPayload
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
+import com.zhihu.matisse.Matisse
+import com.zhihu.matisse.MimeType
+import com.zhihu.matisse.engine.impl.GlideEngine
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,8 +74,12 @@ import kotlin.math.roundToInt
 class RLFragClassWorkoutComplete : RLBaseFragment(){
     val TAG: String = RLFragClassWorkoutComplete::class.java.simpleName
     lateinit var fragBinding: RlFragSessionCompleteBinding
+    //Api call use
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
+
+    private val REQUEST_CODE_CHOOSE_IMAGE = 500
+    private lateinit var cardData: RLSessionDataTransferModelNew
 
     private var imgUriList = mutableListOf<Uri>()
     private var currentUser =""
@@ -86,12 +93,21 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
     private val binding by lazy {
         RlFragSessionCompleteBinding.inflate(layoutInflater)
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Retrieve the Parcelable object from the Bundle
+        arguments?.let {
+            cardData = it.getParcelable("cardData")!! // Use !! only if you're sure it's not null
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClassWorkoutComplete" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragClassWorkoutComplete" )
+        currentUser= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -102,16 +118,38 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 // Do nothing or show a message
             }
         })
-        RLuisetup()
+        RLUiSetUp()
         return fragBinding.root
     }
-    private fun RLuisetup() {
-        val cardData = requireArguments().getSerializable("cardData") as RLSessionDataTransferModel
-        val gson = Gson()
-        val VideoCardData = gson.fromJson(cardData.VIDEODATA, RLFulllVideoModel::class.java)
+    private fun RLUiSetUp() {
+        val VideoCardData = Gson().fromJson(cardData.VIDEODATA, RLFulllVideoModel::class.java)
         fragBinding.edtSessionName.setText(VideoCardData.rideTitle)
         fragBinding.txtMainTitle.setText("ACTIVITY COMPLETE!")
-        RLShareMapHide(false)
+        //ShareMap Hide
+        fragBinding.txtShareMap.visibility=View.GONE
+        fragBinding.switchCompat.visibility=View.GONE
+
+        visibilityflagforthatsession=cardData.visibilityflagforthatsession
+        when(visibilityflagforthatsession){
+            0->{//EveryOne
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
+                fragBinding.tvShareTitle.setText(R.string.everyone)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+            }
+            1->{//Private
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
+                fragBinding.tvShareTitle.setText(R.string.privatetx)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+            }
+            2->{//Friends
+                fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+                fragBinding.tvShareTitle.setText(R.string.friendstx)
+                fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+            }
+        }
         fragBinding.layPrivacy.setOnClickListener {
             val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
             when(titleTxt){
@@ -121,15 +159,6 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
                     fragBinding.tvShareTitle.setText(R.string.privatetx)
                     fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
-                    RLShareMapHide(false)
-                }
-                "EVERYONE"->{
-                    visibilityflagforthatsession=2
-                    fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
-                    fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
-                    fragBinding.tvShareTitle.setText(R.string.friendstx)
-                    fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-                    RLShareMapHide(false)
                 }
                 "PRIVATE"->{
                     visibilityflagforthatsession=1
@@ -137,7 +166,13 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
                     fragBinding.tvShareTitle.setText(R.string.everyone)
                     fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-                    RLShareMapHide(false)
+                }
+                "EVERYONE"->{
+                    visibilityflagforthatsession=2
+                    fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                    fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+                    fragBinding.tvShareTitle.setText(R.string.friendstx)
+                    fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
                 }
             }
 
@@ -154,18 +189,18 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             if ((cardData.classType).equals(RLConstants.BODY)){
                 if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
                     cardData.hrm=1
-                    RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
+                    RLBodyFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
                 }else  {
                     cardData.hrm=0
-                    RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
+                    RLBodyFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
                 }
             }else{
                 if ((cardData.SENSOR).equals(RLConstants.HEART_SENSOR)){
                     cardData.hrm=1
-                    RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData,cardData)
+                    RLMindFirebaseDataPrepaire("HEART_SENSOR",VideoCardData)
                 }else  {
                     cardData.hrm=0
-                    RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData,cardData)
+                    RLMindFirebaseDataPrepaire("NO_SENSOR",VideoCardData)
                 }
 
             }
@@ -174,60 +209,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         fragBinding.txtAddPhoto.setOnClickListener {
             RLchooseFromGallery()
         }
-
-
-    }
-    private fun RLShareMapHide(isVisible:Boolean){
-        if (isVisible){
-            fragBinding.txtShareMap.visibility=View.VISIBLE
-            fragBinding.switchCompat.visibility=View.VISIBLE
-        }else{
-            fragBinding.txtShareMap.visibility=View.GONE
-            fragBinding.switchCompat.visibility=View.GONE
-        }
-    }
-    private fun RLchooseFromGallery() {
-        TedImagePicker.with(requireContext())
-            .max(5, "maximum limit to 5 images") // Set the maximum limit to 5 images
-            .showCameraTile(false)
-            .startMultiImage { uriList ->
-                // Handle the selected images here
-
-                for (uri in uriList) {
-                    imgUriList.add(uri)
-                }
-                if (imgUriList.size>0){
-                    imageListVisible(true)
-                }else{
-                    imageListVisible(false)
-                }
-                fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(
-                    requireContext(),
-                    LinearLayoutManager.HORIZONTAL, false)
-                val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
-                    imgUriList.remove(uri)
-                    if (imgUriList.size>0){
-                        imageListVisible(true)
-                    }else{
-                        imageListVisible(false)
-                    }
-                }
-                fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
-
-            }
-    }
-    private fun imageListVisible(isVisible: Boolean){
-        if (isVisible){
-            fragBinding.rvSelectedImages.visibility=View.VISIBLE
-            fragBinding.txtAddPhoto.visibility=View.GONE
-        }else{
-            fragBinding.rvSelectedImages.visibility=View.GONE
-            fragBinding.txtAddPhoto.visibility=View.VISIBLE
-        }
     }
 
     //ALL BODY DATA TO FIREBASE ENTRY
-    private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel,cardData:RLSessionDataTransferModel){
+    private fun RLBodyFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel){
         var sessionUserSessionDetailData= hashMapOf<String, Any?>()
         var sessionUserSessionSummaryGraphData= hashMapOf<String, Any>()
         var sessionGhostForClassBestForClass= hashMapOf<String, Any>()
@@ -641,7 +626,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         //revoola_UserSessionSummaryData
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
-        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        val entryIdSummery =currentTimestamp
         entryIdSummery.let {
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
@@ -656,7 +641,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         //revoola_UserSessionSummaryGraphData
         val databaseRefGraph = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.graphDataPath(currentUser))
-        val entryIdGraph = (System.currentTimeMillis() / 1000).toString()
+        val entryIdGraph = currentTimestamp
         entryIdGraph.let {
             databaseRefGraph.child(it).setValue(sessionUserSessionSummaryGraphData)
                 .addOnCompleteListener { task ->
@@ -681,13 +666,13 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         //revoola_UserSessionDetailData
          val databaseRef = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.detailDataPath(currentUser))
-        val entryId = (System.currentTimeMillis() / 1000).toString()
+        val entryId =currentTimestamp
         entryId.let {
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         RLTools.RlLogDPrint(TAG, "revoola_UserSessionDetailData Entry saved successfully!")
-                        RLInsertApiCall(cardData,currentTimestamp,0,videoCardData)
+                        RLInsertApiCall(currentTimestamp,0,videoCardData)
                     } else {
                        RLTools.RlLogEPrint(TAG, "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
@@ -697,7 +682,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
     }
 
     //ALL MiND DATA TO FIREBASE ENTRY
-    private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel,cardData:RLSessionDataTransferModel){
+    private fun RLMindFirebaseDataPrepaire(sensorType:String,videoCardData: RLFulllVideoModel){
         val classDate = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         val sessionUserSessionDetailData = hashMapOf(
@@ -764,9 +749,9 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
         val sessionUserCompletedVideos = mapOf(cardData.videoID to true)
 
-        //revoola_UserSessionSummaryData
+        //revoola User SessionSummary Data
         val databaseRefSummery = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.summaryDataPath(currentUser))
-        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        val entryIdSummery = currentTimestamp
         entryIdSummery.let {
             databaseRefSummery.child(it).setValue(sessionUserSessionSummaryData)
                 .addOnCompleteListener { task ->
@@ -779,7 +764,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 }
         }
 
-        //revoolaUserCompletedVideos
+        //revoola User Completed Videos
         val databaseRefCompletedVideos = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.userCompletedVideosDataPath(currentUser))
         databaseRefCompletedVideos.updateChildren(sessionUserCompletedVideos)
             .addOnCompleteListener { task ->
@@ -790,15 +775,15 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 }
             }
 
-        //revoola_UserSessionDetailData
+        //revoola User Session Detail Data
         val databaseRef = FirebaseDatabase.getInstance().getReference(RevoolaFirebasePath.detailDataPath(currentUser))
-        val entryId = (System.currentTimeMillis() / 1000).toString()
+        val entryId = currentTimestamp
         entryId.let {
             databaseRef.child(it).setValue(sessionUserSessionDetailData)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         RLTools.RlLogDPrint(TAG, "revoola_UserSessionDetailData Entry saved successfully!")
-                        RLInsertApiCall(cardData,currentTimestamp,1,videoCardData)
+                        RLInsertApiCall(currentTimestamp,1,videoCardData)
                     } else {
                        RLTools.RlLogEPrint(TAG, "revoola_UserSessionDetailData Entry Failed to save:- ${task.exception}")
                     }
@@ -807,15 +792,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
     }
 
-    private fun safeNumber(value: Double?): Double {
-        return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
-    }
-
-    private fun safeIntNumber(value: Int?): Int {
-        return if (value == null || value < 0) 0 else value
-    }
-
-    private fun createPayload(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): String {
+    //Insert Api
+    private fun createPayload( currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): String {
         val classLeaderboard = RLClassLeaderboard(
             userId = currentUser,
             classId = cardData.videoID,
@@ -837,11 +815,10 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         // Convert to JSON String
         return Gson().toJson(apiPayload)
     }
-    private fun RLInsertApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
+    private fun RLInsertApiCall(currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
         if (RLApiClientRetrofit.RLisConnected()) {
-            val jsonPayload = createPayload(cardData,currentTimestamp,bmo,videoCardData)
+            val jsonPayload = createPayload(currentTimestamp,bmo,videoCardData)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
-
 
             RLTools.RlLogDPrint(TAG,"MindBody Insert Request: $request")
             //Insert Api Call
@@ -849,7 +826,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLInsertOverviewApiCall(cardData,currentTimestamp,bmo,videoCardData)
+                            RLInsertOverviewApiCall(currentTimestamp,bmo,videoCardData)
                             RLTools.RlLogDPrint(TAG, "MindBody Insert Success: ${response.text}")
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
@@ -869,7 +846,11 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
 
     }
 
-   private fun createOverviewPayloadNew(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): Map<String, RequestBody> {
+    // Convert text to RequestBody and OverView Api Call
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+    private fun createOverviewPayloadNew(currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel): Map<String, RequestBody> {
         val requestBodyMap = mutableMapOf<String, RequestBody>()
        // hrm -> 1 (is hr sensor is connected), 0 (if not connected)
         // Add text fields as form data
@@ -931,19 +912,11 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         requestBodyMap["data[myOverviewThumbnails][source]"] = createRequestBody("android")
         requestBodyMap["data[myOverviewThumbnails][from_third_party_source]"] = createRequestBody("0")
 
-        // Handle map image
-        val mapImage = ""// myOverviewThumbnails["mapImage"] as? String
-        if (!mapImage.isNullOrEmpty()) {
-            val mapImageRequestBody = base64ToRequestBody(mapImage)
-            requestBodyMap["mapImage"] = mapImageRequestBody
-        }
-
         return requestBodyMap
     }
-
-    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
+    private fun RLInsertOverviewApiCall(currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
         if (RLApiClientRetrofit.RLisConnected()) {
-            val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp,bmo,videoCardData)
+            val dataMap  = createOverviewPayloadNew(currentTimestamp,bmo,videoCardData)
             val images = getUserImages()
             RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
             //Insert Api Call
@@ -952,7 +925,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                     try {
                         if (response.type.equals("success")) {
                             RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
-                            RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp,bmo,videoCardData)
+                            RLupdateUserInsightlyMoengageApiCall(currentTimestamp,bmo,videoCardData)
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
                             RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
@@ -971,17 +944,18 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
         }
 
     }
-    // Convert text to RequestBody
-    private fun createRequestBody(value: String): RequestBody {
-        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    private fun getUserImages(): List<MultipartBody.Part> {
+        val imageParts = mutableListOf<MultipartBody.Part>()
+        imgUriList.forEachIndexed { index, uri ->
+            val imageFile = RLTools.RLGetFileFromUri(requireContext(), uri)
+            val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val imagePart = MultipartBody.Part.createFormData("userImage[]", imageFile.name, requestFile)
+            imageParts.add(imagePart)
+        }
+        return imageParts
     }
-    // Convert Base64 image to RequestBody
-    private fun base64ToRequestBody(base64String: String): RequestBody {
-        val decodedBytes = Base64.getDecoder().decode(base64String.split(",")[1])
-        return decodedBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
-    }
-
-    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
+    //Mo engage Api Call
+    private fun RLupdateUserInsightlyMoengageApiCall(currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val requestApi = RLInsightlyMoengageBodyApiPayload(
@@ -1015,10 +989,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                         // Handle UI updates if required (e.g., Toast message)
                         RLBaseProgress.RLhideProgressDialog()
                         RLTools.RlLogDPrint(TAG, "Moengage Insert Success: ${apiResponse.response[0].status}")
-                        RLAllProcessDone(cardData,currentTimestamp,bmo,videoCardData)
-                        //RLBottomHideShowSet(true)
-                        //(context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                       // (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+                        RLAllProcessDone(currentTimestamp,bmo,videoCardData)
 
                     }else{
                         RLBaseProgress.RLhideProgressDialog()
@@ -1033,19 +1004,8 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             }
         }
     }
-
-    private fun getUserImages(): List<MultipartBody.Part> {
-        val imageParts = mutableListOf<MultipartBody.Part>()
-        imgUriList.forEachIndexed { index, uri ->
-            val imageFile = RLTools.RLGetFileFromUri(requireContext(), uri)
-            val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
-            val imagePart = MultipartBody.Part.createFormData("userImage[]", imageFile.name, requestFile)
-            imageParts.add(imagePart)
-        }
-        return imageParts
-    }
-
-    private fun RLAllProcessDone(cardData: RLSessionDataTransferModel, currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel){
+    //When All Api and Firebase Process Done
+    private fun RLAllProcessDone(currentTimestamp: String,bmo:Int,videoCardData: RLFulllVideoModel){
         // Convert to a single comma-separated string
         var imgString: String=""
         if (imgUriList.isNotEmpty()){
@@ -1126,8 +1086,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             bundle.putSerializable(RLConstants.CardData, modelData)
             bundle.putString(RLConstants.FeedSelectTag, "FRIENDS")
             bundle.putBoolean("isSessionComplete", true)
-            //(context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, false, null, true)
-            (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
+           (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
 
         }else{
             //Mind
@@ -1137,6 +1096,68 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             bundle.putBoolean("isSessionComplete", true)
             (context as RLMainActivityRL).RLloadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, false, null, true)
 
+        }
+    }
+
+    //Double Safe Number
+    private fun safeNumber(value: Double?): Double {
+        return if (value == null || value.isNaN() || value.isInfinite()) 0.0 else value
+    }
+    //Int Safe Number
+    private fun safeIntNumber(value: Int?): Int {
+        return if (value == null || value < 0) 0 else value
+    }
+    //Below All Code ImagePicker
+    private fun RLHandleSelectedImageList(imgUriList:MutableList<Uri>){
+        if (imgUriList.size > 0) {
+            RLimageListVisible(true)
+        } else {
+            RLimageListVisible(false)
+        }
+        fragBinding.rvSelectedImages.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val selectedImagesAdapter = RLSelectedImagesAdapter(imgUriList) { uri ->
+            imgUriList.remove(uri)
+            if (imgUriList.size > 0) {
+                RLimageListVisible(true)
+            } else {
+                RLimageListVisible(false)
+            }
+        }
+        fragBinding.rvSelectedImages.adapter = selectedImagesAdapter
+    }
+    private fun RLchooseFromGallery() {
+        try {
+            Matisse.from(this)
+                .choose(MimeType.ofImage())
+                .countable(true)
+                .maxSelectable(5)
+                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                .thumbnailScale(0.85f)
+                .imageEngine(GlideEngine())  // Requires implementation
+                .forResult(REQUEST_CODE_CHOOSE_IMAGE)
+        }catch (e:Exception){
+            RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
+        }
+    }
+    private fun RLimageListVisible(isVisible: Boolean){
+        if (isVisible){
+            fragBinding.rvSelectedImages.visibility=View.VISIBLE
+            fragBinding.txtAddPhoto.visibility=View.GONE
+        }else{
+            fragBinding.rvSelectedImages.visibility=View.GONE
+            fragBinding.txtAddPhoto.visibility=View.VISIBLE
+        }
+    }
+    // Handle in onActivityResult
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_CHOOSE_IMAGE && resultCode == Activity.RESULT_OK) {
+            val uriList = Matisse.obtainResult(data)
+            // Handle the selected images here
+            for (uri in uriList) {
+                imgUriList.add(uri)
+            }
+            RLHandleSelectedImageList(imgUriList)
         }
     }
 }

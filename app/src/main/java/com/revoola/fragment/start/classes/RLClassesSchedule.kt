@@ -9,6 +9,8 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +21,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -27,7 +31,12 @@ import com.revoola.databinding.RlFragClassesScheduleBinding
 import com.revoola.fragment.start.RLFragStart
 import com.revoola.model.RLFulllVideoModel
 import com.google.gson.Gson
+import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
+import com.revoola.viewmodel.RLMainRepository
+import com.revoola.viewmodel.RLMainViewModel
+import com.revoola.viewmodel.RLMainViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -35,29 +44,40 @@ import java.util.TimeZone
 
 class RLClassesSchedule : RLBaseFragment() {
     val TAG: String = RLClassesSchedule::class.java.simpleName
+    lateinit var apiClientRetrofit: RLApiClientRet
+    private lateinit var viewModel: RLMainViewModel
+
     lateinit var fragBinding: RlFragClassesScheduleBinding
     private var selectedCalendar = Calendar.getInstance()
     private val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
     var calenderEventDescription=""
+
     private val binding by lazy {
         RlFragClassesScheduleBinding.inflate(layoutInflater)
     }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLClassesSchedule()
         fragment.arguments = bundle
         return fragment
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLClassesSchedule" )
-        RLuisetup()
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
+        // Api call
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
+        val userRepository = RLMainRepository(apiService)
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
+
+        RLUiSetUp()
         return fragBinding.root
     }
-    private fun RLuisetup() {
+    private fun RLUiSetUp(){
         RLonBackPresAct(fragBinding.ivBack)
         fragBinding.txtSelectDatatime.setOnClickListener {
             RLShowDatePickerDialog()
@@ -129,7 +149,7 @@ class RLClassesSchedule : RLBaseFragment() {
         }
 
     }
-    private fun RLShowDatePickerDialog() {
+    private fun RLShowDatePickerDialog(){
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -142,7 +162,7 @@ class RLClassesSchedule : RLBaseFragment() {
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
     }
-    private fun RLShowTimePickerDialog(selectdate:String) {
+    private fun RLShowTimePickerDialog(selectdate:String){
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
@@ -159,7 +179,7 @@ class RLClassesSchedule : RLBaseFragment() {
         }, hour, minute, true)
         timePickerDialog.show()
     }
-    private fun RLCheckIfFuture(data: String, audioVideoType: String) {
+    private fun RLCheckIfFuture(data: String, audioVideoType: String){
         val currentCalendar = Calendar.getInstance()
         val isFuture = selectedCalendar.timeInMillis > currentCalendar.timeInMillis
         if (isFuture){
@@ -174,7 +194,8 @@ class RLClassesSchedule : RLBaseFragment() {
         }
     }
 
-    private fun RLshowSDialog(message:String) {
+    //Subscribe Dialog
+    private fun RLshowSDialog(message:String){
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_subscribe)
@@ -197,7 +218,7 @@ class RLClassesSchedule : RLBaseFragment() {
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
-    private fun RLCheckCalendarPermission() {
+    private fun RLCheckCalendarPermission(){
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
 
@@ -211,7 +232,7 @@ class RLClassesSchedule : RLBaseFragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PERMISSIONS_REQUEST_WRITE_CALENDAR -> {
@@ -223,7 +244,7 @@ class RLClassesSchedule : RLBaseFragment() {
             }
         }
     }
-    private fun RLAddEventToCalendar() {
+    private fun RLAddEventToCalendar(){
         try {
             val dateString = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
 
@@ -259,12 +280,12 @@ class RLClassesSchedule : RLBaseFragment() {
            RLTools.RlLogEPrint(TAG,"EXCEPTION DATE:- ${e.message}")
         }
     }
-    private fun RLParseDateString(dateString: String): Calendar {
+    private fun RLParseDateString(dateString: String):Calendar{
         val dateFormat = SimpleDateFormat("dd/M/yyyy hh:mm a", Locale.getDefault())
         val date = dateFormat.parse(dateString) ?: throw IllegalArgumentException("Invalid date format")
         return Calendar.getInstance().apply { time = date }
     }
-    private fun RLAddReminderToEvent(eventId: Long) {
+    private fun RLAddReminderToEvent(eventId: Long){
         val values = ContentValues().apply {
             put(CalendarContract.Reminders.EVENT_ID, eventId)
             put(CalendarContract.Reminders.MINUTES, 10) // Reminder 10 minutes before
@@ -275,7 +296,7 @@ class RLClassesSchedule : RLBaseFragment() {
         (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
     }
 
-    private fun RLGetPrimaryCalendarId(): Long {
+    private fun RLGetPrimaryCalendarId():Long{
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
@@ -305,7 +326,7 @@ class RLClassesSchedule : RLBaseFragment() {
         throw IllegalStateException("No calendar found.")
     }
 
-    private fun RLGetWritableCalendarId(): Long? {
+    private fun RLGetWritableCalendarId():Long?{
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
@@ -342,6 +363,5 @@ class RLClassesSchedule : RLBaseFragment() {
         // Return null if no writable calendar was found
         return null
     }
-
 
 }

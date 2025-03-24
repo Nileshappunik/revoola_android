@@ -68,6 +68,10 @@ object RevoolaFirebasePath {
         val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
         return "/$basePath/revoolaUserSettings/$userId/basicData/$endPoint"
     }
+    fun userForSearchPathWrite(endPoint:String):String{
+        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        return "/$basePath/revoolaUsersForSearch/$userId/$endPoint"
+    }
 
 
 

@@ -1017,9 +1017,9 @@ class RLFragSessionComplete : RLBaseFragment(){
         entryId.let {
             databaseRef.child(it).setValue(detailsDataMap)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
+                    if (task.isSuccessful) { // 2. Insert API
                         RLInsertApiCall(cardData,currentTimestamp)
+                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                     } else {
                         RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                         printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
@@ -1177,8 +1177,8 @@ class RLFragSessionComplete : RLBaseFragment(){
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
                             RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
+                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
                             RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
@@ -1240,10 +1240,6 @@ class RLFragSessionComplete : RLBaseFragment(){
                         RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
                         printToast(TAG, "Success")
                         RLAllProcessDone(cardData,currentTimestamp)
-                       // RLBottomHideShowSet(true)
-                       // (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-                       // (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
-
                     }else{
                         RLBaseProgress.RLhideProgressDialog()
                         RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
@@ -1320,7 +1316,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             ID =  0,
             userid =  currentUser,
             className =fragBinding.edtSessionName.text.toString(),
-            classType =cardData.classType,
+            classType =cardData.yourWayType,
             timestamp =currentTimestamp,
             short_timestamp= currentTimestamp,
             timestamp_local=currentTimestamp,

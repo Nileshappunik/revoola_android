@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -31,15 +32,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.*
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -47,6 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     val TAG: String = RLFragSetting::class.java.simpleName
@@ -93,8 +103,10 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layEmail.txtUsername.setText(userData.emailId)
                 fragBinding.layGender.txtUsername.setText(userData.gender)
                 fragBinding.layDateofbirth.txtUsername.setText(userData.dob)
-                fragBinding.layWeight.txtUsername.setText(userData.weightkg+" "+userData.weightUnit)
-                fragBinding.layHeight.txtUsername.setText(userData.height+" "+userData.heightUnit)
+
+                fragBinding.layWeight.txtUsername.setText(convertToInt(userData.weightkg).toString())
+
+                fragBinding.layHeight.txtUsername.setText(userData.height)
                 fragBinding.layMaxheartrate.txtUsername.setText(userData.RFMHR.toString())//max hearrate
                 fragBinding.layRestingheartrate.txtUsername.setText(userData.restingHr)//base heartrate
                 if ( userData.appUnit.toLowerCase().equals("imperial")){
@@ -152,6 +164,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layFirstname.edtUsername.visibility=View.GONE
                 fragBinding.layFirstname.txtUsername.setText(firstName)
                 RLBasicDataUpdateToFirebase("firstName",firstName)
+                RLUserForSearchUpdateToFirebase("firstName",firstName)
             }else{
                 fragBinding.layFirstname.edtUsername.error = "First name cannot be empty."
             }
@@ -176,6 +189,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.laySurname.edtUsername.visibility=View.GONE
                 fragBinding.laySurname.txtUsername.setText(surName)
                 RLBasicDataUpdateToFirebase("lastName",surName)
+                RLUserForSearchUpdateToFirebase("lastName",surName)
             }else{
                 fragBinding.laySurname.edtUsername.error = "Surname name cannot be empty."
             }
@@ -198,6 +212,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layNickname.edtUsername.visibility=View.GONE
                 fragBinding.layNickname.txtUsername.setText(nickName)
                 RLBasicDataUpdateToFirebase("displayName",nickName)
+                RLUserForSearchUpdateToFirebase("name",nickName)
             }else{
                 fragBinding.layNickname.edtUsername.error = "Nickname name cannot be empty."
             }
@@ -236,12 +251,12 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
         fragBinding.layMaxheartrate.txtusertitle.setText(R.string.maxheartrateestimated)
         fragBinding.layMaxheartrate.imgEdit.setOnClickListener {
-            RLshowRestingHrDialog()
+            RLshowRestingHrDialog(true)
         }
 
         fragBinding.layRestingheartrate.txtusertitle.setText(R.string.restingheartrate)
         fragBinding.layRestingheartrate.imgEdit.setOnClickListener {
-            RLshowRestingHrDialog()
+            RLshowRestingHrDialog(false)
         }
 
         fragBinding.layLocation.txtusertitle.setText(R.string.location)
@@ -325,6 +340,17 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
            }
         }
     }
+    private fun RLUserForSearchUpdateToFirebase(endPoint:String,data:Any,) {
+        val firebasePath = RevoolaFirebasePath.userForSearchPathWrite(endPoint)
+        // Firebase to Update BasicData
+        RLDatabaseManagerWrite().RlWriteBasicDataUpdate(firebasePath,data) { isSuccessful, error ->
+            if (isSuccessful){
+                RLTools.RlLogDPrint(TAG,"BasicData Update Successfully")
+            }else{
+                RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
+            }
+        }
+    }
     //Calender View For BirthDate Dialog Open
     private fun RLdialogStartDatePicker(dob: String?) {
         val calendar: Calendar = Calendar.getInstance()
@@ -384,6 +410,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         var displayheight:String=""
         var feet:String=""
         var inches:String=""
+        var heightType:String="FeetInch"
         val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_height_selection)
@@ -442,6 +469,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonfeetandinches)){
+                heightType = "FeetInch"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
                 numberPickerfeet.minValue = 0
@@ -464,6 +492,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPickerinches.value = 4
             }else if (checkedId.equals(R.id.radioButtonmetric)){
+                heightType="Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
@@ -481,7 +510,18 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         })
 
         tvYes.setOnClickListener(View.OnClickListener {
-            fragBinding.layHeight.txtUsername.setText(displayheight)
+            if (heightType.equals("FeetInch")){
+                val convertHeight = convertHeightCm(displayheight)
+                RLBasicDataUpdateToFirebase("heightUnit","FeetInch")
+                RLBasicDataUpdateToFirebase("height",convertHeight)
+                fragBinding.layHeight.txtUsername.setText(convertHeight.toString())
+            }else{
+                val convertHeight = displayheight.replace("cm", "", ignoreCase = true).trim().toInt()
+                RLBasicDataUpdateToFirebase("heightUnit","Metric")
+                RLBasicDataUpdateToFirebase("height",convertHeight)
+                fragBinding.layHeight.txtUsername.setText(convertHeight.toString())
+            }
+
             sucDialog.dismiss()
         })
 
@@ -493,7 +533,9 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         var displayweight:String=""
         var st:String=""
         var lb:String=""
-        var sucDialog: Dialog = Dialog(requireActivity())
+        var weightType:String="USPound"
+
+        val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_weight_selection)
         sucDialog.setCancelable(true)
@@ -590,6 +632,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         // Set a listener to handle RadioGroup selection changes
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonPounds)){
+                weightType = "USPound"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
@@ -600,6 +643,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonStones)){
+                weightType = "UKStone"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
                 numberPickerst.minValue = 0
@@ -620,6 +664,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonMetric)){
+                weightType = "Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
@@ -632,12 +677,25 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             }
         }
 
-
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
         })
 
+
         tvYes.setOnClickListener(View.OnClickListener {
+            if (weightType.equals("USPound")){
+                val convertedWeight=parseWeightToKg(displayweight)
+                RLBasicDataUpdateToFirebase("weightUnit","USPound")
+                RLBasicDataUpdateToFirebase("weightkg",convertedWeight)
+            }else if (weightType.equals("UKStone")){
+                val convertedWeight=parseWeightToKg(displayweight)
+                RLBasicDataUpdateToFirebase("weightUnit","UKStone")
+                RLBasicDataUpdateToFirebase("weightkg",convertedWeight)
+            }else{
+                val convertedWeight=parseWeightToKg(displayweight)
+                RLBasicDataUpdateToFirebase("weightUnit","Metric")
+                RLBasicDataUpdateToFirebase("weightkg",convertedWeight)
+            }
             fragBinding.layWeight.txtUsername.setText(displayweight)
             sucDialog.dismiss()
         })
@@ -700,7 +758,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
     // Max HeartRate And Base HeartRate Dialog
-    private fun RLshowRestingHrDialog() {
+    private fun RLshowRestingHrDialog(isMaxHeartrate:Boolean) {
         val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_resting_hr)
@@ -708,19 +766,50 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
         val tvNo: TextView = sucDialog.findViewById(R.id.tvNo)
         val tvYes: TextView = sucDialog.findViewById(R.id.tvYes)
-        val edt_restinghr: EditText = sucDialog.findViewById(R.id.edt_restinghr)
-        edt_restinghr.setText(fragBinding.layRestingheartrate.txtUsername.text.toString())
+        val ivHeartRateEdit: EditText = sucDialog.findViewById(R.id.edt_restinghr)
+
+        if (isMaxHeartrate){
+            ivHeartRateEdit.setHint("Range(120-250)")
+        }else{
+            ivHeartRateEdit.setHint("Range(35-80)")
+        }
+
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
         })
 
         tvYes.setOnClickListener(View.OnClickListener {
-            fragBinding.layRestingheartrate.txtUsername.setText(edt_restinghr.text.toString())
+            val restingHr=convertToInt(ivHeartRateEdit.text.toString())
+            val rangeBase = 35..80
+            val rangeMax = 120..250
+            if (isMaxHeartrate){
+                if (restingHr in rangeMax){
+                    RLBasicDataUpdateToFirebase("RFMHR",restingHr)
+                    fragBinding.layRestingheartrate.txtUsername.setText(restingHr.toString())
+                }else{
+                    RLAlert("Heart Rate must be in range of 120-250",requireContext())
+                }
+
+            }else{
+                if (restingHr in rangeBase){
+                    RLBasicDataUpdateToFirebase("restingHr",restingHr)
+                    fragBinding.layRestingheartrate.txtUsername.setText(restingHr.toString())
+                }else{
+                    RLAlert("Heart Rate must be in range of 35-80",requireContext())
+                }
+            }
             sucDialog.dismiss()
         })
 
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    fun  RLAlert(message: String,contextt: Context){
+        AlertDialog.Builder(contextt)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
     //User Image PickUp All Dialog
     private fun RLopencameragallerydialog() {
@@ -757,6 +846,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             val imgUri= data?.data
             chooseimagefile=RlUriToFile(requireActivity(),imgUri)
             fragBinding.layAvatar.imgUser.setImageURI(imgUri)
+            RlUploadUserImage(imgUri)
         }
     }
     //Camera to Click User Image
@@ -766,7 +856,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             chooseimagefile=RlSaveBitmapToFile(imageBitmap)
             fragBinding.layAvatar.imgUser.setImageBitmap(imageBitmap)
-
+            val tempUri = RLgetImageUri(requireActivity(), imageBitmap)
+            RlUploadUserImage(tempUri)
         }
     }
     //UriImage  to File converter
@@ -828,4 +919,105 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     private fun RLopentoast(messageprint: String) {
         Toast.makeText(requireContext(),messageprint, Toast.LENGTH_SHORT).show()
     }
+    //String to convert Int
+    private fun convertToInt(value: Any): Int {
+        return when (value) {
+            is Double -> value.roundToInt()
+            is Float -> value.roundToInt()
+            is Int -> value
+            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
+            else -> 0 // Default fallback for unsupported types
+        }
+    }
+    //Height Convert Feet inch to cm
+    private fun convertHeightCm(height: String): Int {
+        val regex = Regex("(\\d+)\\s*Feet\\s*(\\d+)\\s*inches", RegexOption.IGNORE_CASE)
+        val match = regex.find(height)
+        if (match != null) {
+            val (feetStr, inchesStr) = match.destructured
+            val feet = feetStr.toInt()
+            val inches = inchesStr.toInt()
+
+            val heightInCm = (feet * 30.48) + (inches * 2.54)
+            return heightInCm.roundToInt()
+        } else {
+            return 0
+        }
+    }
+    //weight Convert to KG
+    private fun parseWeightToKg(weight: String): Double {
+        val lbsRegex = Regex("(\\d+)\\s*lbs?", RegexOption.IGNORE_CASE)
+        val stLbRegex = Regex("(\\d+)\\s*st\\s*(\\d+)\\s*lb", RegexOption.IGNORE_CASE)
+        val kgRegex = Regex("(\\d+)\\s*kg", RegexOption.IGNORE_CASE)
+
+        return when {
+            stLbRegex.matches(weight) -> {
+                val (stStr, lbStr) = stLbRegex.find(weight)!!.destructured
+                val stones = stStr.toInt()
+                val pounds = lbStr.toInt()
+                (stones * 6.35029) + (pounds * 0.453592)
+            }
+            lbsRegex.matches(weight) -> {
+                val pounds = lbsRegex.find(weight)!!.groupValues[1].toInt()
+                pounds * 0.453592
+            }
+            kgRegex.matches(weight) -> {
+                kgRegex.find(weight)!!.groupValues[1].toDouble()
+            }
+            else -> 0.0 // Unknown format
+        }
+    }
+    //BitMap Image To Uri Image
+    private fun RLgetImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
+    }
+    //user Image upload to Firebase
+    private fun RlUploadUserImage(filePath:Uri?) {
+        if (filePath != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val userId=RLAuthManager().RlgetCurrentUser()?.uid?:""
+                    val leaderboardPath = userId+"leaderboard.png"
+                    val mainPath = userId+"main.png"
+
+                    val leaderboardref = FirebaseStorage.getInstance().reference.child(leaderboardPath)
+                    val uploadleaderboard = leaderboardref.putFile(filePath)
+                    uploadleaderboard.addOnSuccessListener {
+                        leaderboardref.downloadUrl.addOnSuccessListener { uri ->
+                            val imageFile = uri.toString()
+                            //Basic Data
+                            RLBasicDataUpdateToFirebase("leaderBoardImage",imageFile)
+                            RLBasicDataUpdateToFirebase("displayImage",imageFile)
+                            //Users For Search
+                            RLUserForSearchUpdateToFirebase("leaderBoardImage",imageFile)
+                            RLUserForSearchUpdateToFirebase("displayImage",imageFile)
+                            RLTools.RlLogDPrint(TAG,"imageUrl leaderboardPath:- $imageFile")
+                        }
+                    }.addOnFailureListener {
+                        RLopentoast("Failed to upload image")
+                    }
+
+                    val mainPathref = FirebaseStorage.getInstance().reference.child(mainPath)
+                    val uploadmainPath= mainPathref.putFile(filePath)
+                    uploadmainPath.addOnSuccessListener {
+                        mainPathref.downloadUrl.addOnSuccessListener { uri ->
+                            val imageFile = uri.toString()
+                            RLTools.RlLogDPrint(TAG,"imageUrl mainPath:- $imageFile")
+                        }
+                    }.addOnFailureListener {
+                        RLopentoast("Failed to upload image")
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        RLopentoast("Failed to upload image: ${e.message}")
+                    }
+                }
+            }
+
+        }
+    }
+
 }

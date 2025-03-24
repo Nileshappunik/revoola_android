@@ -21,7 +21,6 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragBodyClassesNormalVideoStartBinding
-import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
@@ -29,7 +28,7 @@ import com.revoola.utils.RLTimerManager
 import com.google.gson.Gson
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
-import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
+import com.revoola.fragment.start.yourway.RLSessionDataTransferModelNew
 import java.util.concurrent.TimeUnit
 
 class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
@@ -55,6 +54,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     private var  joiningDate: Long = 0
     private var emailId=""
     private var isBasicDataAdded=true
+    private var visibilityflagforthatsession:Int =0
 
     // this all arr need to insert
     private var arrAvgRevPercentage:MutableList<Int> = mutableListOf()
@@ -337,7 +337,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
     //when all data set and new open then this function call
     private fun RLCompleteSessionFragmentOpen(data: String, videoID: String,VideoCardData: RLFulllVideoModel) {
         val bundle: Bundle = Bundle()
-        val cardData = RLSessionDataTransferModel()
+        val cardData = RLSessionDataTransferModelNew()
 
         val assumedREV=VideoCardData.assumedREV?:"0"
         totalRev=assumedREV.toDouble()
@@ -400,8 +400,10 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
         cardData.joiningDate= joiningDate
         cardData.emailId = emailId
         cardData.isBasicDataAdded = isBasicDataAdded
+        cardData.visibilityflagforthatsession = visibilityflagforthatsession
 
-        bundle.putSerializable("cardData",cardData)
+       // bundle.putSerializable("cardData",cardData)
+        bundle.putParcelable("cardData",cardData)
 
         (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
     }
@@ -421,6 +423,7 @@ class RLFragBodyClassesNormalVideoStart : RLBaseFragment() {
                 joiningDate=userData.joiningDate
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
+                visibilityflagforthatsession=userData.visibilityflagforthatsession
             } else {
                 RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }

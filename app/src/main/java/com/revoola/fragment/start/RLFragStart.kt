@@ -53,7 +53,7 @@ class RLFragStart : RLBaseFragment() {
     private val binding by lazy {
         RlFragStartBinding.inflate(layoutInflater)
     }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater:LayoutInflater, container:ViewGroup?,savedInstanceState:Bundle?): View? {
         RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -190,14 +190,10 @@ class RLFragStart : RLBaseFragment() {
         dialog.show()
     }
 
-    //health connect
-
     private lateinit var healthConnectManager: HealthConnectManager
     private lateinit var healthConnectClient: HealthConnectClient
 
-    private val permissionsLauncher = registerForActivityResult(
-        PermissionController.createRequestPermissionResultContract()
-    ) { granted ->
+    private val permissionsLauncher = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
         if (granted.containsAll(HealthConnectManager.PERMISSIONS)) {
             RLTools.RlLogDPrint(TAG, "Permissions granted.")
             readStepsData()
@@ -227,12 +223,7 @@ class RLFragStart : RLBaseFragment() {
     private fun readStepsData() {
         fragBinding.tempText.setText("Start Step")
         lifecycleScope.launch {
-            val stepsRecords = healthConnectManager.readStepsData(
-                healthConnectClient,
-                Instant.now().minus(1, ChronoUnit.DAYS),
-                Instant.now()
-            )
-
+            val stepsRecords = healthConnectManager.readStepsData(healthConnectClient, Instant.now().minus(1, ChronoUnit.DAYS), Instant.now())
             for (record in stepsRecords) {
                 val step = "Steps: ${record.count}, Start: ${record.startTime}, End: ${record.endTime}"
                 fragBinding.tempText.setText(step)

@@ -23,20 +23,13 @@ import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsetgroup_data
 import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.friends.model.RLCreateGroupModel
-import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
-import com.revoola.fragment.start.yourway.RLSessionDataTransferModel
 import com.revoola.model.RLUserDataParcelable
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.UUID
 
 class RLFragYourGroup : RLBaseFragment() {
     val TAG: String = RLFragYourGroup::class.java.simpleName

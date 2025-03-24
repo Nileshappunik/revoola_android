@@ -40,9 +40,11 @@ import com.revoola.databinding.RlDialogHelpSigninBinding
 import com.revoola.commonobject.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.math.roundToInt
 
 class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener   {
     val TAG: String = RLSignUpActivityRL::class.java.simpleName
@@ -176,10 +178,13 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             }
         }
     }
+    //Height Change Dialog
     private fun RLshowHeightDialog() {
+        var dsheight:String=""
         var feet:String=""
         var inches:String=""
-        val sucDialog: Dialog  = Dialog(activity)
+        var heightType:String="FeetInch"
+        val sucDialog: Dialog = Dialog(this)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_height_selection)
         sucDialog.setCancelable(true)
@@ -194,9 +199,24 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         val rv_ukstones = sucDialog.findViewById<RelativeLayout>(R.id.rv_ukstones)
         // Optionally set a default selection
         radioGroup.check(R.id.radioButtonfeetandinches)
-        val valuesfeet= com.revoola.utils.RLConstants.valuesFeet
-        val valuesinches= com.revoola.utils.RLConstants.valuesInches
-        val valuesmatric= com.revoola.utils.RLConstants.valuesMatricHeight
+        val valuesfeet = arrayOf("1 Feet", "2 Feet", "3 Feet", "4 Feet", "5 Feet",
+            "6 Feet", "7 Feet", "8 Feet", "9 Feet")
+        val valuesinches = arrayOf("0 inches", "1 inches", "2 inches", "3 inches", "4 inches",
+            "5 inches", "6 inches", "7 inches", "8 inches", "9 inches","10 inches", "11 inches")
+        val valuesmatric = arrayOf(
+            "151 cm", "152 cm", "153 cm", "154 cm", "155 cm","156 cm", "157 cm", "158 cm", "159 cm", "160 cm",
+            "161 cm", "162 cm", "163 cm", "164 cm", "165 cm","166 cm", "167 cm", "168 cm", "169 cm", "170 cm",
+            "171 cm", "172 cm", "173 cm", "174 cm", "175 cm","176 cm", "177 cm", "178 cm", "179 cm", "180 cm",
+            "181 cm", "182 cm", "183 cm", "184 cm", "185 cm","186 cm", "187 cm", "188 cm", "189 cm", "190 cm",
+            "191 cm", "192 cm", "193 cm", "194 cm", "195 cm","196 cm", "197 cm", "198 cm", "199 cm", "200 cm",
+            "201 cm", "202 cm", "203 cm", "204 cm", "205 cm","206 cm", "207 cm", "208 cm", "209 cm", "210 cm",
+            "211 cm", "212 cm", "213 cm", "214 cm", "215 cm","216 cm", "217 cm", "218 cm", "219 cm", "220 cm",
+            "221 cm", "222 cm","223 cm", "224 cm", "225 cm", "226 cm", "227 cm","228 cm","229 cm","230 cm",
+            "231 cm", "232 cm", "233 cm", "234 cm", "235 cm","236 cm", "237 cm", "238 cm", "239 cm", "240 cm",
+            "241 cm", "242 cm", "243 cm", "244 cm", "245 cm","246 cm", "247 cm", "248 cm", "249 cm", "250 cm",
+            "251 cm", "252 cm", "253 cm", "254 cm", "255 cm","256 cm", "257 cm", "258 cm", "259 cm", "260 cm",
+            "261 cm", "262 cm", "263 cm", "264 cm", "265 cm","266 cm", "267 cm", "268 cm", "269 cm", "270 cm",
+            "271 cm", "272 cm", "273 cm", "274 cm", "275 cm","276 cm", "277 cm", "278 cm", "279 cm", "280 cm")
 
         rv_poundmatric.visibility=View.GONE
         rv_ukstones.visibility=View.VISIBLE
@@ -206,8 +226,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         numberPickerfeet.setOnValueChangedListener { picker, oldVal, newVal ->
             //  val  selectedValueTextView = "Selected Value: ${values[newVal]}"
             feet=valuesfeet[newVal]
-            displayheight=feet +" "+inches
-            heightUnit="FeetInch"
+            dsheight=feet +" "+inches
         }
         numberPickerfeet.value = 4
 
@@ -217,14 +236,13 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         numberPickerinches.setOnValueChangedListener { picker, oldVal, newVal ->
             //  val  selectedValueTextView = "Selected Value: ${values[newVal]}"
             inches=valuesinches[newVal]
-            displayheight=feet +" "+inches
-            heightUnit="FeetInch"
+            dsheight=feet +" "+inches
         }
         numberPickerinches.value = 4
 
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonfeetandinches)){
-                heightUnit="FeetInch"
+                heightType = "FeetInch"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
                 numberPickerfeet.minValue = 0
@@ -233,7 +251,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 numberPickerfeet.setOnValueChangedListener { picker, oldVal, newVal ->
                     //  val  selectedValueTextView = "Selected Value: ${values[newVal]}"
                     feet=valuesfeet[newVal]
-                    displayheight=feet +" "+inches
+                    dsheight=feet +" "+inches
                 }
                 numberPickerfeet.value = 4
 
@@ -243,49 +261,59 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 numberPickerinches.setOnValueChangedListener { picker, oldVal, newVal ->
                     //  val  selectedValueTextView = "Selected Value: ${values[newVal]}"
                     inches=valuesinches[newVal]
-                    displayheight=feet +" "+inches
+                    dsheight=feet +" "+inches
                 }
                 numberPickerinches.value = 4
             }else if (checkedId.equals(R.id.radioButtonmetric)){
+                heightType="Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
                 numberPicker.maxValue = valuesmatric.size - 1
                 numberPicker.displayedValues = valuesmatric
                 numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-                    displayheight=valuesmatric[newVal]
-
-                    heightUnit="Metric"
+                    dsheight=valuesmatric[newVal]
                 }
                 numberPicker.value = 4
             }
         }
-
-
 
         tvNo.setOnClickListener(View.OnClickListener {
             RLvalidation()
             if (displayheight.isEmpty()){
                 activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
             }
-            sucDialog!!.dismiss()
+            sucDialog.dismiss()
         })
 
         tvYes.setOnClickListener(View.OnClickListener {
+            if (heightType.equals("FeetInch")){
+                val convertHeight = convertHeightCm(dsheight)
+                displayheight = convertHeight.toString()
+                heightUnit="FeetInch"
+            }else{
+                val convertHeight = dsheight.replace("cm", "", ignoreCase = true).trim().toInt()
+                displayheight=convertHeight.toString()
+                heightUnit="Metric"
+            }
             activityBinding.edHeight.setText(displayheight)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
             RLvalidation()
-            sucDialog!!.dismiss()
+            sucDialog.dismiss()
         })
 
-        sucDialog!!.show()
-        sucDialog!!.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    //Weight Change Dialog
     private fun RLshowWeightDialog(activity: Activity) {
+        var dsweight:String=""
         var st:String=""
         var lb:String=""
-        var sucDialog: Dialog = Dialog(activity)
+        var weightType:String="USPound"
+
+        val sucDialog: Dialog = Dialog(activity)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_weight_selection)
         sucDialog.setCancelable(true)
@@ -301,10 +329,71 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         // Optionally set a default selection
         radioGroup.check(R.id.radioButtonPounds)
         // Define a string array for the NumberPicker with numbers and RLText
-        val valuesuspounds = com.revoola.utils.RLConstants.valuesUsPounds
-        val valuesmatric = com.revoola.utils.RLConstants.valuesMatric
-        val valuesukstonesst = com.revoola.utils.RLConstants.valuesUkStonesSt
-        val valuesukstoneslb = com.revoola.utils.RLConstants.valuesUkStonesLb
+        val valuesuspounds = arrayOf(
+            "40 lbs",
+            "41 lbs", "42 lbs", "43 lbs", "44 lbs", "45 lbs","46 lbs", "47 lbs", "48 lbs", "49 lbs", "50 lbs",
+            "51 lbs", "52 lbs", "53 lbs", "54 lbs", "55 lbs","56 lbs", "57 lbs", "58 lbs", "59 lbs", "60 lbs",
+            "61 lbs", "62 lbs", "63 lbs", "64 lbs", "65 lbs","66 lbs", "67 lbs", "68 lbs", "69 lbs", "70 lbs",
+            "71 lbs", "72 lbs", "73 lbs", "74 lbs", "75 lbs","76 lbs", "77 lbs", "78 lbs", "79 lbs", "80 lbs",
+            "81 lbs", "82 lbs", "83 lbs", "84 lbs", "85 lbs","86 lbs", "87 lbs", "88 lbs", "89 lbs", "90 lbs",
+            "91 lbs", "92 lbs", "93 lbs", "94 lbs", "95 lbs","96 lbs", "97 lbs", "98 lbs", "99 lbs", "100 lbs",
+            "101 lbs", "102 lbs", "103 lbs", "104 lbs", "105 lbs","106 lbs", "107 lbs", "108 lbs", "109 lbs", "110 lbs",
+            "111 lbs", "112 lbs", "113 lbs", "114 lbs", "115 lbs","116 lbs", "117 lbs", "118 lbs", "119 lbs", "120 lbs",
+            "121 lbs", "122 lbs","123 lbs", "124 lbs", "125 lbs", "126 lbs", "127 lbs","128 lbs","129 lbs","130 lbs",
+            "131 lbs", "132 lbs", "133 lbs", "134 lbs", "135 lbs","136 lbs", "137 lbs", "138 lbs", "139 lbs", "140 lbs",
+            "141 lbs", "142 lbs", "143 lbs", "144 lbs", "145 lbs","146 lbs", "147 lbs", "148 lbs", "149 lbs", "150 lbs",
+            "151 lbs", "152 lbs", "153 lbs", "154 lbs", "155 lbs","156 lbs", "157 lbs", "158 lbs", "159 lbs", "160 lbs",
+            "161 lbs", "162 lbs", "163 lbs", "164 lbs", "165 lbs","166 lbs", "167 lbs", "168 lbs", "169 lbs", "170 lbs",
+            "171 lbs", "172 lbs", "173 lbs", "174 lbs", "175 lbs","176 lbs", "177 lbs", "178 lbs", "179 lbs", "180 lbs",
+            "181 lbs", "182 lbs", "183 lbs", "184 lbs", "185 lbs","186 lbs", "187 lbs", "188 lbs", "189 lbs", "190 lbs",
+            "191 lbs", "192 lbs", "193 lbs", "194 lbs", "195 lbs","196 lbs", "197 lbs", "198 lbs", "199 lbs", "200 lbs",
+            "201 lbs", "202 lbs", "203 lbs", "204 lbs", "205 lbs","206 lbs", "207 lbs", "208 lbs", "209 lbs", "210 lbs",
+            "211 lbs", "212 lbs", "213 lbs", "214 lbs", "215 lbs","216 lbs", "217 lbs", "218 lbs", "219 lbs", "220 lbs",
+            "221 lbs", "222 lbs","223 lbs", "224 lbs", "225 lbs", "226 lbs", "227 lbs","228 lbs","229 lbs","230 lbs",
+            "231 lbs", "232 lbs", "233 lbs", "234 lbs", "235 lbs","236 lbs", "237 lbs", "238 lbs", "239 lbs", "240 lbs",
+            "241 lbs", "242 lbs", "243 lbs", "244 lbs", "245 lbs","246 lbs", "247 lbs", "248 lbs", "249 lbs", "250 lbs",
+            "251 lbs", "252 lbs", "253 lbs", "254 lbs", "255 lbs","256 lbs", "257 lbs", "258 lbs", "259 lbs", "260 lbs",
+            "261 lbs", "262 lbs", "263 lbs", "264 lbs", "265 lbs","266 lbs", "267 lbs", "268 lbs", "269 lbs", "270 lbs",
+            "271 lbs", "272 lbs", "273 lbs", "274 lbs", "275 lbs","276 lbs", "277 lbs", "278 lbs", "279 lbs", "280 lbs",
+            "281 lbs", "282 lbs", "283 lbs", "284 lbs", "285 lbs","286 lbs", "287 lbs", "288 lbs", "289 lbs", "290 lbs",
+            "291 lbs", "292 lbs", "293 lbs", "294 lbs", "295 lbs","296 lbs", "297 lbs", "298 lbs", "299 lbs", "300 lbs",
+            "301 lbs", "302 lbs", "303 lbs", "304 lbs", "305 lbs","306 lbs", "307 lbs", "308 lbs", "309 lbs", "310 lbs",
+            "311 lbs", "312 lbs", "313 lbs", "314 lbs", "315 lbs","316 lbs", "317 lbs", "318 lbs", "319 lbs", "320 lbs",
+            "321 lbs", "322 lbs","323 lbs", "324 lbs", "325 lbs", "326 lbs", "327 lbs","328 lbs","329 lbs","330 lbs",
+            "331 lbs",
+        )
+
+        val valuesmatric = arrayOf(
+            "18 kg", "19 kg", "20 kg", "21 kg", "22 kg","23 kg", "24 kg", "25 kg", "26 kg", "27 kg","28 kg","29 kg","30 kg",
+            "31 kg", "32 kg", "33 kg", "34 kg", "35 kg","36 kg", "37 kg", "38 kg", "39 kg", "40 kg",
+            "41 kg", "42 kg", "43 kg", "44 kg", "45 kg","46 kg", "47 kg", "48 kg", "49 kg", "50 kg",
+            "51 kg", "52 kg", "53 kg", "54 kg", "55 kg","56 kg", "57 kg", "58 kg", "59 kg", "60 kg",
+            "61 kg", "62 kg", "63 kg", "64 kg", "65 kg","66 kg", "67 kg", "68 kg", "69 kg", "70 kg",
+            "71 kg", "72 kg", "73 kg", "74 kg", "75 kg","76 kg", "77 kg", "78 kg", "79 kg", "80 kg",
+            "81 kg", "82 kg", "83 kg", "84 kg", "85 kg","86 kg", "87 kg", "88 kg", "89 kg", "90 kg",
+            "91 kg", "92 kg", "93 kg", "94 kg", "95 kg","96 kg", "97 kg", "98 kg", "99 kg", "100 kg",
+            "101 kg", "102 kg", "103 kg", "104 kg", "105 kg","106 kg", "107 kg", "108 kg", "109 kg", "110 kg",
+            "111 kg", "112 kg", "113 kg", "114 kg", "115 kg","116 kg", "117 kg", "118 kg", "119 kg", "120 kg",
+            "121 kg", "122 kg","123 kg", "124 kg", "125 kg", "126 kg", "127 kg","128 kg","129 kg","130 kg",
+            "131 kg", "132 kg", "133 kg", "134 kg", "135 kg","136 kg", "137 kg", "138 kg", "139 kg", "140 kg",
+            "141 kg", "142 kg", "143 kg", "144 kg", "145 kg","146 kg", "147 kg", "148 kg", "149 kg", "150 kg",
+            "151 kg", "152 kg", "153 kg", "154 kg", "155 kg","156 kg", "157 kg", "158 kg", "159 kg", "160 kg",
+            "161 kg", "162 kg", "163 kg", "164 kg", "165 kg","166 kg", "167 kg", "168 kg", "169 kg", "170 kg",
+            "171 kg", "172 kg", "173 kg", "174 kg", "175 kg","176 kg", "177 kg", "178 kg", "179 kg", "180 kg",
+            "181 kg", "182 kg", "183 kg", "184 kg", "185 kg","186 kg", "187 kg", "188 kg", "189 kg", "190 kg",
+            "191 kg", "192 kg", "193 kg", "194 kg", "195 kg","196 kg", "197 kg", "198 kg", "199 kg", "200 kg",
+        )
+
+        val valuesukstonesst = arrayOf(
+            "1 st", "2 st", "3 st", "4 st", "5 st","6 st", "7 st", "8 st", "9 st", "10 st",
+            "11 st", "12 st", "13 st", "14 st", "15 st","16 st", "17 st", "18 st", "19 st", "20 st",
+            "21 st", "22 st","23 st", "24 st", "25 st", "26 st", "27 st","28 st","29 st","30 st",
+            "31 st", "32 st", "33 st", "34 st", "35 st","36 st", "37 st", "38 st", "39 st", "40 st",
+        )
+        val valuesukstoneslb = arrayOf(
+            "1 lb", "2 lb", "3 lb", "4 lb", "5 lb","6 lb", "7 lb", "8 lb", "9 lb", "10 lb",
+            "11 lb", "12 lb", "13 lb",
+        )
 
         rv_poundmatric.visibility=View.VISIBLE
         rv_ukstones.visibility=View.GONE
@@ -312,27 +401,26 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         numberPicker.maxValue = valuesuspounds.size - 1
         numberPicker.displayedValues = valuesuspounds
         numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-            //  val  selectedValueTextView = "Selected Value: ${values[newVal]}"
-            displayweight=valuesuspounds[newVal]
+            dsweight=valuesuspounds[newVal]
             activityBinding.edWeight.setText(valuesuspounds[newVal])
-            weightUnit="Us Pounds"
         }
         numberPicker.value = 4
 
         // Set a listener to handle RadioGroup selection changes
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonPounds)){
+                weightType = "USPound"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
                 numberPicker.maxValue = valuesuspounds.size - 1
                 numberPicker.displayedValues = valuesuspounds
                 numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-                    displayweight=valuesuspounds[newVal]
-                    weightUnit="Us Pounds"
+                    dsweight=valuesuspounds[newVal]
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonStones)){
+                weightType = "UKStone"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
                 numberPickerst.minValue = 0
@@ -340,8 +428,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 numberPickerst.displayedValues = valuesukstonesst
                 numberPickerst.setOnValueChangedListener { picker, oldVal, newVal ->
                     st=valuesukstonesst[newVal]
-                    displayweight=st+" "+lb
-                    weightUnit="UK Stones"
+                    dsweight=st+" "+lb
                 }
                 numberPickerst.value = 4
 
@@ -350,19 +437,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 numberPickerlb.displayedValues = valuesukstoneslb
                 numberPickerlb.setOnValueChangedListener { picker, oldVal, newVal ->
                     lb=valuesukstoneslb[newVal]
-                    displayweight=st+" "+lb
-                    weightUnit="UK Stones"
+                    dsweight=st+" "+lb
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonMetric)){
+                weightType = "Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
                 numberPicker.minValue = 0
                 numberPicker.maxValue = valuesmatric.size - 1
                 numberPicker.displayedValues = valuesmatric
                 numberPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-                    displayweight=valuesmatric[newVal]
-                    weightUnit="Metric"
+                    dsweight=valuesmatric[newVal]
                 }
                 numberPicker.value = 4
             }
@@ -377,16 +463,32 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             sucDialog.dismiss()
         })
 
+
         tvYes.setOnClickListener(View.OnClickListener {
-            activityBinding.edWeight.setText(displayweight)
+            if (weightType.equals("USPound")){
+                val convertedWeight=parseWeightToKg(dsweight)
+                displayweight=convertedWeight.toString()
+                weightUnit="USPound"
+            }else if (weightType.equals("UKStone")){
+                val convertedWeight=parseWeightToKg(dsweight)
+                displayweight=convertedWeight.toString()
+                weightUnit="UKStone"
+            }else{
+                val convertedWeight=parseWeightToKg(dsweight)
+                displayweight=convertedWeight.toString()
+                weightUnit="Metric"
+            }
+            activityBinding.edWeight.setText(dsweight)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edWeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
             RLvalidation()
             sucDialog.dismiss()
         })
+
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    //Gender Change Dialog
     private fun RLshowGenderDialog() {
         val sucDialog: Dialog = Dialog(activity)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -409,7 +511,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         tvYes.setOnClickListener(View.OnClickListener {
             val selectedId = radioGroup.checkedRadioButtonId
             val radioButton = sucDialog.findViewById<RadioButton>(selectedId)
-             selectedGender = radioButton.text.toString()
+            val stGender = radioButton.text.toString()
+            when(stGender){
+                "MALE"->{
+                    selectedGender="Male"
+                }
+                "FEMALE"->{
+                    selectedGender="Female"
+                }
+                "PREFER NOT TO SAY"->{
+                    selectedGender="Other"
+                }
+            }
             activityBinding.edGender.setText(selectedGender)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edGender.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
@@ -420,6 +533,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+
     private fun RLopentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
@@ -658,7 +772,6 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
         datePickerDialog.show()
     }
-
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, day: Int) {
         var myMonth: Int = 0
         var Month: String = ""
@@ -721,6 +834,42 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 // Permission is denied
                 RLopentoast("Permission is denied")
             }
+        }
+    }
+    private fun convertHeightCm(height: String): Int {
+        val regex = Regex("(\\d+)\\s*Feet\\s*(\\d+)\\s*inches", RegexOption.IGNORE_CASE)
+        val match = regex.find(height)
+        if (match != null) {
+            val (feetStr, inchesStr) = match.destructured
+            val feet = feetStr.toInt()
+            val inches = inchesStr.toInt()
+
+            val heightInCm = (feet * 30.48) + (inches * 2.54)
+            return heightInCm.roundToInt()
+        } else {
+            return 0
+        }
+    }
+    private fun parseWeightToKg(weight: String): Double {
+        val lbsRegex = Regex("(\\d+)\\s*lbs?", RegexOption.IGNORE_CASE)
+        val stLbRegex = Regex("(\\d+)\\s*st\\s*(\\d+)\\s*lb", RegexOption.IGNORE_CASE)
+        val kgRegex = Regex("(\\d+)\\s*kg", RegexOption.IGNORE_CASE)
+
+        return when {
+            stLbRegex.matches(weight) -> {
+                val (stStr, lbStr) = stLbRegex.find(weight)!!.destructured
+                val stones = stStr.toInt()
+                val pounds = lbStr.toInt()
+                (stones * 6.35029) + (pounds * 0.453592)
+            }
+            lbsRegex.matches(weight) -> {
+                val pounds = lbsRegex.find(weight)!!.groupValues[1].toInt()
+                pounds * 0.453592
+            }
+            kgRegex.matches(weight) -> {
+                kgRegex.find(weight)!!.groupValues[1].toDouble()
+            }
+            else -> 0.0 // Unknown format
         }
     }
 }
