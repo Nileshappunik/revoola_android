@@ -814,6 +814,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
            RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
         }
     }
+    //Wear os Send Data
     private fun RLSendDataToWearOS(context: Context, formattedTime: String,
                                    calories: Double, total_Rev: Double,
                                    REVPer: Double, buttonType: String) {
@@ -841,7 +842,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 // Log.e(TAG, "Failed to send data", exception)
             }
     }
-
+    //Wear os Listener
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         for (event in dataEvents) {
             if (event.type == DataEvent.TYPE_CHANGED) {

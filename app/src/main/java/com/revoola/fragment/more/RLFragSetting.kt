@@ -407,7 +407,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     }
     //Height Change Dialog
     private fun RLshowHeightDialog() {
-        var displayheight:String=""
+        var displayheight:String="5 Feet 4 inches"
         var feet:String=""
         var inches:String=""
         var heightType:String="FeetInch"
@@ -469,6 +469,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
 
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonfeetandinches)){
+                displayheight="5 Feet 4 inches"
                 heightType = "FeetInch"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
@@ -492,6 +493,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPickerinches.value = 4
             }else if (checkedId.equals(R.id.radioButtonmetric)){
+                displayheight="155 cm"
                 heightType="Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
@@ -530,7 +532,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     }
     //Weight Change Dialog
     private fun RLshowWeightDialog() {
-        var displayweight:String=""
+        var displayweight:String="44 lbs"
         var st:String=""
         var lb:String=""
         var weightType:String="USPound"
@@ -632,6 +634,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         // Set a listener to handle RadioGroup selection changes
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonPounds)){
+                displayweight="44 lbs"
                 weightType = "USPound"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
@@ -643,6 +646,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonStones)){
+                displayweight="5 st 1 lb"
                 weightType = "UKStone"
                 rv_poundmatric.visibility=View.GONE
                 rv_ukstones.visibility=View.VISIBLE
@@ -664,6 +668,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 }
                 numberPicker.value = 4
             }else if (checkedId.equals(R.id.radioButtonMetric)){
+                displayweight="22 kg"
                 weightType = "Metric"
                 rv_poundmatric.visibility=View.VISIBLE
                 rv_ukstones.visibility=View.GONE
