@@ -118,8 +118,6 @@
             </intent-filter>
         </activity-alias>
 
-
-
        <!-- <activity
             android:name="com.revoola.activity.RLMainActivityRL"
             android:configChanges="orientation|screenSize"

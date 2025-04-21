@@ -408,8 +408,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     //Height Change Dialog
     private fun RLshowHeightDialog() {
         var displayheight:String="5 Feet 4 inches"
-        var feet:String=""
-        var inches:String=""
+        var feet:String="5 Feet"
+        var inches:String="4 inches"
         var heightType:String="FeetInch"
         val sucDialog: Dialog = Dialog(requireActivity())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -533,8 +533,8 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     //Weight Change Dialog
     private fun RLshowWeightDialog() {
         var displayweight:String="44 lbs"
-        var st:String=""
-        var lb:String=""
+        var st:String="5 st"
+        var lb:String="1 lb"
         var weightType:String="USPound"
 
         val sucDialog: Dialog = Dialog(requireActivity())
@@ -790,7 +790,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             if (isMaxHeartrate){
                 if (restingHr in rangeMax){
                     RLBasicDataUpdateToFirebase("RFMHR",restingHr)
-                    fragBinding.layRestingheartrate.txtUsername.setText(restingHr.toString())
+                    fragBinding.layMaxheartrate.txtUsername.setText(restingHr.toString())
                 }else{
                     RLAlert("Heart Rate must be in range of 120-250",requireContext())
                 }

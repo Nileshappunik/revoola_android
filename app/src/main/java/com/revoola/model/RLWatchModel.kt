@@ -6,4 +6,6 @@ data class RLWatchModel(val uid: String="",
                         val dob: String="",
                         val gender: String="",
                         val RFMHR: Int=0,
-                        val restingHr: String="")
+                        val restingHr: String="",
+                        val emailId:String =" ",
+                        val isBasicDataAdded:Boolean=true)

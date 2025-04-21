@@ -74,6 +74,10 @@ class RLDatabaseManagerWrite {
             }
     }
 
+    fun RlUpdateAllData(path: String, data: Any) {
+        database.child(path).setValue(data)
+    }
+
     fun RlWriteData(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {

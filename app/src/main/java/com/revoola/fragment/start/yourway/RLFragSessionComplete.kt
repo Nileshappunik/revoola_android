@@ -7,11 +7,8 @@ import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,16 +49,11 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
-import gun0912.tedimagepicker.builder.TedImagePicker
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import android.util.Base64
-import android.widget.Toast
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.database.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,20 +63,13 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.Serializable
-import java.net.URL
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 //import java.util.Base64
 import java.util.Date
@@ -94,7 +79,7 @@ import kotlin.math.roundToInt
 class RLFragSessionComplete : RLBaseFragment(){
     val TAG: String = RLFragSessionComplete::class.java.simpleName
     private lateinit var fragBinding: RlFragSessionCompleteBinding
-    private lateinit var RLApiClientRetrofit: RLApiClientRet
+    private lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var imgUriList = mutableListOf<Uri>()
     var currentUser =""
@@ -138,8 +123,8 @@ class RLFragSessionComplete : RLBaseFragment(){
             currentUser=RLAuthManager().RlgetCurrentUser()?.uid?:""
         }
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -938,8 +923,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
 
-    private fun RLFirebaseEntry(dataForTestingDataMap: HashMap<String, Any>,
-        ghostDataMap: HashMap<String, Any>,summaryDataMap: HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
+    private fun RLFirebaseEntry(dataForTestingDataMap : HashMap<String, Any>,
+        ghostDataMap: HashMap<String, Any>,summaryDataMap : HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
         graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModelNew,currentTimestamp: String) {
 
         // Writing DataForTesting Data to Firebase
@@ -1069,7 +1054,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         return Gson().toJson(apiPayload)
     }
     private fun RLInsertApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
-        if (RLApiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.RLisConnected()) {
             val jsonPayload = createPayload(cardData,currentTimestamp)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
 
@@ -1168,7 +1153,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         return requestBodyMap
     }
     private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
-        if (RLApiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.RLisConnected()) {
             val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
             val images=getUserImages()
             RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")

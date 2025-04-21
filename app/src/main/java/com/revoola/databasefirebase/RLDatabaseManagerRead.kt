@@ -12,6 +12,16 @@ import com.revoola.firebaseModel.RLChallengeRiderBody
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
+    fun deleteFirebaseData(path: String,callback: (Any?, Exception?) -> Unit) {
+        database.child(path).removeValue()
+            .addOnSuccessListener {
+                callback("Data deleted successfully from $path", null)
+            }
+            .addOnFailureListener {
+                callback(null, it)
+            }
+    }
+
     fun RLREVOOLAUSERFORSEARCHREADDATE(userId: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId)
             .get().addOnCompleteListener { task ->

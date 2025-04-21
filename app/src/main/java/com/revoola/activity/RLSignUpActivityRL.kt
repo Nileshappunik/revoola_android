@@ -180,9 +180,9 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     //Height Change Dialog
     private fun RLshowHeightDialog() {
-        var dsheight:String=""
-        var feet:String=""
-        var inches:String=""
+        var dsheight:String="5 Feet 4 inches"
+        var feet:String="5 Feet"
+        var inches:String="4 inches"
         var heightType:String="FeetInch"
         val sucDialog: Dialog = Dialog(this)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -308,9 +308,9 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     }
     //Weight Change Dialog
     private fun RLshowWeightDialog(activity: Activity) {
-        var dsweight:String=""
-        var st:String=""
-        var lb:String=""
+        var dsweight:String="44 lbs"
+        var st:String="5 st"
+        var lb:String="1 lb"
         var weightType:String="USPound"
 
         val sucDialog: Dialog = Dialog(activity)

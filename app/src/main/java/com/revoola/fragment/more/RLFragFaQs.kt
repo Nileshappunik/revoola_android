@@ -126,6 +126,7 @@ class RLFragFaQs : RLBaseFragment() {
         }
 
         fragBinding.webView.loadUrl(RLConstants.FaQS_URL) // Load any URL
+
     }
 
 }

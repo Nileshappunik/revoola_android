@@ -86,6 +86,9 @@ package com.revoola.utils
         const val Name_You_Sensor_Help_Video:String =  "name_your_sensor"
         const val Troubleshooting_Cant_Find_My_Sensor_Help_Video:String =  "troubleshooting"
 
+        //term and condition
+        const val TermCondition:String ="https://www.revoola.com/tcs/"
+
 
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
         const val Revenuecat_Api_Key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"

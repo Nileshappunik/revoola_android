@@ -22,3 +22,5 @@ data class RLZoneDataDetails(
     var seconds:Int = 0,
     var totalRev:Double = 0.0,
 ): Serializable
+
+

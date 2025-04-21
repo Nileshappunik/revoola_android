@@ -55,6 +55,8 @@ class RLAuthManager {
         return auth.currentUser
     }
 
+
+
     fun RLsignOut() {
         auth.signOut()
     }

@@ -203,6 +203,9 @@ dependencies {
     implementation (files("libs/samsung-health-data-api-1.0.0-b2.aar"))
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
 
+    //Firebase Background
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
 
 }
 

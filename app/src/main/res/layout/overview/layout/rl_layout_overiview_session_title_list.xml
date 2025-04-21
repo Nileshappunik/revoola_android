@@ -16,7 +16,7 @@
             android:textStyle="bold"
             android:text="@string/sessionsmall"
             android:textColor="@color/AppBlackColor"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
         <View
             android:id="@+id/view_session"
             android:layout_width="match_parent"

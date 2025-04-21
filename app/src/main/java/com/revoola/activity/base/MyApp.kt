@@ -6,6 +6,8 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
@@ -36,6 +38,7 @@ import com.revoola.moengage.push.RLGeofenceHitListener
 import com.revoola.commonobject.RLTools
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
+import com.revoola.databasefirebase.RlFirebaseWorker
 import com.revoola.healthconnect.HealthConnectManager
 import com.revoola.utils.RLConstants
 import org.json.JSONArray
@@ -53,6 +56,10 @@ class MyApp : Application() {
         // Enable Firebase Database persistence
         val database = FirebaseDatabase.getInstance()
         database.setPersistenceEnabled(true)
+
+        //BackGround Firebase WatchData
+        val request = OneTimeWorkRequestBuilder<RlFirebaseWorker>().build()
+        WorkManager.getInstance(this).enqueue(request)
 
         // Branch logging for debugging
         Branch.enableLogging()

@@ -236,7 +236,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
                 calories = burntCalories,
                 total_Rev = totalRev,
                 REVPer = revPercentage,
-                buttonType = "STOP")
+                buttonType = 2)
             fragBinding.videoView.stopPlayback()
             viewModel.stopNotifications()
             timerManager.RLstop()
@@ -284,7 +284,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
                     calories = burntCalories,
                     total_Rev = totalRev,
                     REVPer = revPercentage,
-                    buttonType = "PAUSE")
+                    buttonType = 1)
                 viewModel.pauseNotifications()
                 fragBinding.videoView.pause()
                 pauseVideo=false
@@ -297,7 +297,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
                     calories = burntCalories,
                     total_Rev = totalRev,
                     REVPer = revPercentage,
-                    buttonType = "RESUME")
+                    buttonType = 0)
                 viewModel.resumeNotifications()
                 pauseVideo=true
                 fragBinding.videoView.start()
@@ -358,7 +358,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
                     calories = burntCalories,
                     total_Rev = totalRev,
                     REVPer = revPercentage,
-                    buttonType = "START")
+                    buttonType = 0)
                 RlDataFillAllArray()
 
             }
@@ -479,7 +479,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
 
     private fun RLSendDataToWearOS(context: Context, formattedTime: String,
                                    calories: Double, total_Rev: Double,
-                                   REVPer: Double, buttonType: String) {
+                                   REVPer: Double, buttonType: Int) {
         // Create a PutDataMapRequest with a unique path
         val putDataMapRequest = PutDataMapRequest.create("/mobile_to_wear")
         val dataMap = putDataMapRequest.dataMap
@@ -489,7 +489,7 @@ class RLFragMindClassesHeartVideoStart : RLBaseFragment() ,DataClient.OnDataChan
         dataMap.putDouble("calories", calories)
         dataMap.putDouble("total_Rev", total_Rev)
         dataMap.putDouble("REVPer", REVPer)
-        dataMap.putString("buttonType", buttonType)
+        dataMap.putInt("action", buttonType)
         dataMap.putString("SessionName", "Mind")
 
         // Create the PutDataRequest; marking it as urgent ensures it gets delivered quickly.

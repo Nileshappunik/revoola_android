@@ -44,6 +44,7 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import com.google.gson.Gson
 import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.databasefirebase.RevoolaKeys
@@ -244,14 +245,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
-                   buttonType = "PAUSE")
+                   buttonType = 1)
                viewModel.pauseNotifications()
                 timerManager.RLpause()
 
                 fragBinding.layPause.visibility=View.GONE
                 fragBinding.layResumestop.visibility=View.VISIBLE
-
-
 
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
                    rlLocationViewModel.RLstopLocationUpdates()
@@ -268,7 +267,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
-                   buttonType = "RESUME")
+                   buttonType = 0)
                 timerManager.RLresume()
 
                 fragBinding.layPause.visibility=View.VISIBLE
@@ -290,7 +289,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
-                   buttonType = "STOP")
+                   buttonType = 2)
                 timerManager.RLstop()
                viewModel.stopNotifications()
                Wearable.getDataClient(requireContext()).removeListener(this)
@@ -532,11 +531,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 fragBinding.inlayTime.txtProgressTimeNumber.setText(RLYourWayCalvulation.RLformatElapsedTime(elapsedTime))
                 totalTime=(elapsedTime/1000).toString()
                 RLSendDataToWearOS(context = requireContext(),
-                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(elapsedTime) ,
+                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(elapsedTime),
                     calories = burntCalories,
                     total_Rev = totalRev,
                     REVPer = revPercentage,
-                    buttonType = "START")
+                    buttonType = 0)
                 RlDataFillAllArray()
             }
         }
@@ -547,6 +546,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             heartRate = heartRateNumber
         }
         val REVPer=RLYourWayCalvulation.calculateREVPer(heartRate,wsWeight.toDouble(),wsHeight.toDouble(),wsAge,gender,RestingHR,RFMHR) //only REV
+
         RLUpdateHRPersentage(REVPer.roundToInt())
         arrRevPercentage.add(RLYourWayCalvulation.noNanValueDouble(REVPer))
         avgRevPercentage = RLYourWayCalvulation.avgOfArray(arrRevPercentage)
@@ -817,7 +817,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
     //Wear os Send Data
     private fun RLSendDataToWearOS(context: Context, formattedTime: String,
                                    calories: Double, total_Rev: Double,
-                                   REVPer: Double, buttonType: String) {
+                                   REVPer: Double, buttonType: Int) {
         // Create a PutDataMapRequest with a unique path
         val putDataMapRequest = PutDataMapRequest.create("/mobile_to_wear")
         val dataMap = putDataMapRequest.dataMap
@@ -827,10 +827,10 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         dataMap.putDouble("calories", calories)
         dataMap.putDouble("total_Rev", total_Rev)
         dataMap.putDouble("REVPer", REVPer)
-        dataMap.putString("buttonType", buttonType)
+        dataMap.putInt("action", buttonType)
         dataMap.putString("SessionName", "YourWay")
 
-        // Create the PutDataRequest; marking it as urgent ensures it gets delivered quickly.
+        //Create the PutDataRequest; marking it as urgent ensures it gets delivered quickly.
         val putDataRequest = putDataMapRequest.asPutDataRequest().setUrgent()
 
         // Send the DataItem to connected Wear OS devices
@@ -874,7 +874,6 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             }
         }
     }
-
 
     private fun RLGetKmMiles(km:String,miles:String):String{
         return if (isImperial) {

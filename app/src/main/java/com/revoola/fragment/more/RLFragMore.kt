@@ -25,7 +25,6 @@ import com.revoola.watch.RLWearDataSync
 class RLFragMore : RLBaseFragment() {
     val TAG: String = RLFragMore::class.java.simpleName
     lateinit var fragBinding: RlFragMoreBinding
-
     private val binding by lazy {
         RlFragMoreBinding.inflate(layoutInflater)
     }
@@ -130,14 +129,16 @@ class RLFragMore : RLBaseFragment() {
                 val gender=userData.gender
                 val RFMHR=userData.RFMHR
                 val restingHr=userData.restingHr
-                val userDataTransfer = RLWatchModel(uid, weight, height, dob, gender, RFMHR, restingHr)
+                val emailId=userData.emailId
+                val isBasicDataAdded=userData.isBasicDataAdded
+                val userDataTransfer = RLWatchModel(uid, weight, height, dob, gender, RFMHR, restingHr,emailId,isBasicDataAdded)
                 if (isAdded){
                     //val  wearDataSync = WearDataSync(Wearable.getDataClient(requireContext()))
                     val wearDataSync = RLWearDataSync(Wearable.getDataClient(requireContext()),Wearable.getNodeClient(requireContext()))
                     wearDataSync.sendUserDataToWatch(userDataTransfer){ isSuccess, message ->
                         if (isSuccess) {
                             RLBaseProgress.RLhideProgressDialog()
-                           RLTools.RlLogDPrint(TAG, "WearDataSync Success: $message")
+                           RLTools.RlLogDPrint(TAG, "WearDataSync Success: $userDataTransfer")
                             // Handle success (e.g., update UI)
                         } else {
                             RLBaseProgress.RLhideProgressDialog()
