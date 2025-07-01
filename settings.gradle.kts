@@ -15,6 +15,9 @@ dependencyResolutionManagement {
         // Add RevenueCat's repository
        // maven { url = uri("https://github.com/RevenueCat/purchases-android/releases" )}
         maven { url = uri("https://jitpack.io" )}
+        maven {
+            url = uri ("https://maven.garmin.com/api/releases")
+        }
 
     }
     versionCatalogs {

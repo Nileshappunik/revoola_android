@@ -32,9 +32,6 @@ android {
         }
     }
     compileOptions {
-       // sourceCompatibility = JavaVersion.VERSION_1_8 Old
-       // targetCompatibility = JavaVersion.VERSION_1_8  Old
-
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -205,6 +202,9 @@ dependencies {
 
     //Firebase Background
     implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
+    //Garmin App
+    implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.2.0@aar")
 
 
 }
