@@ -234,9 +234,10 @@ open class RLBaseFragment : Fragment() {
         // Firebase to fetch user data
         RLDatabaseManagerRead().RlUserBasicDataRead(userId) { data, error ->
             if (data != null) {
-                val gson = Gson()
-                val jsonObject = gson.toJson(data)
-                val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+               // val gson = Gson()
+               // val jsonObject = gson.toJson(data)
+               // val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+                val userData = RLTools.parseUserData(data)
                 callback(userData) // Return userData through the callback
             } else {
                 callback(null) // Return null in case of an error

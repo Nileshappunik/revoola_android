@@ -49,11 +49,13 @@ import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.enumclass.RLValueOvName
 import com.revoola.fragment.overview.adapter.RLOverviewFilterListAdapter
 import com.revoola.fragment.overview.adapter.RLOverviewFilterListMultipleSelectedAdapter
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
+import com.revoola.utils.RLPrefManager
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -70,6 +72,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var appUnit:String="Metric"
+
+    private var isFilterResponse:Boolean = false
+    private var fromDateTimestemp:Long = 0
+    private var toDateTimestemp:Long = 0
 
     private var fromDate = ""
     private var toDate = ""
@@ -102,8 +108,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         //activity?.window!!.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Dark icons
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview_sessions, container) as RlFragOverviewSessionsBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragOverviewSession" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragOverviewSession" )
+        currentUser= RLAuthManager().RlgetCurrentUser()?.uid?:""
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -124,7 +130,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private  fun  RLuisetup(){
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         RLonBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.setText("")
@@ -177,12 +183,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
         if (RLApiClientRetrofit.RLisConnected()) {
             //Detail Api
-            RLAPiCall("OVERVIEW")
+            RLAPiCall("OVERVIEW",false, emptyList())
         } else {
             RLshowDialogFullscreen()
         }
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
-           // RLallactivitydialogopen()
             RLFilterdialogopen()
         }
 
@@ -196,7 +201,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             true
         }
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onItemClick(position: Int) {
         swipePosition=position
@@ -209,38 +213,35 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun RLAPiCall(valueType:String) {
-
+    private fun RLAPiCall(valueType:String,isFilterApi:Boolean,requestFilter: List<RLOverviewGraphDataRequest>) {
         val offset = Date().timezoneOffset
         val date = Date()
         val firstDay= Date(date.year, date.month, 1)
         val timestampFrom = ((if (firstDay!=null) firstDay.time else firstDay) / 1000 - offset * 60).toInt()
         val timestampTo = (date.time / 1000 - offset * 60).toInt()
 
-        val request = listOf(
+        var  request = listOf(
             RLOverviewGraphDataRequest(
                 overview_graph = RLOverview_graphData(
                     user = currentUser,
                     classtype = "mindAndBody",
                     timestampfrom = timestampFrom.toInt(),
                     timestampto = timestampTo.toInt(),
-                    fromthirdparty="n")
-            )
-        )
-        val gson = Gson()
-        val jsonRequest = gson.toJson(request)
+                    fromthirdparty="n")))
 
-        RLTools.RlLogDPrint(TAG,"request Overview:- $jsonRequest")
+        if (isFilterApi){
+            request =   requestFilter
+        }
 
+        RLTools.RlLogDPrint(TAG,"request Overview:- ${Gson().toJson(request)}")
         viewModel.RLgetOverviewGraph(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
                         RLTools.RlLogDPrint(TAG,"Success= "+response.type)
                         cardDate=response.text[0].overviewGraph[0]
-                        val gson = Gson()
-                        val jsonArray = gson.toJson(response)
-                       RLTools.RlLogEPrint(TAG,"Overview_jsonDate:-  $jsonArray")
+                        val jsonArray = Gson().toJson(response)
+                        RLTools.RlLogDPrint(TAG,"Overview_response:-  $jsonArray")
                         RLHandleApiResponse(response.text[0].overviewGraph[0],valueType)
 
                     }else {
@@ -294,174 +295,173 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
                     when (i){
                         0-> dataList.add(RLSessionitemset("EFFORT",
-                            RLGetValueForTitle(RLValueOvName.Effort,carddate),R.drawable.ic_heart))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Effort,carddate,appUnit),R.drawable.ic_heart))
                         1-> dataList.add(RLSessionitemset("RELAXATION",
-                            RLGetValueForTitle(RLValueOvName.Relaxation,carddate),R.drawable.ic_mind_read))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Relaxation,carddate,appUnit),R.drawable.ic_mind_read))
                         2-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.TotalCalories,carddate,appUnit),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
-                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate,appUnit),R.drawable.fd_calories_green))
+                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",
-                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
-                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Steps,carddate,appUnit),R.drawable.fd_steps_green))
+                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Climbed,carddate,appUnit),R.drawable.ic_climb))
                         7-> dataList.add(RLSessionitemset("AWARDS",
-                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Awards,carddate,appUnit),R.drawable.ic_award))
                     }
                 }
                 fragBinding.relayOverviewName.visibility=View.VISIBLE
             }
             "SESSIONS" -> {
                 RLwebviewurlload("sessions")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Session,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Session,carddate,appUnit))
                 totaldisplayitem=10
                 for (i in 0 until  totaldisplayitem){
 
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLGetValueForTitle(RLValueOvName.LongestSession,carddate),R.drawable.fd_active_time_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.LongestSession,carddate,appUnit),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLGetValueForTitle(RLValueOvName.AvgSession,carddate),R.drawable.fd_active_time_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgSession,carddate,appUnit),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("EFFORT",
-                            RLGetValueForTitle(RLValueOvName.Effort,carddate),R.drawable.ic_heart))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Effort,carddate,appUnit),R.drawable.ic_heart))
                         3-> dataList.add(RLSessionitemset("RELAXATION",
-                            RLGetValueForTitle(RLValueOvName.Relaxation,carddate),R.drawable.ic_mind_read))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Relaxation,carddate,appUnit),R.drawable.ic_mind_read))
                         4-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.TotalCalories,carddate,appUnit),R.drawable.fd_calories_green))
                         5-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
-                        6-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate,appUnit),R.drawable.fd_calories_green))
+                        6-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
                         7-> dataList.add(RLSessionitemset("STEPS",
-                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
-                        8-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Steps,carddate,appUnit),R.drawable.fd_steps_green))
+                        8-> dataList.add(RLSessionitemset("CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Climbed,carddate,appUnit),R.drawable.ic_climb))
                         9-> dataList.add(RLSessionitemset("AWARDS",
-                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Awards,carddate,appUnit),R.drawable.ic_award))
                     }
                 }
 
             }
             "CALORIES" -> {
                 RLwebviewurlload("calories")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.TotalCalories,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.TotalCalories,carddate,appUnit))
                 totaldisplayitem=6
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX CALORIES",
-                            RLGetValueForTitle(RLValueOvName.MaxCalories,carddate),R.drawable.fd_calories_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxCalories,carddate,appUnit),R.drawable.fd_calories_green))
                         1-> dataList.add(RLSessionitemset("AVG CALORIES",
-                            RLGetValueForTitle(RLValueOvName.AvgCalories,carddate),R.drawable.fd_calories_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgCalories,carddate,appUnit),R.drawable.fd_calories_green))
                         2-> dataList.add(RLSessionitemset("MAX DAILY TOTAL",
-                            RLGetValueForTitle(RLValueOvName.MaxDailyTotal,carddate),R.drawable.ic_max_calender_black))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxDailyTotal,carddate,appUnit),R.drawable.ic_max_calender_black))
                         3-> dataList.add(RLSessionitemset("MAX DAILY ACTIVE",
-                            RLGetValueForTitle(RLValueOvName.MaxDailyActive,carddate),R.drawable.ic_max_calender_black))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxDailyActive,carddate,appUnit),R.drawable.ic_max_calender_black))
                         4-> dataList.add(RLSessionitemset("AVG DAILY TOTAL",
-                            RLGetValueForTitle(RLValueOvName.AvgDailyTotal,carddate),R.drawable.ic_avg_calender_black))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgDailyTotal,carddate,appUnit),R.drawable.ic_avg_calender_black))
                         5-> dataList.add(RLSessionitemset("AVG DAILY ACTIVE",
-                            RLGetValueForTitle(RLValueOvName.AvgDailyActive,carddate),R.drawable.ic_avg_calender_black))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgDailyActive,carddate,appUnit),R.drawable.ic_avg_calender_black))
                     }
                 }
             }
             "RELAXATION" -> {
                 RLwebviewurlload("relaxation")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Relaxation,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Relaxation,carddate,appUnit))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("LONGEST SESSION",
-                            RLGetValueForTitle(RLValueOvName.LongestSession,carddate),R.drawable.fd_active_time_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.LongestSession,carddate,appUnit),R.drawable.fd_active_time_green))
                         1-> dataList.add(RLSessionitemset("AVG SESSION",
-                            RLGetValueForTitle(RLValueOvName.AvgSession,carddate),R.drawable.fd_active_time_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgSession,carddate,appUnit),R.drawable.fd_active_time_green))
                         2-> dataList.add(RLSessionitemset("MAX RELAXATION",
-                            RLGetValueForTitle(RLValueOvName.MaxRelaxation,carddate),R.drawable.ic_mind_read))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxRelaxation,carddate,appUnit),R.drawable.ic_mind_read))
                         3-> dataList.add(RLSessionitemset("AVG RELAXATION",
-                            RLGetValueForTitle(RLValueOvName.AvgRelaxation,carddate),R.drawable.ic_mind_read))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgRelaxation,carddate,appUnit),R.drawable.ic_mind_read))
                     }
                 }
             }
             "EFFORT" -> {
                 RLwebviewurlload("effort")
                 totaldisplayitem=8
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Effort,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Effort,carddate,appUnit))
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX EFFORT",
-                            RLGetValueForTitle(RLValueOvName.MaxEffort,carddate),R.drawable.ic_heart))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxEffort,carddate,appUnit),R.drawable.ic_heart))
                         1-> dataList.add(RLSessionitemset("AVG EFFORT",
-                            RLGetValueForTitle(RLValueOvName.AvgEffort,carddate),R.drawable.ic_heart))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgEffort,carddate,appUnit),R.drawable.ic_heart))
                         2-> dataList.add(RLSessionitemset("TOTAL CALORIES",
-                            RLGetValueForTitle(RLValueOvName.TotalCalories,carddate),R.drawable.fd_calories_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.TotalCalories,carddate,appUnit),R.drawable.fd_calories_green))
                         3-> dataList.add(RLSessionitemset("ACTIVE CALORIES",
-                            RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate),R.drawable.fd_calories_green))
-                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.ActiveCalories,carddate,appUnit),R.drawable.fd_calories_green))
+                        4-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
                         5-> dataList.add(RLSessionitemset("STEPS",
-                            RLGetValueForTitle(RLValueOvName.Steps,carddate),R.drawable.fd_steps_green))
-                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Steps,carddate,appUnit),R.drawable.fd_steps_green))
+                        6-> dataList.add(RLSessionitemset("CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Climbed,carddate,appUnit),R.drawable.ic_climb))
                         7-> dataList.add(RLSessionitemset("AWARDS",
-                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Awards,carddate,appUnit),R.drawable.ic_award))
                     }
                 }
             }
             "STEPS" -> {
                 RLwebviewurlload("steps")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.Steps,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Steps,carddate,appUnit))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
                         0-> dataList.add(RLSessionitemset("MAX STEPS",
-                            RLGetValueForTitle(RLValueOvName.MaxSteps,carddate),R.drawable.fd_steps_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxSteps,carddate,appUnit),R.drawable.fd_steps_green))
                         1-> dataList.add(RLSessionitemset("AVG STEPS",
-                            RLGetValueForTitle(RLValueOvName.AvgSteps,carddate),R.drawable.fd_steps_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgSteps,carddate,appUnit),R.drawable.fd_steps_green))
                         2-> dataList.add(RLSessionitemset("MAX DAILY STEPS",
-                            RLGetValueForTitle(RLValueOvName.MaxDailySteps,carddate),R.drawable.fd_steps_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxDailySteps,carddate,appUnit),R.drawable.fd_steps_green))
                         3-> dataList.add(RLSessionitemset("AVG DAILY STEPS",
-                            RLGetValueForTitle(RLValueOvName.AvgDailySteps,carddate),R.drawable.fd_steps_green))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgDailySteps,carddate,appUnit),R.drawable.fd_steps_green))
                     }
                 }
             }
             "DISTANCE" -> {
                 RLwebviewurlload("distance")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.DistanceNormal,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.DistanceNormal,carddate,appUnit))
                 totaldisplayitem=4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> dataList.add(RLSessionitemset("MAX DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.MaxDistance,carddate),R.drawable.ic_distance))
-                        1-> dataList.add(RLSessionitemset("AVG DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.AvgDistance,carddate),R.drawable.ic_distance))
-                        2-> dataList.add(RLSessionitemset("CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.Climbed,carddate),R.drawable.ic_climb))
-                        3-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                        0-> dataList.add(RLSessionitemset("MAX DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxDistance,carddate,appUnit),R.drawable.ic_distance))
+                        1-> dataList.add(RLSessionitemset("AVG DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgDistance,carddate,appUnit),R.drawable.ic_distance))
+                        2-> dataList.add(RLSessionitemset("CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Climbed,carddate,appUnit),R.drawable.ic_climb))
+                        3-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
                     }
                 }
             }
             "CLIMBED" ->{
                 RLwebviewurlload("climbed")
-                fragBinding.txtTotalsessionNumber.setText(RLGetValueForTitle(RLValueOvName.ClimbedNormal,carddate))
+                fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.ClimbedNormal,carddate,appUnit))
                 totaldisplayitem = 4
                 for (i in 0 until  totaldisplayitem){
                     when (i){
-                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.MaxClimbed,carddate),R.drawable.ic_climb))
-                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (${RLGetKmMiles("m","ft")})",
-                            RLGetValueForTitle(RLValueOvName.AvgClimbed,carddate),R.drawable.ic_climb))
-                        2-> dataList.add(RLSessionitemset("DISTANCE (${RLGetKmMiles("km","miles")})",
-                            RLGetValueForTitle(RLValueOvName.Distance,carddate),R.drawable.ic_distance))
+                        0-> dataList.add(RLSessionitemset("MAX CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.MaxClimbed,carddate,appUnit),R.drawable.ic_climb))
+                        1-> dataList.add(RLSessionitemset("AVG CLIMBED (${RLYourWayCalvulation.RLGetKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.AvgClimbed,carddate,appUnit),R.drawable.ic_climb))
+                        2-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.RLGetKmMiles("km","miles",appUnit)})",
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
                         3-> dataList.add(RLSessionitemset("AWARDS",
-                            RLGetValueForTitle(RLValueOvName.Awards,carddate),R.drawable.ic_award))
+                            RLYourWayCalvulation.RLGetValueForTitle(RLValueOvName.Awards,carddate,appUnit),R.drawable.ic_award))
                     }
                 }
             }
         }
         adapterdata.RLsetList(dataList,isTextColorSetWhite)
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun RLwebviewurlload(type:String){
 
@@ -484,72 +484,17 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampFrom = firstDay.toEpochSecond()
         val timestampTo = endDay.toEpochSecond()
 
-        //val imageUrl="${RLConstants.BASE_URL}getResponse_v2.php?q=overviewGraphChartHTML&user=w2p8SQCvE3emjEEDo66f02eF6fG2&classtype=all&graphtimefrom=1711929600&graphtimeto=1714521600&timerange=this_month&gmtdiff=%2D0&type=$type"
-        val imageUrl=RLConstants.BASE_URL+"_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
-       RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
-        fragBinding.webView.loadUrl(imageUrl)
+      if (isFilterResponse){
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            fragBinding.webView.loadUrl(imageUrl)
+        }else{
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            fragBinding.webView.loadUrl(imageUrl)
+        }
+      // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
+        //fragBinding.webView.loadUrl(imageUrl)
     }
-    private fun RLallactivitydialogopen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_allactivity)
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-
-
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-        val recycleDialog : RecyclerView = dialog.findViewById(R.id.recycle_dialog)
-        val namelist = arrayOf(
-            getString(R.string.mindbody),
-            getString(R.string.allmind),
-            getString(R.string.allbody),
-            getString(R.string.selectbodyactivity),
-        )
-        val adapter = RLAllDialogListAdapter(requireContext(), namelist) { clickdata ->
-            // Handle selection
-            if (clickdata.equals(getString(R.string.selectbodyactivity))){
-              dialog.dismiss()
-                RLSelectBodyActivityDialogOpen()
-            }
-        }
-        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        recycleDialog.layoutManager = linearLayoutManager
-        recycleDialog.adapter = adapter
-
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    private fun RLSelectBodyActivityDialogOpen() {
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_allactivity)
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-
-        val btClear : TextView = dialog.findViewById(R.id.txtx_cancle)
-        val tvTitleDialog : TextView = dialog.findViewById(R.id.tvTitle_dialog)
-        val recycleDialog : RecyclerView = dialog.findViewById(R.id.recycle_dialog)
-
-        tvTitleDialog.setText(getString(R.string.selectbodyactivity))
-        val namelist = arrayOf("DANCE", "HIIT","PILATES","RIDE","RUN","WALK","YOGA")
-
-        val adapter = RLAllDialogListAdapter(requireContext(), namelist) { clickdata ->
-            // Handle date selection
-            //clickdata
-        }
-        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        recycleDialog.layoutManager = linearLayoutManager
-        recycleDialog.adapter = adapter
-
-        btClear.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
+    //Swipe to move Code
     private fun RLMoveToCenter(position: Int) {
         val layoutManager = fragBinding.inlayTop.recyclerTitle.layoutManager as LinearLayoutManager
 
@@ -573,7 +518,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 })
         }
     }
-
     // Custom gesture listener to detect swipe gestures
     private inner class RlSwipeGestureListener : GestureDetector.SimpleOnGestureListener() {
 
@@ -672,7 +616,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
     }
-
+    //API Call for userData Get
     private fun RLapicallAggregatedData(joiningDate:Long) {
         val date = Calendar.getInstance()
         val firstDay = Calendar.getInstance().apply {
@@ -711,92 +655,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
             }
         }
-    }
-
-    private fun RLGetValueForTitle(title: String, cardOvData: RlOverviewGraphData): String {
-        val isImperial = RLTools.RLGetIsImperial(appUnit)
-
-        return when (title) {
-            RLValueOvName.Effort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_REV))
-            RLValueOvName.MaxEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_REV_per_session))
-            RLValueOvName.AvgEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_REV_per_session))
-
-            RLValueOvName.Awards  -> {
-                val totalAwards = cardOvData.medals_bronze + cardOvData.medals_silver + cardOvData.medals_gold
-                if (totalAwards != 0) totalAwards.toString() else "0"
-            }
-            RLValueOvName.Steps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_steps))
-            RLValueOvName.MaxSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_steps_per_session))
-            RLValueOvName.AvgSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_steps_per_session))
-            RLValueOvName.MaxDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_daily_steps))
-            RLValueOvName.AvgDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_daily_steps))
-
-            RLValueOvName.Distance  -> RLConvertDistance(isImperial,cardOvData)
-            RLValueOvName.DistanceNormal  -> RLTools.RLformatCommas(convertToDouble(cardOvData.total_distance))
-            RLValueOvName.MaxDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.max_distance_per_session) )
-            RLValueOvName.AvgDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.avg_distance_per_session))
-
-            RLValueOvName.Relaxation -> RLTools.RLminutesget(convertToInt(cardOvData.total_rmm))
-            RLValueOvName.MaxRelaxation -> convertToInt(cardOvData.max_rmm_per_session).toString()
-            RLValueOvName.AvgRelaxation -> convertToInt(cardOvData.avg_rmm_per_session).toString()
-            RLValueOvName.TotalCalories -> convertToInt(cardOvData.total_calories).toString()
-            RLValueOvName.ActiveCalories -> convertToInt(cardOvData.active_calories).toString()
-
-            RLValueOvName.AvgClimbed -> convertToInt(cardOvData.avg_elevation_per_session).toString()
-            RLValueOvName.MaxClimbed -> convertToInt(cardOvData.max_elevation_per_session).toString()
-            RLValueOvName.ClimbedNormal -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_elevation))
-            RLValueOvName.Climbed  -> {
-                val demsElevation:Int = convertToInt(cardOvData.total_elevation?:-1)
-                val elevation = if (!isImperial) {
-                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt(demsElevation)
-                } else {
-                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt((demsElevation * 3.28084).toInt())
-                }
-                elevation.toString()
-            }
-            RLValueOvName.Session -> convertToInt(cardOvData.session).toString()
-            RLValueOvName.AvgSession -> RLTools.RLminutesget(convertToInt(cardOvData.avg_time_per_session))
-            RLValueOvName.LongestSession -> RLTools.RLminutesget(convertToInt(cardOvData.max_time_per_session))
-            RLValueOvName.MaxCalories -> convertToInt(cardOvData.max_total_calories_per_session).toString()
-            RLValueOvName.AvgCalories -> convertToInt(cardOvData.avg_total_calories_per_session).toString()
-            RLValueOvName.MaxDailyTotal -> convertToInt(cardOvData.max_daily_total_calories).toString()
-            RLValueOvName.MaxDailyActive -> convertToInt(cardOvData.max_daily_active_calories).toString()
-            RLValueOvName.AvgDailyTotal -> convertToInt(cardOvData.avg_daily_total_calories).toString()
-            RLValueOvName.AvgDailyActive -> convertToInt(cardOvData.avg_daily_active_calories).toString()
-            else -> "0"
-        }
-
-    }
-    private fun RLConvertDistance(isImperial: Boolean, cardOvData: RlOverviewGraphData): String {
-        val distance=convertToDouble(cardOvData.total_distance)
-        if (!isImperial) {
-            return RLTools.RLformatCommas(distance)
-        } else{
-            return  RLTools.RLformatCommas(distance * 0.621371)
-        }
-    }
-    private fun convertToInt(value: Any): Int {
-        return when (value) {
-            is Double -> value.roundToInt()
-            is Float -> value.roundToInt()
-            is Int -> value
-            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
-            else -> 0 // Default fallback for unsupported types
-        }
-    }
-    private fun convertToDouble(value: Any): Double {
-        return when (value) {
-            is Double -> if (value.isFinite()) value else 0.0
-            is Float -> if (value.isFinite()) value.toDouble() else 0.0
-            is Int -> value.toDouble()
-            is Long -> value.toDouble()
-            is String -> value.toDoubleOrNull()?.takeIf { it.isFinite() } ?: 0.0
-            else -> 0.0
-        }
-    }
-    private fun RLGetKmMiles(km:String,miles:String):String{
-        val isImperial = RLTools.RLGetIsImperial(appUnit)
-        return if (isImperial) miles else km
     }
     // Filter Screen Open
     @OptIn(UnstableApi::class)
@@ -943,6 +801,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
         binding.btnShowResults.setOnClickListener{
+            isFilterResponse = true
             if (toDate.isNullOrEmpty() && fromDate.isNullOrEmpty()){
                 toDate = ""
                 fromDate = ""
@@ -957,109 +816,34 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         dialog.show()
         dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
-
+    //Filter Result Handle
     private fun filterClickHandle(toDate: String, fromDate: String, selectionPeriod: String, selectionSource: String, selectionType: List<String>) {
         val classType=selectionType.joinToString(",") { it.lowercase() }
-
         if (toDate.isNullOrEmpty() && fromDate.isNullOrEmpty()){
-            val rangeDate = getDateRangeForPeriod(selectionPeriod)
-            if (rangeDate.toDate!=null && rangeDate.fromDate!=null){
-                val request = listOf(
-                    RLOverviewGraphDataRequest(
-                        overview_graph = RLOverview_graphData(
-                            user = currentUser,
-                            classtype = classType,
-                            timestampfrom = rangeDate.fromDate.toInt(),
-                            timestampto = rangeDate.toDate.toInt(),
-                            fromthirdparty="n")
-                    )
-                )
-                filterApiCall(request)
-            }
+            val rangeDate = RLYourWayCalvulation.getDateRangeForPeriod(selectionPeriod)
+            fromDateTimestemp = rangeDate.fromDate?:0
+            toDateTimestemp = rangeDate.toDate?:0
         }else{
-            val request = listOf(
-                RLOverviewGraphDataRequest(
-                    overview_graph = RLOverview_graphData(
-                        user = currentUser,
-                        classtype = classType,
-                        timestampfrom = convertDateStringToTimestamp(fromDate).toInt(),
-                        timestampto = convertDateStringToTimestamp(toDate).toInt(),
-                        fromthirdparty="n")
-                )
+            fromDateTimestemp = RLYourWayCalvulation.convertDateStringToTimestamp(fromDate)
+            toDateTimestemp = RLYourWayCalvulation.convertDateStringToTimestamp(toDate)
+        }
+        val request = listOf(
+            RLOverviewGraphDataRequest(
+                overview_graph = RLOverview_graphData(
+                    user = currentUser,
+                    classtype = classType,
+                    timestampfrom = fromDateTimestemp.toInt(),
+                    timestampto = toDateTimestemp.toInt(),
+                    fromthirdparty="n")
             )
-            filterApiCall(request)
-        }
-    }
-    private fun filterApiCall(request: List<RLOverviewGraphDataRequest>) {
-        val gson = Gson()
-        val jsonRequest = gson.toJson(request)
-
-        RLTools.RlLogDPrint(TAG,"request Overview:- $jsonRequest")
-
-        viewModel.RLgetOverviewGraph(request) { result ->
-            result.onSuccess { response ->
-                try {
-                    if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        cardDate=response.text[0].overviewGraph[0]
-                        val gson = Gson()
-                        val jsonArray = gson.toJson(response)
-                        RLTools.RlLogEPrint(TAG,"Overview_jsonDate:-  $jsonArray")
-                        RLHandleApiResponse(response.text[0].overviewGraph[0],"OVERVIEW")
-
-                    }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
-                    }
-                }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
-                }
-            }.onFailure { error ->
-
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
-            }
-        }
-    }
-
-    private data class DateRange(val fromDate: Long?, val toDate: Long?)
-    private fun getDateRangeForPeriod(period: String): DateRange {
-        val today = LocalDate.now()
-        val fromDate: LocalDate?
-        val toDate: LocalDate?
-
-        when (period) {
-            "This Month" -> {
-                fromDate = today.withDayOfMonth(1)
-                toDate = today.with(TemporalAdjusters.lastDayOfMonth())
-            }
-            "Last 3 Months" -> {
-                fromDate = today.minusMonths(2).withDayOfMonth(1)
-                toDate = today.with(TemporalAdjusters.lastDayOfMonth())
-            }
-            "Last 6 Months" -> {
-                fromDate = today.minusMonths(5).withDayOfMonth(1)
-                toDate = today.with(TemporalAdjusters.lastDayOfMonth())
-            }
-            "This Year" -> {
-                fromDate = today.withDayOfYear(1)
-                toDate = today.with(TemporalAdjusters.lastDayOfYear())
-            }
-            else -> {
-                fromDate = null
-                toDate = null
-            }
-        }
-        RLTools.RlLogDPrint(TAG,"fromDate: $fromDate , toDate: $toDate")
-        return DateRange(
-            fromDate = fromDate?.atStartOfDay()?.atOffset(ZoneOffset.UTC)?.toEpochSecond(),
-            toDate = toDate?.atTime(23, 59, 59)?.atOffset(ZoneOffset.UTC)?.toEpochSecond()
         )
-    }
-    private fun convertDateStringToTimestamp(dateString: String): Long {
-        if (dateString.isEmpty()) return 0
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yy", Locale.getDefault())
-        val localDate = LocalDate.parse(dateString, formatter)
-        // Convert to start of day in UTC and get timestamp
-        return localDate.atStartOfDay().atOffset(ZoneOffset.UTC).toEpochSecond()
+
+        if (RLApiClientRetrofit.RLisConnected()) {
+            //Detail Api
+            RLAPiCall(valueslist[swipePosition],true,request)
+        } else {
+            RLshowDialogFullscreen()
+        }
     }
 
 }

@@ -58,7 +58,14 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.revoola.model.BooleanDeserializer
+import com.revoola.model.DoubleDeserializer
+import com.revoola.model.FloatDeserializer
+import com.revoola.model.IntDeserializer
+import com.revoola.model.LongDeserializer
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.model.RLZoneChartData
+import com.revoola.model.StringDeserializer
 import com.revoola.utils.RLConstants
 import org.json.JSONArray
 import org.json.JSONObject
@@ -68,6 +75,31 @@ import java.time.temporal.TemporalAdjusters
 
 
 object RLTools {
+
+    // Custom Gson Builder with all deserializers
+    fun createCustomGson(): Gson {
+        return GsonBuilder()
+            .setLenient()
+            .registerTypeAdapter(Long::class.java, LongDeserializer())
+            .registerTypeAdapter(Int::class.java, IntDeserializer())
+            .registerTypeAdapter(String::class.java, StringDeserializer())
+            .registerTypeAdapter(Boolean::class.java, BooleanDeserializer())
+            .registerTypeAdapter(Double::class.java, DoubleDeserializer())
+            .registerTypeAdapter(Float::class.java, FloatDeserializer())
+            .create()
+    }
+
+    // Usage Example
+    fun parseUserData(data: Any): RLRevoolaUsersSettingsModel? {
+        return try {
+            val gson = createCustomGson()
+            val jsonObject = gson.toJson(data)
+            gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
     fun View.RLadjustWidthToHeight() {
         this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {

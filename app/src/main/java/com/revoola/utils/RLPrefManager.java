@@ -49,8 +49,15 @@ public class RLPrefManager {
     public static void RLSetSomeStringValue(Context context, String key, String newValue) {
         final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
         editor.putString(key, newValue);
+        editor.commit(); // Synchronous write - ensures immediate persistence
         editor.apply();
     }
+//    public static void RLSetSomeStringValue(Context context, String key, String newValue) {
+//        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+//        editor.putString(key, newValue);
+//        editor.apply();
+//    }
+
     public static void RLSetSomeJsonObjectValue(Context context, String key, JsonObject newValue) {
         final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
         editor.putString(key, newValue.toString());

@@ -1,41 +1,69 @@
 {
   "project_info": {
-    "project_number": "657860663217",
-    "firebase_url": "https://my-first-app-51df4-default-rtdb.firebaseio.com",
-    "project_id": "my-first-app-51df4",
-    "storage_bucket": "my-first-app-51df4.appspot.com"
+    "project_number": "550906427656",
+    "firebase_url": "https://rideathome-9080e.firebaseio.com",
+    "project_id": "rideathome-9080e",
+    "storage_bucket": "rideathome-9080e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:657860663217:android:5b46247420e93c63154f90",
+        "mobilesdk_app_id": "1:550906427656:android:9644f305bf3967362dd4bd",
         "android_client_info": {
-          "package_name": "com.example.myfirstapp"
+          "package_name": "com.revoola"
         }
       },
       "oauth_client": [
         {
-          "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+          "client_id": "550906427656-b8h9ib5gu1ct2tth3a5en1aac6m2siat.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.revoola",
+            "certificate_hash": "3609dffe068fdfaf6bedd31e893e5c3ab2f6d43c"
+          }
+        },
+        {
+          "client_id": "550906427656-f464htf2015juhhi1tf4ehon39pqtui9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.revoola",
+            "certificate_hash": "225f98e3a0b47f3da4c12647d6c43c431a4ae449"
+          }
+        },
+        {
+          "client_id": "550906427656-jq8fgida3iu7hj30po74fibm7s02u8l1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.revoola",
+            "certificate_hash": "f30b2f29d8dff5ad3991f140aaafe6cee0d9f2a2"
+          }
+        },
+        {
+          "client_id": "550906427656-prem0mvjse9gt855c977htqhbj4otlh8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCOwcSM8SrRxnXsIAkqcwx5rSf4AHclUCw"
+          "current_key": "AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
+        },
+        {
+          "current_key": "AIzaSyCaKEPrD4YbMRzI2C137nPNrQQR_1WUNLI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+              "client_id": "550906427656-prem0mvjse9gt855c977htqhbj4otlh8.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "657860663217-g93ve1fbcpb443mhor9ongf1pcck9r8j.apps.googleusercontent.com",
+              "client_id": "550906427656-8v6qvgk2nqs8ft95vvo6mocos9h3gggs.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.revoolaltd.revoola"
+                "bundle_id": "com.revoolaltd.revoola",
+                "app_store_id": "1486071793"
               }
             }
           ]
@@ -44,34 +72,38 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:657860663217:android:0f9dc682797d55ca154f90",
+        "mobilesdk_app_id": "1:550906427656:android:391d12deecbf66662dd4bd",
         "android_client_info": {
-          "package_name": "com.revoola"
+          "package_name": "com.revoolaEnterprise"
         }
       },
       "oauth_client": [
         {
-          "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+          "client_id": "550906427656-prem0mvjse9gt855c977htqhbj4otlh8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCOwcSM8SrRxnXsIAkqcwx5rSf4AHclUCw"
+          "current_key": "AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
+        },
+        {
+          "current_key": "AIzaSyCaKEPrD4YbMRzI2C137nPNrQQR_1WUNLI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "657860663217-0bklfm0dvqrhh1dd0cbsun7qadfr683o.apps.googleusercontent.com",
+              "client_id": "550906427656-prem0mvjse9gt855c977htqhbj4otlh8.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "657860663217-g93ve1fbcpb443mhor9ongf1pcck9r8j.apps.googleusercontent.com",
+              "client_id": "550906427656-8v6qvgk2nqs8ft95vvo6mocos9h3gggs.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.revoolaltd.revoola"
+                "bundle_id": "com.revoolaltd.revoola",
+                "app_store_id": "1486071793"
               }
             }
           ]
