@@ -54,7 +54,6 @@
                             android:layout_height="wrap_content"
                             android:layout_toEndOf="@+id/img_user"
                             android:layout_below="@+id/txt_organiser"
-                            android:text="dhruv90"
                             android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppTextGrayColor"
                             android:textSize="14sp"/>
@@ -80,9 +79,9 @@
                             android:layout_height="wrap_content"
                             android:layout_toEndOf="@+id/img_calender"
                             android:textAllCaps="true"
-                            android:text="Missed"
+                            android:text="SCHEDULED FOR"
                             android:fontFamily="@font/omnes_regular"
-                            android:textColor="@color/AppZone7Color"
+                            android:textColor="@color/AppMainColor"
                             android:textSize="10sp"/>
 
                         <TextView
@@ -92,7 +91,6 @@
                             android:layout_toEndOf="@+id/img_calender"
                             android:layout_below="@+id/txt_missed"
                             android:fontFamily="@font/omnes_regular"
-                            android:text="29 Apr 06:57 Pm"
                             android:textColor="@color/AppBlackColor"
                             android:textSize="14sp"/>
 
@@ -107,8 +105,7 @@
                         android:id="@+id/img_big_full"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/body_top"/>
+                        android:scaleType="centerCrop"/>
                     <TextView
                         android:id="@+id/txt_with"
                         android:layout_width="wrap_content"
@@ -174,7 +171,6 @@
                             android:layout_marginStart="10dp"
                             android:layout_toEndOf="@+id/img_watch"
                             android:textAllCaps="true"
-                            android:text="10 mins class"
                             android:textColor="@color/AppTextGrayColor"
                             android:textSize="12sp"/>
                     </RelativeLayout>
@@ -194,15 +190,13 @@
                             android:layout_height="24dp"
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@+id/txt_easy"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_easy"/>
+                            android:layout_marginStart="10dp"/>
 
                         <TextView
                             android:id="@+id/txt_easy"
                             android:layout_width="wrap_content"
                             android:layout_height="24dp"
                             android:gravity="center_vertical"
-                            android:text="Beginner"
                             android:textAllCaps="true"
                             android:textColor="@color/AppMainColor"
                             android:textSize="12sp"/>

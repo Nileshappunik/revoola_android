@@ -31,10 +31,13 @@ import com.revoola.services.RELDynamicLinkManager
 import com.revoola.commonobject.RLTools
 import com.revoola.permission.RLHealthConnectManager
 import com.revoola.permission.RLPermissionManager
+import com.revoola.watch.RLWatchFirebaseManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.concurrent.Executors
 
 class RLMainActivityRL  : RLBaseActivity() {
     val TAG: String = RLMainActivityRL::class.java.simpleName
@@ -63,8 +66,17 @@ class RLMainActivityRL  : RLBaseActivity() {
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
         // Call this when a user completes a specific action
+        val executor = Executors.newSingleThreadExecutor()
+        executor.execute {
+            try {
+                RLTools.RlLogEPrint("WatchSession", "GetSession Start")
+                //Watch Data Fetch And Session Save Firebase
+                RLWatchFirebaseManager().fetchWatchSessionAndSaveToFirebase(RLAuthManager().RlgetCurrentUser()?.uid?:"", this)
+            } catch (e: Exception) {
+               RLTools.RlLogEPrint("WatchSession", "Error fetching session: ${e.message}")
+            }
+        }
     }
-
 
     fun RLCheckAllPermission(){
         //All Permission

@@ -1540,6 +1540,22 @@ object RLTools {
         }
     }
 
+    fun RLconvertTimestampToSchdualDAte(timestamp: Long): String {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                val formatter = DateTimeFormatter.ofPattern("dd MMM HH:mm a")
+                //val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
+                val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
+                val dateall=dateTime.format(formatter)//+" | "+dateTime.format(formatter2)
+                return dateall
+            }else{
+                return "0"
+            }
+        } catch (ex: ActivityNotFoundException) {
+            return "0"
+        }
+    }
+
     fun RLgetMetric(thirdPartySource: Int,cardData: RLTextOverview): RlMetric {
         return when (thirdPartySource) {
             in listOf(20, 26, 32, 38) -> RlMetric(

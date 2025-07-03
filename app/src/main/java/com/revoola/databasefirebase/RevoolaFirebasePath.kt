@@ -73,6 +73,15 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaUsersForSearch/$userId/$endPoint"
     }
 
+    fun ScheduledPathRead():String{
+        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        return "/$basePath/revoolaUserSettings/$userId/schedule"
+    }
+
+    fun ScheduledRequestPathRead(docId:String):String{
+        return "/$basePath/revoolaChallengeRequest/$docId"
+    }
+
 
 
 }

@@ -464,7 +464,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun RLwebviewurlload(type:String){
-
         // Set the timezone to GMT
         val zoneId = ZoneId.of("GMT")
 
@@ -484,14 +483,14 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampFrom = firstDay.toEpochSecond()
         val timestampTo = endDay.toEpochSecond()
 
-      if (isFilterResponse){
+        if (isFilterResponse){
             val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
             fragBinding.webView.loadUrl(imageUrl)
         }else{
             val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
             fragBinding.webView.loadUrl(imageUrl)
         }
-      // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
+        // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
         //fragBinding.webView.loadUrl(imageUrl)
     }
     //Swipe to move Code
