@@ -30,6 +30,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
     lateinit var fragBinding: RlFragScheduledClassesBinding
     // Collection to store all scheduled request data
     var currentUserId = ""
+
     private val binding by lazy {
         RlFragScheduledClassesBinding.inflate(layoutInflater)
     }
@@ -99,6 +100,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
 
                     }
                 }else{
+                    noScheduleDataShow("No schedule Data")
                     RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Data: ${error?.message}")
                 }
             }
@@ -108,7 +110,6 @@ class RLFragScheduledClasses : RLBaseFragment() {
 
     // Main sorting function equivalent to JavaScript getSortScheduleList()
     private fun getSortScheduleList(scheduleList: List<Map<String, Any?>>) {
-        RLTools.RlLogDPrint(TAG, "==========ScheduleList=======: ${scheduleList.size}")
         val now = System.currentTimeMillis()
         // Filter future dates (equivalent to x.dateOfChallenge * 1000 >= now)
         val filteredList = scheduleList.filter { schedule ->
@@ -119,7 +120,6 @@ class RLFragScheduledClasses : RLBaseFragment() {
             }
             dateOfChallenge >= now
         }
-        RLTools.RlLogDPrint(TAG, "==========filteredList=======: ${filteredList.size}")
         // Sort by dateOfChallenge (equivalent to a.dateOfChallenge - b.dateOfChallenge)
         val sortedList = filteredList.sortedBy { schedule ->
             when (val date = schedule["dateOfChallenge"]) {
@@ -128,7 +128,6 @@ class RLFragScheduledClasses : RLBaseFragment() {
                 else -> 0L
             }
         }
-        RLTools.RlLogDPrint(TAG, "==========sortedList=======: ${sortedList.size}")
         val scheduleKeyList = mutableListOf<ScheduleItem>()
 
         // Process each schedule item
@@ -205,13 +204,66 @@ class RLFragScheduledClasses : RLBaseFragment() {
                 )
             }
         }
+        if (scheduleKeyList.isNotEmpty()){
+            updateListSetToList(scheduleKeyList)
+        }else{
+            noScheduleDataShow("No schedule Data")
+        }
 
-        RLTools.RlLogDPrint(TAG, "==========Filtered ScheduleList======= Size: ${scheduleKeyList.size}")
+    }
 
-        val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduleKeyList)
-        fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
+    private fun noScheduleDataShow(value :String) {
+        fragBinding.rvSchdualclasses.visibility=View.GONE
+        fragBinding.txtNoData.visibility=View.VISIBLE
         RLBaseProgress.RLhideProgressDialog()
+        RLTools.RlLogEPrint(TAG,"Error:- $value")
+    }
 
+    private fun updateListSetToList(scheduleKeyList: MutableList<ScheduleItem>) {
+        val scheduledList = mutableListOf<ScheduleMediaItem>()
+        var completedRequests = 0
+        val totalRequests = scheduleKeyList.size
+        scheduleKeyList.forEach { cardData->
+            val videoId = cardData.schedule.get("videoKey").toString()
+            RLTools.RlLogDPrint(TAG,"videoId: $videoId")
+            val createdBy = cardData.schedule.get("createdBy").toString()
+            RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoId){ data, error ->
+                if (data!=null){
+                    val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
+                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                    RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
+                        if (data!=null) {
+                            val userData = RLTools.parseUserData(data)
+                            if(userData!=null){
+                                val organizerName = userData.displayName
+                                RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
+                                RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                                // Add all three items to the array
+                                scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName))
+                            }
+                        }else{
+                            RLBaseProgress.RLhideProgressDialog()
+                            RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
+                        }
+                        completedRequests++
+                        if (completedRequests == totalRequests) {
+                            RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
+                            completedRequests = 0
+                            val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
+                            fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
+                            fragBinding.rvSchdualclasses.visibility=View.VISIBLE
+                            fragBinding.txtNoData.visibility=View.GONE
+                            RLBaseProgress.RLhideProgressDialog()
+                        }
+                    }
+
+                }else{
+                    RLBaseProgress.RLhideProgressDialog()
+                    RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
+                }
+
+            }
+        }
     }
 
     // Function to handle mind class data
@@ -270,6 +322,11 @@ data class ScheduleItem(
     val schedule: MutableMap<String, Any?>,
     val videoObj: Map<String, Any?> = emptyMap()
 )
+
+
+sealed class ScheduleMediaItem() {
+    data class Combined(val scheduleItem: ScheduleItem, val videoItem: RLFulllVideoModel, val organizer: String) : ScheduleMediaItem()
+}
 
 data class ChallengerInfo(
     val userId: String,

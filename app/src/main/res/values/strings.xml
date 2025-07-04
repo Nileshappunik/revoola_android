@@ -208,6 +208,7 @@
     <!--more-->
     <string name="schduledclasses">Scheduled Classes</string>
     <string name="schduled">Scheduled</string>
+    <string name="schdule_no_data">You currently have no scheduled activities, new scheduled activities will show here. To create your own scheduled activity click on the start menu and navigate to a body or mind class, choose a class and then you can schedule to do it with friends or a group of friends.</string>
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
     <string name="settings">Settings</string>
@@ -496,6 +497,9 @@
     <string name="done">Done</string>
     <string name="current_subscription">CURRENT SUBSCRIPTION</string>
     <string name="connect">Connect</string>
+    <string name="application_setting">APPLICATION SETTING</string>
+    <string name="permission">PERMISSION</string>
+    <string name="purchase">PURCHASE</string>
 
 
 </resources>

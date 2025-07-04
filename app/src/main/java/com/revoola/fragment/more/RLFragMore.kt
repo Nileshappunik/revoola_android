@@ -60,9 +60,15 @@ class RLFragMore : RLBaseFragment() {
             editAccountChildDataList.add("TRY PREMIUM FOR FREE")
         }
         // Prepare the Data
-        val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
+        val groupDataList_Old = listOf(RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.helpvideotutorials), emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_sensors_g,resources.getString(R.string.syncwatchdata),emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.edit_your_account_data),editAccountChildDataList),
+            RLMoreGroupItemModel(R.drawable.ic_sign_out_g,resources.getString(R.string.signout), emptyList()))
+
+        val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_account_g,resources.getString(R.string.profile), emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.application_setting),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_permission,resources.getString(R.string.permission),emptyList()),
+            RLMoreGroupItemModel(R.drawable.ic_purchase,resources.getString(R.string.purchase),emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_sign_out_g,resources.getString(R.string.signout), emptyList()))
 
         // Set up the Adapter
@@ -70,11 +76,29 @@ class RLFragMore : RLBaseFragment() {
         fragBinding.expandableListView.setAdapter(adapter)
         fragBinding.expandableListView.expandGroup(2)
         // Optionally: Set listeners for group and child clicks
+//        fragBinding.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
+//            // Handle group click if needed
+//            when(groupDataList[groupPosition].title){
+//                resources.getString(R.string.helpvideotutorials)->{
+//                    (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
+//                }
+//                resources.getString(R.string.syncwatchdata)->{
+//                    // Initialize WearDataSync with DataClient
+//                    RLSyncWatchData()
+//
+//                }
+//                resources.getString(R.string.signout)->{
+//                    RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
+//                }
+//            }
+//            false
+//        }
+
         fragBinding.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
             // Handle group click if needed
             when(groupDataList[groupPosition].title){
-                resources.getString(R.string.helpvideotutorials)->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true, null, false)
+                resources.getString(R.string.profile)->{
+                    (context as RLMainActivityRL).RLloadFrag(RLFragSetting(), TAG, true, null, false)
                 }
                 resources.getString(R.string.syncwatchdata)->{
                     // Initialize WearDataSync with DataClient

@@ -26,7 +26,7 @@
             android:layout_marginTop= "10dp"
             android:layout_marginStart="20dp"
             android:textAllCaps="true"
-            android:text="@string/settings"
+            android:text="@string/profile"
             android:textColor="@color/AppBlackColor"
             android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />

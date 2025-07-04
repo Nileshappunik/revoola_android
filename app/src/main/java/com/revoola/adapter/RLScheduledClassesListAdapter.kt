@@ -13,16 +13,21 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
+import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlLayoutScheduledClassesListBinding
+import com.revoola.fragment.more.RLFragSchdulClassesView
 import com.revoola.fragment.more.ScheduleItem
+import com.revoola.fragment.more.ScheduleMediaItem
+import com.revoola.fragment.start.body.RLFragBodyClassesView
+import com.revoola.fragment.start.mind.RLFragMindClassesView
 import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.model.RLFulllVideoModel
 import com.revoola.utils.RLConstants
 
-class RLScheduledClassesListAdapter(val context: FragmentActivity?,val scheduledClassesList: List<ScheduleItem>) :
+class RLScheduledClassesListAdapter(val context: FragmentActivity?,val scheduledClassesList: List<ScheduleMediaItem>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLYourGroupListAdapter"
+    val TAG = "RLScheduledClassesListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutBinding: RlLayoutScheduledClassesListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_scheduled_classes_list , parent, false)
@@ -41,32 +46,24 @@ class RLScheduledClassesListAdapter(val context: FragmentActivity?,val scheduled
 
     inner class MyViewHolder(val layoutBinding: RlLayoutScheduledClassesListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         fun bindData(position: Int, itemVIew: View) {
-            val cardData = scheduledClassesList[position]
-            val schedule = cardData.schedule
-            val videoId = cardData.schedule.get("videoKey").toString()
-            val createdBy = cardData.schedule.get("createdBy").toString()
-            RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoId){ data, error ->
-                if (data != null) {
-                    val jsonObject = Gson().toJson(data)
-                    RLTools.RlLogDPrint(TAG,"videoData: ${jsonObject}")
-                    val videoCardData = Gson().fromJson(jsonObject, RLFulllVideoModel::class.java)
+            val cardData:ScheduleMediaItem = scheduledClassesList[position]
+
+            when (cardData) {
+                is ScheduleMediaItem.Combined -> {
+                    val videoCardData = cardData.videoItem
+                    val scheduleCardData = cardData.scheduleItem
+                    val organizerName = cardData.organizer
                     layoutBinding.txtImageTitle.setText(videoCardData.rideTitle)
                     layoutBinding.txtWithName.setText(videoCardData.instructor)
                     layoutBinding.txtWatchtime.setText(videoCardData.duration + " class")
-                    val date = RLTools.RLconvertTimestampToSchdualDAte(schedule.get("dateOfChallenge").toString().toLong())
+                    val date = RLTools.RLconvertTimestampToSchdualDAte(scheduleCardData.schedule.get("dateOfChallenge").toString().toLong())
                     layoutBinding.txtMisseddate.setText(date)
-                    Glide.with(context!!).load(videoCardData.imageLinkSquareV2).into(layoutBinding.imgBigFull)
-                    RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
-                        if (data!=null) {
-                            val userData = RLTools.parseUserData(data)
-                            if(userData!=null){
-                                layoutBinding.txtUsernam.setText(userData.displayName)
-                            }
-                        }
-                    }
-                    layoutBinding.txtWarmupMin.setText(videoCardData.minwarmup+" MIN")
-                    layoutBinding.txtWarmupMin.setText(videoCardData.mincooldown+" MIN")
-                    layoutBinding.txtWarmupMin.setText(videoCardData.mininstruction+" MIN")
+                    Glide.with(context!!).load(videoCardData.imageLinkrectangleV2).into(layoutBinding.imgBigFull)
+                    layoutBinding.txtUsernam.setText(organizerName)
+
+                    layoutBinding.txtWarmupMin.setText(safeString(videoCardData.minwarmup)+" MIN")
+                    layoutBinding.txtWorkoutMin.setText(safeString(videoCardData.mincooldown)+" MIN")
+                    layoutBinding.txtCooldownMin.setText(safeString(videoCardData.mininstruction)+" MIN")
 
                     layoutBinding.txtEasy.setText(videoCardData.difficulty)
                     if(videoCardData.difficulty.equals("Beginner")){
@@ -79,8 +76,27 @@ class RLScheduledClassesListAdapter(val context: FragmentActivity?,val scheduled
                         layoutBinding.imgEasy.setImageResource(R.drawable.ic_medium)
                         layoutBinding.txtEasy.setTextColor(context.resources.getColor(R.color.AppOrangeColor))
                     }
+
+                    itemVIew.setOnClickListener {
+                        var ride = false
+                        val videoId = scheduleCardData.schedule.get("videoKey").toString()
+                        val createdBy = scheduleCardData.schedule.get("createdBy").toString()
+                        val dateOfChallenge = scheduleCardData.schedule.get("dateOfChallenge").toString()
+                        if (videoCardData.classType.toLowerCase().equals("ride")) ride = true else ride = false
+                        itemVIew.setOnClickListener {
+                            val bundle = Bundle()
+                            bundle.putString("videoID",videoId)
+                            bundle.putString("createdBy",createdBy)
+                            bundle.putString("dateOfChallenge",dateOfChallenge)
+                            (context as RLMainActivityRL).RLloadFrag(RLFragSchdulClassesView().newInstance(bundle), TAG, true, null, true)
+                        }
+                    }
                 }
             }
+        }
+
+        private fun safeString(value:String?):String{
+            return if (value.isNullOrEmpty()) return "" else value
         }
     }
 }

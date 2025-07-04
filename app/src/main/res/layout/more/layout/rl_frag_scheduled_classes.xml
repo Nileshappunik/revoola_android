@@ -37,5 +37,20 @@
             android:layout_marginTop="10dp"
             android:layout_below="@+id/txt_titletv"/>
 
+        <TextView
+            android:id="@+id/txtNoData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="40dp"
+            android:visibility="gone"
+            android:layout_below="@+id/txt_titletv"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:text="@string/schdule_no_data"
+            android:fontFamily="@font/omnes_regular" />
+
     </RelativeLayout>
 </layout>
