@@ -8,6 +8,7 @@ plugins {
     kotlin("android")
     id ("kotlin-kapt")
     id ("kotlin-parcelize")
+    id ("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -205,6 +206,10 @@ dependencies {
 
     //Garmin App
     implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.2.0@aar")
+
+    //navigation Graph
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.9.1")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.9.1")
 
 
 }

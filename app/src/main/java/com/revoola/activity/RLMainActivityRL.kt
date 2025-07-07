@@ -8,11 +8,14 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import android.net.ConnectivityManager
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.TooltipCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.revoola.R
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.revoola.activity.base.RLBaseActivity
 import com.revoola.broadcast.RlNetworkChangeReceiver
@@ -64,7 +67,7 @@ class RLMainActivityRL  : RLBaseActivity() {
         // Internet Check And Reconnect
         networkChangeReceiver = RlNetworkChangeReceiver(activityMainBinding.container)
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(networkChangeReceiver, filter)
+       // registerReceiver(networkChangeReceiver, filter)
         // Call this when a user completes a specific action
         val executor = Executors.newSingleThreadExecutor()
         executor.execute {

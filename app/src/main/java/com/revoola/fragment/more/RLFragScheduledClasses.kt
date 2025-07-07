@@ -236,10 +236,11 @@ class RLFragScheduledClasses : RLBaseFragment() {
                             val userData = RLTools.parseUserData(data)
                             if(userData!=null){
                                 val organizerName = userData.displayName
+                                val organizerImage = userData.displayImage
                                 RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
                                 RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
                                 // Add all three items to the array
-                                scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName))
+                                scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
                             }
                         }else{
                             RLBaseProgress.RLhideProgressDialog()
@@ -325,7 +326,7 @@ data class ScheduleItem(
 
 
 sealed class ScheduleMediaItem() {
-    data class Combined(val scheduleItem: ScheduleItem, val videoItem: RLFulllVideoModel, val organizer: String) : ScheduleMediaItem()
+    data class Combined(val scheduleItem: ScheduleItem, val videoItem: RLFulllVideoModel, val organizer: String,val organizerImage:String) : ScheduleMediaItem()
 }
 
 data class ChallengerInfo(

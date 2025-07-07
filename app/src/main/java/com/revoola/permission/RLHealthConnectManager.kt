@@ -88,7 +88,7 @@ class RLHealthConnectManager(private val context: Context) {
         return withContext(Dispatchers.IO) {
             try {
                 val grantedPermissions = healthConnectClient.permissionController.getGrantedPermissions()
-                RLTools.RlLogEPrint(TAG, "Granted Permissions: $grantedPermissions")
+                RLTools.RlLogDPrint(TAG, "Granted Permissions: $grantedPermissions")
 
                 val missingPermissions = requiredPermissions.filter { it !in grantedPermissions }
                 if (missingPermissions.isNotEmpty()) {

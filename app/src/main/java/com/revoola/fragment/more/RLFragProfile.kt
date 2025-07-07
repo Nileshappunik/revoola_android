@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.NumberPicker
@@ -42,11 +43,11 @@ import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.model.RLRevoolaUsersSettingsModel
+import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -58,15 +59,12 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
-class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
-    val TAG: String = RLFragSetting::class.java.simpleName
-    lateinit var fragBinding: RlFragSettingBinding
+class RLFragProfile : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
+    val TAG: String = RLFragProfile::class.java.simpleName
+    lateinit var fragBinding: RlFragProfileBinding
     private val STORAGE_PERMISSION_REQUEST_CODE = 1001
     private var chooseimagefile: File? =null
     private var userBasicDataCard: RLRevoolaUsersSettingsModel? =null
-    private var day: Int = 0
-    private var month: Int = 0
-    private var year: Int = 0
     private var myDay: Int = 0
     private var myMonth: Int = 0
     private var myYear: Int = 0
@@ -75,14 +73,14 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
     private var DateTime: String = ""
 
     private val binding by lazy {
-        RlFragSettingBinding.inflate(layoutInflater)
+        RlFragProfileBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_setting, container) as RlFragSettingBinding
+        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_profile, container) as RlFragProfileBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
         RlUiSetUp()
         return fragBinding.root
@@ -109,41 +107,10 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
                 fragBinding.layHeight.txtUsername.setText(userData.height)
                 fragBinding.layMaxheartrate.txtUsername.setText(userData.RFMHR.toString())//max hearrate
                 fragBinding.layRestingheartrate.txtUsername.setText(userData.restingHr)//base heartrate
-                if ( userData.appUnit.toLowerCase().equals("imperial")){
-                    fragBinding.radioGroup.check(R.id.radioButtonimperial)
-                }else{
-                    fragBinding.radioGroup.check(R.id.radioButtonmetric)
-                }
-                when(userData.visibilityflagforthatsession){
-                    0->{//EveryOne
-                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
-                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
-                        fragBinding.layActivities.tvsharetitle.setText(R.string.everyone)
-                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-                    }
-                    1->{//Private
-                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
-                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
-                        fragBinding.layActivities.tvsharetitle.setText(R.string.privatetx)
-                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
-                    }
-                    2->{//Friends
-                        fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
-                        fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
-                        fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
-                        fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-                    }
-                }
-            } else {
-               RLTools.RlLogEPrint(TAG, "Error fetching user data")
-            }
-        }
 
-        fragBinding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId.equals(R.id.radioButtonimperial)) {
-                RLBasicDataUpdateToFirebase("appUnit","Imperial")
-            }else {
-                RLBasicDataUpdateToFirebase("appUnit","Metric")
+
+            } else {
+                RLTools.RlLogEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -259,73 +226,19 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             RLshowRestingHrDialog(false)
         }
 
-        fragBinding.layLocation.txtusertitle.setText(R.string.location)
-        fragBinding.layLocation.txtUsername.visibility=View.GONE
-        fragBinding.layLocation.imgEdit.visibility=View.GONE
-        fragBinding.layLocation.switchSetting.visibility=View.VISIBLE
-
-        fragBinding.layActivities.txtusertitle.setText(R.string.activities)
-        fragBinding.layActivities.txtUsername.visibility=View.GONE
-        fragBinding.layActivities.imgEdit.visibility=View.GONE
-        fragBinding.layActivities.layPrivacy.visibility=View.VISIBLE
-
-        fragBinding.layActivities.layPrivacy.setOnClickListener {
-            val titletxt:String=fragBinding.layActivities.tvsharetitle.text.toString()
-
-            if (titletxt.uppercase().equals("PRIVATE")){
-                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",0)
-                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
-                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyeveryone)
-                fragBinding.layActivities.tvsharetitle.setText(R.string.everyone)
-                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
-
-            }else if (titletxt.uppercase().equals("FRIENDS")){
-                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",1)
-                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
-                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyprivate)
-                fragBinding.layActivities.tvsharetitle.setText(R.string.privatetx)
-                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
-
-            }else if (titletxt.uppercase().equals("EVERYONE")){
-                RLBasicDataUpdateToFirebase("visibilityflagforthatsession",2)
-                fragBinding.layActivities.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
-                fragBinding.layActivities.imgShareimage.setImageResource(R.drawable.ic_privacyfriends)
-                fragBinding.layActivities.tvsharetitle.setText(R.string.friendstx)
-                fragBinding.layActivities.tvsharetitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
-            }
+        fragBinding.layChangeYourPassword.txtusertitle.setText(R.string.changeyourpassword)
+        fragBinding.layChangeYourPassword.txtUsername.visibility=View.GONE
+        fragBinding.layChangeYourPassword.imgEdit.setImageResource(R.drawable.ic_chevron_right)
+        fragBinding.layChangeYourPassword.relayUser.setOnClickListener {
+            (context as RLMainActivityRL).RLloadFrag(RLFragChangePassword(), TAG, true, null, false)
         }
 
-        fragBinding.layNotification.txtusertitle.setText(R.string.notifications)
-        fragBinding.layNotification.txtUsername.visibility=View.GONE
-        fragBinding.layNotification.imgEdit.visibility=View.GONE
-        fragBinding.layNotification.switchSetting.visibility=View.VISIBLE
-
-        fragBinding.layCamera.txtusertitle.setText(R.string.camera)
-        fragBinding.layCamera.txtUsername.visibility=View.GONE
-        fragBinding.layCamera.imgEdit.visibility=View.GONE
-        fragBinding.layCamera.switchSetting.visibility=View.VISIBLE
-
-        fragBinding.layGallery.txtusertitle.setText(R.string.gallery)
-        fragBinding.layGallery.txtUsername.visibility=View.GONE
-        fragBinding.layGallery.imgEdit.visibility=View.GONE
-        fragBinding.layGallery.switchSetting.visibility=View.VISIBLE
-
-        fragBinding.layTermandcondition.txtusertitle.setText(R.string.termandcondition)
-        fragBinding.layTermandcondition.txtUsername.visibility=View.GONE
-        fragBinding.layTermandcondition.imgEdit.setImageResource(R.drawable.ic_chevron_right)
-        fragBinding.layTermandcondition.relayUser.setOnClickListener {
-            //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true,null, false)
+        fragBinding.layRequestToDeleteYourData.txtusertitle.setText(R.string.requesttodeleteyourdata)
+        fragBinding.layRequestToDeleteYourData.txtUsername.visibility=View.GONE
+        fragBinding.layRequestToDeleteYourData.imgEdit.setImageResource(R.drawable.ic_chevron_right)
+        fragBinding.layRequestToDeleteYourData.relayUser.setOnClickListener {
+            RLshowDialog(RLConstants.EXIT,getString(R.string.areyousurewanttodeletedata))
         }
-
-        fragBinding.layPrivacyPolicy.txtusertitle.setText(R.string.privacypolicy)
-        fragBinding.layPrivacyPolicy.txtUsername.visibility=View.GONE
-        fragBinding.layPrivacyPolicy.imgEdit.setImageResource(R.drawable.ic_chevron_right)
-        fragBinding.layPrivacyPolicy.relayUser.setOnClickListener {
-            //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true, null, false)
-        }
-
     }
 
     //Firebase One By One BasicData Update
@@ -333,11 +246,11 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
         val firebasePath = RevoolaFirebasePath.basicDataPathWrite(endPoint)
         // Firebase to Update BasicData
         RLDatabaseManagerWrite().RlWriteBasicDataUpdate(firebasePath,data) { isSuccessful, error ->
-           if (isSuccessful){
-               RLTools.RlLogDPrint(TAG,"BasicData Update Successfully")
-           }else{
-               RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
-           }
+            if (isSuccessful){
+                RLTools.RlLogDPrint(TAG,"BasicData Update Successfully")
+            }else{
+                RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
+            }
         }
     }
     private fun RLUserForSearchUpdateToFirebase(endPoint:String,data:Any,) {
@@ -890,7 +803,7 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             return imageFile
         } catch (e: IOException) {
             e.printStackTrace()
-           RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
+            RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
             return null
         }
     }
@@ -1023,6 +936,42 @@ class RLFragSetting : RLBaseFragment(), DatePickerDialog.OnDateSetListener  {
             }
 
         }
+    }
+
+    private fun RLshowDialog(type: String, message: String) {
+        val sucDialog: Dialog = Dialog(requireContext())
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_layout_dailog)
+        sucDialog.setCancelable(true)
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(sucDialog.window!!.attributes)
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        val tvNo: TextView = sucDialog.findViewById(R.id.tvNo)
+        val tvYes: TextView = sucDialog.findViewById(R.id.tvYes)
+        val tvTitle: TextView = sucDialog.findViewById(R.id.tvTitle)
+        val tvSubTitle: TextView = sucDialog.findViewById(R.id.tvSubTitle)
+        tvSubTitle.setText(message)
+
+        tvNo.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+
+        tvYes.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+            if (type.equals(RLConstants.LOGOUT_D)){
+                RLSignOut()
+                /* Firebase.auth.signOut()
+                  MoECoreHelper.logoutUser(requireContext())
+               // RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
+                RLPrefManager.RLClear_all(requireContext())
+                 val intent = Intent(requireContext(), RLSplashActivityRL::class.java)
+                 startActivity(intent)
+                 activity?.finish()*/
+            }
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 
 }

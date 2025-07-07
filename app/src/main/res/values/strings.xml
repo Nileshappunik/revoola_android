@@ -500,6 +500,9 @@
     <string name="application_setting">APPLICATION SETTING</string>
     <string name="permission">PERMISSION</string>
     <string name="purchase">PURCHASE</string>
+    <string name="trypremiumforfree">TRY PREMIUM FOR FREE</string>
+    <string name="viewtransation">View Transaction</string>
+    <string name="changeyourpassword">Change Your Password</string>
 
 
 </resources>

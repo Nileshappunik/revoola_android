@@ -26,7 +26,7 @@
             android:layout_marginTop= "10dp"
             android:layout_marginStart="20dp"
             android:textAllCaps="true"
-            android:text="@string/profile"
+            android:text="@string/application_setting"
             android:textColor="@color/AppBlackColor"
             android:textSize="26sp"
             android:fontFamily="@font/omnes_semibold_regular" />
@@ -41,72 +41,6 @@
                 android:layout_height="match_parent"
                 android:background="@color/AppWhiteColor"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tvtxtprofile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:layout_marginStart="20dp"
-                    android:gravity="center_vertical"
-                    android:textAllCaps="true"
-                    android:text="@string/profile"
-                    android:textColor="@color/AppBlackColor"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/omnes_semibold_regular"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBlack10Color"
-                    android:layout_marginStart="20dp"/>
-
-                <include
-                    android:id="@+id/lay_firstname"
-                    layout="@layout/rl_common_layout_setting"/>
-
-                <include
-                    android:id="@+id/lay_surname"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_nickname"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_avatar"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_email"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include android:id="@+id/lay_gender"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_dateofbirth"
-                    layout="@layout/rl_common_layout_setting"/>
-
-                <include
-                    android:id="@+id/lay_weight"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_height"
-                    layout="@layout/rl_common_layout_setting"/>
-
-                <include
-                    android:id="@+id/lay_maxheartrate"
-                    layout="@layout/rl_common_layout_setting"/>
-
-                <include
-                    android:id="@+id/lay_restingheartrate"
-                    layout="@layout/rl_common_layout_setting"/>
 
                 <TextView
                     android:id="@+id/tvtxtunitofmeasure"
@@ -123,6 +57,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:visibility="gone"
                     android:background="@color/AppBlack10Color"
                     android:layout_marginStart="20dp"/>
 
@@ -173,8 +108,16 @@
                     android:background="@color/AppBlack10Color"
                     android:layout_marginStart="20dp"/>
 
+                <include
+                    android:id="@+id/lay_HelpAndVideoTutorial"
+                    layout="@layout/rl_common_layout_setting"/>
+
+                <include
+                    android:id="@+id/lay_syncWatchData"
+                    layout="@layout/rl_common_layout_setting"/>
+
                 <TextView
-                    android:id="@+id/tvtxtprivacy"
+                    android:id="@+id/tvPrivacy"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginStart="20dp"
@@ -186,45 +129,12 @@
                     android:fontFamily="@font/omnes_semibold_regular"/>
 
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/AppBlack10Color"
-                    android:layout_marginStart="20dp"/>
-
-                <include
-                    android:id="@+id/lay_location"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_activities"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_notification"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_camera"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_gallery"
-                    layout="@layout/rl_common_layout_setting"/>
-
-
-                <include
-                    android:id="@+id/lay_termandcondition"
-                    layout="@layout/rl_common_layout_setting"/>
-
                 <include
                     android:id="@+id/lay_PrivacyPolicy"
                     layout="@layout/rl_common_layout_setting"/>
-
+                <include
+                    android:id="@+id/lay_termandcondition"
+                    layout="@layout/rl_common_layout_setting"/>
 
                 <View
                     android:layout_width="match_parent"

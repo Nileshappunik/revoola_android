@@ -53,12 +53,15 @@ class RLScheduledClassesListAdapter(val context: FragmentActivity?,val scheduled
                     val videoCardData = cardData.videoItem
                     val scheduleCardData = cardData.scheduleItem
                     val organizerName = cardData.organizer
+                    val organizerImage = cardData.organizerImage
+
                     layoutBinding.txtImageTitle.setText(videoCardData.rideTitle)
                     layoutBinding.txtWithName.setText(videoCardData.instructor)
                     layoutBinding.txtWatchtime.setText(videoCardData.duration + " class")
                     val date = RLTools.RLconvertTimestampToSchdualDAte(scheduleCardData.schedule.get("dateOfChallenge").toString().toLong())
                     layoutBinding.txtMisseddate.setText(date)
                     Glide.with(context!!).load(videoCardData.imageLinkrectangleV2).into(layoutBinding.imgBigFull)
+                    Glide.with(context!!).load(organizerImage).into(layoutBinding.imgUser)
                     layoutBinding.txtUsernam.setText(organizerName)
 
                     layoutBinding.txtWarmupMin.setText(safeString(videoCardData.minwarmup)+" MIN")

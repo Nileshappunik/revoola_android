@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/AppLightGrayColor"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_chevron_left"/>
+
+
+        <TextView
+            android:id="@+id/tvtitlesetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop= "10dp"
+            android:layout_marginStart="20dp"
+            android:textAllCaps="true"
+            android:text="@string/purchase"
+            android:textColor="@color/AppBlackColor"
+            android:textSize="26sp"
+            android:fontFamily="@font/omnes_semibold_regular" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop= "10dp"
+            android:background="@color/AppWhiteColor">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/AppWhiteColor"
+                android:orientation="vertical">
+                <include
+                    android:id="@+id/lay_currentSubscription"
+                    layout="@layout/rl_common_layout_setting"/>
+
+                <include
+                    android:id="@+id/lay_restore_your_Purchase"
+                    layout="@layout/rl_common_layout_setting"/>
+
+                <include
+                    android:id="@+id/lay_try_premium_for_free"
+                    layout="@layout/rl_common_layout_setting"/>
+
+                <include
+                    android:id="@+id/lay_viewTransaction"
+                    layout="@layout/rl_common_layout_setting"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:visibility="gone"
+                    android:background="@color/AppWhiteColor"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+</layout>
