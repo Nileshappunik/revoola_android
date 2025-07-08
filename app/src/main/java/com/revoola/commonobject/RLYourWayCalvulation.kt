@@ -11,6 +11,16 @@ import kotlin.math.roundToInt
 
 object RLYourWayCalvulation {
 
+     fun safeInt(value: Any?): Int {
+        return when (value) {
+            is Int -> value
+            is Number -> value.toInt()
+            is String -> value.toIntOrNull() ?: 0
+            else -> 0
+        }
+    }
+
+
     public fun calculateREVPer(heartRate: Int, weight: Double, height: Double, age: Int, gender: String,RestingHR:String,RFMHR:Int): Double {
 
         val currentDI = 1.0

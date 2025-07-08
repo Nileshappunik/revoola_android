@@ -10,18 +10,14 @@ import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
-import com.revoola.activity.RLMainActivityRL
 import com.revoola.adapter.RLScheduledClassesListAdapter
-import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLFirebaseManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databinding.RlFragScheduledClassesBinding
-import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.utils.RLConstants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -56,7 +52,6 @@ class RLFragScheduledClasses : RLBaseFragment() {
         GlobalScope.launch {
             RLFirebaseManager().databaseRead.RlreadData(RevoolaFirebasePath.ScheduledPathRead()){  data, error ->
                 if (data!=null){
-                  //  RLTools.RlLogDPrint(TAG,"Scheduled Data: ${data.toString()}")
                     // Extract keys into a list
                     val keysList = mutableListOf<String>()
                     when (data) {
@@ -78,7 +73,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
                     keysList.forEach { key->
                         RLFirebaseManager().databaseRead.RlreadData(RevoolaFirebasePath.ScheduledRequestPathRead(key)){  data, error ->
                             if (data!=null){
-                             //   RLTools.RlLogDPrint(TAG,"Scheduled Request Data: ${data.toString()}")
+                                // Simple usage example
                                 when (data) {
                                     is Map<*, *> -> {
                                         @Suppress("UNCHECKED_CAST")
@@ -101,7 +96,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
                     }
                 }else{
                     noScheduleDataShow("No schedule Data")
-                    RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Data: ${error?.message}")
+                    RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Key Data: ${error?.message}")
                 }
             }
         }
@@ -227,43 +222,86 @@ class RLFragScheduledClasses : RLBaseFragment() {
             val videoId = cardData.schedule.get("videoKey").toString()
             RLTools.RlLogDPrint(TAG,"videoId: $videoId")
             val createdBy = cardData.schedule.get("createdBy").toString()
-            RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoId){ data, error ->
-                if (data!=null){
-                    val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
-                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                    RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
-                        if (data!=null) {
-                            val userData = RLTools.parseUserData(data)
-                            if(userData!=null){
-                                val organizerName = userData.displayName
-                                val organizerImage = userData.displayImage
-                                RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
-                                RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                                // Add all three items to the array
-                                scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
+            val isMindClass = cardData.schedule.get("isMindClass").toString()
+            if (isMindClass.equals("false")){
+                RLDatabaseManagerRead().RLRevoolaVideosRead(videoId) { data, error ->
+                    if (data!=null){
+                        val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
+                        RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                        RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
+                            if (data!=null) {
+                                val userData = RLTools.parseUserData(data)
+                                if(userData!=null){
+                                    val organizerName = userData.displayName
+                                    val organizerImage = userData.displayImage
+                                    RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
+                                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                                    // Add all three items to the array
+                                    scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
+                                }
+                            }else{
+                                RLBaseProgress.RLhideProgressDialog()
+                                RLTools.RlLogEPrint(TAG,"Error Fetch User Data: ${error?.message}")
                             }
-                        }else{
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
+                            completedRequests++
+                            if (completedRequests == totalRequests) {
+                                RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
+                                completedRequests = 0
+                                val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
+                                fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
+                                fragBinding.rvSchdualclasses.visibility=View.VISIBLE
+                                fragBinding.txtNoData.visibility=View.GONE
+                                RLBaseProgress.RLhideProgressDialog()
+                            }
                         }
-                        completedRequests++
-                        if (completedRequests == totalRequests) {
-                            RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
-                            completedRequests = 0
-                            val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
-                            fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
-                            fragBinding.rvSchdualclasses.visibility=View.VISIBLE
-                            fragBinding.txtNoData.visibility=View.GONE
-                            RLBaseProgress.RLhideProgressDialog()
+
+                    }else{
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${error?.message}")
+                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${Gson().toJson(cardData)}")
+                    }
+                }
+            }else{
+                RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoId){ data, error ->
+                    if (data!=null){
+                        val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
+                        RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                        RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
+                            if (data!=null) {
+                                val userData = RLTools.parseUserData(data)
+                                if(userData!=null){
+                                    val organizerName = userData.displayName
+                                    val organizerImage = userData.displayImage
+                                    RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
+                                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
+                                    // Add all three items to the array
+                                    scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
+                                }
+                            }else{
+                                RLBaseProgress.RLhideProgressDialog()
+                                RLTools.RlLogEPrint(TAG,"Error Fetch User Data: ${error?.message}")
+                            }
+                            completedRequests++
+                            if (completedRequests == totalRequests) {
+                                RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
+                                completedRequests = 0
+                                val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
+                                fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
+                                fragBinding.rvSchdualclasses.visibility=View.VISIBLE
+                                fragBinding.txtNoData.visibility=View.GONE
+                                RLBaseProgress.RLhideProgressDialog()
+                            }
                         }
+
+                    }else{
+                        RLBaseProgress.RLhideProgressDialog()
+                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${error?.message}")
+                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${Gson().toJson(cardData)}")
                     }
 
-                }else{
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
                 }
-
             }
+
         }
     }
 

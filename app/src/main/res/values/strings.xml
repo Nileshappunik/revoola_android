@@ -16,6 +16,7 @@
 
     <!--GOOGLE KEY-->
     <string name="google_clientId">AIzaSyCOwcSM8SrRxnXsIAkqcwx5rSf4AHclUCw</string>
+    <string name="google_clientId2">AIzaSyDKw9AIk36jZMeuGDHQFbGnFt2iv-Tirwg</string>
 
 
     <string name="no_conn">No Internet Connection</string>

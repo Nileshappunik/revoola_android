@@ -24,7 +24,8 @@ class RLImagePagerAdapter(
     private val ZoneTextData: EffortZoneFeedModel,
     private val effort: String,
     private val effortScore: String,
-    private val maxEffort: String
+    private val maxEffort: String,
+    private val listener: OnImageClickListener
 ) :PagerAdapter(){
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
@@ -41,8 +42,11 @@ class RLImagePagerAdapter(
         }
         Glide.with(context!!).load(imageList.get(position)).into(layoutbinding.imageView)
 
-        //Chart Set
+        layoutbinding.imageView.setOnClickListener {
+            listener.onImageClick(position, imageList[position])
+        }
 
+        //Chart Set
         layoutbinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
         layoutbinding.inlayChart.layEffortZone.txtNumber.setText(ZoneTextData.efforZoneText)
         layoutbinding.inlayChart.layEffortZone.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
@@ -85,6 +89,7 @@ class RLImagePagerAdapter(
         return imageList.size
     }
 
-
-
+}
+interface OnImageClickListener {
+    fun onImageClick(position: Int, imageUrl: String)
 }

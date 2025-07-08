@@ -124,6 +124,7 @@ class StringDeserializer : JsonDeserializer<String> {
     }
 }
 
+
 // Boolean Deserializer
 class BooleanDeserializer : JsonDeserializer<Boolean> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): Boolean {

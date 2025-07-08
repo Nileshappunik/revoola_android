@@ -189,6 +189,7 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notifications" />
 
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/AppMainColor" />
@@ -259,7 +260,7 @@
         <!-- end Branch SDK -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_clientId" />
+            android:value="@string/google_clientId2" />
 
 
     </application>

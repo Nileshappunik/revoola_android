@@ -11,6 +11,7 @@ import com.revoola.firebaseModel.RLChallengeRiderBody
 
 class RLDatabaseManagerRead {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private val d2_database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/").reference
 
     fun deleteFirebaseData(path: String,callback: (Any?, Exception?) -> Unit) {
         database.child(path).removeValue()
@@ -89,6 +90,15 @@ class RLDatabaseManagerRead {
     }
     fun RlreadData(path: String, callback: (Any?, Exception?) -> Unit) {
         database.child(path).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(task.result?.value, null)
+            } else {
+                callback(null, task.exception)
+            }
+        }
+    }
+    fun Rld2DataBaseReadData(path: String, callback: (Any?, Exception?) -> Unit) {
+        d2_database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
             } else {

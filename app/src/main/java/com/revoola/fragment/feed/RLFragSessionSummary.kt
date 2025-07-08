@@ -2,8 +2,6 @@ package com.revoola.fragment.feed
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.utils.RLPrefManager
 import com.revoola.R
+import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.feed.adapter.RLFeedSessionSummryListAdapter
 import com.revoola.api.RLApiClientRet
@@ -39,7 +39,9 @@ import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.enumclass.RLValueName
 import com.revoola.firebaseModel.RLSessionSummaryDataModel
 import com.revoola.firebaseModel.RLSessionDetailDataModel
+import com.revoola.fragment.feed.adapter.OnImageClickListener
 import com.revoola.fragment.overview.RLFragOverviewSession
+import com.revoola.fragment.start.challenges.RLFragChallengesFor
 import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.model.RLZoneChartData
 import com.revoola.model.RLZoneChartScoreData
@@ -48,10 +50,9 @@ import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 import kotlin.math.roundToInt
 
-class RLFragSessionSummary : RLBaseFragment() {
+class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
     val TAG: String = RLFragSessionSummary::class.java.simpleName
     lateinit var fragBinding: RlFragSessionSummaryBinding
     lateinit var cardData: RLTextOverview
@@ -63,6 +64,7 @@ class RLFragSessionSummary : RLBaseFragment() {
     private var fireBaseCardData: RLSessionSummaryDataModel?=null
     private var fireBaseDetailCardData: RLSessionDetailDataModel?=null
     private var userCardData: RLRevoolaUsersSettingsModel?=null
+    private var mapObject:String =""
 
     private val binding by lazy {
         RlFragSessionSummaryBinding.inflate(layoutInflater)
@@ -90,6 +92,7 @@ class RLFragSessionSummary : RLBaseFragment() {
 
     //Start Ui
     private fun RLuisetup() {
+        if (isAdded) RLBaseProgress.RLShowProgressDialog(requireActivity())
         val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
        // RLonBackPresAct(fragBinding.ivBack)
         fragBinding.ivBack.setOnClickListener {
@@ -155,7 +158,15 @@ class RLFragSessionSummary : RLBaseFragment() {
             }
         }
 
-
+        val mapPath = RevoolaFirebasePath.dataForTestingPathRead(cardData.userid,cardData.timestamp)
+        RLDatabaseManagerRead().Rld2DataBaseReadData(mapPath) { data, error ->
+            if (data != null) {
+                  mapObject =  Gson().toJson(data)
+                RLTools.RlLogEPrint(TAG,"dataForTesting Data: $mapObject")
+            } else {
+                RLTools.RlLogEPrint(TAG,"dataForTesting Error: $error")
+            }
+        }
     }
 
     //Summery Ui SetUp
@@ -170,6 +181,7 @@ class RLFragSessionSummary : RLBaseFragment() {
 
         var imageList:MutableList<String> = mutableListOf()
         val imageListOriginal = listOf(imagelink, RLTools.RLgetImage(classType))
+        RLBaseProgress.RLhideProgressDialog()
         fragBinding.testImage.visibility=View.GONE
         fragBinding.viewPagerImage.visibility=View.VISIBLE
         fragBinding.intoTabLayout.visibility=View.VISIBLE
@@ -219,7 +231,7 @@ class RLFragSessionSummary : RLBaseFragment() {
         }
 
         RLTools.RLheightsetViewPager(fragBinding.viewPagerImage)
-        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList,zoneDataList,ZoneTextData,effort,effortScore,maxEffort)
+        val viewPagerAdapter = RLImagePagerAdapter(activity,imageList,zoneDataList,ZoneTextData,effort,effortScore,maxEffort,this)
         fragBinding.viewPagerImage.adapter = viewPagerAdapter
 
         when (classType.toLowerCase()){
@@ -1078,7 +1090,6 @@ class RLFragSessionSummary : RLBaseFragment() {
         }
     }
 
-
     //Effort Ui SetUp
     private fun RLeffortDataSet(){
         val dataList: List<RLZoneChartScoreData> = listOf(
@@ -1201,6 +1212,20 @@ class RLFragSessionSummary : RLBaseFragment() {
             return false
         }
         return true
+    }
+
+    override fun onImageClick(position: Int, imageUrl: String) {
+        // Example: open full-screen image
+        if (position ==0 && cardData.map_image.isNotEmpty() ){
+            openFullGoogleMap(position)
+        }
+
+    }
+
+    private fun openFullGoogleMap(position:Int){
+        val bundle: Bundle = Bundle()
+        bundle.putString("jsonDataString",mapObject)
+        (context as RLMainActivityRL).RLloadFrag(RLFragMapView().newInstance(bundle), TAG, true,null, true)
     }
 
 }

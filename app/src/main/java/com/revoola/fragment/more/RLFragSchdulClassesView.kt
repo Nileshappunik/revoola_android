@@ -44,6 +44,7 @@ class RLFragSchdulClassesView : RLBaseFragment() {
         val videoID=  requireArguments().getString("videoID","")
         val createdBy=  requireArguments().getString("createdBy","")
         val dateOfChallenge=  requireArguments().getString("dateOfChallenge","")
+        val isMindClass=  requireArguments().getString("isMindClass","")
         val date = RLTools.RLconvertTimestampToSchdualDAte(dateOfChallenge.toString().toLong())
         fragBinding.txtMisseddate.setText(date)
         RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
@@ -60,17 +61,32 @@ class RLFragSchdulClassesView : RLBaseFragment() {
                 RLTools.RlLogEPrint(TAG, "Error Fetch Scheduled Request Data: ${error?.message}")
             }
         }
-        RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoID) { data, error ->
-        if (data != null) {
-            val gson = Gson()
-            val jsonObject = gson.toJson(data)
-            val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
-            RLMindUiSetup(VideoData)
-            fragBinding.joinButton.setOnClickListener {
-                //Join Button Click Set Here
+        if (isMindClass.equals("false")){
+            RLDatabaseManagerRead().RLRevoolaVideosRead(videoID) { data, error ->
+                if (data != null) {
+                    val gson = Gson()
+                    val jsonObject = gson.toJson(data)
+                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
+                    RLMindUiSetup(VideoData)
+                    fragBinding.joinButton.setOnClickListener {
+                        //Join Button Click Set Here
+                    }
+                }
+            }
+        }else{
+            RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoID) { data, error ->
+                if (data != null) {
+                    val gson = Gson()
+                    val jsonObject = gson.toJson(data)
+                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
+                    RLMindUiSetup(VideoData)
+                    fragBinding.joinButton.setOnClickListener {
+                        //Join Button Click Set Here
+                    }
+                }
             }
         }
-        }
+
     }
     private fun RLMindUiSetup(VideoData: RLFulllVideoModel){
         fragBinding.txtTitle.setText(VideoData.rideTitle)
