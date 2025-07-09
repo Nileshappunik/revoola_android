@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.revoola.RLBaseFragment
-import com.revoola.R
 import com.revoola.RLBaseProgress
 import com.revoola.adapter.RLScheduledClassesListAdapter
 import com.revoola.commonobject.RLTools
@@ -17,17 +16,21 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLFirebaseManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databinding.RlFragScheduledClassesBinding
+import com.revoola.enumclass.RLChallengeStatusType
+import com.revoola.fragment.more.schduleModel.ChallengerInfo
+import com.revoola.fragment.more.schduleModel.RLScheduleData
+import com.revoola.fragment.more.schduleModel.ScheduleItem
 import com.revoola.model.RLFulllVideoModel
+import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class RLFragScheduledClasses : RLBaseFragment() {
     val TAG: String = RLFragScheduledClasses::class.java.simpleName
-    lateinit var fragBinding: RlFragScheduledClassesBinding
-    // Collection to store all scheduled request data
+    private lateinit var adapterScheduledClasses: RLScheduledClassesListAdapter
     var currentUserId = ""
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragScheduledClassesBinding.inflate(layoutInflater)
     }
 
@@ -35,8 +38,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_scheduled_classes, container) as RlFragScheduledClassesBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragScheduledClasses" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragScheduledClasses" )
         RLuisetup()
         return fragBinding.root
     }
@@ -46,8 +48,8 @@ class RLFragScheduledClasses : RLBaseFragment() {
         currentUserId = RLAuthManager().RlgetCurrentUser()?.uid ?:""
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvSchdualclasses.layoutManager = linearLayoutManager
-      //  val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,emptyList())
-     //   fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
+        adapterScheduledClasses = RLScheduledClassesListAdapter(activity,emptyList())
+        fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
         RLBaseProgress.RLShowProgressDialog(requireActivity())
         GlobalScope.launch {
             RLFirebaseManager().databaseRead.RlreadData(RevoolaFirebasePath.ScheduledPathRead()){  data, error ->
@@ -103,7 +105,6 @@ class RLFragScheduledClasses : RLBaseFragment() {
 
     }
 
-    // Main sorting function equivalent to JavaScript getSortScheduleList()
     private fun getSortScheduleList(scheduleList: List<Map<String, Any?>>) {
         val now = System.currentTimeMillis()
         // Filter future dates (equivalent to x.dateOfChallenge * 1000 >= now)
@@ -115,6 +116,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
             }
             dateOfChallenge >= now
         }
+
         // Sort by dateOfChallenge (equivalent to a.dateOfChallenge - b.dateOfChallenge)
         val sortedList = filteredList.sortedBy { schedule ->
             when (val date = schedule["dateOfChallenge"]) {
@@ -123,8 +125,8 @@ class RLFragScheduledClasses : RLBaseFragment() {
                 else -> 0L
             }
         }
-        val scheduleKeyList = mutableListOf<ScheduleItem>()
 
+        val scheduleKeyList = mutableListOf<ScheduleItem>()
         // Process each schedule item
         sortedList.forEach { schedule ->
             val mutableSchedule = schedule.toMutableMap()
@@ -153,7 +155,8 @@ class RLFragScheduledClasses : RLBaseFragment() {
                         is Number -> rank.toInt()
                         else -> 0
                     },
-                    isDeline = challengerData["isDeline"] as? Boolean ?: false
+                    isDeline = challengerData["isDeline"] as? Boolean ?: false,
+                    challengeStatus = challengerData["challengeStatus"] as? Int
                 )
 
                 sampleArr.add(challengerInfo)
@@ -166,213 +169,191 @@ class RLFragScheduledClasses : RLBaseFragment() {
 
             // Determine status label
             selfUserChallenge?.let { userChallenge ->
-                val statusLabel = when {
-                    userChallenge.isDecline -> "Declined"
-                    userChallenge.status -> {
-                        if (sampleArr.isNotEmpty() && sampleArr[0].userId != currentUserId) {
-                            "Lost"
-                        } else {
-                            "Win"
+                val statusLabel = if (userChallenge.challengeStatus != null) {
+                    // Handle challengeStatus-based logic
+                    when (userChallenge.challengeStatus) {
+                        RLChallengeStatusType.Pending.value -> {
+                            val lastDateTimestamp = when (val timestamp = schedule["dateOfChallenge"]) {
+                                is Number -> timestamp.toLong()
+                                is String -> timestamp.toLongOrNull() ?: 0L
+                                else -> 0L
+                            }
+                            if (lastDateTimestamp < System.currentTimeMillis() / 1000) {
+                                "Missed"
+                            } else {
+                                "Scheduled For"
+                            }
+                        }
+                        RLChallengeStatusType.Accepted.value -> "Scheduled For"
+                        RLChallengeStatusType.Completed.value -> "Completed"
+                        RLChallengeStatusType.Declined.value -> "Declined"
+                        RLChallengeStatusType.Missed.value -> "Missed"
+                        RLChallengeStatusType.OwnerWinner.value -> "Won"
+                        RLChallengeStatusType.OtherWinner.value -> "Lost"
+                        RLChallengeStatusType.Ignored.value -> "Declined"
+                        else -> "Scheduled For"
+                    }
+                } else {
+                    //Handle legacy status logic
+                    when {
+                        userChallenge.isDecline -> "Declined"
+                        userChallenge.status -> {
+                            val lastDateTimestamp = when (val timestamp = schedule["dateOfChallenge"]) {
+                                is Number -> timestamp.toLong()
+                                is String -> timestamp.toLongOrNull() ?: 0L
+                                else -> 0L
+                            }
+
+                            if (lastDateTimestamp < System.currentTimeMillis() / 1000) {
+                                if (userChallenge.rank == 0) {
+                                    "Missed"
+                                } else {
+                                    //Sort participants by totalRev (descending), then by totalTime (ascending)
+                                    val sortedParticipants = sampleArr.sortedWith(compareBy<ChallengerInfo> { -it.totalRev }.thenBy { it.totalTime })
+
+                                    if (sortedParticipants.isNotEmpty() && sortedParticipants[0].userId != currentUserId) {
+                                        "Lost"
+                                    } else {
+                                        "Won"
+                                    }
+                                }
+                            } else {
+                                val challengeOwner = schedule["createdBy"] as? String
+                                if (challengeOwner == currentUserId) {
+                                    val otherParticipant = sampleArr.find { participant ->
+                                        participant.userId != currentUserId
+                                    }
+
+                                    if (otherParticipant != null && !otherParticipant.isDecline) {
+                                        "Scheduled For"
+                                    } else {
+                                        "Declined"
+                                    }
+                                } else {
+                                    "Scheduled For"
+                                }
+                            }
+                        }
+                        else -> {
+                            val lastDateTimestamp = when (val timestamp = schedule["dateOfChallenge"]) {
+                                is Number -> timestamp.toLong()
+                                is String -> timestamp.toLongOrNull() ?: 0L
+                                else -> 0L
+                            }
+
+                            if (lastDateTimestamp < System.currentTimeMillis() / 1000) {
+                                "Missed"
+                            } else {
+                                "Scheduled For"
+                            }
                         }
                     }
-                    else -> "Scheduled For"
                 }
+
                 mutableSchedule["statusLbl"] = statusLabel
             }
 
-            // Process based on class type
+            //Process based on class type
             val isClass = schedule["isClass"] as? Boolean ?: false
             val isMindClass = schedule["isMindClass"] as? Boolean ?: false
 
             if (isClass) {
                 if (isMindClass) {
-                    getMindData(mutableSchedule, scheduleKeyList)
+                    getMindData(mutableSchedule) { item ->
+                        if (item != null) {
+                            scheduleKeyList.add(item)
+                            updateListSetToList(scheduleKeyList)
+                        }
+                    }
                 } else {
-                    getBodyData(mutableSchedule, scheduleKeyList)
+                    getBodyData(mutableSchedule) { item ->
+                        if (item != null) {
+                            scheduleKeyList.add(item)
+                            updateListSetToList(scheduleKeyList)
+                        }
+                    }
                 }
-            } else {
-                scheduleKeyList.add(
-                    ScheduleItem(
-                        schedule = mutableSchedule,
-                        videoObj = emptyMap()
-                    )
-                )
             }
         }
-        if (scheduleKeyList.isNotEmpty()){
-            updateListSetToList(scheduleKeyList)
-        }else{
-            noScheduleDataShow("No schedule Data")
-        }
-
     }
 
+    private fun getMindData(schedule: MutableMap<String, Any?>, onScheduleItemReady: (ScheduleItem?) -> Unit) {
+        val videoKey = schedule["videoKey"] as? String ?: ""
+        val createdBy = schedule["createdBy"] as? String ?: ""
+
+        val scheduleJson = Gson().toJson(schedule)
+        val scheduleData = Gson().fromJson(scheduleJson, RLScheduleData::class.java)
+
+        RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoKey) { data, error ->
+            if (data != null) {
+                val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
+
+                RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { userDataRaw, _ ->
+                    if (userDataRaw != null) {
+                        val userData = RLTools.parseUserData(userDataRaw)
+                        if (userData != null) {
+                            val item = ScheduleItem(
+                                schedule = scheduleData,
+                                videoItem = videoCardData,
+                                organizer = userData.displayName,
+                                organizerImage = userData.displayImage
+                            )
+                            onScheduleItemReady(item)  // return the item
+                        } else {
+                            onScheduleItemReady(null)
+                        }
+                    } else {
+                        onScheduleItemReady(null)
+                    }
+                }
+            } else {
+                onScheduleItemReady(null)
+            }
+        }
+    }
+    private fun getBodyData(schedule: MutableMap<String, Any?>, onScheduleItemReady: (ScheduleItem?) -> Unit) {
+        val videoKey = schedule["videoKey"] as? String ?: ""
+        val createdBy = schedule["createdBy"] as? String ?: ""
+        val scheduleJson = Gson().toJson(schedule)
+        val scheduleData = Gson().fromJson(scheduleJson, RLScheduleData::class.java)
+        RLDatabaseManagerRead().RLRevoolaVideosRead(videoKey) { data, error ->
+            if (data != null) {
+                val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
+
+                RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { userDataRaw, _ ->
+                    if (userDataRaw != null) {
+                        val userData = RLTools.parseUserData(userDataRaw)
+                        if (userData != null) {
+                            val item = ScheduleItem(
+                                schedule = scheduleData,
+                                videoItem = videoCardData,
+                                organizer = userData.displayName,
+                                organizerImage = userData.displayImage
+                            )
+                            onScheduleItemReady(item)  // return the item
+                        } else {
+                            onScheduleItemReady(null)
+                        }
+                    } else {
+                        onScheduleItemReady(null)
+                    }
+                }
+            } else {
+                onScheduleItemReady(null)
+            }
+        }
+    }
+
+    private fun updateListSetToList(scheduleKeyList: MutableList<ScheduleItem>) {
+        adapterScheduledClasses.updateList(scheduleKeyList)
+        fragBinding.rvSchdualclasses.visibility=View.VISIBLE
+        fragBinding.txtNoData.visibility=View.GONE
+        RLBaseProgress.RLhideProgressDialog()
+    }
     private fun noScheduleDataShow(value :String) {
         fragBinding.rvSchdualclasses.visibility=View.GONE
         fragBinding.txtNoData.visibility=View.VISIBLE
         RLBaseProgress.RLhideProgressDialog()
         RLTools.RlLogEPrint(TAG,"Error:- $value")
     }
-
-    private fun updateListSetToList(scheduleKeyList: MutableList<ScheduleItem>) {
-        val scheduledList = mutableListOf<ScheduleMediaItem>()
-        var completedRequests = 0
-        val totalRequests = scheduleKeyList.size
-        scheduleKeyList.forEach { cardData->
-            val videoId = cardData.schedule.get("videoKey").toString()
-            RLTools.RlLogDPrint(TAG,"videoId: $videoId")
-            val createdBy = cardData.schedule.get("createdBy").toString()
-            val isMindClass = cardData.schedule.get("isMindClass").toString()
-            if (isMindClass.equals("false")){
-                RLDatabaseManagerRead().RLRevoolaVideosRead(videoId) { data, error ->
-                    if (data!=null){
-                        val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
-                        RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                        RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
-                            if (data!=null) {
-                                val userData = RLTools.parseUserData(data)
-                                if(userData!=null){
-                                    val organizerName = userData.displayName
-                                    val organizerImage = userData.displayImage
-                                    RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
-                                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                                    // Add all three items to the array
-                                    scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
-                                }
-                            }else{
-                                RLBaseProgress.RLhideProgressDialog()
-                                RLTools.RlLogEPrint(TAG,"Error Fetch User Data: ${error?.message}")
-                            }
-                            completedRequests++
-                            if (completedRequests == totalRequests) {
-                                RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
-                                completedRequests = 0
-                                val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
-                                fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
-                                fragBinding.rvSchdualclasses.visibility=View.VISIBLE
-                                fragBinding.txtNoData.visibility=View.GONE
-                                RLBaseProgress.RLhideProgressDialog()
-                            }
-                        }
-
-                    }else{
-                        RLBaseProgress.RLhideProgressDialog()
-                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${error?.message}")
-                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${Gson().toJson(cardData)}")
-                    }
-                }
-            }else{
-                RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoId){ data, error ->
-                    if (data!=null){
-                        val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
-                        RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                        RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
-                            if (data!=null) {
-                                val userData = RLTools.parseUserData(data)
-                                if(userData!=null){
-                                    val organizerName = userData.displayName
-                                    val organizerImage = userData.displayImage
-                                    RLTools.RlLogDPrint(TAG,"organizerName: $organizerName")
-                                    RLTools.RlLogDPrint(TAG,"videoCardData: $videoCardData")
-                                    // Add all three items to the array
-                                    scheduledList.add(ScheduleMediaItem.Combined(cardData, videoCardData, organizerName,organizerImage))
-                                }
-                            }else{
-                                RLBaseProgress.RLhideProgressDialog()
-                                RLTools.RlLogEPrint(TAG,"Error Fetch User Data: ${error?.message}")
-                            }
-                            completedRequests++
-                            if (completedRequests == totalRequests) {
-                                RLTools.RlLogDPrint(TAG,"scheduledList: ${scheduledList.size}")
-                                completedRequests = 0
-                                val adapterScheduledClasses = RLScheduledClassesListAdapter(activity,scheduledList)
-                                fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
-                                fragBinding.rvSchdualclasses.visibility=View.VISIBLE
-                                fragBinding.txtNoData.visibility=View.GONE
-                                RLBaseProgress.RLhideProgressDialog()
-                            }
-                        }
-
-                    }else{
-                        RLBaseProgress.RLhideProgressDialog()
-                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${error?.message}")
-                        RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Video Data: ${Gson().toJson(cardData)}")
-                    }
-
-                }
-            }
-
-        }
-    }
-
-    // Function to handle mind class data
-    private fun getMindData(schedule: MutableMap<String, Any?>, scheduleKeyList: MutableList<ScheduleItem>) {
-        // Implement your mind data logic here
-        // This would be equivalent to your JavaScript getMindData(x) function
-
-        val videoKey = schedule["videoKey"] as? String ?: ""
-
-        // Example mind data processing
-        val mindVideoObj = mapOf(
-            "type" to "mind",
-            "videoKey" to videoKey,
-            "isMindClass" to true
-            // Add other mind-specific properties
-        )
-
-        scheduleKeyList.add(
-            ScheduleItem(
-                schedule = schedule,
-                videoObj = mindVideoObj
-            )
-        )
-
-        RLTools.RlLogDPrint(TAG, "Processed Mind Class: ${schedule["challengeName"]}")
-    }
-
-    // Function to handle body class data
-    private fun getBodyData(schedule: MutableMap<String, Any?>, scheduleKeyList: MutableList<ScheduleItem>) {
-        // Implement your body data logic here
-        // This would be equivalent to your JavaScript getBodyData(x) function
-
-        val videoKey = schedule["videoKey"] as? String ?: ""
-
-        // Example body data processing
-        val bodyVideoObj = mapOf(
-            "type" to "body",
-            "videoKey" to videoKey,
-            "isMindClass" to false
-            // Add other body-specific properties
-        )
-
-        scheduleKeyList.add(
-            ScheduleItem(
-                schedule = schedule,
-                videoObj = bodyVideoObj
-            )
-        )
-
-        RLTools.RlLogDPrint(TAG, "Processed Body Class: ${schedule["challengeName"]}")
-    }
-
 }
-// Data class for better type safety (optional but recommended)
-data class ScheduleItem(
-    val schedule: MutableMap<String, Any?>,
-    val videoObj: Map<String, Any?> = emptyMap()
-)
-
-
-sealed class ScheduleMediaItem() {
-    data class Combined(val scheduleItem: ScheduleItem, val videoItem: RLFulllVideoModel, val organizer: String,val organizerImage:String) : ScheduleMediaItem()
-}
-
-data class ChallengerInfo(
-    val userId: String,
-    val isDecline: Boolean = false,
-    val status: Boolean = false,
-    val totalTime: Int = 0,
-    val totalRev: Double = 0.0,
-    val rank: Int = 0,
-    val isDeline: Boolean = false
-)

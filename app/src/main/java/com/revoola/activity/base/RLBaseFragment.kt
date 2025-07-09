@@ -406,12 +406,4 @@ open class RLBaseFragment : Fragment() {
          return 1
     }
 
-    fun  RLCommonAlert(message: String,contextt: Context){
-        AlertDialog.Builder(contextt)
-            .setTitle("Payload Details")
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .show()
-    }
-
 }

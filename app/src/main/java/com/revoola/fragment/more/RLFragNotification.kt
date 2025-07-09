@@ -15,6 +15,7 @@ import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragNotificationBinding
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -22,7 +23,6 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragNotification : RLBaseFragment() {
     val TAG: String = RLFragNotification::class.java.simpleName
-    lateinit var fragBinding: RlFragNotificationBinding
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var adapter : RLNotificationListAdapter?=null
@@ -31,7 +31,7 @@ class RLFragNotification : RLBaseFragment() {
     var index=0
     var currentUser:String=""
     
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragNotificationBinding.inflate(layoutInflater)
     }
 
@@ -39,9 +39,9 @@ class RLFragNotification : RLBaseFragment() {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_notification, container) as RlFragNotificationBinding
+        //fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_notification, container) as RlFragNotificationBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragNotification" )
-        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        currentUser= RLAuthManager().RlgetCurrentUser()?.uid ?:""
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -109,7 +109,6 @@ class RLFragNotification : RLBaseFragment() {
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
-
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }
         }

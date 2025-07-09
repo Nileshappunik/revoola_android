@@ -1,27 +1,34 @@
 package com.revoola.fragment.more
 
+import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.model.RLFulllVideoModel
 import com.google.gson.Gson
-import com.revoola.RLBaseProgress
+import com.revoola.activity.RLMainActivityRL
+import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlFragSchduleClassesViewBinding
+import com.revoola.fragment.more.schduleModel.ScheduleItem
+import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.utils.RLPrefManager
 
 class RLFragSchdulClassesView : RLBaseFragment() {
     val TAG: String = RLFragSchdulClassesView::class.java.simpleName
-    lateinit var fragBinding: RlFragSchduleClassesViewBinding
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragSchduleClassesViewBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
@@ -33,7 +40,6 @@ class RLFragSchdulClassesView : RLBaseFragment() {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_schdule_classes_view, container) as RlFragSchduleClassesViewBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSchdulClassesView" )
         RLuisetup()
         return fragBinding.root
@@ -41,52 +47,55 @@ class RLFragSchdulClassesView : RLBaseFragment() {
 
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-        val videoID=  requireArguments().getString("videoID","")
-        val createdBy=  requireArguments().getString("createdBy","")
-        val dateOfChallenge=  requireArguments().getString("dateOfChallenge","")
-        val isMindClass=  requireArguments().getString("isMindClass","")
-        val date = RLTools.RLconvertTimestampToSchdualDAte(dateOfChallenge.toString().toLong())
+        val cardData:ScheduleItem = requireArguments().getParcelable<ScheduleItem>("selectedSchedule") as ScheduleItem
+        fragBinding.txtUsernam.setText(cardData.organizer)
+        Glide.with(requireContext()).load(cardData.organizerImage).into(fragBinding.imgUser)
+        val date = RLTools.RLconvertTimestampToSchdualDAte(cardData.schedule.dateOfChallenge.toString().toLong())
         fragBinding.txtMisseddate.setText(date)
-        RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { data, error ->
-            if (data != null) {
-                val userData = RLTools.parseUserData(data)
-                if (userData != null) {
-                    val organizerName = userData.displayName
-                    val organizerImage = userData.displayImage
-                    fragBinding.txtUsernam.setText(organizerName)
-                    Glide.with(requireContext()).load(organizerImage).into(fragBinding.imgUser)
+        fragBinding.txtMissed.setText(cardData.schedule.statusLbl)
+        if (isAdded) fragBinding.txtMissed.setTextColor(requireContext().resources.getColor(RLTools.getColorForScheduleStatus(cardData.schedule.statusLbl)))
+
+        RLMindUiSetup(cardData.videoItem)
+        val safeDateOfChallenge = safeString(cardData.schedule.dateOfChallenge.toString())
+        RLTools.RlLogEPrint(TAG,"safeDateOfChallenge: $safeDateOfChallenge")
+        if (isWithinLast10Minutes(safeDateOfChallenge)) {
+            startReverseTimer(safeDateOfChallenge)
+        }
+        fragBinding.joinButton.setOnClickListener {
+            //Join Button Click Set Here
+            if (isWithinLast10Minutes(safeDateOfChallenge)) {
+                val gson = Gson()
+                val jsonObject = gson.toJson(cardData.videoItem)
+                RLTools.RLLogLarge(TAG,"jsonObject: $jsonObject")
+                if (cardData.schedule.isMindClass){
+                    val bundle = Bundle()
+                    bundle.putString(RLExtraValueKey.yourWayType,"all")
+                    bundle.putBoolean(RLExtraValueKey.isBody,false)
+                    bundle.putBoolean(RLExtraValueKey.isMind,true)
+                    bundle.putBoolean(RLExtraValueKey.isYourWay,false)
+
+                    bundle.putString(RLExtraValueKey.videoId,cardData.schedule.videoKey)
+                    bundle.putString(RLExtraValueKey.videoData,jsonObject)
+                    bundle.putString(RLExtraValueKey.audioVideoType,"video")
+
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                }else{
+                    val bundle: Bundle = Bundle()
+                    val ride = if (cardData.schedule.typeOfWorkout.toLowerCase().equals("ride")) true else false
+                    bundle.putString(RLExtraValueKey.yourWayType,cardData.schedule.typeOfWorkout)
+                    bundle.putBoolean(RLExtraValueKey.isBody,true)
+                    bundle.putBoolean(RLExtraValueKey.isMind,false)
+                    bundle.putBoolean(RLExtraValueKey.isYourWay,false)
+
+                    bundle.putString(RLExtraValueKey.videoData,jsonObject)
+                    bundle.putString(RLExtraValueKey.videoId,cardData.schedule.videoKey)
+                    bundle.putBoolean(RLExtraValueKey.isRide,ride)
+                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
                 }
             } else {
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG, "Error Fetch Scheduled Request Data: ${error?.message}")
+                if (isAdded)  showAlertTenMins(requireContext())
             }
         }
-        if (isMindClass.equals("false")){
-            RLDatabaseManagerRead().RLRevoolaVideosRead(videoID) { data, error ->
-                if (data != null) {
-                    val gson = Gson()
-                    val jsonObject = gson.toJson(data)
-                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
-                    RLMindUiSetup(VideoData)
-                    fragBinding.joinButton.setOnClickListener {
-                        //Join Button Click Set Here
-                    }
-                }
-            }
-        }else{
-            RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoID) { data, error ->
-                if (data != null) {
-                    val gson = Gson()
-                    val jsonObject = gson.toJson(data)
-                    val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
-                    RLMindUiSetup(VideoData)
-                    fragBinding.joinButton.setOnClickListener {
-                        //Join Button Click Set Here
-                    }
-                }
-            }
-        }
-
     }
     private fun RLMindUiSetup(VideoData: RLFulllVideoModel){
         fragBinding.txtTitle.setText(VideoData.rideTitle)
@@ -123,6 +132,69 @@ class RLFragSchdulClassesView : RLBaseFragment() {
     override fun onPause() {
         super.onPause()
         RLBottomHideShowSet(true)
+    }
+
+    private fun isWithinLast10Minutes(dateOfChallenge: String): Boolean {
+        return try {
+            val challengeTimeMillis = dateOfChallenge.toLong() * 1000 // Convert seconds to milliseconds
+            val currentTime = System.currentTimeMillis()
+            RLTools.RlLogEPrint(TAG, "currentTime: $currentTime")
+            RLTools.RlLogEPrint(TAG, "challengeTime: $challengeTimeMillis")
+
+            val tenMinutesMillis = 10 * 60 * 1000 // 10 minutes in milliseconds
+            val timeDifference = challengeTimeMillis - currentTime // Time remaining until challenge
+
+            RLTools.RlLogEPrint(TAG, "Time remaining: ${timeDifference / 1000} seconds")
+            RLTools.RlLogEPrint(TAG, "Is within 10 minutes: ${timeDifference <= tenMinutesMillis && timeDifference > 0}")
+
+            // Check if challenge time is within next 10 minutes (10 minutes or less remaining)
+            timeDifference <= tenMinutesMillis && timeDifference > 0
+        } catch (e: Exception) {
+            RLTools.RlLogEPrint(TAG, "Exception: ${e.localizedMessage}")
+            false // Return false if parsing fails
+        }
+    }
+
+    private fun showAlertTenMins(context: Context) {
+        val sucDialog:Dialog = Dialog(context)
+        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
+        sucDialog.setCancelable(false)
+        val iv_ok: TextView = sucDialog.findViewById(R.id.iv_ok)
+        val iv_title: TextView = sucDialog.findViewById(R.id.iv_title)
+        val iv_description: TextView = sucDialog.findViewById(R.id.iv_description)
+        val view_v: View = sucDialog.findViewById(R.id.view_v)
+
+        iv_title.visibility=View.GONE
+        view_v.visibility=View.VISIBLE
+        iv_description.setText("You can join only before 10 min of schedule time")
+        iv_ok.setText("OK")
+        iv_ok.setOnClickListener(View.OnClickListener {
+            sucDialog.dismiss()
+        })
+        sucDialog.show()
+        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    private fun startReverseTimer(dateOfChallenge: String) {
+        val challengeTimeMillis = dateOfChallenge.toLong() * 1000
+        // Start countdown timer
+        val timer =
+            object : CountDownTimer(challengeTimeMillis - System.currentTimeMillis(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val minutes = millisUntilFinished / (60 * 1000)
+                    val seconds = (millisUntilFinished % (60 * 1000)) / 1000
+                    fragBinding.txtMisseddate.text = String.format("%02d:%02d", minutes, seconds)
+                    fragBinding.txtMissed.setText("Start in")
+                    fragBinding.imgCalender.setImageResource(R.drawable.fd_active_time_green)
+                    if (isAdded)  fragBinding.txtMissed.setTextColor(requireContext().resources.getColor(R.color.AppMainColor))
+                }
+
+                override fun onFinish() {
+                    fragBinding.joinButton.visibility = View.GONE
+                }
+            }
+        timer.start()
     }
 
 }

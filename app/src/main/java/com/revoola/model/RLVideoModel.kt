@@ -1,5 +1,8 @@
 package com.revoola.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 
 data class RLVideoModel (
     val difficulty: String,
@@ -14,7 +17,7 @@ data class RLVideoModel (
     val key: String,
     val timestamp: Long)
 
-
+@Parcelize
 data class RLFulllVideoModel (
     val assumedREV: String,
     val assumedRMS: String,
@@ -47,6 +50,6 @@ data class RLFulllVideoModel (
     val type: String,
     val videoLinkiPad: String,
     val videoLinkiPhone: String,
-    val videoLinkiPhonex: String, )
+    val videoLinkiPhonex: String, ): Parcelable
 
 

@@ -27,17 +27,18 @@ import com.revoola.utils.RLPrefManager
 class RLFragPermission : RLBaseFragment() {
     val TAG: String = RLFragPermission::class.java.simpleName
     private var userBasicDataCard: RLRevoolaUsersSettingsModel? = null
+
     private val fragBinding by lazy {
         RlFragPermissionBinding.inflate(layoutInflater)
     }
 
-    // Permission request codes
+    //Permission request codes
     private val LOCATION_PERMISSION_REQUEST = 1001
     private val CAMERA_PERMISSION_REQUEST = 1002
     private val GALLERY_PERMISSION_REQUEST = 1003
     private val NOTIFICATION_PERMISSION_REQUEST = 1004
 
-    // Required permissions
+    //Required permissions
     private val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
@@ -107,14 +108,15 @@ class RLFragPermission : RLBaseFragment() {
                         R.string.everyone,
                         resources.getColor(R.color.AppPrivacyEveryOneColor))
 
-                } else if (titletxt.uppercase().equals("FRIENDS")) {
+                }else if (titletxt.uppercase().equals("FRIENDS")) {
                     RLBasicDataUpdateToFirebase("visibilityflagforthatsession", 1)
                     RLactivitySet(resources.getColor(R.color.AppPrivacyPrivateBGColor),
                         R.drawable.ic_privacyprivate,
                         R.string.privatetx,
                         resources.getColor(R.color.AppPrivacyPrivateColor))
 
-                } else if (titletxt.uppercase().equals("EVERYONE")) {
+                }else if (titletxt.uppercase().equals("EVERYONE")) {
+                    RLBasicDataUpdateToFirebase("visibilityflagforthatsession", 2)
                     RLactivitySet(resources.getColor(R.color.AppPrivacyFriendsBGColor),
                         R.drawable.ic_privacyfriends,
                         R.string.friendstx,
@@ -122,10 +124,8 @@ class RLFragPermission : RLBaseFragment() {
                 }
             }
         }
-
         setupPermissionSwitches()
         updateSwitchStates()
-        
     }
 
     private fun RLactivitySet(bgColor:Int,icon:Int,title:Int,titleColor:Int){
@@ -241,14 +241,6 @@ class RLFragPermission : RLBaseFragment() {
     }
 
     private fun updateSwitchStates() {
-        // Update switch states based on current permissions
-//        fragBinding.layLocation.switchSetting.isChecked = hasLocationPermission()
-//        fragBinding.layCamera.switchSetting.isChecked = hasCameraPermission()
-//        fragBinding.layGallery.switchSetting.isChecked = hasGalleryPermission()
-//        fragBinding.layNotification.switchSetting.isChecked = hasNotificationPermission()
-//        fragBinding.layStep.switchSetting.isChecked = hasActivityRecognitionPermission()
-
-
         // Update switch states based on current permissions without triggering listeners
         fragBinding.layLocation.switchSetting.apply {
             setOnCheckedChangeListener(null)
@@ -316,7 +308,7 @@ class RLFragPermission : RLBaseFragment() {
         }
     }
 
-    // Permission check methods
+    //Permission check methods
     private fun hasLocationPermission(): Boolean {
         return locationPermissions.all { permission ->
             ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
@@ -351,7 +343,7 @@ class RLFragPermission : RLBaseFragment() {
         }
     }
 
-    // Permission request methods
+    //Permission request methods
     private fun requestLocationPermission() {
         try {
             if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -417,7 +409,7 @@ class RLFragPermission : RLBaseFragment() {
 
     }
 
-    // Handle permission results
+    //Handle permission results
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -456,7 +448,7 @@ class RLFragPermission : RLBaseFragment() {
         }
     }
 
-    // Helper methods
+    //Helper methods
     private fun showPermissionRationaleDialog(permissionName: String, message: String, onPositive: () -> Unit) {
         AlertDialog.Builder(requireContext())
             .setTitle("Permission Required")

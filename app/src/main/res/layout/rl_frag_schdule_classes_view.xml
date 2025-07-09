@@ -20,7 +20,7 @@
                     android:id="@+id/img_main_banner"
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
-                    android:scaleType="fitXY" />
+                    android:scaleType="centerCrop" />
 
                 <ImageView
                     android:id="@+id/ivBack"

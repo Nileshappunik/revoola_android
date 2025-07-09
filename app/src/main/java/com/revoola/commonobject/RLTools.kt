@@ -76,6 +76,19 @@ import java.time.temporal.TemporalAdjusters
 
 object RLTools {
 
+    fun getColorForScheduleStatus(statusText: String): Int {
+        return when (statusText.lowercase()) {
+            "scheduled for" -> R.color.AppMainColor
+            "completed"     -> R.color.AppScheduleCompletedColor
+            "declined"      -> R.color.AppScheduleDeclinedColor
+            "missed"        -> R.color.AppScheduleMissedColor
+            "lost"          -> R.color.AppScheduleLoseColor
+            "won", "win"    -> R.color.AppScheduleWinColor
+            else            -> R.color.AppMainColor
+        }
+    }
+
+
     // Custom Gson Builder with all deserializers
     fun createCustomGson(): Gson {
         return GsonBuilder()
