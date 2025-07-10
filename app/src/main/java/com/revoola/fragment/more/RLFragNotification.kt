@@ -8,12 +8,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
-import com.revoola.R
 import com.revoola.adapter.RLNotificationListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlFragNotificationBinding
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.utils.RLPrefManager
@@ -23,9 +22,9 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragNotification : RLBaseFragment() {
     val TAG: String = RLFragNotification::class.java.simpleName
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var adapter : RLNotificationListAdapter?=null
+     var adapter : RLNotificationListAdapter?=null
     private var isLoading = false
     var  limit = 10
     var index=0
@@ -36,25 +35,23 @@ class RLFragNotification : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_notification, container) as RlFragNotificationBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragNotification" )
         currentUser= RLAuthManager().RlgetCurrentUser()?.uid ?:""
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
         RLonBackPresAct(fragBinding.ivBack)
-        if (RLApiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.RLisConnected()) {
             limit = 10
             index=0
             isLoading = false
@@ -86,14 +83,14 @@ class RLFragNotification : RLBaseFragment() {
     }
     private fun RLNotificationAPiCall() {
         isLoading = true
-        adapter!!.RLaddLoadingFooter()
+        adapter?.RLaddLoadingFooter()
         viewModel.RLgetNotificationData("getNotifications",currentUser,limit,index) { result ->
             result.onSuccess { response ->
-                adapter!!.RLremoveLoadingFooter()
+                adapter?.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        adapter!!.RLsetList(response.text)
+                        RLTools.RLLogLarge(TAG,"Notification Object: ${Gson().toJson(response)}")
+                        adapter?.RLsetList(response.text)
                         isLoading = false
                         index=index+10
                         limit=limit+10
@@ -107,7 +104,7 @@ class RLFragNotification : RLBaseFragment() {
                     RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                adapter!!.RLremoveLoadingFooter()
+                adapter?.RLremoveLoadingFooter()
                 isLoading = true
                 RLTools.RlLogDPrint(TAG,"Error= "+error.message)
             }

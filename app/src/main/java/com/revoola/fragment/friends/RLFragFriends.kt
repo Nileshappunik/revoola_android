@@ -18,19 +18,19 @@ import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 
 class RLFragFriends : RLBaseFragment() {
     val TAG: String = RLFragFriends::class.java.simpleName
-    lateinit var fragBinding: RlFragFriendsBinding
-    private val binding by lazy {
+
+    private val fragBinding by lazy {
         RlFragFriendsBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_friends, container) as RlFragFriendsBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragFriends" )
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFriends" )
         RLFriendsList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -61,15 +61,14 @@ class RLFragFriends : RLBaseFragment() {
                 fragBinding.rvFriend.adapter=adapter
             }
         })
-
     }
     private fun RLFriendsList() {
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.RLALLMENULISTRead(RLConstants.FRIENDS){ data, error ->
             if (data != null) {
-                try {
+                try{
                     val gson = Gson()
-                    val jsonArray = gson.toJson(data)
+                    val jsonArray =  Gson().toJson(data)
                     RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)

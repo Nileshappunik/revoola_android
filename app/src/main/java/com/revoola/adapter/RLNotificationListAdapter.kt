@@ -32,10 +32,6 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
             LoadingViewHolder(view)
         }
     }
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//        val layoutbinding: LayoutNotificationListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_notification_list , parent, false)
-//        return MyViewHolder(layoutbinding)
-//    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == ITEM_TYPE_DATA) {
@@ -45,12 +41,6 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
         }
     }
 
-//    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//        if (holder is RLNotificationListAdapter.MyViewHolder) {
-//            holder.bindData(position, holder.itemView)
-//        }
-//
-//    }
 
     override fun getItemViewType(position: Int): Int {
         return if (position == groupList.size - 1 && isLoadingAdded) ITEM_TYPE_LOADING else ITEM_TYPE_DATA
@@ -87,6 +77,7 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
             layoutBinding.txtNotificationTime.setText(time)
             try {
                 val jsonObject: JSONObject = JSONObject(carddata.notification_data)
+                RLTools.RlLogDPrint(TAG,"jsonObject: $jsonObject")
                 val simpleJson= jsonObject.getJSONObject("simple")
                 val dataJson= simpleJson.getJSONObject("data")
                 val content:String= simpleJson.getString("content")

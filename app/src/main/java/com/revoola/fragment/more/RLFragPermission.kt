@@ -128,6 +128,7 @@ class RLFragPermission : RLBaseFragment() {
         updateSwitchStates()
     }
 
+
     private fun RLactivitySet(bgColor:Int,icon:Int,title:Int,titleColor:Int){
         fragBinding.layActivities.apply {
             layPrivacy.visibility = View.VISIBLE

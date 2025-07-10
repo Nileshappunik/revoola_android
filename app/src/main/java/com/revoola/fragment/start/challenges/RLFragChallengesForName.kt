@@ -141,6 +141,7 @@ class RLFragChallengesForName : RLBaseFragment() {
 
         val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
         val gson = Gson()
+       // RLTools.RlLogEPrint(TAG,"jsonString: ${gson.toJson(jsonString)}")
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
         dialogMainBinding.ivRecyclerview.adapter=adapter
