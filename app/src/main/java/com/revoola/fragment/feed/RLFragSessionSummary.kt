@@ -178,7 +178,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         val imagelink= RLTools.RLFeedSetImage(cardData,currentUser,selectTag)
         if (isAdded) Glide.with(requireContext()).load(imagelink).into(fragBinding.testImage)
 
-
         var imageList:MutableList<String> = mutableListOf()
         val imageListOriginal = listOf(imagelink, RLTools.RLgetImage(classType))
         RLBaseProgress.RLhideProgressDialog()

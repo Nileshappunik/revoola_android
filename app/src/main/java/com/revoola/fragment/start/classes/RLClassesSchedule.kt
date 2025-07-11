@@ -9,8 +9,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.revoola.RLBaseFragment
 import com.revoola.R
@@ -33,6 +30,7 @@ import com.revoola.model.RLFulllVideoModel
 import com.google.gson.Gson
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -47,12 +45,13 @@ class RLClassesSchedule : RLBaseFragment() {
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
 
-    lateinit var fragBinding: RlFragClassesScheduleBinding
+   // lateinit var fragBinding: RlFragClassesScheduleBinding
     private var selectedCalendar = Calendar.getInstance()
     private val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
     var calenderEventDescription=""
 
-    private val binding by lazy {
+
+    private val fragBinding by lazy {
         RlFragClassesScheduleBinding.inflate(layoutInflater)
     }
 
@@ -66,7 +65,7 @@ class RLClassesSchedule : RLBaseFragment() {
          RLScreenSet(false)
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
+      //  fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -82,8 +81,7 @@ class RLClassesSchedule : RLBaseFragment() {
         fragBinding.txtSelectDatatime.setOnClickListener {
             RLShowDatePickerDialog()
         }
-
-        val data=  requireArguments().getString("VIDEODATA","")
+        val data=  requireArguments().getString("videoCardData","")
         val selectedFriend =  requireArguments().getString("Message","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
@@ -107,11 +105,14 @@ class RLClassesSchedule : RLBaseFragment() {
 
         fragBinding.btnScheduleclass.setOnClickListener {
            if (fragBinding.btnScheduleclass.text.equals("CONFIRM")){
-               RLshowSDialog("Would you like to add to your calendar?")
+               RLshowSDialog("Would you like to add to your calendar?",VideoCardData)
            }else{
                RLCheckIfFuture(data,"")
            }
         }
+
+
+
 
        /* if (classtype.equals(RLConstants.MIND)){
             val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
@@ -171,7 +172,7 @@ class RLClassesSchedule : RLBaseFragment() {
             selectedCalendar.set(Calendar.MINUTE, selectedMinute)
             val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val formattedTime = timeFormat.format(selectedCalendar.time)
-            com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
+            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
             //fragBinding.txtSelectDatatime.text = "$selectdate  $selectedHour:$selectedMinute"
             fragBinding.txtSelectDatatime.text = "$selectdate  $formattedTime"
             val color = ContextCompat.getColor(requireContext(), R.color.AppMainColor)
@@ -184,9 +185,9 @@ class RLClassesSchedule : RLBaseFragment() {
         val isFuture = selectedCalendar.timeInMillis > currentCalendar.timeInMillis
         if (isFuture){
             val bundle = Bundle()
-            bundle.putString("VIDEODATA",data)
-            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
-            bundle.putString("SELECTEDDATE",fragBinding.txtSelectDatatime.text.toString())
+            bundle.putString("videoCardData",data)
+            bundle.putString("audioVideoType",audioVideoType)
+            bundle.putString("selectDate",fragBinding.txtSelectDatatime.text.toString())
             //Future Time
             (context as RLMainActivityRL).RLloadFrag(RLClassesScheduleJoinSession().newInstance(bundle), TAG, false,null, false)
         }else{
@@ -195,7 +196,7 @@ class RLClassesSchedule : RLBaseFragment() {
     }
 
     //Subscribe Dialog
-    private fun RLshowSDialog(message:String){
+    private fun RLshowSDialog(message: String, videoCardData: RLFulllVideoModel){
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_subscribe)
@@ -208,7 +209,8 @@ class RLClassesSchedule : RLBaseFragment() {
         tvYes.setText("Yes")
         tvNo.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
-            (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+            //Here Api Call
+            scduleDataStoreServer(videoCardData)
         })
         tvYes.setOnClickListener(View.OnClickListener {
             RLCheckCalendarPermission()
@@ -216,6 +218,22 @@ class RLClassesSchedule : RLBaseFragment() {
         })
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+
+    private fun scduleDataStoreServer(videoCardData: RLFulllVideoModel) {
+        val userData= RLGetUserDetails(requireContext())
+//        val updateMoengageInsightly = mapOf(
+//            "uid" to RLAuthManager().RlgetCurrentUser()?.uid,
+//            "schedule_initiator_userid" to RLAuthManager().RlgetCurrentUser()?.uid,
+//            "schedule_target_userids" to selectedUidList,
+//            "schedule_target_name" to userData!!.displayName,
+//            "schedule_time_for_start" to dateTime,
+//            "schedule_activity_type" to classType,
+//            "schedule_title" to videoCardData.rideTitle
+//        )
+
+        (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+
     }
 
     private fun RLCheckCalendarPermission(){

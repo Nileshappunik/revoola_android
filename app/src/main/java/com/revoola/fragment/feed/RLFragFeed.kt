@@ -50,7 +50,7 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     val TAG: String = RLFragFeed::class.java.simpleName
-    lateinit var fragBinding: RlFragFeedBinding
+    //lateinit var fragBinding: RlFragFeedBinding
     lateinit var RLApiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
@@ -67,14 +67,14 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private var lastfragmentopen=""
     var appUnit:String="Metric"
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragFeedBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          RLScreenSet(false)
         RLBottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
+       // fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed, container) as RlFragFeedBinding
          lastfragmentopen= RLPrefManager.RLGetSomeStringValue(activity,RLPrefManager.current_fragment,"" )
         RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeed" )
          currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
@@ -139,7 +139,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                         }
                     }
                 }catch (e:Exception){
-                    RLTools.RlLogDPrint(TAG,"Catch="+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch: ${e.message}")
                 }
             }
         })
@@ -175,36 +175,33 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             )
         )
 
-       RLTools.RlLogEPrint(TAG,"setdata= $request")
+       RLTools.RlLogEPrint(TAG,"setdata ${Gson().toJson(request)}")
 
         viewModel.RLgetUserFeedCardData(request) { result ->
             result.onSuccess { response ->
                  adapter!!.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                       /* val gson = Gson()
-                        val jsonArray = gson.toJson(response.text)
-                       RLTools.RlLogEPrint(TAG,"Feed_jsonDate:-  $jsonArray")*/
+                        RLTools.RlLogDPrint(TAG,"Success: ${Gson().toJson(response)}")
                         adapter!!.RLaddData(response.text)
                         isLoading = false
                         index=index+100
                         limit=limit+100
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail: ${response.type}")
                         //commonToast(response.type)
                         isLoading = true
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch: ${e.message}")
                     isLoading = true
                 }
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error: ${error.message}")
             }
         }
     }
@@ -229,33 +226,33 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             )
         )
 
-        RLTools.RlLogDPrint(TAG,"setdatayou= "+request)
+        RLTools.RlLogDPrint(TAG,"setdatayou: ${Gson().toJson(request)}")
 
         viewModel.RLgetUserFeedCardDatayou(request) { result ->
             result.onSuccess { response ->
                 adapter!!.RLremoveLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success: ${Gson().toJson(response)}")
                         //main list
                         adapter!!.RLaddData(response.text)
                         isLoading = false
                         index=index+100
                         limit=limit+100
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail: ${response.type}")
                         isLoading = true
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch: ${e.message}")
                     isLoading = true
                 }
             }.onFailure { error ->
                 adapter!!.RLremoveLoadingFooter()
                 isLoading = true
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error: ${error.message}")
             }
         }
     }
@@ -265,23 +262,22 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                 group_data = RLSetGroupData(userid = currentUser, limit = 100, index=0)
             )
         )
-        RLTools.RlLogDPrint(TAG,"setGroupdata= "+request)
-
+        RLTools.RlLogDPrint(TAG,"set Group Data: ${Gson().toJson(request)}")
         viewModel.RLgetGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success: ${Gson().toJson(response)}")
                         RLgroupnamelistdialogopen(response.text)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail: ${response.type}")
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch: ${e.message}")
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error: ${error.message}")
             }
         }
     }
@@ -351,12 +347,12 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                     id = currentUser,
                     type = "challenges_feed_thumbs",
                     today = currentTimestamp)))
-        RLTools.RlLogDPrint(TAG,"setdataChallenges= "+request)
+        RLTools.RlLogDPrint(TAG,"setdataChallenges: ${Gson().toJson(request)}")
         viewModel.RLgoaled_challenges(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Success: ${response.type}")
                         RLTools.RlLogDPrint(TAG,"ChResponse: ${Gson().toJson(response.text)}")
                         if (response.text.data.isNullOrEmpty()){
                             fragBinding.inlayNoData.noDataLayout.visibility=View.VISIBLE
@@ -365,15 +361,15 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
                             adapterch.RLaddData(response.text.data)
                         }
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.RlLogDPrint(TAG,"Fail: ${response.type}")
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.RlLogDPrint(TAG,"Catch: ${e.message}")
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.RlLogDPrint(TAG,"Error: ${error.message}")
             }
         }
     }
@@ -381,59 +377,20 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
         fragBinding.inlayNoData.noDataLayout.visibility=View.GONE
         when(valueslist[position]){
             "FRIENDS"-> {
-                //fragBinding.inlayFilter.visibility=View.VISIBLE
                 currentState="FRIENDS"
-                //fragBinding.relayGroupname.visibility=View.GONE
-                //fragBinding.relayListview.visibility=View.VISIBLE
-               // clickyou=false
-               // RlGroupNameSetTitle("GROUPS",false)
-               // RLfirsttimeApiCall(GroupId)
                 RLTopListItemClickUISetup(currentState)
             }
             "GROUPS"-> {
                 currentState="GROUPS"
                 RLTopListItemClickUISetup(currentState)
-                /*fragBinding.inlayFilter.visibility=View.VISIBLE
-                fragBinding.relayGroupname.visibility=View.VISIBLE
-                fragBinding.relayListview.visibility=View.VISIBLE
-                clickyou=false
-                RlGroupNameSetTitle("123",true)
-                fragBinding.relayGroupname.setOnClickListener {
-                    RLgroupAPiCall()
-                }
-                RLgroupAPiCall()*/
-
             }
             "YOU"-> {
                 currentState="YOU"
                 RLTopListItemClickUISetup(currentState)
-                /*fragBinding.inlayFilter.visibility=View.GONE
-
-                fragBinding.relayGroupname.visibility=View.GONE
-                fragBinding.relayListview.visibility=View.VISIBLE
-                clickyou=true
-                RlGroupNameSetTitle("GROUPS",false)
-                if (RLApiClientRetrofit.RLisConnected()) {
-                    //Detail Api
-                    limit = 100
-                    index=0
-                    isLoading = false
-                    val linearLayoutManager = LinearLayoutManager(activity)
-                    fragBinding.rvItemFeed.layoutManager = linearLayoutManager
-                    adapter = RLFeedListAdapter(activity,currentUser,currentState,viewModel)
-                    fragBinding.rvItemFeed.adapter = adapter
-                    RLapicallYou()
-                } else {
-                    RLshowDialogFullscreen()
-                }*/
             }
             "CHALLENGES"-> {
                 currentState="CHALLENGES"
                 RLTopListItemClickUISetup(currentState)
-                /*fragBinding.inlayFilter.visibility=View.VISIBLE
-                currentState="CHALLENGES"
-                RlGroupNameSetTitle("GROUPS",false)
-                RLChallengesUISet()*/
             }
         }
     }

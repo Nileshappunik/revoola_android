@@ -25,6 +25,7 @@ import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -52,8 +53,8 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
         RLBottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule_session, container) as RlFragClassesScheduleSessionBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLClassesScheduleJoinSession" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesScheduleJoinSession" )
+        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -219,11 +220,11 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
             fragBinding.btnInvite.visibility=View.VISIBLE
         }
         fragBinding.btnInviteClick.setOnClickListener {
-            val data=  requireArguments().getString("VIDEODATA","")
-            val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
+            val data=  requireArguments().getString("videoCardData","")
+            val audioVideoType=  requireArguments().getString("audioVideoType","")
             val bundle = Bundle()
-            bundle.putString("VIDEODATA",data)
-            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            bundle.putString("videoCardData",data)
+            bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message",message)
             (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, false,null, false)
 

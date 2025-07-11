@@ -122,9 +122,9 @@ class RLFragMindClassesView : RLBaseFragment() {
     private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
         fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("VIDEODATA",data)
+            bundle.putString("videoCardData",data)
             bundle.putString(RLConstants.CLASS_TYPE,classtype)
-            bundle.putString("AUDIOVIDEOTYPE",audioVideoType)
+            bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message","")
             (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
         }
