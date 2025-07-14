@@ -12,28 +12,29 @@ import com.revoola.databinding.*
 import com.revoola.fragment.more.adapter.RLGetStartedItemListAdapter
 import com.revoola.model.RLMoreGroupItemModel
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLPrefManager
 
 class RLFragGetStarted : RLBaseFragment() {
     val TAG: String = RLFragGetStarted::class.java.simpleName
-    lateinit var fragBinding: RlFragGetStartedBinding
+    //lateinit var fragBinding: RlFragGetStartedBinding
 
     
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragGetStartedBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_get_started, container) as RlFragGetStartedBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragGetStarted")
-        RLuisetup()
+       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_get_started, container) as RlFragGetStartedBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragGetStarted")
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         //List
         val dataList = listOf(
             RLMoreGroupItemModel(R.drawable.ic_help_g,resources.getString(R.string.heartratesensor), emptyList()),
@@ -50,29 +51,29 @@ class RLFragGetStarted : RLBaseFragment() {
             // Handle date selection
             when(selectedItem){
                 getString(R.string.heartratesensor)->{
-                    RLOpenClickNextView(RLConstants.Connecting_HearRate_Help_Video)
+                    rl_openClickNextView(RLConstants.Connecting_HearRate_Help_Video)
                 }
                 getString(R.string.connectingaspeedsensor)->{
-                    RLOpenClickNextView(RLConstants.Connecting_Speed_Help_Video)
+                    rl_openClickNextView(RLConstants.Connecting_Speed_Help_Video)
                 }
                 getString(R.string.aquicktourofrevoola)->{
-                    RLOpenClickNextView(RLConstants.A_Quick_Tour_of_Revoola_Help_Video)
+                    rl_openClickNextView(RLConstants.A_Quick_Tour_of_Revoola_Help_Video)
                 }
                 getString(R.string.connectionapplewatch)->{
-                    RLOpenClickNextView(RLConstants.Connecting_Apple_Watch_Help_Video)
+                    rl_openClickNextView(RLConstants.Connecting_Apple_Watch_Help_Video)
                 }
                 getString(R.string.icantfindmysensor)->{
-                    RLOpenClickNextView(RLConstants.Troubleshooting_Cant_Find_My_Sensor_Help_Video)
+                    rl_openClickNextView(RLConstants.Troubleshooting_Cant_Find_My_Sensor_Help_Video)
                 }
                 getString(R.string.nameyoursensor)->{
-                    RLOpenClickNextView(RLConstants.Name_You_Sensor_Help_Video)
+                    rl_openClickNextView(RLConstants.Name_You_Sensor_Help_Video)
                 }
             }
         }
         fragBinding.recyclerview.adapter = adapter
     }
 
-    private fun RLOpenClickNextView(HelpType: String) {
+    private fun rl_openClickNextView(HelpType: String) {
         val videoDialog = RLFragGetStartedVideoPlay(HelpType)
         videoDialog.show(parentFragmentManager, "RLFragGetStartedVideoPlay")
     }

@@ -57,7 +57,6 @@
                 android:textColor="@color/AppBlackColor"
                 android:textSize="22sp"/>
 
-
             <TextView
                 android:id="@+id/iv_Description"
                 android:layout_width="match_parent"
@@ -71,6 +70,18 @@
                 android:textColor="@color/AppBlackColor"
                 android:textSize="18sp"/>
         </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_Feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginEnd="10dp"
+            android:layout_alignParentEnd="true"
+            app:thumbTint="@color/AppWhiteColor"
+            android:checked="true"
+            app:track="@drawable/custom_track"/>
+
 
         <RelativeLayout
             android:id="@+id/iv_RvList"

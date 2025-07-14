@@ -73,27 +73,27 @@ class RLFragChalengesCalender : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_calender, container) as RlFragChalengesCalenderBinding
-       RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_calender, container) as RlFragChalengesCalenderBinding
+       RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesCalender" )
         RLuisetup()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
                 // For example, show a confirmation dialog or navigate
-                RLcloseFragment()
+                rl_closeFragment()
             }
         })
         return fragBinding.root
     }
     private fun RLuisetup(){
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLcloseFragment()
+            rl_closeFragment()
         }
        // RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
@@ -124,8 +124,8 @@ class RLFragChalengesCalender : RLBaseFragment() {
         }
         fragBinding.btnNextVisible.setOnClickListener {
            if (fromDate.isNotEmpty() && toDate.isNotEmpty()){
-               val todate=RLTools.RLConvertDate(toDate)
-               val fromdate=RLTools.RLConvertDate(fromDate)
+               val todate=RLTools.rl_convertDate(toDate)
+               val fromdate=RLTools.rl_convertDate(fromDate)
                val joinDate = "STARTS: $fromdate ENDS: $todate"
 
                cardData.selectedDate=joinDate
@@ -135,9 +135,9 @@ class RLFragChalengesCalender : RLBaseFragment() {
                val bundle: Bundle = Bundle()
                bundle.putSerializable("cardData",cardData)
                if (cardData.isEditClass){
-                   (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+                   (context as RLMainActivityRL).rl_loadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
                }else {
-                   (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true, null, false)
+                   (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true, null, false)
                }
            }else{
                RLshowAlertDialog("Please select Valid details")
@@ -152,19 +152,19 @@ class RLFragChalengesCalender : RLBaseFragment() {
         calendarTo = Calendar.getInstance()
         if (cardData.toDate.isNotEmpty() && cardData.fromDate.isNotEmpty()){
             if (isMonth){
-                selectionCurrentYearFrom = RLTools.RLStringDateToMonthYearFormate(cardData.fromDate,true)
-                selectionCurrentMonthFrom = RLTools.RLStringDateToMonthYearFormate(cardData.fromDate,false).toUpperCase()
+                selectionCurrentYearFrom = RLTools.rl_stringDateToMonthYearFormate(cardData.fromDate,true)
+                selectionCurrentMonthFrom = RLTools.rl_stringDateToMonthYearFormate(cardData.fromDate,false).toUpperCase()
 
                 selectionAllReadyMontFrom = "$selectionCurrentMonthFrom, $selectionCurrentYearFrom"
                 selectedFromMonthName = selectionCurrentMonthFrom
                 selectedFromYear = selectionCurrentYearFrom
                 fromDate=cardData.fromDate
                 toDate=cardData.toDate
-                selectionAllReadyMonthTo = "${RLTools.RLStringDateToMonthYearFormate(cardData.toDate,false).toUpperCase()}, ${RLTools.RLStringDateToMonthYearFormate(cardData.toDate,true)}"
+                selectionAllReadyMonthTo = "${RLTools.rl_stringDateToMonthYearFormate(cardData.toDate,false).toUpperCase()}, ${RLTools.rl_stringDateToMonthYearFormate(cardData.toDate,true)}"
 
                 RLCalenderShow(CalenderType,true)
             }else {
-                selectionAllReadyDateFrom = RLTools.RLStringDateToDateFormate(cardData.fromDate)
+                selectionAllReadyDateFrom = RLTools.rl_stringDateToDateFormate(cardData.fromDate)
                 if (!CalenderType.equals("Weekly")){
                    /* selectionAllReadyDateTo = RLTools.RLStringDateToDateFormate(cardData.toDate)
                     toDate = selectionAllReadyDateTo.toString()
@@ -172,14 +172,14 @@ class RLFragChalengesCalender : RLBaseFragment() {
                     currentDateTO = RLTools.RLStringDateToDateFormate(cardData.fromDate)!!*/
 
 
-                    val date=RLTools.RLStringDateToDateFormate(cardData.fromDate)
+                    val date=RLTools.rl_stringDateToDateFormate(cardData.fromDate)
                     selectionAllReadyDateFrom=date
                     selectionAllReadyDateTo=null
                     dayBefore = date?.let { getDayBefore(it) } ?: "null"
                     currentDateTO = date
                     currentDateFrom=date
                     fromDate=date.toString()
-                    toDate = RLTools.RLStringDateToDateFormate(cardData.fromDate).toString()
+                    toDate = RLTools.rl_stringDateToDateFormate(cardData.fromDate).toString()
 
                 }else{
                     selectionAllReadyDateTo=null
@@ -349,7 +349,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
             selectionCurrentMonthFrom= monthData.date
             selectionCurrentYearFrom=monthData.monthNameWithYear.split(", ")[1].toString()
             RLsetupCalendarMonthlyTO(currentToYear)
-            fromDate=RLTools.RLMonthNameTogetFirstDate("01 ${monthData.monthNameWithYear}")
+            fromDate=RLTools.rl_monthNameTogetFirstDate("01 ${monthData.monthNameWithYear}")
             println("Selected fromDate: $fromDate")
             RLNextButtonSShowHide(toDate)
 
@@ -414,7 +414,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val adapter = RLMonthlyCalenderListAdapter(requireContext(), MonthNameList,selectionAllReadyMonthTo) { monthData ->
             // Handle date selection
             selectionAllReadyMonthTo = monthData.monthNameWithYear
-            toDate=RLTools.RLMonthNameTogetLastDate("${monthData.monthNameWithYear}")
+            toDate=RLTools.rl_monthNameTogetLastDate("${monthData.monthNameWithYear}")
             RLNextButtonSShowHide(fromDate)
         }
         fragBinding.calendarRecyclerViewTo.layoutManager = GridLayoutManager(requireContext(), 4)
@@ -437,29 +437,29 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val date = dateIterator.time
         when(dateIterator.get(Calendar.DAY_OF_WEEK)){
             Calendar.MONDAY->{
-                RLTools.RlLogDPrint(TAG,"MONDAY")}
+                RLTools.rl_logDPrint(TAG,"MONDAY")}
             Calendar.TUESDAY->{
-                RLTools.RlLogDPrint(TAG,"TUESDAY")
+                RLTools.rl_logDPrint(TAG,"TUESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.WEDNESDAY->{ RLTools.RlLogDPrint(TAG,"WEDNESDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.THURSDAY->{  RLTools.RlLogDPrint(TAG,"THURSDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.WEDNESDAY->{ RLTools.rl_logDPrint(TAG,"WEDNESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.FRIDAY->{  RLTools.RlLogDPrint(TAG,"FRIDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.THURSDAY->{  RLTools.rl_logDPrint(TAG,"THURSDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SATURDAY->{ RLTools.RlLogDPrint(TAG,"SATURDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.FRIDAY->{  RLTools.rl_logDPrint(TAG,"FRIDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SUNDAY->{ RLTools.RlLogDPrint(TAG,"SUNDAY")
+            Calendar.SATURDAY->{ RLTools.rl_logDPrint(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ RLTools.rl_logDPrint(TAG,"SUNDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
@@ -509,29 +509,29 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val date = dateIterator.time
         when(dateIterator.get(Calendar.DAY_OF_WEEK)){
             Calendar.MONDAY->{
-                RLTools.RlLogDPrint(TAG,"MONDAY")}
+                RLTools.rl_logDPrint(TAG,"MONDAY")}
             Calendar.TUESDAY->{
-                RLTools.RlLogDPrint(TAG,"TUESDAY")
+                RLTools.rl_logDPrint(TAG,"TUESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.WEDNESDAY->{ RLTools.RlLogDPrint(TAG,"WEDNESDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.THURSDAY->{  RLTools.RlLogDPrint(TAG,"THURSDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.WEDNESDAY->{ RLTools.rl_logDPrint(TAG,"WEDNESDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.FRIDAY->{  RLTools.RlLogDPrint(TAG,"FRIDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.THURSDAY->{  RLTools.rl_logDPrint(TAG,"THURSDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SATURDAY->{ RLTools.RlLogDPrint(TAG,"SATURDAY")
-                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+            Calendar.FRIDAY->{  RLTools.rl_logDPrint(TAG,"FRIDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))}
-            Calendar.SUNDAY->{ RLTools.RlLogDPrint(TAG,"SUNDAY")
+            Calendar.SATURDAY->{ RLTools.rl_logDPrint(TAG,"SATURDAY")
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))
+                days.add(RLDateInfoModel(date, RLDateType.BLANK))}
+            Calendar.SUNDAY->{ RLTools.rl_logDPrint(TAG,"SUNDAY")
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
                 days.add(RLDateInfoModel(date, RLDateType.BLANK))
@@ -647,7 +647,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
+        val jsonString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

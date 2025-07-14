@@ -41,66 +41,66 @@ import retrofit2.http.*
 
 interface RLNetworkService {
     @POST(RLConstants.URL_V3)
-    fun RLgetUserAggregatedData(@Body request: List<RLGetUserAggregatedDataRequest>): Call<RLOverViewModel>
+    fun rl_getUserAggregatedData(@Body request: List<RLGetUserAggregatedDataRequest>): Call<RLOverViewModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgetOverviewGraph(@Body request: List<RLOverviewGraphDataRequest>): Call<RLOverviewGraphResponse>
+    fun rl_getOverviewGraph(@Body request: List<RLOverviewGraphDataRequest>): Call<RLOverviewGraphResponse>
 
     @POST(RLConstants.URL_V3)
-    fun RLgetUserFeedCardData(@Body request: List<RLSetoverview_thumbRequest>): Call<RLFeedModel>
+    fun rl_getUserFeedCardData(@Body request: List<RLSetoverview_thumbRequest>): Call<RLFeedModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgetUserFeedCardDatayou(@Body request: List<RLSetoverview_thumbRequest_you>): Call<RLFeedModel>
+    fun rl_getUserFeedCardDatayou(@Body request: List<RLSetoverview_thumbRequest_you>): Call<RLFeedModel>
 
    @POST(RLConstants.URL_V3)
-    fun RLJoinBigChallengeFeed(@Body request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>): Call<String>
+    fun rl_JoinBigChallengeFeed(@Body request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>): Call<String>
 
     @POST(RLConstants.URL_V3)
-    fun RLgetGroupData(@Body request: List<RLSetGroupRequest>): Call<RLGroupModel>
+    fun rl_getGroupData(@Body request: List<RLSetGroupRequest>): Call<RLGroupModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgoaled_challenges(@Body request: List<RLSetgoaled_challenges_request>): Call<RLFeedChallengesModel>
+    fun rl_goaled_challenges(@Body request: List<RLSetgoaled_challenges_request>): Call<RLFeedChallengesModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgoaled_challenges_view(@Body request: List<RLrequest_goaled_challenges>): Call<RLFeedChallengesModel>
+    fun rl_goaled_challenges_view(@Body request: List<RLrequest_goaled_challenges>): Call<RLFeedChallengesModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLGroupMembers(@Body request: List<RLSetGroupMemberRequest>): Call<RLGetGroupMemberModel>
+    fun rl_groupMembers(@Body request: List<RLSetGroupMemberRequest>): Call<RLGetGroupMemberModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgoaled_challenges_Single(@Body request: List<RLSetgoaled_challenges_request_single>): Call<RLFeedChallengesModel>
+    fun rl_goaled_challenges_Single(@Body request: List<RLSetgoaled_challenges_request_single>): Call<RLFeedChallengesModel>
 
      @POST(RLConstants.URL_V3)
-    fun RLMetricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
+    fun rl_metricChartByDay(@Body request: List<RLSetMetricChartByDay>): Call<RLFeedChallengesMapModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLfriendsYouFollow(@Body request: List<RLSetsearch_userrequest>): Call<RLYourFriendsModel>
+    fun rl_friendsYouFollow(@Body request: List<RLSetsearch_userrequest>): Call<RLYourFriendsModel>
 
 
     @POST(RLConstants.URL_V3)
-    fun RLsearch_user_Data_DeepLink(@Body request: List<RLsearch_userrequest>): Call<RLYourFriendsModel>
+    fun rl_search_user_Data_DeepLink(@Body request: List<RLsearch_userrequest>): Call<RLYourFriendsModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLFindOnRevoolaEmailFilter(@Body request: List<RLEmailFilterRequestModel>): Call<EmailFilterApiResponse>
+    fun rl_findOnRevoolaEmailFilter(@Body request: List<RLEmailFilterRequestModel>): Call<EmailFilterApiResponse>
 
     @POST(RLConstants.URL_V3)
-    fun RLfriendsFollowingYou(@Body request: List<RLSetget_followersrequest>): Call<RLYourFriendsModel>
+    fun rl_friendsFollowingYou(@Body request: List<RLSetget_followersrequest>): Call<RLYourFriendsModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLyourGroupData(@Body request: List<RLrequestgroup_dataset>): Call<RLYourGroupModel>
+    fun rl_yourGroupData(@Body request: List<RLrequestgroup_dataset>): Call<RLYourGroupModel>
 
     @POST(RLConstants.URL_V3)
-    fun RLgetOverviewThumbFromIdData(@Body request: List<RLRequestDetail_dataset>): Call<RLFeedModel>
+    fun rl_getOverviewThumbFromIdData(@Body request: List<RLRequestDetail_dataset>): Call<RLFeedModel>
 
     @GET(RLConstants.URL_V2)
-    fun RLgetNotificationData(
+    fun rl_getNotificationData(
         @Query("q") q: String,
         @Query("user") user: String,
         @Query("limit") limit: Int,
         @Query("index") index: Int): Call<RLNotificationModel>
 
     @GET(RLConstants.URL_V2)
-    fun RLgetCommentsData(
+    fun rl_getCommentsData(
         @Query("q") q: String,
         @Query("overviewid") overviewid: String,
         @Query("limit") limit: Int,
@@ -108,24 +108,24 @@ interface RLNetworkService {
 
     //Insert Api
     @POST(RLConstants.insertJSONApi)
-    fun RLInsertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLInsertCommonApiResponse>
+    fun rl_insertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLInsertCommonApiResponse>
 
     @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
-    fun RLInsertClassSessionData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
+    fun rl_insertClassSessionData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
-    fun RLInsertYourWayOverviewData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
+    fun rl_insertYourWayOverviewData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @Multipart
     @POST(RLConstants.insertGroup)
-    fun RLInsertGroupData( @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>,@Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
+    fun rl_insertGroupData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
      @POST(RLConstants.insertJSONApi)
-    fun RLInsertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLInsertCommonApiResponse>
+    fun rl_insertChallenges(@Body request: List<RLChallengesApiPayload>): Call<RLInsertCommonApiResponse>
 
     //Friends Insert
     @POST(RLConstants.insertJSONApi)
-    fun RLInsertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
+    fun rl_insertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
 }

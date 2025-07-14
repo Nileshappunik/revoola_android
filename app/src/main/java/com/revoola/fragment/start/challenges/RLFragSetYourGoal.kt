@@ -42,27 +42,27 @@ class RLFragSetYourGoal : RLBaseFragment() {
         RlFragSetYourGoalBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_set_your_goal, container) as RlFragSetYourGoalBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetYourGoal" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_set_your_goal, container) as RlFragSetYourGoalBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetYourGoal" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
                 // For example, show a confirmation dialog or navigate
-                RLBottomHideShowSet(true)
-                RLcloseFragment()
+                rl_bottomHideShowSet(true)
+                rl_closeFragment()
             }
         })
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLBottomHideShowSet(true)
-            RLcloseFragment()
+            rl_bottomHideShowSet(true)
+            rl_closeFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(R.string.setyourtarget)
         fragBinding.inlayTop.ivDescription.setText(R.string.setyourtargetandselecttimeperiod)
@@ -111,10 +111,10 @@ class RLFragSetYourGoal : RLBaseFragment() {
             }
         }
 
-        RLTools.RLheightsetstartimage(fragBinding.relayDaily.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayWeekly.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayMonthly.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayCustom.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayDaily.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayWeekly.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayMonthly.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayCustom.cardChalengesst,requireActivity())
 
         fragBinding.relayDaily.imgType.setImageResource(R.drawable.calendar_daily)
         fragBinding.relayDaily.txtTypeTitle.setText(R.string.daily)
@@ -153,7 +153,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
             cardData.stepCount=stepCount
             val bundle: Bundle = Bundle()
             bundle.putSerializable("cardData",cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragChalengesCalender().newInstance(bundle), TAG, true,null, true)
 
         } else{
             RLshowAlertDialog()
@@ -172,7 +172,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
+        val jsonString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

@@ -42,8 +42,8 @@ class RLYourFriendSelectListAdapter(
        return datalist.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutYourFriendBinding = layoutBinding
+    inner class MyViewHolder(private val layoutBinding: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        //private val layoutBinding: RlLayoutYourFriendBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = datalist[position]
             Glide.with(context!!).load(cardData.avatar)
@@ -58,7 +58,7 @@ class RLYourFriendSelectListAdapter(
             layoutBinding.viewFriend.visibility=View.GONE
 
             layoutBinding.checkboxFriend.setOnCheckedChangeListener { buttonView, isChecked ->
-               RLTools.RlLogEPrint(TAG,"totalselect First:- $totalselect")
+               RLTools.rl_logEPrint(TAG,"totalselect First:- $totalselect")
                 try {
                     cardData.isSelected=isChecked
                     notifyItemChanged(position)
@@ -76,14 +76,14 @@ class RLYourFriendSelectListAdapter(
                             tvCreateClick.visibility=View.GONE
                         }
                     }
-                   RLTools.RlLogEPrint(TAG,"totalselect Last:- $totalselect")
+                   RLTools.rl_logEPrint(TAG,"totalselect Last:- $totalselect")
                 }catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"EXCEPTION:- ${e.message}")
+                   RLTools.rl_logEPrint(TAG,"EXCEPTION:- ${e.message}")
                 }
             }
         }
     }
-    fun RLfilter(query: String) {
+    fun rl_filter(query: String) {
         datalist = if (query.isEmpty()) {
             friendList
         } else {

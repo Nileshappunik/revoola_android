@@ -23,7 +23,6 @@ import com.revoola.model.RLSetsearch_userrequest
 import com.revoola.model.RLsearch_user_request
 import com.revoola.model.RLsearch_userrequest
 import com.revoola.model.RLuserData
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
@@ -32,7 +31,7 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragYourFriends : RLBaseFragment() {
     val TAG: String = RLFragYourFriends::class.java.simpleName
-    lateinit var fragBinding: RlFragYourFriendsBinding
+    //lateinit var fragBinding: RlFragYourFriendsBinding
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
@@ -43,38 +42,38 @@ class RLFragYourFriends : RLBaseFragment() {
         return fragment
     }
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragYourFriendsBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_friends, container) as RlFragYourFriendsBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourFriends" )
+        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_friends, container) as RlFragYourFriendsBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourFriends" )
         fragBinding.toolbar.tvTitle.setText(R.string.yourfriends)
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
-        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
+        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
 
         fragBinding.txtFriendYoufollow.setOnClickListener {
             fragBinding.viewlableleft.setBackgroundResource(R.color.AppMainColor)
             fragBinding.viewlablelright.setBackgroundResource(R.color.AppWhiteColor)
             fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppMainColor))
             fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppBlackColor))
-            if (apiClientRetrofit.RLisConnected()) {
-                RLyouFollowApiCall()
+            if (apiClientRetrofit.rl_isConnected()) {
+                rl_youFollowApiCall()
             } else {
-                RLshowDialogFullscreen()
+                rl_showDialogFullscreen()
             }
         }
 
@@ -83,104 +82,104 @@ class RLFragYourFriends : RLBaseFragment() {
             fragBinding.viewlableleft.setBackgroundResource(R.color.AppWhiteColor)
             fragBinding.txtFriendFollowingyou.setTextColor(resources.getColor(R.color.AppMainColor))
             fragBinding.txtFriendYoufollow.setTextColor(resources.getColor(R.color.AppBlackColor))
-            if (apiClientRetrofit.RLisConnected()) {
-                RLfollowingYouApiCall()
+            if (apiClientRetrofit.rl_isConnected()) {
+                rl_followingYouApiCall()
             } else {
-                RLshowDialogFullscreen()
+                rl_showDialogFullscreen()
             }
         }
 
         fragBinding.txtInviteyourfriend.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
         }
 
         val reDirecDeepLinkPage=requireArguments().getBoolean("reDirecDeepLinkPage")
         if (reDirecDeepLinkPage){
-            if (apiClientRetrofit.RLisConnected()) {
-                RLSearchFollowApiCall()
+            if (apiClientRetrofit.rl_isConnected()) {
+                rl_searchFollowApiCall()
             } else {
-                RLshowDialogFullscreen()
+                rl_showDialogFullscreen()
             }
         }else{
-            if (apiClientRetrofit.RLisConnected()) {
-                RLyouFollowApiCall()
+            if (apiClientRetrofit.rl_isConnected()) {
+                rl_youFollowApiCall()
             } else {
-                RLshowDialogFullscreen()
+                rl_showDialogFullscreen()
             }
         }
 
 
     }
-    private fun RLyouFollowApiCall() {
+    private fun rl_youFollowApiCall() {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
-        RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
+        RLTools.rl_logDPrint(TAG,"setyouFollowdata= "+request)
 
-        viewModel.RLfriendsYouFollow(request) { result ->
+        viewModel.rl_friendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandle(response.text.user,true)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
+                        rl_responsehandle(response.text.user,true)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }
 
-    private fun RLSearchFollowApiCall() {
+    private fun rl_searchFollowApiCall() {
         //var myid: String,var contact_status:Int, var limit: Int, var index:Int
         val request = listOf(RLsearch_userrequest(search_user = RLsearch_user_request(myid = currentUser,contact_status=2,limit = 100, index=0)))
-        RLTools.RlLogDPrint(TAG,"setSearchFollowdata= "+request)
+        RLTools.rl_logDPrint(TAG,"setSearchFollowdata= "+request)
 
-        viewModel.RLsearch_user_Data_DeepLink(request) { result ->
+        viewModel.rl_search_user_Data_DeepLink(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandle(response.text.user,true)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
+                        rl_responsehandle(response.text.user,true)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }
 
-    private fun RLfollowingYouApiCall() {
+    private fun rl_followingYouApiCall() {
         val request = listOf(RLSetget_followersrequest(search_user = RLSetget_followers(get_followers = currentUser,limit = 100, index=0)))
-        RLTools.RlLogDPrint(TAG,"setfollowingYoudata= "+request)
+        RLTools.rl_logDPrint(TAG,"setfollowingYoudata= "+request)
 
-        viewModel.RLfriendsFollowingYou(request) { result ->
+        viewModel.rl_friendsFollowingYou(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandle(response.text.user,false)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
+                        rl_responsehandle(response.text.user,false)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }
-    private fun RLresponsehandle(userdata: List<RLuserData>, youFollow:Boolean) {
+    private fun rl_responsehandle(userdata: List<RLuserData>, youFollow:Boolean) {
         if (youFollow){
            // fragBinding.txtFriendFollowcount.setText(userdata.size.toString()+" "+getString(R.string.friendsyoufollow))
         }else{
@@ -196,7 +195,7 @@ class RLFragYourFriends : RLBaseFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter.RLfilter(s.toString())
+                adapter.rl_filter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}

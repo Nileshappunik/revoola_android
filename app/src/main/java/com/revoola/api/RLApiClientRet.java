@@ -72,7 +72,7 @@ public class RLApiClientRet {
 
             CacheControl cacheControl;
 
-            if (RLApiClientRet.this.RLisConnected()) {
+            if (RLApiClientRet.this.rl_isConnected()) {
                cacheControl = new CacheControl.Builder()
                        .maxAge(0, TimeUnit.SECONDS)
                        .build();
@@ -98,7 +98,7 @@ public class RLApiClientRet {
          public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
 
-            if (!RLApiClientRet.this.RLisConnected()) {
+            if (!RLApiClientRet.this.rl_isConnected()) {
                CacheControl cacheControl = new CacheControl.Builder()
                        .maxStale(7, TimeUnit.DAYS)
                        .build();
@@ -114,7 +114,7 @@ public class RLApiClientRet {
       };
    }
 
-   public boolean RLisConnected() {
+   public boolean rl_isConnected() {
       try {
          android.net.ConnectivityManager e = (android.net.ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
          NetworkInfo activeNetwork = e.getActiveNetworkInfo();

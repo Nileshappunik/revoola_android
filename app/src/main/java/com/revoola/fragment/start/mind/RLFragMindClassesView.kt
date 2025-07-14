@@ -45,16 +45,16 @@ class RLFragMindClassesView : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesView" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesView" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
         val VideoID=  requireArguments().getString("VIDEODATA","")
         val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         fragBinding.layWorklog.visibility=View.GONE
@@ -84,7 +84,7 @@ class RLFragMindClassesView : RLBaseFragment() {
             fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
         }
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLRevoolaVideosMindRead(VideoID){ data, error ->
+        databaseManager.rl_revoolaVideosMindRead(VideoID){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -103,7 +103,7 @@ class RLFragMindClassesView : RLBaseFragment() {
                     bundle.putString(RLExtraValueKey.videoData,jsonObject)
                     bundle.putString(RLExtraValueKey.audioVideoType,audioVideoType)
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
                 }
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {
@@ -126,7 +126,7 @@ class RLFragMindClassesView : RLBaseFragment() {
             bundle.putString(RLConstants.CLASS_TYPE,classtype)
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message","")
-            (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
         }
     }
     private fun RLMindUiSetup(VideoData: RLFulllVideoModel){
@@ -192,7 +192,7 @@ class RLFragMindClassesView : RLBaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        RLBottomHideShowSet(true)
+        rl_bottomHideShowSet(true)
     }
 
 }

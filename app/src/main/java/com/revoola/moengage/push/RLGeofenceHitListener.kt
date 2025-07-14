@@ -6,7 +6,7 @@ import com.revoola.commonobject.RLTools
 
 class RLGeofenceHitListener: OnGeofenceHitListener {
     override fun geofenceHit(geofenceData: GeofenceData): Boolean {
-       RLTools.RlLogEPrint("MoengageTag","RLGeofenceHitListener : geofenceHit() Geofence hit callback received. Callback data: $geofenceData")
+       RLTools.rl_logEPrint("MoengageTag","RLGeofenceHitListener : geofenceHit() Geofence hit callback received. Callback data: $geofenceData")
         // process the intent.
         // return true if the app does not want the SDK to process the Geo-fence callback else false
         return false

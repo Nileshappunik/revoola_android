@@ -6,22 +6,22 @@ import androidx.lifecycle.LiveData
 import android.location.Location
 class RLLocationViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val RLLocationRepository = RLLocationRepository(application)
+    private val locationRepository = RLLocationRepository(application)
 
-    val locationData: LiveData<Location> = RLLocationRepository.locationData
-    val speedData: LiveData<Float> = RLLocationRepository.speedData
-    val stepCountData: LiveData<Int> = RLLocationRepository.stepCountData
-    val distanceData: LiveData<Double> = RLLocationRepository.distanceData
-    val cadenceData: LiveData<Double> = RLLocationRepository.cadenceData
-    val paceData: LiveData<Double> = RLLocationRepository.paceData
+    val locationData: LiveData<Location> = locationRepository.locationData
+    val speedData: LiveData<Float> = locationRepository.speedData
+    val stepCountData: LiveData<Int> = locationRepository.stepCountData
+    val distanceData: LiveData<Double> = locationRepository.distanceData
+    val cadenceData: LiveData<Double> = locationRepository.cadenceData
+    val paceData: LiveData<Double> = locationRepository.paceData
    // val caloriesBurnedData: LiveData<Double> = RLLocationRepository.caloriesBurnedData
-    val elevationMeter: LiveData<Double> = RLLocationRepository.elevationMeter
+    val elevationMeter: LiveData<Double> = locationRepository.elevationMeter
 
-    fun RLstartLocationUpdates() {
-        RLLocationRepository.RLstartLocationUpdates()
+    fun rl_startLocationUpdates() {
+        locationRepository.rl_startLocationUpdates()
     }
 
-    fun RLstopLocationUpdates() {
-        RLLocationRepository.RLstopLocationUpdates()
+    fun rl_stopLocationUpdates() {
+        locationRepository.rl_stopLocationUpdates()
     }
 }

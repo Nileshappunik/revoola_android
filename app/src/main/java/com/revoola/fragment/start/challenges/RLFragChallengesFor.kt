@@ -33,7 +33,6 @@ import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsetgroup_data
 import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -59,12 +58,12 @@ class RLFragChallengesFor : RLBaseFragment() {
         RlFragChallengesForBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for, container) as RlFragChallengesForBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesFor" )
-        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for, container) as RlFragChallengesForBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesFor" )
+        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         RLApiClientRetrofit = RLApiClientRet(activity)
         val apiService = RLApiClientRetrofit.networkService
@@ -75,15 +74,15 @@ class RLFragChallengesFor : RLBaseFragment() {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
                 // For example, show a confirmation dialog or navigate
-                RLcloseFragment()
+                rl_closeFragment()
             }
         })
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectFor)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectFor)
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLcloseFragment()
+            rl_closeFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(R.string.challengesfor)
         fragBinding.inlayTop.ivDescription.setText(R.string.challengeforyouorwithothers)
@@ -94,10 +93,10 @@ class RLFragChallengesFor : RLBaseFragment() {
     }
     private fun RLUIBottom() {
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
-        RLTools.RLheightsetstartimage(fragBinding.relayYou.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayFriends.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayGroup.cardChalengesst,requireActivity())
-        RLTools.RLheightsetstartimage(fragBinding.relayGroupVGroup.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayYou.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayFriends.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayGroup.cardChalengesst,requireActivity())
+        RLTools.rl_heightsetstartimage(fragBinding.relayGroupVGroup.cardChalengesst,requireActivity())
 
         selectDataID = cardData.selectGroupList
 
@@ -129,9 +128,9 @@ class RLFragChallengesFor : RLBaseFragment() {
             bundle.putSerializable("cardData",cardData)
 
             if (cardData.isEditClass){
-                (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
             }else{
-                (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
             }
 
         }
@@ -158,7 +157,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectFor,"")
+        val jsonString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectFor,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
@@ -222,7 +221,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         }
         val bundle: Bundle = Bundle()
         bundle.putSerializable("cardData",cardData)
-        (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
+        (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 
     }
     private fun RLshowAlertDialog(message:String) {
@@ -249,46 +248,46 @@ class RLFragChallengesFor : RLBaseFragment() {
     private fun RLgroupApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,isGroupVGroup:Boolean, dialog: Dialog ) {
 
         val request = listOf(RLrequestgroup_dataset(group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)))
-        RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
+        RLTools.rl_logDPrint(TAG,"setgroupdata= "+request)
 
-        viewModel.RLyourGroupData(request) { result ->
+        viewModel.rl_yourGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
                         RLresponsehandleGroupsApi(response.text,dialogMainBinding,isGroupVGroup,dialog)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception) {
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }private fun RLfriendsApiCall(dialogMainBinding: RlDialogFriendChallengesBinding,dialog: Dialog) {
         val request = listOf(RLSetsearch_userrequest(search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)))
-        RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
+        RLTools.rl_logDPrint(TAG,"setyouFollowdata= "+request)
 
-        viewModel.RLfriendsYouFollow(request) { result ->
+        viewModel.rl_friendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
                         RLresponsehandlefriendsApi(response.text.user,dialogMainBinding,dialog)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }

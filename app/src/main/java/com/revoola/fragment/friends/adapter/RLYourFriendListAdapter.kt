@@ -31,8 +31,8 @@ class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: Li
        return datalist.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutYourFriendBinding = layoutBinding
+    inner class MyViewHolder(private  val layoutBinding: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+      //  private val layoutBinding: RlLayoutYourFriendBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = datalist[position]
             Glide.with(context!!).load(cardData.avatar)
@@ -47,7 +47,7 @@ class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: Li
             }
         }
     }
-    fun RLfilter(query: String) {
+    fun rl_filter(query: String) {
         datalist = if (query.isEmpty()) {
             friendList
         } else {

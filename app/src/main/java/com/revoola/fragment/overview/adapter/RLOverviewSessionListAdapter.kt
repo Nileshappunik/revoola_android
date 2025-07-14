@@ -42,8 +42,8 @@ class RLOverviewSessionListAdapter(val context: FragmentActivity?, val textColor
         notifyDataSetChanged()
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutOveriviewSessionListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutOveriviewSessionListBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlLayoutOveriviewSessionListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlLayoutOveriviewSessionListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val carddata = sessionList[position]
             layoutBinding.txtsessiontitle.setText(carddata.name)

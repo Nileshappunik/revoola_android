@@ -67,11 +67,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(true)
-        RLBottomHideShowSet(false)
+         rl_screenSet(true)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_normal_video_start, container) as RlFragMindClassesNormalVideoStartBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesNormalVideoStart" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_normal_video_start, container) as RlFragMindClassesNormalVideoStartBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesNormalVideoStart" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing or show a message
@@ -126,7 +126,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
 
         fragBinding.inlayPlayStop.btnStop.setOnClickListener {
             fragBinding.videoView.stopPlayback()
-            timerManager.RLstop()
+            timerManager.rl_stop()
             var rms = VideoCardData.assumedRMS?:"0.0"
             val videoID=  requireArguments().getString(RLExtraValueKey.videoId,"")
             if (rms.isNullOrEmpty()){
@@ -164,19 +164,19 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
            // bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)
 
-            (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
 
         }
         fragBinding.inlayPlayStop.btnPauseResume.setOnClickListener {
             if (pauseVideo){
                 pauseVideo=false
-                timerManager.RLresume()
+                timerManager.rl_resume()
                 fragBinding.videoView.pause()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("RESUME")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_playbutton2)
             }else{
                 pauseVideo=true
-                timerManager.RLpause()
+                timerManager.rl_pause()
                 fragBinding.videoView.start()
                 fragBinding.inlayPlayStop.txtPauseResume.setText("PAUSE")
                 fragBinding.inlayPlayStop.btnPauseResume.setImageResource(R.drawable.ic_pause_button)
@@ -224,7 +224,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     }
 
     fun RLtimerMain() {
-        timerManager.RLstart { elapsedTime ->
+        timerManager.rl_start { elapsedTime ->
             activity?.runOnUiThread {
                 totalTime=(elapsedTime/1000).toString()
                 RlDataFillAllArray()
@@ -301,11 +301,11 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
     }
 
     private fun RLUserDataGet() {
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg
                 wsHeight=userData.height
-                wsAge= RLTools.RLCalculateAge(userData.dob)
+                wsAge= RLTools.rl_calculateAge(userData.dob)
                 gender=userData.gender
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
@@ -317,7 +317,7 @@ class RLFragMindClassesNormalVideoStart : RLBaseFragment() {
                 isBasicDataAdded=userData.isBasicDataAdded
                 visibilityflagforthatsession=userData.visibilityflagforthatsession
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
     }

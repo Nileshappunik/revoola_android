@@ -31,11 +31,11 @@ class RLFragChalengesType : RLBaseFragment() {
         RlFragChalengesTypeBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChalengesType" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChalengesType" )
         return fragBinding.root
     }
 
@@ -46,22 +46,22 @@ class RLFragChalengesType : RLBaseFragment() {
             override fun onGlobalLayout() {
                 fragBinding.rvChallenges.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val height =  fragBinding.rvChallenges.height
-                RLTools.RlLogDPrint(TAG,"RelativeLayout total height: $height pixels")
+                RLTools.rl_logDPrint(TAG,"RelativeLayout total height: $height pixels")
                 RLChallengesList(height)
             }
         })
     }
 
     private fun RLChallengesList(height: Int) {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        rl_onBackPresAct(fragBinding.inlayTop.ivBack)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.challengessmall))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.typeofchallenge))
         fragBinding.inlayTop.ivhelp.setOnClickListener {
             RLshowHelpDialog()
         }
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLALLMENULISTRead(RLConstants.CHALLENGES){ data, error ->
+        databaseManager.rl_allMenuListRead(RLConstants.CHALLENGES){ data, error ->
             if (data != null) {
                 try {
                     val gson = Gson()
@@ -75,10 +75,10 @@ class RLFragChalengesType : RLBaseFragment() {
                     fragBinding.rvChallenges.adapter=adapter
 
                 }catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
+                   RLTools.rl_logEPrint(TAG,"Catch:- ${e.message}")
                 }
             }else{
-               RLTools.RlLogEPrint(TAG,"Null Data:- $data")
+               RLTools.rl_logEPrint(TAG,"Null Data:- $data")
             }
         }
     }

@@ -41,8 +41,8 @@ class RLFriendListAdapter(
         return  dataList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutStartMenuBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutStartMenuBinding = layoutBinding
+    inner class MyViewHolder(private val layoutBinding: RlLayoutStartMenuBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+      //  private val layoutBinding: RlLayoutStartMenuBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             layoutBinding.txtTypename.setText(cardData.title)
@@ -64,16 +64,16 @@ class RLFriendListAdapter(
             layoutBinding.relayStartNew.setOnClickListener {
                 if (cardData.title.toLowerCase().equals("find on revoola")){
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
                     val bundle =Bundle ()
                     bundle.putBoolean("reDirecDeepLinkPage",false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
                     val shareIntent = Intent().apply {

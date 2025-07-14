@@ -23,7 +23,8 @@ class RLDatabaseManagerRead {
             }
     }
 
-    fun RLREVOOLAUSERFORSEARCHREADDATE(userId: String, callback: (Any?, Exception?) -> Unit) {
+
+    fun rl_revoolaUserForSearchReaddata(userId: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId)
             .get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -33,7 +34,7 @@ class RLDatabaseManagerRead {
             }
         }
     }
-    fun RLREVOOLAVIDEOKEYSMINDRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+    fun rl_revoolaVideoKeysMindRead(classname: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEO_KEYS_MIND)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
@@ -45,7 +46,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RLALLMENULISTRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+    fun rl_allMenuListRead(classname: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.CODE_SECTION)
             .child(RLConstants.AVAILABLE_MENUS).child(classname)
             .get().addOnCompleteListener { task ->
@@ -56,7 +57,7 @@ class RLDatabaseManagerRead {
                 }
             }
     }
-    fun RLRevoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
+    fun rl_revoolaVideoKeysRead(classname: String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEO_KEYS)
             .child(classname).child(RLConstants.LISTOFVIDEOS)
             .get().addOnCompleteListener { task ->
@@ -68,7 +69,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RLRevoolaVideosRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
+    fun rl_revoolaVideosRead(videoId:String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEOS).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -78,7 +79,7 @@ class RLDatabaseManagerRead {
                 }
             }
     }
-    fun RLRevoolaVideosMindRead(videoId:String,callback: (Any?, Exception?) -> Unit) {
+    fun rl_revoolaVideosMindRead(videoId:String, callback: (Any?, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_VIDEOS_MIND).child(videoId)
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -88,7 +89,7 @@ class RLDatabaseManagerRead {
                 }
             }
     }
-    fun RlreadData(path: String, callback: (Any?, Exception?) -> Unit) {
+    fun rl_readData(path: String, callback: (Any?, Exception?) -> Unit) {
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -97,7 +98,7 @@ class RLDatabaseManagerRead {
             }
         }
     }
-    fun Rld2DataBaseReadData(path: String, callback: (Any?, Exception?) -> Unit) {
+    fun rl_d2DataBaseReadData(path: String, callback: (Any?, Exception?) -> Unit) {
         d2_database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 callback(task.result?.value, null)
@@ -107,7 +108,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RlUserBasicDataRead(userId: String,callback: (Any?, Exception?) -> Unit) {
+    fun rl_userBasicDataRead(userId: String, callback: (Any?, Exception?) -> Unit) {
         val path = RevoolaFirebasePath.basicDataDataPath(userId)
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -118,7 +119,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RlAppUnitRead(callback: (Any?, Exception?) -> Unit) {
+    fun rl_appUnitRead(callback: (Any?, Exception?) -> Unit) {
         val path = RevoolaFirebasePath.basicDataPathWrite("appUnit")
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -129,7 +130,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RlHelpVideoGetDataRead(HelpType: String,callback: (Any?, Exception?) -> Unit) {
+    fun rl_helpVideoGetDataRead(HelpType: String, callback: (Any?, Exception?) -> Unit) {
         val path =RevoolaFirebasePath.getStartedVideosDataPath(HelpType)
         database.child(path).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -140,7 +141,7 @@ class RLDatabaseManagerRead {
         }
     }
 
-    fun RLClassLeaderBoardDataRead(viedoId: String,callback: (Any?, String?) -> Unit){
+    fun rl_classLeaderBoardDataRead(viedoId: String, callback: (Any?, String?) -> Unit){
         val leaderboardMap = mutableMapOf<String, RLChallengeRiderBody>()
         val path = RevoolaFirebasePath.classLeaderBoardsDataPath(viedoId)
         database.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -170,15 +171,3 @@ class RLDatabaseManagerRead {
 
 }
 
-
-/*
-private fun readData(path: String) {
-    databaseManager.readData(path) { data, error ->
-        if (data != null) {
-            RLTools.RlLogDPrint("MainActivity", "Data read: $data")
-            Toast.makeText(this, "Data read: $data", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Read failed: ${error?.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-}*/

@@ -28,17 +28,17 @@ class RLFragEditYourSensor : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_your_sensor, container) as RlFragEditYourSensorBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditYourSensor" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_your_sensor, container) as RlFragEditYourSensorBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditYourSensor" )
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
         val deviceType:String = requireArguments().getString("deviceType").toString()
         val deviceAddress:String = requireArguments().getString("deviceAddress").toString()
         val devicename:String = requireArguments().getString("devicename").toString()
@@ -58,9 +58,9 @@ class RLFragEditYourSensor : RLBaseFragment() {
         }
 
         fragBinding.tvforgetsensor.setOnClickListener {
-            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
-            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
-            RLcloseFragment()
+            RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.last_device_connect, "no")
+            RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.last_device_connect_type, "")
+            rl_closeFragment()
         }
 
         fragBinding.tvsave.setOnClickListener {
@@ -70,10 +70,10 @@ class RLFragEditYourSensor : RLBaseFragment() {
                     addProperty(RLConstants.DEVICE_NAME,editdeviceName)
                     addProperty(RLConstants.DEVICE_ADDRESS,deviceAddress)
                 }
-                RLPrefManager.RLSetSomeJsonObjectValue(activity, RLPrefManager.change_device_name, jsonObject)
-                RLcloseFragment()
+                RLPrefManager.rl_setSomeJsonObjectValue(activity, RLPrefManager.change_device_name, jsonObject)
+                rl_closeFragment()
             }else{
-                RLcommonToast("Device Name is Empty")
+                rl_commonToast("Device Name is Empty")
             }
 
         }

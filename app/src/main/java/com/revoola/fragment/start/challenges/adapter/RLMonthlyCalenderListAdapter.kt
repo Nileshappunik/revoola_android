@@ -13,7 +13,6 @@ import com.revoola.enumclass.RLDateType
 import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 class RLMonthlyCalenderListAdapter(
@@ -52,7 +51,7 @@ class RLMonthlyCalenderListAdapter(
             }
 
             when(cardData.dateType){
-                RLDateType.BLANK-> RLTools.RlLogDPrint(TAG,"BLANK:- ${cardData.date}")
+                RLDateType.BLANK-> RLTools.rl_logDPrint(TAG,"BLANK:- ${cardData.date}")
                 RLDateType.OLD-> {
                     layoutBinding.monthText.text = cardData.date.toString()
                     if (RlISCurrentDateCheck(cardData.monthNameWithYear)){

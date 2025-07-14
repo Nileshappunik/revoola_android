@@ -3,14 +3,12 @@ package com.revoola.databasefirebase
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.revoola.commonobject.RLTools
 
 class RLDatabaseManagerWrite {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val d2_database = FirebaseDatabase.getInstance("https://rideathome-9080e-252d2.firebaseio.com/").reference
 
-
-    fun RLLIVEUSERSEMAILWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun rl_Live_users_Email_Write(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(RLConstants.LIVE).child(RLConstants.LIVE_USERS_EMAIL).child(userId).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -20,7 +18,8 @@ class RLDatabaseManagerWrite {
                 }
             }
     }
-    fun REVOOLAUSEREMAILSWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+
+    fun revoola_User_Emails_write(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_EMAILS).child(userId).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -30,7 +29,7 @@ class RLDatabaseManagerWrite {
                 }
             }
     }
-    fun REVOOLAUSERFORSEARCHWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun revoola_User_For_Search_Write(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_FOR_SEARCH).child(userId).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -40,7 +39,7 @@ class RLDatabaseManagerWrite {
                 }
             }
     }
-    fun REVOOLAUSERSETTINGSWrite(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun revoola_User_Settings_Write(userId:String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_SETTINGS).child(userId).child(RLConstants.BASIC_DATA).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -51,7 +50,7 @@ class RLDatabaseManagerWrite {
             }
     }
 
-    fun REVOOLADEEPLINKWrite(userId:String) {
+    fun revoola_Deep_Link_Write(userId:String) {
         database.child(RevoolaFirebasePath.basePath).child(RLConstants.REVOOLA_USER_SETTINGS)
             .child(userId).child(RLConstants.BASIC_DATA).child("link").setValue("")
             .addOnCompleteListener { task ->
@@ -63,7 +62,7 @@ class RLDatabaseManagerWrite {
             }
     }
 
-    fun RlWriteBasicDataUpdate(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun rl_write_Basic_Data_Update(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         database.child(path).setValue(data)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -74,11 +73,11 @@ class RLDatabaseManagerWrite {
             }
     }
 
-    fun RlUpdateAllData(path: String, data: Any) {
+    fun rl_update_All_Data(path: String, data: Any) {
         database.child(path).setValue(data)
     }
 
-    fun RlWriteData(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun rl_write_Data(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
             database.child(path).child(it).setValue(data)
@@ -92,7 +91,7 @@ class RLDatabaseManagerWrite {
         }
     }
 
-    fun RlWriteDataForTestingData(path: String, dataMap: Map<String,Any>, callback: (Boolean, Exception?) -> Unit) {
+    fun rl_write_Data_For_Testing_Data(path: String, dataMap: Map<String,Any>, callback: (Boolean, Exception?) -> Unit) {
         dataMap.forEach { (category, entry) ->
             d2_database.child(path).child(category).updateChildren(entry as Map<String, Any>)
                 .addOnCompleteListener { task ->
@@ -106,7 +105,7 @@ class RLDatabaseManagerWrite {
     }
 
 
-    fun RlGuestUpdateUserWrite(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
+    fun rl_guest_Update_User_Write(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {
             database.child(path).child(it).setValue(data)

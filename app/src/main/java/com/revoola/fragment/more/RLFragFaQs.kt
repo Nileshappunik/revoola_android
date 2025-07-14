@@ -23,10 +23,10 @@ import com.revoola.utils.RLPrefManager
 
 class RLFragFaQs : RLBaseFragment() {
     val TAG: String = RLFragFaQs::class.java.simpleName
-    lateinit var fragBinding: RlFragFaqsBinding
+   // lateinit var fragBinding: RlFragFaqsBinding
     private var player: ExoPlayer? = null
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragFaqsBinding.inflate(layoutInflater)
     }
 
@@ -36,34 +36,34 @@ class RLFragFaQs : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_faqs, container) as RlFragFaqsBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFaQs")
-        RLuisetup()
+       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_faqs, container) as RlFragFaqsBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFaQs")
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         val isFAqs=requireArguments().getBoolean("isFAqs")
         if (isFAqs){
             fragBinding.ivTitle.setText(getString(R.string.faqs))
             fragBinding.videoView.visibility=View.GONE
             fragBinding.webView.visibility=View.VISIBLE
-            RLFAQSCode()
+            rl_FAQSCode()
         }else{
             fragBinding.ivTitle.setText(getString(R.string.aquickintroduction))
             fragBinding.webView.visibility=View.GONE
             fragBinding.videoView.visibility=View.VISIBLE
             //RLQuickIntroductionCode()
-            RLInitializePlayer()
+            rl_initializePlayer()
         }
 
     }
 
-    private fun RLInitializePlayer() {
+    private fun rl_initializePlayer() {
         if (player == null) {
             player = ExoPlayer.Builder(requireContext())
                 .setMediaSourceFactory(DefaultMediaSourceFactory(requireContext())) // HLS Supported
@@ -82,7 +82,7 @@ class RLFragFaQs : RLBaseFragment() {
         }
     }
 
-    private fun RLQuickIntroductionCode() {
+    private fun rl_quickIntroductionCode() {
         player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
             fragBinding.videoView.player = exoPlayer
             val mediaItem = MediaItem.fromUri(RLConstants.Quick_Introduction_Url)
@@ -103,7 +103,7 @@ class RLFragFaQs : RLBaseFragment() {
         player = null
     }
 
-    private fun RLFAQSCode() {
+    private fun rl_FAQSCode() {
         fragBinding.webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true

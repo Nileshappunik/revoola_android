@@ -60,7 +60,7 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
                     val bundle = Bundle()
                     bundle.putString("AUDIOVIDEOTYPE", cardData.classtype)
                     bundle.putString("VIDEODATA",cardData.key)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, null, true)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragMindClassesView().newInstance(bundle), TAG, true, null, true)
                 }
 
                 /*val layoutParams: ViewGroup.LayoutParams = layoutBinding.relayNew.layoutParams
@@ -82,7 +82,7 @@ class RLMindClassListAdapter(private val dataList: List<RLVideoModel>,
 
 
             }catch (e:Exception){
-               RLTools.RlLogEPrint(TAG,"Exception:- ${e.message}")
+               RLTools.rl_logEPrint(TAG,"Exception:- ${e.message}")
             }
         }
 

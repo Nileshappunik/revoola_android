@@ -40,7 +40,6 @@ import com.revoola.databinding.RlDialogHelpSigninBinding
 import com.revoola.commonobject.RLTools
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -69,16 +68,16 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
     lateinit var  authManager: RLAuthManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        RLScreenSet(false)
+        rl_screenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_sign_up) as RlActivitySignUpBinding
-        RLUisetup()
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_sign_up) as RlActivitySignUpBinding
+        rl_uisetup()
     }
-    private fun RLUisetup() {
+    private fun rl_uisetup() {
         activityBinding.toolbarLogin.tvTitle.setText(R.string.signup)
-        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
-        RLGetFcmToken()
+        rl_onBackPresAct(activityBinding.toolbarLogin.ivBack)
+        rl_getFcmToken()
 
         firstName= intent.getStringExtra("firstName").toString()
         lastName= intent.getStringExtra("lastName").toString()
@@ -90,32 +89,32 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         //Read DataBase
         val databaseManager: RLDatabaseManagerRead = RLDatabaseManagerRead()
         authManager = RLAuthManager()
-         userId = authManager.RlgetCurrentUser()!!.uid
-        emailId = RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user_email,"")
+         userId = authManager.rl_getCurrentUser()!!.uid
+        emailId = RLPrefManager.rl_getSomeStringValue(this, RLPrefManager.current_user_email,"")
         if (emailId.isNullOrEmpty()){
-            emailId = authManager.RlgetCurrentUser()!!.email.toString()
+            emailId = authManager.rl_getCurrentUser()!!.email.toString()
         }
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            RLRevoolaUserSettingWrite()
+            rl_revoolaUserSettingWrite()
         })
 
         activityBinding.imgHelp.setOnClickListener(View.OnClickListener {
-            RLshowHelpDialog()
+            rl_showHelpDialog()
         })
         activityBinding.imgUseriamge.setOnClickListener {
-            RLopencameragallerydialog()
+            rl_opencameragallerydialog()
         }
         activityBinding.edDateofbirth.setOnClickListener {
-            RLdialogStartDatePicker()
+            rl_dialogStartDatePicker()
         }
         activityBinding.edGender.setOnClickListener {
-            RLshowGenderDialog()
+            rl_showGenderDialog()
         }
         activityBinding.edHeight.setOnClickListener {
-            RLshowHeightDialog()
+            rl_showHeightDialog()
         }
         activityBinding.edWeight.setOnClickListener {
-            RLshowWeightDialog(activity)
+            rl_showWeightDialog(activity)
         }
 
         activityBinding.edFirstname.addTextChangedListener(object : TextWatcher {
@@ -127,7 +126,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 }else{
                     val drawable = getDrawable(R.drawable.ic_check)
                     activityBinding.edFirstname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -143,7 +142,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 }else{
                     val drawable = getDrawable(R.drawable.ic_check)
                     activityBinding.edLastname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -158,14 +157,14 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 }else{
                     val drawable = getDrawable(R.drawable.ic_check)
                     activityBinding.edNickname.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
-    private fun RLGetFcmToken() {
+    private fun rl_getFcmToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -173,13 +172,13 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
                 // Get new FCM registration token
                 tokenFCM = task.result
                 // Log and toast
-                RLTools.RlLogDPrint(TAG, "FCM Token: $tokenFCM")
+                RLTools.rl_logDPrint(TAG, "FCM Token: $tokenFCM")
                 // Send token to your server or use it as needed
             }
         }
     }
     //Height Change Dialog
-    private fun RLshowHeightDialog() {
+    private fun rl_showHeightDialog() {
         var dsheight:String="5 Feet 4 inches"
         var feet:String="5 Feet"
         var inches:String="4 inches"
@@ -279,7 +278,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         }
 
         tvNo.setOnClickListener(View.OnClickListener {
-            RLvalidation()
+            rl_validation()
             if (displayheight.isEmpty()){
                 activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
             }
@@ -299,7 +298,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             activityBinding.edHeight.setText(displayheight)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edHeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-            RLvalidation()
+            rl_validation()
             sucDialog.dismiss()
         })
 
@@ -307,7 +306,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
     //Weight Change Dialog
-    private fun RLshowWeightDialog(activity: Activity) {
+    private fun rl_showWeightDialog(activity: Activity) {
         var dsweight:String="44 lbs"
         var st:String="5 st"
         var lb:String="1 lb"
@@ -456,7 +455,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
 
 
         tvNo.setOnClickListener(View.OnClickListener {
-            RLvalidation()
+            rl_validation()
             if (displayweight.isEmpty()){
                 activityBinding.edWeight.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
             }
@@ -481,7 +480,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             activityBinding.edWeight.setText(dsweight)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edWeight.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-            RLvalidation()
+            rl_validation()
             sucDialog.dismiss()
         })
 
@@ -489,7 +488,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
     //Gender Change Dialog
-    private fun RLshowGenderDialog() {
+    private fun rl_showGenderDialog() {
         val sucDialog: Dialog = Dialog(activity)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_gender_selection)
@@ -501,7 +500,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         radioGroup.check(R.id.radioButtonFemale)
 
         tvNo.setOnClickListener(View.OnClickListener {
-            RLvalidation()
+            rl_validation()
             if (selectedGender.isEmpty()){
                 activityBinding.edGender.setCompoundDrawablesWithIntrinsicBounds(null, null,null, null)
             }
@@ -526,7 +525,7 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             activityBinding.edGender.setText(selectedGender)
             val drawable = getDrawable(R.drawable.ic_check)
             activityBinding.edGender.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-            RLvalidation()
+            rl_validation()
             sucDialog.dismiss()
         })
 
@@ -534,10 +533,10 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
-    private fun RLopentoast(messageprint: String) {
+    private fun rl_opentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
-    private fun RLvalidation(): Boolean {
+    private fun rl_validation(): Boolean {
         firstName = activityBinding.edFirstname.text.toString().trim()
         lastName = activityBinding.edLastname.text.toString().trim()
         nickName = activityBinding.edNickname.text.toString().trim()
@@ -580,11 +579,11 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         return true
     }
     //FIREBASE NEW USER ENTRY
-    private fun RLRevoolaUserSettingWrite() {
+    private fun rl_revoolaUserSettingWrite() {
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
        val databaseManager = RLDatabaseManagerWrite()
-        val userId =authManager.RlgetCurrentUser()!!.uid
-        val myAge= RLTools.RLCalculateAge(DateTime)?:0
+        val userId =authManager.rl_getCurrentUser()!!.uid
+        val myAge= RLTools.rl_calculateAge(DateTime)?:0
         val versionName: String = try {
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             packageInfo.versionName ?: "0"
@@ -602,9 +601,9 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "name" to nickName,
             "remark" to "Android",
             "userId" to userId)
-        databaseManager.REVOOLAUSERFORSEARCHWrite(userId,revoolaUserForSearchMap) { success, error ->
+        databaseManager.revoola_User_For_Search_Write(userId,revoolaUserForSearchMap) { success, error ->
             if (success) {
-               RLTools.RlLogDPrint(TAG,"RevoolaUsersForSearch Successful Entry")
+               RLTools.rl_logDPrint(TAG,"RevoolaUsersForSearch Successful Entry")
             }
         }
 
@@ -670,68 +669,68 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             "visibilityflagforthatsession" to 0,
             "weightUnit" to weightUnit,
             "weightkg" to displayweight)
-        databaseManager.REVOOLAUSERSETTINGSWrite(userId,revoolaUserSettingsMap) { success, error ->
+        databaseManager.revoola_User_Settings_Write(userId,revoolaUserSettingsMap) { success, error ->
             if (success) {
                 startActivity(Intent(this, RLMainActivityRL::class.java))
                 finish()
             } else {
-                RLopentoast("User write operation failed: ${error?.message}")
+                rl_opentoast("User write operation failed: ${error?.message}")
             }
         }
     }
 
-    private fun RLopencameragallerydialog() {
+    private fun rl_opencameragallerydialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
         AlertDialog.Builder(activity)
             .setTitle("Choose Image")
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> RLtakePhoto()
-                    1 -> RLchooseFromGallery()
+                    0 -> rl_takePhoto()
+                    1 -> rl_chooseFromGallery()
                 }
                 dialog.dismiss()
             }
             .show()
     }
-    private fun RLtakePhoto() {
-        if (!RLisStoragePermissionGranted()) {
+    private fun rl_takePhoto() {
+        if (!rl_isStoragePermissionGranted()) {
             // Request the permission
-            RLrequestStoragePermission()
+            rl_requestStoragePermission()
         } else {
             // Permission is already granted, you can proceed with your code
             val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            RLchangeImageCamera.launch(pickImg)
+            rl_changeImageCamera.launch(pickImg)
         }
     }
-    private  fun RLchooseFromGallery() {
+    private  fun rl_chooseFromGallery() {
         val pickImg = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        RLchangeImage.launch(pickImg)
+        rl_changeImage.launch(pickImg)
     }
     //Image select
-    val RLchangeImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    val rl_changeImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imgUri= data?.data
             activityBinding.imgUseriamge.setImageURI(imgUri)
-            RluploadImage(imgUri!!)
+            rl_uploadImage(imgUri!!)
         }
     }
-    val RLchangeImageCamera =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    val rl_changeImageCamera =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imageBitmap = data?.extras?.get("data") as Bitmap
             activityBinding.imgUseriamge.setImageBitmap(imageBitmap)
-            val tempUri = RLgetImageUri(this, imageBitmap)
-            RluploadImage(tempUri)
+            val tempUri = rl_getImageUri(this, imageBitmap)
+            rl_uploadImage(tempUri)
         }
     }
-    private fun RLgetImageUri(inContext: Activity, inImage: Bitmap): Uri {
+    private fun rl_getImageUri(inContext: Activity, inImage: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path = MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
         return Uri.parse(path)
     }
-    private fun RluploadImage(filePath:Uri) {
+    private fun rl_uploadImage(filePath:Uri) {
         if (filePath != null) {
             val leaderboardPath = userId+"leaderboard.png"
             val mainPath = userId+"main.png"
@@ -741,26 +740,26 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             uploadleaderboard.addOnSuccessListener {
                 leaderboardref.downloadUrl.addOnSuccessListener { uri ->
                     chooseimagefile = uri.toString()
-                    RLvalidation()
-                    RLTools.RlLogDPrint(TAG,"imageUrl leaderboardPath:- $chooseimagefile")
+                    rl_validation()
+                    RLTools.rl_logDPrint(TAG,"imageUrl leaderboardPath:- $chooseimagefile")
                 }
             }.addOnFailureListener {
-               RLopentoast("Failed to upload image")
+               rl_opentoast("Failed to upload image")
             }
 
             val mainPathref = FirebaseStorage.getInstance().reference.child(mainPath)
             val uploadmainPath= mainPathref.putFile(filePath)
             uploadmainPath.addOnSuccessListener {
                 mainPathref.downloadUrl.addOnSuccessListener { uri ->
-                    RLTools.RlLogDPrint(TAG,"imageUrl mainPath:- $chooseimagefile")
+                    RLTools.rl_logDPrint(TAG,"imageUrl mainPath:- $chooseimagefile")
                 }
             }.addOnFailureListener {
-                RLopentoast("Failed to upload image")
+                rl_opentoast("Failed to upload image")
             }
         }
     }
     //DATE SELECT
-    private fun RLdialogStartDatePicker() {
+    private fun rl_dialogStartDatePicker() {
         val currentDate: Calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
             this,
@@ -791,18 +790,18 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
         activityBinding.edDateofbirth.setText(DateTime).toString()
         val drawable = getDrawable(R.drawable.ic_check)
         activityBinding.edDateofbirth.setCompoundDrawablesWithIntrinsicBounds(null, null,drawable, null)
-        RLvalidation()
+        rl_validation()
     }
-    private fun RLisStoragePermissionGranted(): Boolean {
+    private fun rl_isStoragePermissionGranted(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         val storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
-    private fun RLrequestStoragePermission() {
+    private fun rl_requestStoragePermission() {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_REQUEST_CODE)
     }
 
-    private fun RLshowHelpDialog() {
+    private fun rl_showHelpDialog() {
         val dialog: Dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         val dialogMainBinding: RlDialogHelpSigninBinding=
@@ -829,10 +828,10 @@ class RLSignUpActivityRL : RLBaseActivity(),DatePickerDialog.OnDateSetListener  
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted, you can proceed with your code
                 val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                RLchangeImageCamera.launch(pickImg)
+                rl_changeImageCamera.launch(pickImg)
             } else {
                 // Permission is denied
-                RLopentoast("Permission is denied")
+                rl_opentoast("Permission is denied")
             }
         }
     }

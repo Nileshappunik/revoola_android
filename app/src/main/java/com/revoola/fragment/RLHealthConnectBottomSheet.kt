@@ -2,8 +2,6 @@ package com.revoola.fragment
 
 
 import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +31,7 @@ class RLHealthConnectBottomSheet : BottomSheetDialogFragment() {
         connectButton.setOnClickListener {
             // Handle "CONNECT TO HEALTH" button click
             dismiss()
-            (context as RLMainActivityRL).RLHealthAndAllPermission()
+            (context as RLMainActivityRL).rl_healthAndAllPermission()
 
         }
         // Set transparent background to apply rounded corners properly

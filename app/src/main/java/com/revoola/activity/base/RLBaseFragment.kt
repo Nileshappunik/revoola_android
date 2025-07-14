@@ -1,6 +1,5 @@
 package com.revoola
 
-import android.app.AlertDialog
 import android.app.UiModeManager
 import android.content.Context
 import android.content.Intent
@@ -9,9 +8,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.view.*
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -25,7 +22,6 @@ import com.revoola.firebaseModel.RLAssumedRev
 import com.revoola.fragment.common.RLFragNoInternet
 import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.model.RLRevoolaUsersSettingsModel
-import com.revoola.commonobject.RLTools.RLnextFinishAllActivity
 import com.google.gson.Gson
 import com.moengage.core.MoECoreHelper
 import com.revoola.activity.RLSplashActivityRL
@@ -40,48 +36,11 @@ open class RLBaseFragment : Fragment() {
     val TAG1: String = RLBaseFragment::class.java.simpleName
 
 
-    open fun RLonBackPresAct(o: ImageView) {
+    open fun rl_onBackPresAct(o: ImageView) {
         o.setOnClickListener { v: View? -> super.requireActivity().onBackPressed() }
     }
 
-    open fun onBackPressedHandler() {
-        // Call activity's onBackPressed
-        requireActivity().onBackPressed() // This will trigger the default back behavior
-    }
-
-    open fun RLonDirectBackPresAct(o: ImageView) {
-        super.requireActivity()!!.onBackPressed()
-    }
-
-    open fun RLonClickNoTask(o: LinearLayout) {
-        o.setOnClickListener { v: View? -> }
-    }
-
-    open fun RLclickActiviy(o: View, cls: Class<*>?, finishAll: String) {
-        if (finishAll == "NEXT") {
-            o.setOnClickListener { RLnextActivity(cls) }
-        } else if (finishAll == "ALL") {
-            o.setOnClickListener { RLnextFinishAllActivity(requireActivity(), cls) }
-        }
-    }
-
-    //TODO : Full Screen
-    open fun RLsetStatusBarDark() {
-        requireActivity()!!.window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR//  set status RLText dark
-        requireActivity()!!.window.statusBarColor =
-            ContextCompat.getColor(requireActivity()!!, R.color.AppBlackColor)
-    }
-
-    open fun RLsetSystemBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window: Window = requireActivity()!!.window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-            window.statusBarColor = requireActivity()!!.resources.getColor(color)
-        }
-    }
-    fun RLgetCurrentDateTimeIsoFormatted(): String {
+    fun rl_getCurrentDateTimeIsoFormatted(): String {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val currentDateTime = ZonedDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -92,8 +51,8 @@ open class RLBaseFragment : Fragment() {
 
     }
 
-    fun RLGetUserDetails(context: Context): RLRevoolaUsersSettingsModel? {
-        val  json = RLPrefManager.RLGetSomeStringValue(requireContext(), RLPrefManager.user_model_data,null)
+    fun rl_getUserDetails(context: Context): RLRevoolaUsersSettingsModel? {
+        val  json = RLPrefManager.rl_getSomeStringValue(requireContext(), RLPrefManager.user_model_data,null)
         val gson = Gson()
 
         return if (json != null) {
@@ -103,35 +62,23 @@ open class RLBaseFragment : Fragment() {
         }
     }
 
-    open fun RLnextActivity(cls: Class<*>?) {
-        val intent = Intent(activity, cls)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
 
-    open fun RLSignOut() {
+    open fun rl_signOut() {
         Firebase.auth.signOut()
         MoECoreHelper.logoutUser(requireContext())
         // RLPrefManager.RLsetSomeStringValue(requireContext(), RLPrefManager.current_user,"")
-        RLPrefManager.RLClear_all(requireContext())
+        RLPrefManager.rl_clear_all(requireContext())
         val intent = Intent(requireContext(), RLSplashActivityRL::class.java)
         startActivity(intent)
         activity?.finish()
     }
 
-    /*open fun RLopeDrawerBar(findId: View) {
-        findId.setOnClickListener(View.OnClickListener {
-            (activity as RLMainActivityRL).activityMainBinding.drawerLayout.openDrawer(Gravity.LEFT)
-        })
-    }*/
-
     //TODO : DataBind
-    open fun RLinflateBindLayout(activity1: Class<FragmentActivity>?, inflater: LayoutInflater, layoutName: Int, container: ViewGroup?, ): Any? {
+    open fun rl_inflateBindLayout(activity1: Class<FragmentActivity>?, inflater: LayoutInflater, layoutName: Int, container: ViewGroup?, ): Any? {
         return DataBindingUtil.inflate(inflater!!, layoutName, container, false)
     }
 
-    val RLDIALOG_QUEST_CODE: Int = 205
-    fun RLshowDialogFullscreen(): RLFragNoInternet {
+    fun rl_showDialogFullscreen(): RLFragNoInternet {
         val dialog = RLFragNoInternet()
         val ft = requireActivity().supportFragmentManager.beginTransaction()
         dialog.show(ft, TAG1)
@@ -139,21 +86,7 @@ open class RLBaseFragment : Fragment() {
         return dialog
     }
 
-
-   /* open fun RLsessionOut() {
-        ShowProgressDialog(requireActivity())
-        Toast.makeText(activity, "Session Expire", Toast.LENGTH_SHORT).show()
-        Handler(Looper.getMainLooper()).postDelayed({
-            PrefManager.clear_all(activity)
-            val intent = Intent(activity, RLLoginActivityRL::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            requireActivity().startActivity(intent)
-            requireActivity().finish()
-            RLBaseProgress.hideProgressDialog()
-        }, 700)
-    }*/
-
-    open fun RLcommonToast(message:String){
+    open fun rl_commonToast(message:String){
         try{
             if (isAdded) {
                 context?.let {
@@ -161,18 +94,17 @@ open class RLBaseFragment : Fragment() {
                 }
             }
         }catch (e:Exception){
-           RLTools.RlLogEPrint(TAG1,"TOAST EXCEPTION:- ${e.message}")
+           RLTools.rl_logEPrint(TAG1,"TOAST EXCEPTION:- ${e.message}")
         }
 
     }
 
-
-    open fun RLcloseFragment() {
+    open fun rl_closeFragment() {
         // Close the fragment by popping it from the back stack
         parentFragmentManager.popBackStack()
     }
 
-    open fun RLScreenSet(isLandScape:Boolean) {
+    open fun rl_screenSet(isLandScape:Boolean) {
         val uiModeManager =  activity?.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
         val currentModeType = uiModeManager.currentModeType
 
@@ -190,17 +122,17 @@ open class RLBaseFragment : Fragment() {
 
     }
 
-    open fun RLBottomHideShowSet(isShow:Boolean) {
+    open fun rl_bottomHideShowSet(isShow:Boolean) {
         if (isShow){
-            (context as RLMainActivityRL).RLshowbottombarcolorwhite()
+            (context as RLMainActivityRL).rl_showbottombarcolorwhite()
 
         }else{
-            (context as RLMainActivityRL).RLhidebottombarcolorwhite()
+            (context as RLMainActivityRL).rl_hidebottombarcolorwhite()
         }
     }
 
-    open fun RLHelpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
-        val helpString= com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, startHelpContent,"" )
+    open fun rl_helpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
+        val helpString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, startHelpContent,"" )
 
         if (helpString.isNotEmpty()){
             try {
@@ -224,15 +156,15 @@ open class RLBaseFragment : Fragment() {
 
 
     //Firebase To Fetch UserBasic Data
-     fun RLFirebaseToFetchUserData(callback: (RLRevoolaUsersSettingsModel?) -> Unit) {
+     fun rl_firebaseToFetchUserData(callback: (RLRevoolaUsersSettingsModel?) -> Unit) {
         val authManager = RLAuthManager()
-        val userId = authManager.RlgetCurrentUser()?.uid ?: run {
+        val userId = authManager.rl_getCurrentUser()?.uid ?: run {
             callback(null) // Return null if user is not logged in
             return
         }
 
         // Firebase to fetch user data
-        RLDatabaseManagerRead().RlUserBasicDataRead(userId) { data, error ->
+        RLDatabaseManagerRead().rl_userBasicDataRead(userId) { data, error ->
             if (data != null) {
                // val gson = Gson()
                // val jsonObject = gson.toJson(data)
@@ -246,11 +178,11 @@ open class RLBaseFragment : Fragment() {
 
     }
     //Firebase To Fetch AssumedCalories Data
-    fun RLfetchAssumedCalories(callback: (RLAssumedCalories?) -> Unit) {
+    fun rl_fetchAssumedCalories(callback: (RLAssumedCalories?) -> Unit) {
         // Firebase to fetch user data
 
         val path = RevoolaFirebasePath.assumedCaloriesDataPath()
-        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+        RLDatabaseManagerRead().rl_readData(path) { data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -262,10 +194,10 @@ open class RLBaseFragment : Fragment() {
         }
     }
     //Firebase To Fetch AssumedRev Data
-    fun RLfetchAssumedRev(callback: (RLAssumedRev?) -> Unit) {
+    fun rl_fetchAssumedRev(callback: (RLAssumedRev?) -> Unit) {
         // Firebase to fetch user data
         val path = RevoolaFirebasePath.assumedRevDataPath()
-        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+        RLDatabaseManagerRead().rl_readData(path) { data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -276,7 +208,7 @@ open class RLBaseFragment : Fragment() {
             }
         }
     }
-     fun RLCalculateAssumedCalories(hr: Double, weight: Double, age: Int, time: Double, assumedRev: Double, assumedCalories: RLAssumedCalories, gender:String): Double {
+     fun rl_calculateAssumedCalories(hr: Double, weight: Double, age: Int, time: Double, assumedRev: Double, assumedCalories: RLAssumedCalories, gender:String): Double {
         val maxAssumedRev = (1000.0 / 3600.0) * time
         val normalizedAssumedRev = assumedRev / maxAssumedRev / 100
 
@@ -299,7 +231,7 @@ open class RLBaseFragment : Fragment() {
         }
         return 0.0
     }
-     fun RLGenerateAssumedRev(classType:String, assumedRev: RLAssumedRev, distancevalue:Double, totalElevation:Double, totalTime:Double): Double {
+     fun rl_generateAssumedRev(classType:String, assumedRev: RLAssumedRev, distancevalue:Double, totalElevation:Double, totalTime:Double): Double {
         var assumedRevValue = 0.0
         val distance = distancevalue//
         val elevation =totalElevation  //
@@ -372,38 +304,6 @@ open class RLBaseFragment : Fragment() {
         }
         return assumedRevValue
     }
-    fun RLzoneDiff(REVPer: Int):Int {
-        when {
-            REVPer <= 30 -> {
-                //Zone 1
-                return 1
-            }
-            REVPer <= 50 -> {
-                //Zone 2
-                return 2
-            }
-            REVPer <= 60 -> {
-                //Zone 3
-                return 3
-            }
-            REVPer <= 70 -> {
-                //Zone 4
-                return 4
-            }
-            REVPer <= 80 -> {
-                //Zone 5
-                return 5
-            }
-            REVPer <= 90 -> {
-                //Zone 6
-                return 6
-            }
-            REVPer <= 100 -> {
-                //Zone 7
-                return 7
-            }
-        }
-         return 1
-    }
+
 
 }

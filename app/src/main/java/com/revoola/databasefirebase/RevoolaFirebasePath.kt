@@ -69,16 +69,16 @@ object RevoolaFirebasePath {
     }
 
     fun basicDataPathWrite(endPoint:String):String{
-        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        val userId =  RLAuthManager().rl_getCurrentUser()?.uid ?:""
         return "/$basePath/revoolaUserSettings/$userId/basicData/$endPoint"
     }
     fun userForSearchPathWrite(endPoint:String):String{
-        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        val userId =  RLAuthManager().rl_getCurrentUser()?.uid ?:""
         return "/$basePath/revoolaUsersForSearch/$userId/$endPoint"
     }
 
     fun ScheduledPathRead():String{
-        val userId =  RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        val userId =  RLAuthManager().rl_getCurrentUser()?.uid ?:""
         return "/$basePath/revoolaUserSettings/$userId/schedule"
     }
 

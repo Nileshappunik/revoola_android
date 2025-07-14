@@ -26,11 +26,11 @@ class RLFragYourWay : RLBaseFragment() {
         RlFragYoueWayBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_youe_way, container) as RlFragYoueWayBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragYourWay" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_youe_way, container) as RlFragYoueWayBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragYourWay" )
         return fragBinding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,25 +39,25 @@ class RLFragYourWay : RLBaseFragment() {
             override fun onGlobalLayout() {
                 fragBinding.rvYourway.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val height =  fragBinding.rvYourway.height
-                RLTools.RlLogDPrint(TAG,"RelativeLayout total height: $height pixels")
+                RLTools.rl_logDPrint(TAG,"RelativeLayout total height: $height pixels")
                 RLYourwayList(height)
             }
         })
     }
 
     private fun RLYourwayList(height: Int) {
-        RLonBackPresAct(fragBinding.inlayTop.ivBack)
+        rl_onBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))
         fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
 
          val databaseManager= RLDatabaseManagerRead()
-         databaseManager.RLALLMENULISTRead(RLConstants.YOUR_WAY){ data, error ->
+         databaseManager.rl_allMenuListRead(RLConstants.YOUR_WAY){ data, error ->
              if (data != null) {
                  try {
                      val gson = Gson()
                      val jsonArray = gson.toJson(data)
-                     RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
+                     RLTools.rl_logDPrint(TAG,"Response:- $jsonArray")
                      val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                      val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                     //Recyclerview Set
@@ -66,7 +66,7 @@ class RLFragYourWay : RLBaseFragment() {
                      val adapter = RLYourWayListAdapter(activity,dataList,height)
                      fragBinding.rvYourway.adapter=adapter
                  }catch (e:Exception){
-                    RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
+                    RLTools.rl_logEPrint(TAG,"Catch:- ${e.message}")
                  }
              }
          }

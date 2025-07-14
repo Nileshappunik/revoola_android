@@ -41,8 +41,8 @@ import retrofit2.Response
 
 class RLMainRepository(private val apiService: RLNetworkService) {
 
-    fun RLgetUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
-        apiService.RLgetUserAggregatedData(request).enqueue(object : Callback<RLOverViewModel> {
+    fun rl_getUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
+        apiService.rl_getUserAggregatedData(request).enqueue(object : Callback<RLOverViewModel> {
             override fun onResponse(call: Call<RLOverViewModel>, response: Response<RLOverViewModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -57,8 +57,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgetUserFeedCardData(request: List<RLSetoverview_thumbRequest>, callback: (Result<RLFeedModel>) -> Unit) {
-        apiService.RLgetUserFeedCardData(request).enqueue(object : Callback<RLFeedModel> {
+    fun rl_getUserFeedCardData(request: List<RLSetoverview_thumbRequest>, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.rl_getUserFeedCardData(request).enqueue(object : Callback<RLFeedModel> {
             override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -73,8 +73,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgetUserFeedCardDatayou(request: List<RLSetoverview_thumbRequest_you>, callback: (Result<RLFeedModel>) -> Unit) {
-        apiService.RLgetUserFeedCardDatayou(request).enqueue(object : Callback<RLFeedModel> {
+    fun rl_getUserFeedCardDatayou(request: List<RLSetoverview_thumbRequest_you>, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.rl_getUserFeedCardDatayou(request).enqueue(object : Callback<RLFeedModel> {
             override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -89,8 +89,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLJoinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
-        apiService.RLJoinBigChallengeFeed(request).enqueue(object : Callback<String> {
+    fun rl_joinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
+        apiService.rl_JoinBigChallengeFeed(request).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body() ?: "No response"
@@ -107,8 +107,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
     }
 
 
-    fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
-        apiService.RLGroupMembers(request).enqueue(object : Callback<RLGetGroupMemberModel> {
+    fun rl_groupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
+        apiService.rl_groupMembers(request).enqueue(object : Callback<RLGetGroupMemberModel> {
             override fun onResponse(call: Call<RLGetGroupMemberModel>, response: Response<RLGetGroupMemberModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -123,8 +123,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgetGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
-        apiService.RLgetGroupData(request).enqueue(object : Callback<RLGroupModel> {
+    fun rl_getGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
+        apiService.rl_getGroupData(request).enqueue(object : Callback<RLGroupModel> {
             override fun onResponse(call: Call<RLGroupModel>, response: Response<RLGroupModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -138,8 +138,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLgetOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
-        apiService.RLgetOverviewGraph(request).enqueue(object : Callback<RLOverviewGraphResponse> {
+    fun rl_getOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
+        apiService.rl_getOverviewGraph(request).enqueue(object : Callback<RLOverviewGraphResponse> {
             override fun onResponse(call: Call<RLOverviewGraphResponse>, response: Response<RLOverviewGraphResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -154,8 +154,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        apiService.RLgoaled_challenges(request).enqueue(object : Callback<RLFeedChallengesModel> {
+    fun rl_goaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.rl_goaled_challenges(request).enqueue(object : Callback<RLFeedChallengesModel> {
             override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -170,8 +170,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgoaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        apiService.RLgoaled_challenges_view(request).enqueue(object : Callback<RLFeedChallengesModel> {
+    fun rl_goaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.rl_goaled_challenges_view(request).enqueue(object : Callback<RLFeedChallengesModel> {
             override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -186,8 +186,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        apiService.RLgoaled_challenges_Single(request).enqueue(object : Callback<RLFeedChallengesModel> {
+    fun rl_goaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        apiService.rl_goaled_challenges_Single(request).enqueue(object : Callback<RLFeedChallengesModel> {
             override fun onResponse(call: Call<RLFeedChallengesModel>, response: Response<RLFeedChallengesModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -201,8 +201,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
-        apiService.RLMetricChartByDay(request).enqueue(object : Callback<RLFeedChallengesMapModel> {
+    fun rl_metricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
+        apiService.rl_metricChartByDay(request).enqueue(object : Callback<RLFeedChallengesMapModel> {
             override fun onResponse(call: Call<RLFeedChallengesMapModel>, response: Response<RLFeedChallengesMapModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -217,8 +217,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLfriendsYouFollow(request: List<RLSetsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        apiService.RLfriendsYouFollow(request).enqueue(object : Callback<RLYourFriendsModel> {
+    fun rl_friendsYouFollow(request: List<RLSetsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        apiService.rl_friendsYouFollow(request).enqueue(object : Callback<RLYourFriendsModel> {
             override fun onResponse(call: Call<RLYourFriendsModel>, response: Response<RLYourFriendsModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -233,8 +233,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLsearch_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        apiService.RLsearch_user_Data_DeepLink(request).enqueue(object : Callback<RLYourFriendsModel> {
+    fun rl_search_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        apiService.rl_search_user_Data_DeepLink(request).enqueue(object : Callback<RLYourFriendsModel> {
             override fun onResponse(call: Call<RLYourFriendsModel>, response: Response<RLYourFriendsModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -248,8 +248,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLFindOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
-        apiService.RLFindOnRevoolaEmailFilter(request).enqueue(object : Callback<EmailFilterApiResponse> {
+    fun rl_findOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
+        apiService.rl_findOnRevoolaEmailFilter(request).enqueue(object : Callback<EmailFilterApiResponse> {
             override fun onResponse(call: Call<EmailFilterApiResponse>, response: Response<EmailFilterApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -264,8 +264,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLfriendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        apiService.RLfriendsFollowingYou(request).enqueue(object : Callback<RLYourFriendsModel> {
+    fun rl_friendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        apiService.rl_friendsFollowingYou(request).enqueue(object : Callback<RLYourFriendsModel> {
             override fun onResponse(call: Call<RLYourFriendsModel>, response: Response<RLYourFriendsModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -280,8 +280,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLyourGroupData(request: List<RLrequestgroup_dataset>, callback: (Result<RLYourGroupModel>) -> Unit) {
-        apiService.RLyourGroupData(request).enqueue(object : Callback<RLYourGroupModel> {
+    fun rl_yourGroupData(request: List<RLrequestgroup_dataset>, callback: (Result<RLYourGroupModel>) -> Unit) {
+        apiService.rl_yourGroupData(request).enqueue(object : Callback<RLYourGroupModel> {
             override fun onResponse(call: Call<RLYourGroupModel>, response: Response<RLYourGroupModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -296,8 +296,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgetOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
-        apiService.RLgetOverviewThumbFromIdData(request).enqueue(object : Callback<RLFeedModel> {
+    fun rl_getOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.rl_getOverviewThumbFromIdData(request).enqueue(object : Callback<RLFeedModel> {
             override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -312,8 +312,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
-    fun RLgetNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
-        apiService.RLgetNotificationData(q,user,limit,index).enqueue(object : Callback<RLNotificationModel> {
+    fun rl_getNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
+        apiService.rl_getNotificationData(q,user,limit,index).enqueue(object : Callback<RLNotificationModel> {
             override fun onResponse(call: Call<RLNotificationModel>, response: Response<RLNotificationModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -327,8 +327,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLgetCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
-        apiService.RLgetCommentsData(q,overviewid,limit,index).enqueue(object : Callback<RLFeedModel> {
+    fun rl_getCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
+        apiService.rl_getCommentsData(q,overviewid,limit,index).enqueue(object : Callback<RLFeedModel> {
             override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -344,8 +344,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
     }
 
     //Innsert Api
-    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertYourWayData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+    fun rl_insertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertYourWayData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -361,8 +361,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
     }
 
     //Innsert Api
-    fun RLInsertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertFriendsData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+    fun rl_insertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertFriendsData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -376,8 +376,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLInsertClassSessionData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertClassSessionData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+    fun rl_insertClassSessionData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertClassSessionData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -391,24 +391,8 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun RLInsertYourWayOverviewData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertYourWayOverviewData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
-            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
-                if (response.isSuccessful) {
-                    callback(Result.success(response.body()!!))
-                } else {
-                    callback(Result.failure(Throwable(response.message().toString())))
-                }
-            }
-            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
-
-    }
-
-    fun RLInsertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertGroupData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+    fun rl_insertYourWayOverviewData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertYourWayOverviewData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -423,9 +407,25 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun rl_insertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertGroupData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
 
-    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        apiService.RLInsertChallenges(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+    }
+
+
+    fun rl_insertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertChallenges(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseUser
 class RLAuthManager {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun RLRegisterUser(email: String, password: String, callback: (FirebaseUser?, Exception?) -> Unit) {
+    fun rl_registerUser(email: String, password: String, callback: (FirebaseUser?, Exception?) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -18,7 +18,7 @@ class RLAuthManager {
     }
 
 
-    fun RLRegisterGuestUser(callback: (FirebaseUser?, Exception?) -> Unit) {
+    fun rl_registerGuestUser(callback: (FirebaseUser?, Exception?) -> Unit) {
         auth.signInAnonymously()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -29,7 +29,7 @@ class RLAuthManager {
             }
     }
 
-    fun RlloginUser(email: String, password: String, callback: (FirebaseUser?, Exception?) -> Unit) {
+    fun rl_loginUser(email: String, password: String, callback: (FirebaseUser?, Exception?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -40,7 +40,7 @@ class RLAuthManager {
             }
     }
 
-    fun RLForgotPasswordUser(email: String, callback: (String?, Exception?) -> Unit) {
+    fun rl_forgotPasswordUser(email: String, callback: (String?, Exception?) -> Unit) {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -51,13 +51,13 @@ class RLAuthManager {
             }
     }
 
-    fun RlgetCurrentUser(): FirebaseUser? {
+    fun rl_getCurrentUser(): FirebaseUser? {
         return auth.currentUser
     }
 
 
 
-    fun RLsignOut() {
+    fun rl_signOut() {
         auth.signOut()
     }
 

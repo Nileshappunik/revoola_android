@@ -43,12 +43,12 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(true)
-        RLBottomHideShowSet(false)
+         rl_screenSet(true)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_right_body_heart_video, container) as RlFragRightBodyHeartVideoBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragRightBodyWithHeartVideo")
-        currentUserID =  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user,"")
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_right_body_heart_video, container) as RlFragRightBodyHeartVideoBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragRightBodyWithHeartVideo")
+        currentUserID =  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user,"")
         RLuisetup()
         return fragBinding.root
     }
@@ -56,11 +56,11 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
     private fun RLuisetup() {
         val linearLayoutMain = LinearLayoutManager(activity)
         fragBinding.recyclerList.layoutManager = linearLayoutMain
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 userBasicdata=userData
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
        // val VideoId=  requireArguments().getString("videoID","")
@@ -75,10 +75,10 @@ class RLFragRightBodyWithHeartVideo : RLBaseFragment(), RLItemClickListener {
     @SuppressLint("SuspiciousIndentation")
     private fun RLfetchLeaderBoardData(videoId:String) {
         val sessionList = mutableListOf<RLRanking>()
-        RLDatabaseManagerRead().RLClassLeaderBoardDataRead(videoId) { result, error ->
+        RLDatabaseManagerRead().rl_classLeaderBoardDataRead(videoId) { result, error ->
             if (error != null) {
                 // Handle the error case
-               RLTools.RlLogEPrint(TAG, "Error fetching leaderboard data: $error")
+               RLTools.rl_logEPrint(TAG, "Error fetching leaderboard data: $error")
             } else if (result is Map<*, *>) {
                 // Handle the successful result
                 for ((key, value) in result) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,8 +19,6 @@ import com.revoola.R
 import com.revoola.RLBaseFragment
 import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlDialogMapBinding
-import com.revoola.fragment.start.challenges.RLFragChallengesFor
-import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 import com.revoola.utils.RLPrefManager
 import org.json.JSONObject
 
@@ -41,11 +38,10 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
         RlDialogMapBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMapView" )
-       // RLuisetup()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMapView" )
         return fragBinding.root
     }
 
@@ -54,7 +50,7 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
         jsonDataString = requireArguments().getString("jsonDataString").toString()
         // Set up back button click listener
        // val ivBack = view.findViewById<ImageView>(R.id.ivBack)
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
 
         // Add a small delay to ensure the view is fully inflated
         view.post {
@@ -63,19 +59,9 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
         }
     }
 
-
-//    private fun RLuisetup() {
-//        RLonBackPresAct(fragBinding.ivBack)
-//        jsonDataString = requireArguments().getString("jsonDataString").toString()
-//        view?.post {
-//            mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as? SupportMapFragment
-//            mapFragment?.getMapAsync(this)
-//        }
-//    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        RLTools.RlLogEPrint("RLMapFragment", "Map ready, starting initialization...")
+        RLTools.rl_logEPrint("RLMapFragment", "Map ready, starting initialization...")
 
         try {
             // Test if map is actually working with a simple marker first
@@ -103,8 +89,8 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
             mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
             // Log map state
-            RLTools.RlLogEPrint("RLMapFragment", "Map type: ${mMap.mapType}")
-            RLTools.RlLogEPrint("RLMapFragment", "Map camera position: ${mMap.cameraPosition}")
+            RLTools.rl_logEPrint("RLMapFragment", "Map type: ${mMap.mapType}")
+            RLTools.rl_logEPrint("RLMapFragment", "Map camera position: ${mMap.cameraPosition}")
 
             // Set map style (optional)
             mMap.setMapStyle(null)
@@ -115,13 +101,13 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
             }, 1000) // 1 second delay
 
         } catch (e: Exception) {
-            RLTools.RlLogEPrint("RLMapFragment", "Error in onMapReady: $e")
+            RLTools.rl_logEPrint("RLMapFragment", "Error in onMapReady: $e")
         }
     }
 
     private fun initializeMap() {
         if (!::mMap.isInitialized || jsonDataString.isEmpty()) {
-            RLTools.RlLogEPrint("RLMapFragment", "Map not ready or no location data")
+            RLTools.rl_logEPrint("RLMapFragment", "Map not ready or no location data")
             return
         }
 
@@ -159,7 +145,7 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
                     colors.add(getStateColor(state))
 
                 } catch (e: Exception) {
-                    RLTools.RlLogEPrint("RLMapFragment", "Parse error at $index: $e")
+                    RLTools.rl_logEPrint("RLMapFragment", "Parse error at $index: $e")
                 }
             }
 
@@ -205,10 +191,10 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
                         2000, // 2 seconds animation
                         object : GoogleMap.CancelableCallback {
                             override fun onFinish() {
-                                RLTools.RlLogEPrint("RLMapFragment", "Camera animation finished")
+                                RLTools.rl_logEPrint("RLMapFragment", "Camera animation finished")
                             }
                             override fun onCancel() {
-                                RLTools.RlLogEPrint("RLMapFragment", "Camera animation cancelled")
+                                RLTools.rl_logEPrint("RLMapFragment", "Camera animation cancelled")
                             }
                         }
                     )
@@ -217,13 +203,13 @@ class RLFragMapView : RLBaseFragment() , OnMapReadyCallback {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsToFit, 100))
                 }
 
-                RLTools.RlLogEPrint("RLMapFragment", "Map initialized with ${pathPoints.size} points")
+                RLTools.rl_logEPrint("RLMapFragment", "Map initialized with ${pathPoints.size} points")
             } else {
-                RLTools.RlLogEPrint("RLMapFragment", "pathPoints and colors are empty")
+                RLTools.rl_logEPrint("RLMapFragment", "pathPoints and colors are empty")
             }
 
         } catch (e: Exception) {
-            RLTools.RlLogEPrint("RLMapFragment", "Error initializing map: $e")
+            RLTools.rl_logEPrint("RLMapFragment", "Error initializing map: $e")
         }
     }
 

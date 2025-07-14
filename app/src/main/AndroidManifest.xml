@@ -175,7 +175,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.revoola.services.RLBLEService" />
 
        <!-- Start MoEPushService SDK-->
 

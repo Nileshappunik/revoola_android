@@ -1,17 +1,12 @@
 package com.revoola.fragment.start.yourway
 
 import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -32,9 +27,7 @@ import com.revoola.ble.RLDeviceType
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlFragChooseYourSensorBinding
-import com.revoola.databinding.RlWatchConformationDialogBinding
 import com.revoola.enumclass.RLYourWayName
-import com.revoola.fragment.guest.RLWelcomeDialog
 import com.revoola.fragment.start.adapter.RLBleListModel
 import com.revoola.fragment.start.adapter.RLSensorCadenceListAdapter
 import com.revoola.fragment.start.adapter.RLSensorHeartListAdapter
@@ -48,7 +41,6 @@ import com.revoola.interfaceall.RLItemClickListenerAdapter
 import com.revoola.utils.RLPrefManager
 import com.revoola.watch.RLWatchWakeUpDialog
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
     val TAG: String = RLFragChooseYourSensor::class.java.simpleName
@@ -85,11 +77,11 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment, "BLEFragment")
+        fragBinding = rl_inflateBindLayout(activity?.javaClass, inflater, R.layout.rl_frag_choose_your_sensor, container) as RlFragChooseYourSensorBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment, "BLEFragment")
         RLuisetup()
         return fragBinding.root
     }
@@ -97,8 +89,8 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
     private fun RLuisetup() {
 
         fragBinding.ivBack.setOnClickListener {
-            RLBottomHideShowSet(true)
-            RLcloseFragment()
+            rl_bottomHideShowSet(true)
+            rl_closeFragment()
         }
 
         RLGetConnectedWearOsDevices(requireContext())
@@ -186,7 +178,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
     }
 
     private fun updateDeviceList(devicesList: List<RLBLEResult.RLDeviceFound>) {
-        val lastConnectDeviceAddress =RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+        val lastConnectDeviceAddress =RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.last_device_connect, "")
         devicesList.forEach { deviceData ->
            val lastConnect = lastConnectDeviceAddress.equals(deviceData.deviceAddress)
             if (lastConnect){
@@ -212,7 +204,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
 
     private fun updateSensorDisplay(data: RLBLEResult.RLSensorData?) {
         // Update UI with sensor data
-        RLTools.RlLogEPrint(TAG1,"data: $data")
+        RLTools.rl_logEPrint(TAG1,"data: $data")
     }
 
     private fun RLNextScreenOpen(yourWayType:String){
@@ -230,15 +222,15 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragHeartRateSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
                     bundle.putBoolean(RLExtraValueKey.isSpeedSensor,true)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragSensorProgress().newInstance(bundle), TAG, false, null, false)
                 }
             }
 
@@ -253,13 +245,13 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClassesSpeedVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
             }
 
@@ -274,13 +266,13 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             bundle.putBoolean(RLExtraValueKey.isWatch, isWatch)
             when(sensorDeviceType){
                 RLDeviceType.NO_DEVICE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 RLDeviceType.HEART_RATE.toString() ->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragMindClassesHeartVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
                 else ->{ //SPEED AND CADENCE
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragMindClassesNormalVideoStart().newInstance(bundle), TAG, false, null, false)
                 }
             }
 
@@ -295,7 +287,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             sensorDeviceType=deviceType
             sensorDeviceAddress=deviceAddress
             isWatch = isWatchDevice
-            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.last_device_connect, deviceAddress)
+            RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.last_device_connect, deviceAddress)
         }else{
             if (deviceType.equals(sensorDeviceType)){
                 sensorDeviceType = RLDeviceType.NO_DEVICE.toString()
@@ -320,7 +312,7 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
             .addOnSuccessListener { nodes ->
                 nodes.forEach { node ->
                     fragBinding.cardHeartRateSensor.visibility = View.VISIBLE
-                    val lastConnectDeviceAddress =RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.last_device_connect, "")
+                    val lastConnectDeviceAddress =RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.last_device_connect, "")
                     val lastConnect = lastConnectDeviceAddress.equals(node.id)
                     if (lastConnect){
                         sensorDeviceType = RLDeviceType.HEART_RATE.toString()
@@ -328,11 +320,11 @@ class RLFragChooseYourSensor : RLBaseFragment(), RLItemClickListenerAdapter  {
                         isWatch = true
                     }
                     adapter.addUniqueItem(RLBleListModel(node.displayName,node.id,RLDeviceType.HEART_RATE.toString(),lastConnect,true))
-                    RLTools.RlLogEPrint("WearOS", "Connected Wear OS device: ${node.displayName}, id: ${node.id}")
+                    RLTools.rl_logEPrint("WearOS", "Connected Wear OS device: ${node.displayName}, id: ${node.id}")
                 }
             }
             .addOnFailureListener { exception ->
-                RLTools.RlLogEPrint("WearOS", "Error retrieving connected nodes ${ exception.message}",)
+                RLTools.rl_logEPrint("WearOS", "Error retrieving connected nodes ${ exception.message}",)
             }
     }
 

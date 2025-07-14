@@ -14,43 +14,27 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.view.Window
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databinding.RlFragFriendsBinding
-import com.revoola.enumclass.RLStartAllMenuModel
-import com.revoola.fragment.friends.adapter.RLFriendListAdapter
-import com.revoola.utils.RLConstants
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlFragCreateGroupBinding
 import com.revoola.fragment.friends.adapter.RLCreateFriendListAdapter
-import com.revoola.fragment.friends.adapter.RLSelectedFriendListAdapter
-import com.revoola.fragment.friends.adapter.RLYourGroupListAdapter
 import com.revoola.fragment.friends.model.RLCreateGroupModel
-import com.revoola.fragment.start.challenges.RLFragChallengesFor
 import com.revoola.model.RLUserDataParcelable
-import com.revoola.model.RLrequestgroup_dataset
-import com.revoola.model.RLsetgroup_data
-import com.revoola.model.RLuserData
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -70,7 +54,7 @@ import java.util.UUID
 
 class RLFragCreateGroup : RLBaseFragment() {
     val TAG: String = RLFragCreateGroup::class.java.simpleName
-    lateinit var fragBinding: RlFragCreateGroupBinding
+   // lateinit var fragBinding: RlFragCreateGroupBinding
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
@@ -86,26 +70,26 @@ class RLFragCreateGroup : RLBaseFragment() {
         private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
     }
 
-    private val binding by lazy {
-        RlFragFriendsBinding.inflate(layoutInflater)
+    private val fragBinding by lazy {
+        RlFragCreateGroupBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_create_group, container) as RlFragCreateGroupBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCreateGroup" )
-        currentUser= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_create_group, container) as RlFragCreateGroupBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCreateGroup" )
+        currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        RLuisetupNew()
+        rl_uisetupNew()
         return fragBinding.root
     }
-    private fun RLuisetupNew() {
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
+    private fun rl_uisetupNew() {
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
         fragBinding.toolbar.tvTitle.setText(getString(R.string.creategroup))
         val cardData = requireArguments().getParcelable<RLCreateGroupModel>("cardData") as RLCreateGroupModel
         fragBinding.tvselectedCount.setText("${ cardData.selectFriendList.size.toString() } SELECTED")
@@ -120,43 +104,43 @@ class RLFragCreateGroup : RLBaseFragment() {
 
         fragBinding.tvCreateClick.setOnClickListener {
             if (fragBinding.ivGroupName.text.toString().isEmpty()){
-                RLshowAlertDialog("Enter Group Name!")
+                rl_showAlertDialog("Enter Group Name!")
             }else if (selectUserdata.isEmpty()){
-                RLshowAlertDialog("No Friend Select!")
+                rl_showAlertDialog("No Friend Select!")
             }else{
                 if(isAdded){
-                    RLBaseProgress.RLShowProgressDialog(requireActivity())
+                    RLBaseProgress.rl_showProgressDialog(requireActivity())
                 }
-                RLCreateGroupApiCall()
+                rl_createGroupApiCall()
             }
         }
         fragBinding.ivGroupImage.setOnClickListener {
-            RLopencameragallerydialog()
+            rl_opencameragallerydialog()
         }
 
     }
-    private fun RLCreateGroupApiCall() {
+    private fun rl_createGroupApiCall() {
         val dataMap  = createGroupPayload()
         val images=getUserImages()
-        RLTools.RlLogDPrint(TAG,"Create Group Request: $dataMap")
-        viewModel.RLInsertGroupData(dataMap,images) { result ->
+        RLTools.rl_logDPrint(TAG,"Create Group Request: $dataMap")
+        viewModel.rl_insertGroupData(dataMap,images) { result ->
             result.onSuccess { response ->
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
                 try {
                     if (response.type.equals("success")) {
-                        (context as RLMainActivityRL).RLloadFrag(RLFragFriends(), TAG, false, null, false)
-                        RLTools.RlLogDPrint(TAG, "Create Group Success: ${response.text}")
+                        (context as RLMainActivityRL).rl_loadFrag(RLFragFriends(), TAG, false, null, false)
+                        RLTools.rl_logDPrint(TAG, "Create Group Success: ${response.text}")
                     } else {
-                        RLTools.RlLogEPrint(TAG, "Create Group Fail: ${response.text}")
+                        RLTools.rl_logEPrint(TAG, "Create Group Fail: ${response.text}")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    RLTools.RlLogEPrint(TAG, "Create Group Catch: ${e.message}" )
+                    RLTools.rl_logEPrint(TAG, "Create Group Catch: ${e.message}" )
 
                 }
             }.onFailure { error ->
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG, "Create Group Error: ${error.message}" )
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logEPrint(TAG, "Create Group Error: ${error.message}" )
             }
         }
     }
@@ -195,39 +179,39 @@ class RLFragCreateGroup : RLBaseFragment() {
             return imageParts
         }
     }
-    private fun RLopencameragallerydialog() {
+    private fun rl_opencameragallerydialog() {
         val options = arrayOf("Take Photo", "Choose from Gallery", "Cancel")
         AlertDialog.Builder(activity)
             .setTitle("Choose Image")
             .setItems(options) { dialog, which ->
                 when (which) {
-                    0 -> RLtakePhoto()
-                    1 -> RLchooseFromGallery()
+                    0 -> rl_takePhoto()
+                    1 -> rl_chooseFromGallery()
                 }
                 dialog.dismiss()
             }
             .show()
     }
-    private fun RLtakePhoto() {
-        if (!RLisStoragePermissionGrantedd()) {
+    private fun rl_takePhoto() {
+        if (!rl_isStoragePermissionGrantedd()) {
             // Request the permission
-            RLrequestStoragePermissionn()
+            rl_requestStoragePermissionn()
         } else {
             // Permission is already granted, you can proceed with your code
             val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            RLchangeImageCamera.launch(pickImg)
+            rl_changeImageCamera.launch(pickImg)
         }
     }
-    private  fun RLchooseFromGallery() {
+    private  fun rl_chooseFromGallery() {
         val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        RLchangeImage.launch(pickImg)
+        rl_changeImage.launch(pickImg)
     }
     //Image select
-    private val RLchangeImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private val rl_changeImage =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imgUri= data?.data
-            val file=RLuriToFile(requireActivity(),imgUri)
+            val file=rl_uriToFile(requireActivity(),imgUri)
             if (file!=null){
                 imgUriList.add(file)
             }
@@ -235,11 +219,11 @@ class RLFragCreateGroup : RLBaseFragment() {
 
         }
     }
-    private val RLchangeImageCamera =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private val rl_changeImageCamera =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             val data = it.data
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            val file=RLsaveBitmapToFile(imageBitmap)
+            val file=rl_saveBitmapToFile(imageBitmap)
             if (file!=null){
                 imgUriList.add(file)
             }
@@ -247,7 +231,7 @@ class RLFragCreateGroup : RLBaseFragment() {
         }
     }
     //Uri to File converter
-    private fun RLuriToFile(context: FragmentActivity?, uri: Uri?): File? {
+    private fun rl_uriToFile(context: FragmentActivity?, uri: Uri?): File? {
         val projection = arrayOf(MediaStore.Images.Media.DATA)
         val cursor = context?.contentResolver?.query(uri!!, projection, null, null, null) ?: return null
         val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
@@ -257,7 +241,7 @@ class RLFragCreateGroup : RLBaseFragment() {
         return File(filePath)
     }
     //Bitmapimage to File converter
-    private fun RLsaveBitmapToFile(bitmap: Bitmap): File? {
+    private fun rl_saveBitmapToFile(bitmap: Bitmap): File? {
         try {
             // Create a file to save the bitmap
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -271,20 +255,20 @@ class RLFragCreateGroup : RLBaseFragment() {
             return imageFile
         } catch (e: IOException) {
             e.printStackTrace()
-            RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
+            RLTools.rl_logEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
             return null
         }
     }
-    private fun RLisStoragePermissionGrantedd(): Boolean {
+    private fun rl_isStoragePermissionGrantedd(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA)
         val storagePermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
-    private fun RLrequestStoragePermissionn() {
+    private fun rl_requestStoragePermissionn() {
         ActivityCompat.requestPermissions(requireActivity(),
             arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),STORAGE_PERMISSION_REQUEST_CODE)
     }
-    private fun RLopentoast(messageprint: String) {
+    private fun rl_opentoast(messageprint: String) {
         Toast.makeText(requireContext(),messageprint, Toast.LENGTH_SHORT).show()
     }
     // Handle permission request result
@@ -294,15 +278,15 @@ class RLFragCreateGroup : RLBaseFragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted, you can proceed with your code
                 val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                RLchangeImageCamera.launch(pickImg)
+                rl_changeImageCamera.launch(pickImg)
             } else {
                 // Permission is denied
                 // You may want to show a message or handle the case where the RLuser denies the permission
-                RLopentoast("Permission is denied")
+                rl_opentoast("Permission is denied")
             }
         }
     }
-    private fun RLshowAlertDialog(message:String) {
+    private fun rl_showAlertDialog(message:String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)

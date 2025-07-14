@@ -42,8 +42,8 @@ class RLFeedSessionSummryListAdapter(
         return dataList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlCommonSessionSummaryCardBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlCommonSessionSummaryCardBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlCommonSessionSummaryCardBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlCommonSessionSummaryCardBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val (typeOfMetric, metricData) = dataList[position]
 
@@ -51,7 +51,7 @@ class RLFeedSessionSummryListAdapter(
             layoutBinding.imgsessionimage.setImageResource(typeOfMetric.image)
             layoutBinding.txtNumber.setText(metricData.value)
             if (typeOfMetric.title.equals("EFFORT ZONE")){
-                val ZoneTextData= RLTools.RlVerifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
+                val ZoneTextData= RLTools.rl_verifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
                 layoutBinding.txtNumber.setText(ZoneTextData.efforZoneText)
                 layoutBinding.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
             }
@@ -71,7 +71,7 @@ class RLFeedSessionSummryListAdapter(
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
                     bundle.putString(RLConstants.TYPE, passstring)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
                 }
             }
             if (position % 2 == 0) {

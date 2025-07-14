@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.google.gson.JsonObject;
 
-import java.util.Set;
-
 public class RLPrefManager {
     private static final String PREF_NAME = "base_pref";
     public static String current_fragment = "Currentfragment";
@@ -37,51 +35,46 @@ public class RLPrefManager {
 
 
 
-    public static SharedPreferences RLgetSharedPreferences(Context context) {
+    public static SharedPreferences rl_getSharedPreferences(Context context) {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
 
-    public static String RLGetSomeStringValue(Context context, String key, String defaultValue) {
-        return RLgetSharedPreferences(context).getString(key, defaultValue);
+    public static String rl_getSomeStringValue(Context context, String key, String defaultValue) {
+        return rl_getSharedPreferences(context).getString(key, defaultValue);
     }
 
-    public static void RLSetSomeStringValue(Context context, String key, String newValue) {
-        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+    public static void rl_setSomeStringValue(Context context, String key, String newValue) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.putString(key, newValue);
         editor.commit(); // Synchronous write - ensures immediate persistence
         editor.apply();
     }
-//    public static void RLSetSomeStringValue(Context context, String key, String newValue) {
-//        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
-//        editor.putString(key, newValue);
-//        editor.apply();
-//    }
 
-    public static void RLSetSomeJsonObjectValue(Context context, String key, JsonObject newValue) {
-        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+    public static void rl_setSomeJsonObjectValue(Context context, String key, JsonObject newValue) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.putString(key, newValue.toString());
         editor.apply();
     }
 
-    public static void RLSetSomeBooleanValue(Context context, String key, Boolean newValue) {
-        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+    public static void rl_setSomeBooleanValue(Context context, String key, Boolean newValue) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.putBoolean(key, newValue);
         editor.apply();
     }
 
-    public static Boolean RLGetGuestUser(Context context) {
-        return RLgetSharedPreferences(context).getBoolean(isGuestUser,false);
+    public static Boolean rl_getGuestUser(Context context) {
+        return rl_getSharedPreferences(context).getBoolean(isGuestUser,false);
     }
 
-    public static void RLClearIndividual(Context context, String key) {
-        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+    public static void rl_clearIndividual(Context context, String key) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.remove(key);
         editor.apply();
     }
 
-    public static void RLClear_all(Context context) {
-        final SharedPreferences.Editor editor = RLgetSharedPreferences(context).edit();
+    public static void rl_clear_all(Context context) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.clear();
         editor.apply();
     }

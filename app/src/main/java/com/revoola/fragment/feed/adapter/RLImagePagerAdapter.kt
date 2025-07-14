@@ -32,53 +32,53 @@ class RLImagePagerAdapter(
         return view === `object` as RelativeLayout
     }
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val layoutbinding:RlItemPageBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_item_page , container, false)
+        val layoutBinding:RlItemPageBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_item_page , container, false)
         if (imageList.get(position).equals("CHART")){
-            layoutbinding.imageView.visibility=View.GONE
-            layoutbinding.inlayChart.layAll.visibility=View.VISIBLE
+            layoutBinding.imageView.visibility=View.GONE
+            layoutBinding.inlayChart.layAll.visibility=View.VISIBLE
         }else{
-            layoutbinding.imageView.visibility=View.VISIBLE
-            layoutbinding.inlayChart.layAll.visibility=View.GONE
+            layoutBinding.imageView.visibility=View.VISIBLE
+            layoutBinding.inlayChart.layAll.visibility=View.GONE
         }
-        Glide.with(context!!).load(imageList.get(position)).into(layoutbinding.imageView)
+        Glide.with(context!!).load(imageList.get(position)).into(layoutBinding.imageView)
 
-        layoutbinding.imageView.setOnClickListener {
+        layoutBinding.imageView.setOnClickListener {
             listener.onImageClick(position, imageList[position])
         }
 
         //Chart Set
-        layoutbinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
-        layoutbinding.inlayChart.layEffortZone.txtNumber.setText(ZoneTextData.efforZoneText)
-        layoutbinding.inlayChart.layEffortZone.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
-        layoutbinding.inlayChart.layAll.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
-        layoutbinding.inlayChart.relayChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
-        layoutbinding.inlayChart.webViewChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        layoutBinding.inlayChart.layEffortZone.txtName.setText(R.string.effortzone)
+        layoutBinding.inlayChart.layEffortZone.txtNumber.setText(ZoneTextData.efforZoneText)
+        layoutBinding.inlayChart.layEffortZone.txtNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+        layoutBinding.inlayChart.layAll.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        layoutBinding.inlayChart.relayChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
+        layoutBinding.inlayChart.webViewChart.setBackgroundColor(Color.parseColor(ZoneTextData.efforZoneBgrClr))
         val efforZoneBgrClr =  ZoneTextData.efforZoneBgrClr
 
-        layoutbinding.inlayChart.layEffort.txtName.setText("EFFORT %")
-        layoutbinding.inlayChart.layEffort.txtNumber.setText(effort)
+        layoutBinding.inlayChart.layEffort.txtName.setText("EFFORT %")
+        layoutBinding.inlayChart.layEffort.txtNumber.setText(effort)
 
-        layoutbinding.inlayChart.layEffortScore.txtName.setText("EFFORT SCORE")
-        layoutbinding.inlayChart.layEffortScore.txtNumber.setText(effortScore)
+        layoutBinding.inlayChart.layEffortScore.txtName.setText("EFFORT SCORE")
+        layoutBinding.inlayChart.layEffortScore.txtNumber.setText(effortScore)
 
-        layoutbinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
-        layoutbinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
+        layoutBinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
+        layoutBinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
 
-        RLTools.RLheightsetdisplaywebview(layoutbinding.inlayChart.webViewChart,context)
-        layoutbinding.inlayChart.webViewChart.webViewClient = WebViewClient()
+        RLTools.rl_heightsetdisplaywebview(layoutBinding.inlayChart.webViewChart,context)
+        layoutBinding.inlayChart.webViewChart.webViewClient = WebViewClient()
 
-        val webSettings: WebSettings = layoutbinding.inlayChart.webViewChart.settings
+        val webSettings: WebSettings = layoutBinding.inlayChart.webViewChart.settings
         webSettings.javaScriptEnabled = true
         webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
         webSettings.domStorageEnabled = true
         webSettings.useWideViewPort = true
         webSettings.loadWithOverviewMode = true
 
-        layoutbinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
-            RLAllHTMLChart.RLGetNewZoneChartHtml(zoneData,efforZoneBgrClr), "text/html", "UTF-8", null)
+        layoutBinding.inlayChart.webViewChart.loadDataWithBaseURL(null,
+            RLAllHTMLChart.rl_getNewZoneChartHtml(zoneData,efforZoneBgrClr), "text/html", "UTF-8", null)
 
-        container.addView(layoutbinding.root)
-        return layoutbinding.root
+        container.addView(layoutBinding.root)
+        return layoutBinding.root
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

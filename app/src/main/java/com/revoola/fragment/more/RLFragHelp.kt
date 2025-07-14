@@ -11,28 +11,29 @@ import com.revoola.R
 import com.revoola.databinding.*
 import com.revoola.fragment.more.adapter.RLHelpItemListAdapter
 import com.revoola.model.RLMoreGroupItemModel
+import com.revoola.utils.RLPrefManager
 
 class RLFragHelp : RLBaseFragment() {
     val TAG: String = RLFragHelp::class.java.simpleName
-    lateinit var fragBinding: RlFragHelpBinding
+  //  lateinit var fragBinding: RlFragHelpBinding
 
     
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragHelpBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_help, container) as RlFragHelpBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragHelp")
-        RLuisetup()
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_help, container) as RlFragHelpBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragHelp")
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
 
         // AppointmentList
         val moreList = listOf(

@@ -15,7 +15,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        RLTools.RlLogDPrint(TAG, "Refreshed token: $token")
+        RLTools.rl_logDPrint(TAG, "Refreshed token: $token")
 
         // Send the token to your server or save it for later use
         sendRegistrationToServer(token)
@@ -27,11 +27,11 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         // Handle FCM messages here
-        RLTools.RlLogDPrint(TAG, "From: ${remoteMessage.from}")
+        RLTools.rl_logDPrint(TAG, "From: ${remoteMessage.from}")
 
         // Check if message contains a data payload.
         remoteMessage.data.isNotEmpty().let {
-            RLTools.RlLogDPrint(TAG, "Message data payload: " + remoteMessage.data)
+            RLTools.rl_logDPrint(TAG, "Message data payload: " + remoteMessage.data)
             val title = remoteMessage.notification?.title ?: "Default Title"
             val body = remoteMessage.notification?.body ?: "Default Body"
             // Show custom notification
@@ -40,7 +40,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            RLTools.RlLogDPrint(TAG, "Message Notification Body: ${it.body}")
+            RLTools.rl_logDPrint(TAG, "Message Notification Body: ${it.body}")
             showNotification(it.title ?: "No Title", it.body ?: "No Body")
         }
 
@@ -50,7 +50,7 @@ class RLMyFirebaseMessagingService : FirebaseMessagingService() {
         }else{
             // your app's business logic to show notification
             remoteMessage.notification?.let {
-                RLTools.RlLogDPrint(TAG, "Message Notification Body: ${it.body}")
+                RLTools.rl_logDPrint(TAG, "Message Notification Body: ${it.body}")
                 showNotification(it.title ?: "No Title", it.body ?: "No Body")
             }
         }

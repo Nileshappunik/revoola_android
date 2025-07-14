@@ -50,7 +50,7 @@ class RLScheduledClassesListAdapter(val context: FragmentActivity?,var scheduled
             layoutBinding.txtImageTitle.setText(videoCardData?.rideTitle)
             layoutBinding.txtWithName.setText(videoCardData?.instructor)
             layoutBinding.txtWatchtime.setText(videoCardData?.duration + " class")
-            val date = RLTools.RLconvertTimestampToSchdualDAte(scheduleCardData?.dateOfChallenge?:0)
+            val date = RLTools.rl_convertTimestampToSchdualDAte(scheduleCardData?.dateOfChallenge?:0)
             layoutBinding.txtMisseddate.setText(date)
             layoutBinding.txtMissed.setText(cardData.schedule.statusLbl)
             layoutBinding.txtMissed.setTextColor(context!!.resources.getColor(RLTools.getColorForScheduleStatus(cardData.schedule.statusLbl)))
@@ -81,7 +81,7 @@ class RLScheduledClassesListAdapter(val context: FragmentActivity?,var scheduled
                     val bundle = Bundle().apply {
                         putParcelable("selectedSchedule",cardData)
                     }
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSchdulClassesView().newInstance(bundle), TAG, true, null, true)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragSchdulClassesView().newInstance(bundle), TAG, true, null, true)
                 }
             }
         }

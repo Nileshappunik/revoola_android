@@ -28,21 +28,21 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(true)
-        RLBottomHideShowSet(false)
+        rl_screenSet(true)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_left_body_heart_video, container) as RlFragLeftBodyHeartVideoBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragLeftBodyWithHeartVideo" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_left_body_heart_video, container) as RlFragLeftBodyHeartVideoBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragLeftBodyWithHeartVideo" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        fragBinding.circularProgressBar.RLsetProgress(0)
+        fragBinding.circularProgressBar.rl_setProgress(0)
         fragBinding.progresstext.setText("0%")
-        fragBinding.circularProgressBar.RLsetMaxProgress(100)
-        fragBinding.circularProgressBar.RLsetProgressColor(resources.getColor(R.color.AppZone5Color))
+        fragBinding.circularProgressBar.rl_setMaxProgress(100)
+        fragBinding.circularProgressBar.rl_setProgressColor(resources.getColor(R.color.AppZone5Color))
         fragBinding.circularProgressBar.setBackgroundColor(Color.LTGRAY)
-        fragBinding.circularProgressBar.RLsetStrokeWidth(15f)
+        fragBinding.circularProgressBar.rl_setStrokeWidth(15f)
 
         fragBinding.inlayEffort.imgIcon.setImageResource(R.drawable.ic_heart)
         fragBinding.inlayEffort.txtName.setText(R.string.effort)
@@ -93,19 +93,19 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
 
         if (REVPer>=100){
             fragBinding.progresstext.setText("100%")
-            fragBinding.circularProgressBar.RLsetProgress(100)
+            fragBinding.circularProgressBar.rl_setProgress(100)
         }else if(REVPer>=0){
             fragBinding.progresstext.setText("$REVPer%")
-            fragBinding.circularProgressBar.RLsetProgress(REVPer)
+            fragBinding.circularProgressBar.rl_setProgress(REVPer)
         }else{
             fragBinding.progresstext.setText("--%")
-            fragBinding.circularProgressBar.RLsetProgress(0)
+            fragBinding.circularProgressBar.rl_setProgress(0)
         }
-        val progresscolor = RLTools.RLCalculateCircularGraph(REVPer)
+        val progresscolor = RLTools.rl_calculateCircularGraph(REVPer)
         fragBinding.progresstext.setTextColor(Color.parseColor(progresscolor))
-        fragBinding.circularProgressBar.RLsetProgressColor(Color.parseColor(progresscolor))
+        fragBinding.circularProgressBar.rl_setProgressColor(Color.parseColor(progresscolor))
         }catch (e:Exception){
-            RLTools.RlLogEPrint(TAG,"Exception: ${e.message}")
+            RLTools.rl_logEPrint(TAG,"Exception: ${e.message}")
         }
 
 
@@ -121,7 +121,7 @@ class RLFragLeftBodyWithHeartVideo : RLBaseFragment() {
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         }catch (e:Exception){
-           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+           RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
         }
     }
 

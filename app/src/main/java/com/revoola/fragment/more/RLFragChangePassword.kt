@@ -6,41 +6,40 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import com.revoola.RLBaseFragment
-import com.revoola.R
 import com.revoola.databinding.RlFragChangePasswordBinding
+import com.revoola.utils.RLPrefManager
 
 class RLFragChangePassword : RLBaseFragment() {
     val TAG: String = RLFragChangePassword::class.java.simpleName
-    lateinit var fragBinding: RlFragChangePasswordBinding
+   // lateinit var fragBinding: RlFragChangePasswordBinding
     var passwordold: String = ""
     var passwordnew: String = ""
 
     
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragChangePasswordBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_change_password, container) as RlFragChangePasswordBinding
-
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChangePassword" )
-        RLonBackPresAct(fragBinding.ivBack)
-        RLuisetup()
+        //  fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_change_password, container) as RlFragChangePasswordBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChangePassword" )
+        rl_onBackPresAct(fragBinding.ivBack)
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
 
         fragBinding.tvpassupdate.setOnClickListener {
-            if (RLvalidation()) {
+            if (rl_validation()) {
                 //api call
             }
         }
     }
-    private fun RLvalidation(): Boolean {
+    private fun rl_validation(): Boolean {
          passwordold = fragBinding.etcurrentPassword.text.toString().trim()
          passwordnew = fragBinding.etnewPassword.text.toString().trim()
         val passwordnewcon = fragBinding.etnewconformPassword.text.toString().trim()

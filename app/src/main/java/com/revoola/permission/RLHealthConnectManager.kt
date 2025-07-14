@@ -1,6 +1,5 @@
 package com.revoola.permission
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -9,7 +8,6 @@ import androidx.health.connect.client.HealthConnectClient.Companion.getSdkStatus
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.records.HeartRateRecord
-import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.WeightRecord
 import com.revoola.activity.RLMainActivityRL
@@ -54,19 +52,19 @@ class RLHealthConnectManager(private val context: Context) {
         // Add debug logging
         when (status) {
             HealthConnectClient.SDK_AVAILABLE -> {
-                RLTools.RlLogDPrint(TAG,"Health Connect SDK is available")
+                RLTools.rl_logDPrint(TAG,"Health Connect SDK is available")
                 return true
             }
             HealthConnectClient.SDK_UNAVAILABLE -> {
-                RLTools.RlLogDPrint(TAG,"Health Connect SDK is unavailable")
+                RLTools.rl_logDPrint(TAG,"Health Connect SDK is unavailable")
                 return false
             }
             HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> {
-                RLTools.RlLogDPrint(TAG,"Health Connect provider update required")
+                RLTools.rl_logDPrint(TAG,"Health Connect provider update required")
                 return false
             }
             else -> {
-                RLTools.RlLogDPrint(TAG,"Unknown Health Connect SDK status: $status")
+                RLTools.rl_logDPrint(TAG,"Unknown Health Connect SDK status: $status")
                 return false
             }
         }
@@ -88,16 +86,16 @@ class RLHealthConnectManager(private val context: Context) {
         return withContext(Dispatchers.IO) {
             try {
                 val grantedPermissions = healthConnectClient.permissionController.getGrantedPermissions()
-                RLTools.RlLogDPrint(TAG, "Granted Permissions: $grantedPermissions")
+                RLTools.rl_logDPrint(TAG, "Granted Permissions: $grantedPermissions")
 
                 val missingPermissions = requiredPermissions.filter { it !in grantedPermissions }
                 if (missingPermissions.isNotEmpty()) {
-                    RLTools.RlLogEPrint(TAG, "Missing Permissions: $missingPermissions")
+                    RLTools.rl_logEPrint(TAG, "Missing Permissions: $missingPermissions")
                 }
 
                 requiredPermissions.all { it in grantedPermissions }
             } catch (e: Exception) {
-                RLTools.RlLogEPrint(TAG, "Error checking permissions: ${e.message}")
+                RLTools.rl_logEPrint(TAG, "Error checking permissions: ${e.message}")
                 false
             }
         }
@@ -116,7 +114,7 @@ class RLHealthConnectManager(private val context: Context) {
             }
             context.startActivity(intent)
         } catch (e: Exception) {
-            RLTools.RlLogDPrint(TAG, "Error opening Health Connect permissions: ${e.message}")
+            RLTools.rl_logDPrint(TAG, "Error opening Health Connect permissions: ${e.message}")
             // If direct opening fails, try to open through system settings
             try {
                 val settingsIntent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -125,7 +123,7 @@ class RLHealthConnectManager(private val context: Context) {
                 }
                 context.startActivity(settingsIntent)
             } catch (e: Exception) {
-                RLTools.RlLogDPrint(TAG, "Error opening system settings: ${e.message}")
+                RLTools.rl_logDPrint(TAG, "Error opening system settings: ${e.message}")
                 Toast.makeText(context, "Unable to open Health Connect settings", Toast.LENGTH_SHORT).show()
             }
         }

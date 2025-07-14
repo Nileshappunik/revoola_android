@@ -1,7 +1,6 @@
 package com.revoola.fragment.more
 
 import android.app.Dialog
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
-import com.revoola.commonobject.RLTools
-import com.revoola.databasefirebase.RLDatabaseManagerWrite
-import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databinding.*
-import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
 
 class RLFragPurchase : RLBaseFragment() {
@@ -30,19 +25,19 @@ class RLFragPurchase : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_purchase, container) as RlFragPurchaseBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragPurchase")
-        RLuisetup()
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_purchase, container) as RlFragPurchaseBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragPurchase")
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
 
-        if (RLPrefManager.RLGetGuestUser(requireContext())){
+        if (RLPrefManager.rl_getGuestUser(requireContext())){
             fragBinding.layTryPremiumForFree.relayUser.visibility=View.VISIBLE
         }else{
             fragBinding.layTryPremiumForFree.relayUser.visibility=View.GONE
@@ -52,20 +47,20 @@ class RLFragPurchase : RLBaseFragment() {
         fragBinding.layCurrentSubscription.txtUsername.visibility=View.GONE
         fragBinding.layCurrentSubscription.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layCurrentSubscription.relayUser.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragCurrentSubScription(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragCurrentSubScription(), TAG, true, null, false)
         }
 
         fragBinding.layTryPremiumForFree.txtusertitle.setText(R.string.trypremiumforfree)
         fragBinding.layTryPremiumForFree.txtUsername.visibility=View.GONE
         fragBinding.layTryPremiumForFree.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layTryPremiumForFree.relayUser.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragAccount(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragAccount(), TAG, true, null, false)
         }
         fragBinding.layRestoreYourPurchase.txtusertitle.setText(R.string.restorepurchase)
         fragBinding.layRestoreYourPurchase.txtUsername.visibility=View.GONE
         fragBinding.layRestoreYourPurchase.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layRestoreYourPurchase.relayUser.setOnClickListener {
-            RLshowDialogAlert(getString(R.string.youhavesuccessfullyrestored))
+            rl_showDialogAlert(getString(R.string.youhavesuccessfullyrestored))
         }
 
         fragBinding.layViewTransaction.txtusertitle.setText(R.string.viewtransation)
@@ -77,7 +72,7 @@ class RLFragPurchase : RLBaseFragment() {
 
     }
 
-    private fun RLshowDialogAlert( message: String) {
+    private fun rl_showDialogAlert(message: String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_layout_dailog_alert)

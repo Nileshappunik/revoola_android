@@ -8,6 +8,6 @@ import com.revoola.commonobject.RLTools
 
 class RLApplicationBackgroundListener: AppBackgroundListener {
     override fun onAppBackground(context: Context, data: AppBackgroundData) {
-       RLTools.RlLogEPrint("MoengageTag","RLApplicationBackgroundListener : onAppBackground() $data")
+       RLTools.rl_logEPrint("MoengageTag","RLApplicationBackgroundListener : onAppBackground() $data")
     }
 }

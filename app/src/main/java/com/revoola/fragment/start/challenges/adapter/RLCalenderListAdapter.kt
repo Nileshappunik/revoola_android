@@ -1,7 +1,6 @@
 package com.revoola.fragment.start.challenges.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlItemCalendarDateBinding
 import com.revoola.enumclass.RLDateType
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
-import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -52,7 +50,7 @@ class RLCalenderListAdapter(
                 selectedPosition=position
             }
             when(cardData.dateType){
-                RLDateType.BLANK-> RLTools.RlLogDPrint(TAG,"BLANK:- ${cardData.date}")
+                RLDateType.BLANK-> RLTools.rl_logDPrint(TAG,"BLANK:- ${cardData.date}")
                 RLDateType.OLD-> {
                     layoutBinding.dateText.text = (cardData.date.date).toString()
                     if (RlISCurrentDateCheck(cardData.date)){

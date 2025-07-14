@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
-import com.revoola.databinding.RlFragAccountBinding
 import com.revoola.utils.RLPrefManager
 import com.revoola.commonobject.RLTools
 import com.revenuecat.purchases.Purchases
@@ -25,25 +24,25 @@ import com.revoola.fragment.more.adapter.RLPaywallAdapter
 
 class RLFragCurrentSubScription : RLBaseFragment() {
     val TAG: String = RLFragCurrentSubScription::class.java.simpleName
-    lateinit var fragBinding: RlFragCurrentSubscriptionBinding
+    //lateinit var fragBinding: RlFragCurrentSubscriptionBinding
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragCurrentSubscriptionBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_current_subscription, container) as RlFragCurrentSubscriptionBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCurrentSubScription" )
+        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_current_subscription, container) as RlFragCurrentSubscriptionBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCurrentSubScription" )
 
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
 
         fragBinding.relay1.txtRevoolaDes.visibility=View.VISIBLE
         fragBinding.relay1.txtRevoolaUser.visibility=View.GONE
@@ -71,10 +70,10 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         fragBinding.relay4.txtRevoolaDes.setText(R.string.personalisecalender)
         fragBinding.relay5.txtRevoolaDes.setText(R.string.challengesfriends)
 
-        ScxRevenueCatSetUp()
+        rl_revenueCatSetUp()
     }
 
-    private fun ScxRevenueCatSetUp() {
+    private fun rl_revenueCatSetUp() {
         val linearLayoutManager = LinearLayoutManager(requireContext())
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         fragBinding.paywallList.layoutManager = linearLayoutManager
@@ -101,7 +100,7 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         Purchases.sharedInstance.getOfferingsWith { offerings: Offerings ->
             val gson = Gson()
             val offeringsJson = gson.toJson(offerings.current)
-            RLTools.RlLogEPrint(TAG,offeringsJson)
+            RLTools.rl_logEPrint(TAG,offeringsJson)
             adapter.offering = offerings.current
             adapter.notifyDataSetChanged()
         }
@@ -113,7 +112,7 @@ class RLFragCurrentSubScription : RLBaseFragment() {
             onError = { error, userCancelled ->
                 if (!userCancelled) {
                     //buildError(context, error.message)
-                    RLTools.RlLogEPrint(TAG,"purchaseProductError:- ${ error.message}")
+                    RLTools.rl_logEPrint(TAG,"purchaseProductError:- ${ error.message}")
                 }
             },
             onSuccess = { _, _ ->
@@ -128,7 +127,7 @@ class RLFragCurrentSubScription : RLBaseFragment() {
             onError = { error, userCancelled ->
                 if (!userCancelled) {
                    // buildError(context, error.message)
-                    RLTools.RlLogEPrint(TAG,"purchaseOptionError:- ${ error.message}")
+                    RLTools.rl_logEPrint(TAG,"purchaseOptionError:- ${ error.message}")
                 }
             },
             onSuccess = { _, _ ->

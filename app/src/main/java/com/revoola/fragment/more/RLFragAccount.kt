@@ -2,26 +2,22 @@ package com.revoola.fragment.more
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsLogger
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
@@ -30,24 +26,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databinding.RlFragAccountBinding
 import com.revoola.utils.RLPrefManager
 import com.revoola.commonobject.RLTools
-import com.revoola.activity.RLLoginEmailActivityRL
 import com.revoola.activity.RLMainActivityRL
-import com.revoola.activity.RLSignUpNameActivityRL
-import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databasefirebase.RLFirebaseManager
-import com.revoola.fragment.more.adapter.PaywallItem
-import com.revoola.fragment.more.adapter.RLPaywallAdapter
-import com.revoola.model.RLRevoolaUsersSettingsModel
 
 class RLFragAccount : RLBaseFragment() {
     val TAG: String = RLFragAccount::class.java.simpleName
-    lateinit var fragBinding: RlFragAccountBinding
+   // lateinit var fragBinding: RlFragAccountBinding
 
     private lateinit var callbackManager: CallbackManager
 
@@ -57,22 +45,22 @@ class RLFragAccount : RLBaseFragment() {
         private const val RC_SIGN_IN = 9001
     }
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragAccountBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_account, container) as RlFragAccountBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragAccount" )
-        RLuisetup()
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_account, container) as RlFragAccountBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragAccount" )
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         //googlelogin
         FirebaseApp.initializeApp(requireContext())
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -88,17 +76,17 @@ class RLFragAccount : RLBaseFragment() {
        // AppEventsLogger.activateApp(requireActivity())
 
         fragBinding.txtEmailaccount.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragAccountConnect(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragAccountConnect(), TAG, true, null, false)
         }
         fragBinding.txtGoogleaccount.setOnClickListener {
-            RLgooglelogin()
+            rl_googlelogin()
         }
         fragBinding.txtFacebookaccount.setOnClickListener {
             if (AccessToken.getCurrentAccessToken() != null && AccessToken.getCurrentAccessToken()?.isExpired!!.not()) {
                 // User is logged in, perform logout
                 LoginManager.getInstance().logOut()
             }else{
-                RLfacebooklogin()
+                rl_facebooklogin()
             }
 
         }
@@ -106,7 +94,7 @@ class RLFragAccount : RLBaseFragment() {
     }
 
     //FACEBOOK LOGIN START
-    private fun RLfacebooklogin() {
+    private fun rl_facebooklogin() {
         LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile","email"))
 
         LoginManager.getInstance().registerCallback(callbackManager, object :
@@ -115,41 +103,41 @@ class RLFragAccount : RLBaseFragment() {
                 val accessToken = AccessToken.getCurrentAccessToken()
                 if (accessToken != null && !accessToken.isExpired) {
                     // Handle successful login
-                    RLhandleFacebookAccessToken(result.accessToken)
+                    rl_handleFacebookAccessToken(result.accessToken)
                 }
             }
 
             override fun onCancel() {
-                RLTools.RlLogEPrint(TAG,"FacebookLogin cancelled.")
+                RLTools.rl_logEPrint(TAG,"FacebookLogin cancelled.")
             }
 
             override fun onError(error: FacebookException) {
-                RLTools.RlLogEPrint(TAG,"FacebookLogin Error: ${error.message}")
+                RLTools.rl_logEPrint(TAG,"FacebookLogin Error: ${error.message}")
             }
         })
     }
-    private fun RLhandleFacebookAccessToken(token: AccessToken) {
+    private fun rl_handleFacebookAccessToken(token: AccessToken) {
         val credential = FacebookAuthProvider.getCredential(token.token)
         val user = FirebaseAuth.getInstance().currentUser
         user?.linkWithCredential(credential)
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                   RLTools.RlLogDPrint(TAG, "Facebook account linked successfully!")
+                   RLTools.rl_logDPrint(TAG, "Facebook account linked successfully!")
                     val user = auth.currentUser
-                    RLupdateUI(user)
+                    rl_updateUI(user)
                 } else {
-                    RLTools.RlLogEPrint(TAG, "Facebook linking failed: ${task.exception?.message}")
+                    RLTools.rl_logEPrint(TAG, "Facebook linking failed: ${task.exception?.message}")
                     if (task.exception is FirebaseAuthUserCollisionException) {
                         Toast.makeText(requireContext(), "Facebook account already in use!", Toast.LENGTH_SHORT).show()
                     }
-                    RLupdateUI(null)
+                    rl_updateUI(null)
                 }
             }
 
     }
     //FACEBOOK LOGIN END
     //GOOGLE LOGIN START
-    private fun RLgooglelogin() {
+    private fun rl_googlelogin() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent,RC_SIGN_IN)
     }
@@ -157,49 +145,49 @@ class RLFragAccount : RLBaseFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            RLhandleSignInResultGoogle(task)
+            rl_handleSignInResultGoogle(task)
         }
         callbackManager.onActivityResult(requestCode, resultCode, data)
     }
-    private fun RLhandleSignInResultGoogle(completedTask: Task<GoogleSignInAccount>) {
+    private fun rl_handleSignInResultGoogle(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)!!
             // Signed in successfully, show authenticated UI.
-            RLTools.RlLogDPrint(TAG, "signInResult= " + account.email)
-            RLfirebaseAuthWithGoogle(account)
+            RLTools.rl_logDPrint(TAG, "signInResult= " + account.email)
+            rl_firebaseAuthWithGoogle(account)
         } catch (e: ApiException) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            RLTools.RlLogEPrint(TAG, "Google sign in failed Message:-  " + e.localizedMessage)
+            RLTools.rl_logEPrint(TAG, "Google sign in failed Message:-  " + e.localizedMessage)
         }
     }
 
-    private fun RLfirebaseAuthWithGoogle(account: GoogleSignInAccount) {
+    private fun rl_firebaseAuthWithGoogle(account: GoogleSignInAccount) {
             try {
-                RLTools.RlLogDPrint(TAG, "signInResult idToken:-  ${account.idToken}")
+                RLTools.rl_logDPrint(TAG, "signInResult idToken:-  ${account.idToken}")
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                 val user = FirebaseAuth.getInstance().currentUser
                 user?.linkWithCredential(credential)
                     ?.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            RLTools.RlLogDPrint(TAG, "Google account linked successfully!")
-                            RLupdateUI(auth.currentUser)
+                            RLTools.rl_logDPrint(TAG, "Google account linked successfully!")
+                            rl_updateUI(auth.currentUser)
                         } else {
-                            RLTools.RlLogEPrint(TAG, "Google linking failed: ${task.exception}")
+                            RLTools.rl_logEPrint(TAG, "Google linking failed: ${task.exception}")
                             if (task.exception is FirebaseAuthUserCollisionException) {
                                 Toast.makeText(requireContext(), "Google account already in use!", Toast.LENGTH_SHORT).show()
                             }
-                            RLupdateUI(null)
+                            rl_updateUI(null)
                         }
                     }
             } catch (e: Exception) {
-                RLTools.RlLogEPrint(TAG, "EXCEPTION: ${e.message}")
+                RLTools.rl_logEPrint(TAG, "EXCEPTION: ${e.message}")
             }
         }
 
-    private fun RLupdateUI(user: FirebaseUser?) {
+    private fun rl_updateUI(user: FirebaseUser?) {
         if (user != null) {
-            RLSignOut()
+            rl_signOut()
         } else {
             Toast.makeText(requireContext(), "Authentication Failed.", Toast.LENGTH_LONG).show()
         }

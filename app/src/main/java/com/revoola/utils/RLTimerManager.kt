@@ -13,15 +13,15 @@ class RLTimerManager {
     private var elapsedTime: Long = 0
     private var callback: ((Long) -> Unit)? = null
 
-    fun RLstart(callback: (Long) -> Unit) {
+    fun rl_start(callback: (Long) -> Unit) {
         this.callback = callback
         timer = Timer()
-        timerTask = RLcreateTimerTask()
+        timerTask = rl_createTimerTask()
         timer?.scheduleAtFixedRate(timerTask, delay, period)
         isPaused = false
     }
 
-    private fun RLcreateTimerTask(): TimerTask {
+    private fun rl_createTimerTask(): TimerTask {
         return object : TimerTask() {
             override fun run() {
                 elapsedTime += period
@@ -30,7 +30,7 @@ class RLTimerManager {
         }
     }
 
-    fun RLpause() {
+    fun rl_pause() {
         if (!isPaused) {
             timerTask?.cancel()
             timer?.purge()
@@ -38,16 +38,16 @@ class RLTimerManager {
         }
     }
 
-    fun RLresume() {
+    fun rl_resume() {
         if (isPaused) {
             timer = Timer()
-            timerTask = RLcreateTimerTask()
+            timerTask = rl_createTimerTask()
             timer?.scheduleAtFixedRate(timerTask, delay, period)
             isPaused = false
         }
     }
 
-    fun RLstop() {
+    fun rl_stop() {
         timerTask?.cancel()
         timer?.cancel()
         timer?.purge()
@@ -57,7 +57,7 @@ class RLTimerManager {
         isPaused = false
     }
 
-    fun RLgetElapsedTime(): Long {
+    fun rl_getElapsedTime(): Long {
         return elapsedTime
     }
 }

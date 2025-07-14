@@ -26,7 +26,6 @@ import com.revoola.ble.BLEViewModel
 import com.revoola.ble.RLBLEViewModelFactory
 import com.revoola.ble.RLExtraValueKey
 import com.revoola.databinding.RlFragHeartrateSensorProgressBinding
-import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.firebaseModel.RLElevationPoint
 import com.revoola.firebaseModel.RLLocationDetails
 import com.revoola.services.RLLocationViewModel
@@ -44,11 +43,9 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
-import com.google.gson.Gson
 import com.revoola.databasefirebase.RLZoneDataDetails
 import com.revoola.databasefirebase.RLZoneDataSummery
 import com.revoola.databasefirebase.RevoolaKeys
-import com.revoola.model.RLRevoolaUsersSettingsModel
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedListener{
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
@@ -169,11 +166,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString().trim()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -189,11 +186,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         RLstartCountdown()
         rlLocationViewModel = RLLocationViewModel(requireActivity().application)
         val isWatch = requireArguments().getBoolean(RLExtraValueKey.isWatch)
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg
                 wsHeight=userData.height
-                wsAge= RLTools.RLCalculateAge(userData.dob)
+                wsAge= RLTools.rl_calculateAge(userData.dob)
                 gender=userData.gender
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
@@ -201,11 +198,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                 emailId=userData.emailId
                 isBasicDataAdded=userData.isBasicDataAdded
                 visibilityflagforthatsession=userData.visibilityflagforthatsession
-                isImperial= RLTools.RLGetIsImperial(userData.appUnit)
+                isImperial= RLTools.rl_getIsImperial(userData.appUnit)
                 RLwayTypeDesignSet(yourWayType)
             } else {
                 RLwayTypeDesignSet(yourWayType)
-               RLTools.RlLogEPrint(TAG, "Error fetching user data")
+               RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -213,7 +210,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             RLstepGetToGPS()
         }
 
-        fragBinding.relaytiveMain.setBackgroundResource(RLTools.RLgetImage1(yourWayType.toLowerCase()))
+        fragBinding.relaytiveMain.setBackgroundResource(RLTools.rl_getImage1(yourWayType.toLowerCase()))
         fragBinding.inlayTop.ivTitle.setText(yourWayType)
         fragBinding.inlayTop.ivDescription.setText("")
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
@@ -221,11 +218,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         fragBinding.inlayTop.ivTitle.setTextColor(resources.getColor(R.color.AppWhiteColor))
 
 
-        fragBinding.circularProgressBar.RLsetProgress(100)
-        fragBinding.circularProgressBar.RLsetMaxProgress(100)
-        fragBinding.circularProgressBar.RLsetProgressColor(resources.getColor(R.color.AppOrangeColor))
+        fragBinding.circularProgressBar.rl_setProgress(100)
+        fragBinding.circularProgressBar.rl_setMaxProgress(100)
+        fragBinding.circularProgressBar.rl_setProgressColor(resources.getColor(R.color.AppOrangeColor))
         fragBinding.circularProgressBar.setBackgroundColor(Color.LTGRAY)
-        fragBinding.circularProgressBar.RLsetStrokeWidth(15f)
+        fragBinding.circularProgressBar.rl_setStrokeWidth(15f)
 
         fragBinding.inlayCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
         fragBinding.inlayCalories.txtProgressTime.setText(R.string.activecalories)
@@ -241,34 +238,34 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         fragBinding.layPause.setOnClickListener {
            try {
                RLSendDataToWearOS(context = requireContext(),
-                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   formattedTime = RLYourWayCalvulation.rl_formatElapsedTime(((totalTime.toInt())*1000).toLong()),
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
                    buttonType = 1)
                viewModel.pauseNotifications()
-                timerManager.RLpause()
+                timerManager.rl_pause()
 
                 fragBinding.layPause.visibility=View.GONE
                 fragBinding.layResumestop.visibility=View.VISIBLE
 
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                   rlLocationViewModel.RLstopLocationUpdates()
+                   rlLocationViewModel.rl_stopLocationUpdates()
                }
 
            }catch (e:Exception){
-              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+              RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
            }
         }
         fragBinding.layResume.setOnClickListener {
            try{
                RLSendDataToWearOS(context = requireContext(),
-                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   formattedTime = RLYourWayCalvulation.rl_formatElapsedTime(((totalTime.toInt())*1000).toLong()),
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
                    buttonType = 0)
-                timerManager.RLresume()
+                timerManager.rl_resume()
 
                 fragBinding.layPause.visibility=View.VISIBLE
                 fragBinding.layResumestop.visibility=View.GONE
@@ -276,28 +273,28 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                viewModel.resumeNotifications()
 
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                   rlLocationViewModel.RLstartLocationUpdates()
+                   rlLocationViewModel.rl_startLocationUpdates()
                }
            }catch (e:Exception){
-              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+              RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
            }
         }
         fragBinding.layStop.setOnClickListener {
            try{
                RLSendDataToWearOS(context = requireContext(),
-                   formattedTime = RLYourWayCalvulation.RLformatElapsedTime(((totalTime.toInt())*1000).toLong()),
+                   formattedTime = RLYourWayCalvulation.rl_formatElapsedTime(((totalTime.toInt())*1000).toLong()),
                    calories = burntCalories,
                    total_Rev = totalRev,
                    REVPer = revPercentage,
                    buttonType = 2)
-                timerManager.RLstop()
+                timerManager.rl_stop()
                viewModel.stopNotifications()
                Wearable.getDataClient(requireContext()).removeListener(this)
                if (yourWayType.equals("Run")||yourWayType.equals("Walk")||yourWayType.equals("Ride")){
-                   rlLocationViewModel.RLstopLocationUpdates()
+                   rlLocationViewModel.rl_stopLocationUpdates()
                }
            }catch (e:Exception){
-              RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+              RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
            }
 
             val bundle: Bundle = Bundle()
@@ -394,7 +391,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
             //bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
 
@@ -416,8 +413,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                             if (heartRateSetValue > 0){
                                 arrHRRecordedSecond.add(totalTime.toInt()?:0)
                                 fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(data)
-                                maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
-                                minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                                maxHeartrate= RLYourWayCalvulation.rl_max(maxHeartrate,heartRateNumber)
+                                minHeartrate=RLYourWayCalvulation.rl_min(minHeartrate,heartRateNumber)
                                 fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
                                 if (!arrHr.isNullOrEmpty()){
                                     val avgHeartRate=arrHr.average().roundToInt()?:0
@@ -526,12 +523,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         }.start()
     }
     private fun RLtimerMain() {
-        timerManager.RLstart { elapsedTime ->
+        timerManager.rl_start { elapsedTime ->
             activity?.runOnUiThread {
-                fragBinding.inlayTime.txtProgressTimeNumber.setText(RLYourWayCalvulation.RLformatElapsedTime(elapsedTime))
+                fragBinding.inlayTime.txtProgressTimeNumber.setText(RLYourWayCalvulation.rl_formatElapsedTime(elapsedTime))
                 totalTime=(elapsedTime/1000).toString()
                 RLSendDataToWearOS(context = requireContext(),
-                    formattedTime = RLYourWayCalvulation.RLformatElapsedTime(elapsedTime),
+                    formattedTime = RLYourWayCalvulation.rl_formatElapsedTime(elapsedTime),
                     calories = burntCalories,
                     total_Rev = totalRev,
                     REVPer = revPercentage,
@@ -554,12 +551,12 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         arrRevSecond.add(RLYourWayCalvulation.noNanValueDouble(REVSec))
         totalRev = totalRev+ REVSec
         lastrevPercentage=REVPer
-        maxRevPercentage=RLYourWayCalvulation.RLmax(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
-        minRevPercentage=RLYourWayCalvulation.RLmin(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
-        maxEffort=RLYourWayCalvulation.RLmax(maxEffort,totalRev.roundToInt())
+        maxRevPercentage=RLYourWayCalvulation.rl_max(maxRevPercentage.toInt(),REVPer.toInt()).toDouble()
+        minRevPercentage=RLYourWayCalvulation.rl_min(minRevPercentage.toInt(),REVPer.toInt()).toDouble()
+        maxEffort=RLYourWayCalvulation.rl_max(maxEffort,totalRev.roundToInt())
         burntCalories=burntCalories+currentCalories
 
-        maxBurntCalories=RLYourWayCalvulation.RLmax(maxBurntCalories,burntCalories.toInt())
+        maxBurntCalories=RLYourWayCalvulation.rl_max(maxBurntCalories,burntCalories.toInt())
 
         revPercentage=REVPer
 
@@ -602,7 +599,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
         val elevationpoint= RLElevationPoint(RLYourWayCalvulation.noNanValueDouble(elevationMeter),RLYourWayCalvulation.noNanValueDouble(latitude), RLYourWayCalvulation.noNanValueDouble(longitude))
         arrDataLocation.add((elevationpoint))
-        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(latitude),RLTools.RLGetState(revPercentage.roundToInt()), RLYourWayCalvulation.noNanValueDouble(longitude),RLYourWayCalvulation.noNanValueDouble(elevationMeter))
+        val locationDetails= RLLocationDetails(RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(speedNumber),RLYourWayCalvulation.noNanValueDouble(latitude),RLTools.rl_getState(revPercentage.roundToInt()), RLYourWayCalvulation.noNanValueDouble(longitude),RLYourWayCalvulation.noNanValueDouble(elevationMeter))
         arrLocationDetails.add(locationDetails)
 
         arrAvgCadence.add(RLYourWayCalvulation.noNanValueDouble(arrCadence.average()))
@@ -619,7 +616,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
         }
 
-        val isodate=RLgetCurrentDateTimeIsoFormatted()
+        val isodate=rl_getCurrentDateTimeIsoFormatted()
         gpxStringBuilder.append(
             """
                 <trkpt lat="$latitude" lon="$longitude">
@@ -632,7 +629,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         arrConnection.add(true)
 
         val REVPecentage=REVPer.roundToInt()
-        updateZoneData(RLTools.RLzoneDiff(REVPecentage))
+        updateZoneData(RLTools.rl_zoneDiff(REVPecentage))
 
     }
 
@@ -640,27 +637,27 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         try {
         if (REVPer>=100){
             fragBinding.progresstext.setText("100%")
-            fragBinding.circularProgressBar.RLsetProgress(100)
+            fragBinding.circularProgressBar.rl_setProgress(100)
         }else if(REVPer>=0){
             fragBinding.progresstext.setText("$REVPer%")
-            fragBinding.circularProgressBar.RLsetProgress(REVPer)
+            fragBinding.circularProgressBar.rl_setProgress(REVPer)
         }else{
             fragBinding.progresstext.setText("--%")
-            fragBinding.circularProgressBar.RLsetProgress(0)
+            fragBinding.circularProgressBar.rl_setProgress(0)
         }
-        val progresscolor = RLTools.RLCalculateCircularGraph(REVPer)
+        val progresscolor = RLTools.rl_calculateCircularGraph(REVPer)
         fragBinding.progresstext.setTextColor(Color.parseColor(progresscolor))
-        fragBinding.circularProgressBar.RLsetProgressColor(Color.parseColor(progresscolor))
+        fragBinding.circularProgressBar.rl_setProgressColor(Color.parseColor(progresscolor))
         val tintColor =Color.parseColor(progresscolor)
         fragBinding.imgEffort.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
         fragBinding.txtEffortNumber.setText(totalRev.roundToInt().toString())
         fragBinding.maxEffortNumber.setText(maxEffort.toString())
 
-        val ZoneTextData= RLTools.RlVerifyFeedZoneName(REVPer.toDouble()?:0.0)
+        val ZoneTextData= RLTools.rl_verifyFeedZoneName(REVPer.toDouble()?:0.0)
         fragBinding.txtCurrentZone.setText(ZoneTextData.efforZoneText)
         fragBinding.txtCurrentZone.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
         }catch (e:Exception){
-            RLTools.RlLogEPrint(TAG,"Exception: ${e.message}")
+            RLTools.rl_logEPrint(TAG,"Exception: ${e.message}")
         }
     }
 
@@ -669,14 +666,14 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         //rlLocationViewModel =RLLocationViewModel(requireActivity().application)
         rlLocationViewModel.speedData.observe(requireActivity(), Observer { speed ->
             speed?.let {
-                RLTools.RlLogDPrint(TAG,"Speed: ${it} m/s")
+                RLTools.rl_logDPrint(TAG,"Speed: ${it} m/s")
                 val speedSetValue=convertToDouble(it.toString())
                 speedNumber=speedSetValue
                 speedList.add("%.2f".format(it).toDouble())
                 if (speedSetValue>0){
                     //fragBinding.inlaySpeed.txtProgressTimeNumber.setText("%.2f".format(it))
                     fragBinding.inlaySpeed.txtProgressTimeNumber.setText(RLCalculateSpeed(it))
-                    maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
+                    maxSpeed=RLYourWayCalvulation.rl_max(maxSpeed,speedNumber.roundToInt())
                    // fragBinding.inlaySpeed.txtMaxNumber.setText( maxSpeed.toString())
                     fragBinding.inlaySpeed.txtMaxNumber.setText(RLCalculateSpeed(maxSpeed))
                     if (!speedList.isNullOrEmpty()){
@@ -691,7 +688,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
         rlLocationViewModel.elevationMeter.observe(requireActivity(), Observer { elevation ->
             elevation?.let {
-                RLTools.RlLogDPrint(TAG,"elevation: ${it} m")
+                RLTools.rl_logDPrint(TAG,"elevation: ${it} m")
                 val elevation=convertToDouble(it.toString())
                 elevationMeter=elevation
             }
@@ -700,7 +697,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         rlLocationViewModel.locationData.observe(requireActivity(), Observer { location ->
             location?.let {
                 RLtrackTimePerKilometer(it)
-                RLTools.RlLogDPrint(TAG,"location: ${it}")
+                RLTools.rl_logDPrint(TAG,"location: ${it}")
                 latitude=it.latitude
                 longitude=it.longitude
             }
@@ -708,16 +705,16 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
         rlLocationViewModel.cadenceData.observe(requireActivity(), Observer { cadence ->
             cadence?.let {
-                RLTools.RlLogDPrint(TAG,"cadenceData: ${it} ")
+                RLTools.rl_logDPrint(TAG,"cadenceData: ${it} ")
                 val _cadenceData=convertToDouble(it.toString())
                 cadenceData=_cadenceData
-                maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.roundToInt())
+                maxCadence=RLYourWayCalvulation.rl_max(maxCadence,cadenceData.roundToInt())
             }
         })
 
         rlLocationViewModel.stepCountData.observe(requireActivity(), Observer { stepCount ->
             stepCount?.let {
-                RLTools.RlLogDPrint(TAG,"Steps: $stepCount")
+                RLTools.rl_logDPrint(TAG,"Steps: $stepCount")
                 val stepSetValue=convertToInt(stepCount.toString())
                 stepsNumber=stepSetValue
                 if (stepSetValue>0){
@@ -731,7 +728,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         rlLocationViewModel.distanceData.observe(viewLifecycleOwner, Observer { distance ->
             distance?.let {
                 val totalDistance=it //round(it * 100) / 100
-                RLTools.RlLogDPrint(TAG,"Distance: $totalDistance km")
+                RLTools.rl_logDPrint(TAG,"Distance: $totalDistance km")
                 val totalDistanceValue=convertToDouble(totalDistance.toString())
                 this.distance =totalDistanceValue
                 //distanceList.add(totalDistanceValue)
@@ -745,7 +742,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         rlLocationViewModel.paceData.observe(viewLifecycleOwner, Observer { pace ->
             pace?.let {
                 val totalspace=round(it * 100) / 100
-                RLTools.RlLogDPrint(TAG, "Pace: $totalspace min/km")
+                RLTools.rl_logDPrint(TAG, "Pace: $totalspace min/km")
                 val totalspaceValue=convertToInt(totalspace.toString())
                 paceNumber=totalspaceValue
                 paceList.add(totalspaceValue)
@@ -753,7 +750,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                     fragBinding.inlayPace.txtProgressTimeNumber.setText(totalspace.toString())
                     if (!paceList.isNullOrEmpty()){
                         val averagePace=paceList.average().roundToInt()?:0
-                        maxPace=RLYourWayCalvulation.RLmax(maxPace,paceNumber.toInt())
+                        maxPace=RLYourWayCalvulation.rl_max(maxPace,paceNumber.toInt())
                         //val maxPace=paceList.maxOrNull()!!.toInt()?:0
                         fragBinding.inlayPace.txtAvgNumber.setText(averagePace.toString())
                         fragBinding.inlayPace.txtMaxNumber.setText(maxPace.toString())
@@ -763,7 +760,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             }
         })
 
-        rlLocationViewModel.RLstartLocationUpdates()
+        rlLocationViewModel.rl_startLocationUpdates()
     }
 
     private fun RLtrackTimePerKilometer(location: Location) {
@@ -775,7 +772,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             if (totalDistance >= 1000) {
                 val currentTime = System.currentTimeMillis()
                 val elapsedTimeKm = (currentTime - startTimeKm) / 1000.0 // in seconds
-                maxSpeedForOneKm=RLYourWayCalvulation.RLmax(maxSpeedForOneKm.roundToInt(),elapsedTimeKm.roundToInt()).toDouble()
+                maxSpeedForOneKm=RLYourWayCalvulation.rl_max(maxSpeedForOneKm.roundToInt(),elapsedTimeKm.roundToInt()).toDouble()
                 arrSpeedForOneKm.add(convertToDouble(elapsedTimeKm.toString()))
                 avgSpeedForOneKm=arrSpeedForOneKm.average()
                 println("Time taken for last kilometer: $elapsedTimeKm seconds")
@@ -789,7 +786,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             if (totalDistance >= 1609.34) {
                 val currentTime = System.currentTimeMillis()
                 val elapsedTimeMile = (currentTime - startTimeMile) / 1000.0 // in seconds
-                maxSpeedForOneMile=RLYourWayCalvulation.RLmax(maxSpeedForOneMile.roundToInt(),elapsedTimeMile.roundToInt()).toDouble()
+                maxSpeedForOneMile=RLYourWayCalvulation.rl_max(maxSpeedForOneMile.roundToInt(),elapsedTimeMile.roundToInt()).toDouble()
                 println("Time taken for last mile: $elapsedTimeMile seconds")
                 arrSpeedForOneMile.add(convertToDouble(elapsedTimeMile.toString()))
                 avgSpeedForOneMile=arrSpeedForOneMile.average()
@@ -807,11 +804,11 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
     override fun onDestroy() {
         super.onDestroy()
         try {
-            timerManager.RLstop()
+            timerManager.rl_stop()
             Wearable.getDataClient(requireContext()).removeListener(this)
             viewModel.stopNotifications()
         }catch (e:Exception){
-           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+           RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
         }
     }
     //Wear os Send Data
@@ -859,8 +856,8 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
                         if (heartRateSetValue > 0){
                             arrHRRecordedSecond.add(totalTime.toInt()?:0)
                             fragBinding.inlayHeartrate.txtProgressTimeNumber.setText(heartRate.toString())
-                            maxHeartrate= RLYourWayCalvulation.RLmax(maxHeartrate,heartRateNumber)
-                            minHeartrate=RLYourWayCalvulation.RLmin(minHeartrate,heartRateNumber)
+                            maxHeartrate= RLYourWayCalvulation.rl_max(maxHeartrate,heartRateNumber)
+                            minHeartrate=RLYourWayCalvulation.rl_min(minHeartrate,heartRateNumber)
                             fragBinding.inlayHeartrate.txtMaxNumber.setText(maxHeartrate.toString())
                             if (!arrHr.isNullOrEmpty()){
                                 val avgHeartRate=arrHr.average().roundToInt()?:0
@@ -869,7 +866,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
                         }
                     }
-                    RLTools.RlLogEPrint("DataListener", "Received heart rate: $heartRate")
+                    RLTools.rl_logEPrint("DataListener", "Received heart rate: $heartRate")
                 }
             }
         }

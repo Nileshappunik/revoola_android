@@ -15,14 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.moe.pushlibrary.MoEHelper
 import com.revoola.R
 import com.revoola.activity.base.RLBaseActivity
-import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databasefirebase.RevoolaFirebasePath
 import com.revoola.databinding.RlActivitySplashFirstBinding
-import com.revoola.fragment.guest.RLWelcomeDialog
 import com.revoola.healthconnect.domain.AppConstants
 import com.revoola.healthconnect.domain.AppConstants.currentDate
 import com.revoola.healthconnect.domain.HealthMainViewModel
@@ -30,21 +25,17 @@ import com.revoola.healthconnect.domain.HealthViewModelFactory
 import com.revoola.healthconnect.domain.StepAdapter
 import com.revoola.healthconnect.domain.showToast
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
-
 
 class RLSplashFirstActivity : RLBaseActivity() {
     val TAG: String = RLSplashFirstActivity::class.java.simpleName
     lateinit var activityBinding:RlActivitySplashFirstBinding
-    private fun RLDialogShow(){ RLWelcomeDialog().show(supportFragmentManager, "RLWelcomeDialog") }
 
     private lateinit var healthMainViewModel: HealthMainViewModel
     private var startDate = currentDate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash_first) as RlActivitySplashFirstBinding
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_splash_first) as RlActivitySplashFirstBinding
         //setContentView(R.layout.rl_activity_splash_first)
         supportActionBar?.hide()
 
@@ -68,24 +59,23 @@ class RLSplashFirstActivity : RLBaseActivity() {
         //RLSamsungHealth()
     }
 
-
-    private fun RLSamsungHealth() {
+    private fun rl_samsungHealth() {
         healthMainViewModel = ViewModelProvider(this, HealthViewModelFactory(this))[HealthMainViewModel::class.java]
         /** Show toast on exception occurrence **/
         healthMainViewModel.exceptionResponse.observe(this) { message ->
             showToast(this, message)
         }
-        collectResponse()
+        rl_collectResponse()
         healthMainViewModel.connectToSamsungHealth(this)
     }
-    private fun collectResponse() {
+    private fun rl_collectResponse() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 /**  Handle response of permission request */
                 launch {
                     healthMainViewModel.permissionResponse.collect { result ->
                         if (result.first == AppConstants.SUCCESS) {
-                           RlgetStep()
+                           rl_getStep()
                         } else if (result.first != AppConstants.WAITING) {
                             showToast(this@RLSplashFirstActivity, result.first)
                         }
@@ -95,11 +85,11 @@ class RLSplashFirstActivity : RLBaseActivity() {
             }
         }
     }
-    private fun RlgetStep() {
+    private fun rl_getStep() {
         healthMainViewModel.readStepData(startDate)
-        setStepDataObservers()
+        rl_setStepDataObservers()
     }
-    private fun setStepDataObservers() {
+    private fun rl_setStepDataObservers() {
         val stepAdapter = StepAdapter()
         activityBinding.stepsList.layoutManager = LinearLayoutManager(this)
         activityBinding.stepsList.adapter = stepAdapter

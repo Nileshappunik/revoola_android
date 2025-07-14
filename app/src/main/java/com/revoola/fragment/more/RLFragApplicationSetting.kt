@@ -1,39 +1,11 @@
 package com.revoola.fragment.more
 
-import android.Manifest
-import android.app.Activity
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.NumberPicker
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
-import com.bumptech.glide.Glide
 import com.google.android.gms.wearable.Wearable
-import com.google.firebase.storage.FirebaseStorage
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
@@ -47,44 +19,31 @@ import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.model.RLWatchModel
 import com.revoola.utils.RLPrefManager
 import com.revoola.watch.RLWearDataSync
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import kotlin.math.roundToInt
 
 class RLFragApplicationSetting : RLBaseFragment()  {
     val TAG: String = RLFragApplicationSetting::class.java.simpleName
-    lateinit var fragBinding: RlFragApplicationSettingBinding
+   // lateinit var fragBinding: RlFragApplicationSettingBinding
     private var userBasicDataCard: RLRevoolaUsersSettingsModel? =null
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragApplicationSettingBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_application_setting, container) as RlFragApplicationSettingBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
-        RlUiSetUp()
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_application_setting, container) as RlFragApplicationSettingBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
+        rl_uiSetUp()
         return fragBinding.root
     }
 
     //All Design Setup Like Button Click And All
-    private fun RlUiSetUp() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uiSetUp() {
+        rl_onBackPresAct(fragBinding.ivBack)
         //Firebase To Fetch UserData
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 userBasicDataCard=userData
                 if ( userData.appUnit.toLowerCase().equals("imperial")){
@@ -94,15 +53,15 @@ class RLFragApplicationSetting : RLBaseFragment()  {
                 }
 
             } else {
-               RLTools.RlLogEPrint(TAG, "Error fetching user data")
+               RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
 
         fragBinding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId.equals(R.id.radioButtonimperial)) {
-                RLBasicDataUpdateToFirebase("appUnit","Imperial")
+                rl_basicDataUpdateToFirebase("appUnit","Imperial")
             }else {
-                RLBasicDataUpdateToFirebase("appUnit","Metric")
+                rl_basicDataUpdateToFirebase("appUnit","Metric")
             }
         }
 
@@ -111,7 +70,7 @@ class RLFragApplicationSetting : RLBaseFragment()  {
         fragBinding.layHelpAndVideoTutorial.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layHelpAndVideoTutorial.relayUser.setOnClickListener {
             //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragHelp(), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragHelp(), TAG, true,null, false)
         }
 
         fragBinding.laySyncWatchData.txtusertitle.setText(R.string.syncwatchdata)
@@ -119,7 +78,7 @@ class RLFragApplicationSetting : RLBaseFragment()  {
         fragBinding.laySyncWatchData.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.laySyncWatchData.relayUser.setOnClickListener {
             // Initialize WearDataSync with DataClient
-            RLSyncWatchData()
+            rl_syncWatchData()
         }
 
 
@@ -128,7 +87,7 @@ class RLFragApplicationSetting : RLBaseFragment()  {
         fragBinding.layTermandcondition.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layTermandcondition.relayUser.setOnClickListener {
             //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition(), TAG, true,null, false)
         }
 
         fragBinding.layPrivacyPolicy.txtusertitle.setText(R.string.privacypolicy)
@@ -136,31 +95,31 @@ class RLFragApplicationSetting : RLBaseFragment()  {
         fragBinding.layPrivacyPolicy.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layPrivacyPolicy.relayUser.setOnClickListener {
             //openwebview
-            (context as RLMainActivityRL).RLloadFrag(RLFragTermAndCondition(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition(), TAG, true, null, false)
         }
 
     }
 
     //Firebase One By One BasicData Update
-    private fun RLBasicDataUpdateToFirebase(endPoint:String,data:Any,) {
+    private fun rl_basicDataUpdateToFirebase(endPoint:String, data:Any,) {
         val firebasePath = RevoolaFirebasePath.basicDataPathWrite(endPoint)
         // Firebase to Update BasicData
-        RLDatabaseManagerWrite().RlWriteBasicDataUpdate(firebasePath,data) { isSuccessful, error ->
+        RLDatabaseManagerWrite().rl_write_Basic_Data_Update(firebasePath,data) { isSuccessful, error ->
            if (isSuccessful){
-               RLTools.RlLogDPrint(TAG,"BasicData Update Successfully")
+               RLTools.rl_logDPrint(TAG,"BasicData Update Successfully")
            }else{
-               RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
+               RLTools.rl_logEPrint(TAG, "Error Update BasicData: $error")
            }
         }
     }
 
-    private fun RLSyncWatchData() {
+    private fun rl_syncWatchData() {
         if (isAdded){
-            RLBaseProgress.RLShowProgressDialog(requireActivity())
+            RLBaseProgress.rl_showProgressDialog(requireActivity())
         }
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
-                val uid= RLAuthManager().RlgetCurrentUser()?.uid?:""
+                val uid= RLAuthManager().rl_getCurrentUser()?.uid?:""
                 val weight=userData.weightkg?:"60"
                 val height =userData.height?:"167"
                 val dob= userData.dob
@@ -177,29 +136,24 @@ class RLFragApplicationSetting : RLBaseFragment()  {
                         Wearable.getNodeClient(requireContext()))
                     wearDataSync.sendUserDataToWatch(userDataTransfer){ isSuccess, message ->
                         if (isSuccess) {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "WearDataSync Success: $userDataTransfer")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logDPrint(TAG, "WearDataSync Success: $userDataTransfer")
                             // Handle success (e.g., update UI)
                         } else {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogEPrint(TAG, "WearDataSync Error: $message")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logEPrint(TAG, "WearDataSync Error: $message")
                             // Handle failure (e.g., show error message to the user)
                         }
                     }
                 }else{
-                    RLBaseProgress.RLhideProgressDialog()
+                    RLBaseProgress.rl_hideProgressDialog()
                 }
 
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
 
     }
-
-
-
-
-
 
 }

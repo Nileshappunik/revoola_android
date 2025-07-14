@@ -2,28 +2,19 @@ package com.revoola.commonobject
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.*
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.annotation.ColorRes
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
 import com.revoola.R
@@ -31,18 +22,14 @@ import com.revoola.enumclass.RLYourWayName
 import com.revoola.model.RLTextOverview
 import com.revoola.model.RlMetric
 
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -88,7 +75,6 @@ object RLTools {
         }
     }
 
-
     // Custom Gson Builder with all deserializers
     fun createCustomGson(): Gson {
         return GsonBuilder()
@@ -114,28 +100,28 @@ object RLTools {
         }
     }
 
-    fun View.RLadjustWidthToHeight() {
+    fun View.rl_adjustWidthToHeight() {
         this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                val height = this@RLadjustWidthToHeight.height
+                val height = this@rl_adjustWidthToHeight.height
                 if (height > 0) {
-                    this@RLadjustWidthToHeight.layoutParams.width = height
-                    this@RLadjustWidthToHeight.requestLayout()
-                    this@RLadjustWidthToHeight.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    this@rl_adjustWidthToHeight.layoutParams.width = height
+                    this@rl_adjustWidthToHeight.requestLayout()
+                    this@rl_adjustWidthToHeight.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             }
         })
     }
 
-    fun RlLogDPrint(tag_log:String,message_log:String){
+    fun rl_logDPrint(tag_log:String, message_log:String){
        Log.d(tag_log,message_log)
     }
 
-    fun RlLogEPrint(tag_log:String,message_log:String){
+    fun rl_logEPrint(tag_log:String, message_log:String){
        Log.e(tag_log,message_log)
     }
 
-    fun RLChallengeIcon(challengeType:String):Int{
+    fun rl_challengeIcon(challengeType:String):Int{
           when (challengeType.toLowerCase()){
             "steps"-> return R.drawable.fd_steps_green
             "effort"-> return R.drawable.ic_heart
@@ -146,14 +132,14 @@ object RLTools {
             else -> return R.drawable.fd_steps_green
         }
     }
-    fun RLChallengeTargetIcon(TargetType:String):Int{
+    fun rl_challengeTargetIcon(TargetType:String):Int{
           when (TargetType.toLowerCase()){
             "individualtarget"-> return R.drawable.ic_goal
             "sharedtarget"-> return R.drawable.goal_shared
             else -> return R.drawable.ic_goal
         }
     }
-    fun RLChallengeTargetName(TargetType:String):String{
+    fun rl_challengeTargetName(TargetType:String):String{
         when (TargetType.toLowerCase()){
             "individualtarget"-> return "individual"
             "sharedtarget"-> return "shared"
@@ -161,7 +147,7 @@ object RLTools {
         }
     }
 
-    fun RLChallengeForIcon(challengeForType:String):Int{
+    fun rl_challengeForIcon(challengeForType:String):Int{
         when (challengeForType.toLowerCase()){
             "you"-> return R.drawable.ic_you
             "friends"-> return R.drawable.fr_friends_green
@@ -170,7 +156,7 @@ object RLTools {
             else -> return R.drawable.ic_you
         }
     }
-    fun RLCalendetIcon(calenderType:String):Int{
+    fun rl_calendetIcon(calenderType:String):Int{
         when (calenderType.toLowerCase()){
             "daily"-> return R.drawable.calendar_daily
             "weekly"-> return R.drawable.calendar_weekly
@@ -180,8 +166,7 @@ object RLTools {
         }
     }
 
-
-    fun RLMonthNameTogetFirstDate(inputDate: String): String {
+    fun rl_monthNameTogetFirstDate(inputDate: String): String {
         return try {
             // Define the input date format
             val inputFormat = SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH)
@@ -200,7 +185,7 @@ object RLTools {
         }
     }
 
-    fun RLStringDateToMonthYearFormate(dateString:String,isYear:Boolean):String {
+    fun rl_stringDateToMonthYearFormate(dateString:String, isYear:Boolean):String {
         // Define the input date format
         val inputFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'XXX yyyy", Locale.ENGLISH)
@@ -231,7 +216,7 @@ object RLTools {
 
     }
 
-    fun RLStringDateToDateFormate(dateString:String):Date? {
+    fun rl_stringDateToDateFormate(dateString:String):Date? {
 
         // Define the input date format
         val inputFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -246,7 +231,7 @@ object RLTools {
         return date
     }
 
-    fun RLMonthNameTogetLastDate(dateString: String): String {
+    fun rl_monthNameTogetLastDate(dateString: String): String {
         // Define the input format
         val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DateTimeFormatter.ofPattern("MMM, yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
@@ -274,35 +259,7 @@ object RLTools {
         return outputFormatter.format(legacyDate)
     }
 
-
-    fun RLMonthNameTogetLastDateOld(dateString: String): String {
-        // Define the input format
-        val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DateTimeFormatter.ofPattern("MMM, yyyy").withResolverStyle(java.time.format.ResolverStyle.STRICT).withLocale(java.util.Locale.ENGLISH)
-        } else {
-            TODO("VERSION.SDK_INT < O not supported")
-        }
-
-        // Parse the input string to a LocalDate
-        val parsedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val normalizedDate = dateString.lowercase().replaceFirstChar { it.uppercase() }
-            LocalDate.parse("$normalizedDate 01", DateTimeFormatter.ofPattern("MMM yyyy dd").withLocale(java.util.Locale.ENGLISH))
-        } else {
-            TODO("VERSION.SDK_INT < O not supported")
-        }
-
-        // Get the last day of the month
-        val lastDateOfMonth = parsedDate.with(TemporalAdjusters.lastDayOfMonth())
-
-        // Convert LocalDate to legacy Date for formatting
-        val legacyDate = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant())
-
-        // Format the output in the desired format
-        val outputFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", java.util.Locale.ENGLISH)
-        return outputFormatter.format(legacyDate)
-    }
-
-    fun RlconvertDateToTimestamp(dateString: String): String {
+    fun rl_convertDateToTimestamp(dateString: String): String {
         val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
         dateFormat.timeZone = TimeZone.getTimeZone("GMT") // Ensure consistent parsing
 
@@ -310,7 +267,7 @@ object RLTools {
         return (date?.time?.div(1000)).toString() // Convert to seconds (Unix timestamp)
     }
 
-    fun RLConvertDate(inputDate: String): String {
+    fun rl_convertDate(inputDate: String): String {
         return try {
             // Define the input date format
             val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
@@ -329,7 +286,7 @@ object RLTools {
         }
     }
 
-     fun RLshowAlertDialog(context: Context,activity: Activity) {
+     fun rl_showAlertDialog(context: Context, activity: Activity) {
         val sucDialog: Dialog = Dialog(context)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_subscribe)
@@ -353,11 +310,11 @@ object RLTools {
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
-     fun ScxhasNotificationPermission(context: Context): Boolean {
+     fun rl_hasNotificationPermission(context: Context): Boolean {
          return  ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun RLCalculateCircularGraph(rev: Int): String {
+    fun rl_calculateCircularGraph(rev: Int): String {
         when {
             rev <= 30 -> {
                 return "#F177A0"
@@ -385,7 +342,7 @@ object RLTools {
             }
         }
     }
-    fun RLGetState(rev: Int): Int {
+    fun rl_getState(rev: Int): Int {
         return when {
             rev <= 30 -> 0
             rev <= 50 -> 1
@@ -397,7 +354,7 @@ object RLTools {
             else -> 7
         }
     }
-    fun RLLogLarge(tag: String, message: String) {
+    fun rl_logLarge(tag: String, message: String) {
         val maxLogSize = 4000
         var start = 0
 
@@ -426,7 +383,7 @@ object RLTools {
         }
     }
 
-    fun RLCalculateAge(dateString: String): Int {
+    fun rl_calculateAge(dateString: String): Int {
         // Define the date format (day/month/year)
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -451,16 +408,7 @@ object RLTools {
         return age
     }
 
-    fun RLsetSystemBarColor(act: Activity, @ColorRes color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = act.window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.statusBarColor = act.resources.getColor(color)
-        }
-    }
-
-    fun RLheightsetimageview(testImage:ImageView) {
+    fun rl_heightsetimageview(testImage:ImageView) {
 
 
         // Ensure the layout has been completed before getting the width
@@ -488,7 +436,7 @@ object RLTools {
         testImage.layoutParams =layoutParamsImage
     }
 
-    fun RLheightsetRelative(testImage:RelativeLayout) {
+    fun rl_heightsetRelative(testImage:RelativeLayout) {
 
         // Ensure the layout has been completed before getting the width
         testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -515,7 +463,7 @@ object RLTools {
         testImage.layoutParams =layoutParamsImage
     }
 
-    fun RLChallengesTypeGet(typename:String): String {
+    fun rl_challengesTypeGet(typename:String): String {
         var ChallengeName=""
         when(typename.toLowerCase()){
             "challenge-effort"->{
@@ -616,7 +564,7 @@ object RLTools {
         }
         return ChallengeName
     }
-     fun RLGetMetricsName(metric:String?): String {
+     fun rl_getMetricsName(metric:String?): String {
         val metric = metric ?: return "STEPS"
         return if (metric.equals("elevation", ignoreCase = true)) {
             "CLIMBED"
@@ -624,14 +572,14 @@ object RLTools {
             metric.uppercase()
         }
     }
-     fun RLGetClassTypeValue(classType: String?): String {
+     fun rl_getClassTypeValue(classType: String?): String {
         return when {
             classType?.contains("steps", ignoreCase = true) == true -> "steps"
             classType?.contains("effort", ignoreCase = true) == true -> "effort"
             else -> "steps"
         }
     }
-    fun RLgeticon(typename:String): Int {
+    fun rl_geticon(typename:String): Int {
        if( typename.toLowerCase().equals("walk")){
            return R.drawable.ic_walk
        }else if( typename.toLowerCase().equals("calories")){
@@ -738,7 +686,7 @@ object RLTools {
        }
     }
 
-    fun RLgetImage1(typename:String): Int {
+    fun rl_getImage1(typename:String): Int {
         if (typename.isNullOrEmpty()){
             return R.drawable.walk
         }
@@ -771,7 +719,7 @@ object RLTools {
         }
     }
 
-    fun RLFeedSetImage(datas: RLTextOverview, currentUserId:String, selectTag:String): String {
+    fun rl_feedSetImage(datas: RLTextOverview, currentUserId:String, selectTag:String): String {
         if (datas != null) {
             when (datas.from_third_party_source) {
                 1 -> {
@@ -829,7 +777,7 @@ object RLTools {
 
     }
 
-     fun RLGetLinkImage(classType:String):String{
+     fun rl_getLinkImage(classType:String):String{
         when (classType) {
             RLYourWayName.Workout.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
             RLYourWayName.Pilates.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
@@ -841,11 +789,7 @@ object RLTools {
         }
     }
 
-    fun RLTransformRound(value: Double): Int {
-        return Math.round(value).toInt()
-    }
-
-    fun RlVerifyFeedZoneName(REVPer: Double): EffortZoneFeedModel {
+    fun rl_verifyFeedZoneName(REVPer: Double): EffortZoneFeedModel {
         val roundedREVPer = REVPer.roundToInt()
 
         return when {
@@ -909,7 +853,7 @@ object RLTools {
         }
     }
 
-    fun RLzoneDiff(REVPer: Int):Int {
+    fun rl_zoneDiff(REVPer: Int):Int {
         when {
             REVPer <= 30 -> {
                 //Zone 1
@@ -943,7 +887,7 @@ object RLTools {
         return 1
     }
 
-    fun RLGetZoneNo(num: Int): String {
+    fun rl_getZoneNo(num: Int): String {
         return when {
             num < 30 -> "zone1"
             num < 50 -> "zone2"
@@ -956,7 +900,7 @@ object RLTools {
         }
     }
 
-    fun RLGetZoneColor(zone: String): String {
+    fun rl_getZoneColor(zone: String): String {
         return when (zone) {
             "zone1" -> "#F177A0"
             "zone2" -> "#FFCF2F"
@@ -969,7 +913,7 @@ object RLTools {
         }
     }
 
-    fun RLgetImage(typename:String): String {
+    fun rl_getImage(typename:String): String {
         if (typename.isNullOrEmpty()){
             return RLConstants.WALK_IMAGE
         }
@@ -1002,7 +946,7 @@ object RLTools {
         }
     }
 
-    fun RLheightsetdisplaywebview(imageView: WebView, context: FragmentActivity?) {
+    fun rl_heightsetdisplaywebview(imageView: WebView, context: FragmentActivity?) {
         // Ensure the layout has been completed before getting the width
         // Get the screen width
         val displayMetrics = DisplayMetrics()
@@ -1019,7 +963,7 @@ object RLTools {
 
     }
 
-    fun RLheightsetdisplayAll(relativeLayout: RelativeLayout, context: FragmentActivity?) {
+    fun rl_heightsetdisplayAll(relativeLayout: RelativeLayout, context: FragmentActivity?) {
         // Ensure the layout has been completed before getting the width
         // Get the screen width
         val displayMetrics = DisplayMetrics()
@@ -1036,7 +980,7 @@ object RLTools {
 
     }
 
-    fun RLheightsetstartimage(relativeLayout: RelativeLayout, context: FragmentActivity?) {
+    fun rl_heightsetstartimage(relativeLayout: RelativeLayout, context: FragmentActivity?) {
         relativeLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // Remove the listener to avoid multiple calls
@@ -1065,7 +1009,7 @@ object RLTools {
 
     }
 
-    fun RLheightsetViewPager(relativeLayout: ViewPager) {
+    fun rl_heightsetViewPager(relativeLayout: ViewPager) {
         relativeLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // Remove the listener to avoid multiple calls
@@ -1087,20 +1031,11 @@ object RLTools {
 
     }
 
-    fun RLroundnumbert(number:Double):String{
-        val roundedNumber = BigDecimal(number).setScale(2, BigDecimal.ROUND_HALF_EVEN).toDouble()
-        return roundedNumber.toString()
-    }
-
-    private fun isValidValue(value: Double?): Boolean {
-        return if (value == null || value.isNaN() || value.isInfinite()) false else true
-    }
-
     private fun isValidValueInt(value: Int?): Boolean {
         return if (value == null) false else true
     }
 
-    fun RLGetIsImperial(appUnit:String): Boolean {
+    fun rl_getIsImperial(appUnit:String): Boolean {
         return when (appUnit) {
             "Imperial" -> true
             "Metric" -> false
@@ -1108,7 +1043,7 @@ object RLTools {
         }
     }
 
-    fun RLZoneDataToJson(zoneData: List<RLZoneChartData>): JSONArray {
+    fun rl_zoneDataToJson(zoneData: List<RLZoneChartData>): JSONArray {
         val jsonArray = JSONArray()
         for (zone in zoneData) {
             val jsonObject = JSONObject()
@@ -1120,7 +1055,7 @@ object RLTools {
         return jsonArray
     }
 
-    fun RLToTimeLabel(secs: Int?): String {
+    fun rl_toTimeLabel(secs: Int?): String {
         if (!isValidValueInt(secs)) return "0"
 
         val secNum = secs ?: 0
@@ -1146,7 +1081,7 @@ object RLTools {
         return time.trim() // Removes any trailing spaces
     }
 
-     fun RLGetFileFromUri(context: Context, uri: Uri): File {
+     fun rl_getFileFromUri(context: Context, uri: Uri): File {
         val inputStream = context.contentResolver.openInputStream(uri)
         val file = File.createTempFile("temp_img", ".jpg", context.cacheDir)
         FileOutputStream(file).use { output ->
@@ -1154,7 +1089,7 @@ object RLTools {
         }
         return file
     }
-    fun RLFormatValue(title: String?, value: Any?): String {
+    fun rl_formatValue(title: String?, value: Any?): String {
         if (title != null) {
             val lowercaseTitle = title.lowercase()
 
@@ -1163,7 +1098,7 @@ object RLTools {
                         lowercaseTitle.contains("pace") ||
                         lowercaseTitle.contains("minute") -> value.toString()
 
-                lowercaseTitle.contains("session") -> RLToTimeLabel(value as Int?)
+                lowercaseTitle.contains("session") -> rl_toTimeLabel(value as Int?)
 
                 lowercaseTitle.contains("speed") ||
                         lowercaseTitle.contains("distance") -> {
@@ -1193,13 +1128,13 @@ object RLTools {
             "0"
         }
     }
-    fun RLgetCurrentISO8601(): String {
+    fun rl_getCurrentISO8601(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         sdf.timeZone = TimeZone.getTimeZone("UTC") // Ensure UTC time zone
         return sdf.format(Date()) // Get current date & time
     }
 
-    fun RLFormatMinutesToTimeLabel(minutes: Int): String {
+    fun rl_formatMinutesToTimeLabel(minutes: Int): String {
         return if (minutes >= 60) {
             val hours = minutes / 60
             val remainingMinutes = minutes % 60
@@ -1213,7 +1148,7 @@ object RLTools {
         }
     }
 
-    fun RLGetDisplayMessage(joiningDate:Long,sessionCount:Int): String {
+    fun rl_getDisplayMessage(joiningDate:Long, sessionCount:Int): String {
         val date = Calendar.getInstance()
         val y = date.get(Calendar.YEAR)
         val m = date.get(Calendar.MONTH)
@@ -1233,8 +1168,7 @@ object RLTools {
         }
     }
 
-
-    fun RLdaytimeget(totalSeconds:Int):String {
+    fun rl_daytimeget(totalSeconds:Int):String {
         val secondsInADay = 86400
         val secondsInAnHour = 3600
         val secondsInAMinute = 60
@@ -1257,194 +1191,15 @@ object RLTools {
         }
     }
 
-    fun RLminutesget(totalSeconds:Int):String {
+    fun rl_minutesget(totalSeconds:Int):String {
         val secondsInAMinute = 60
         val minutes = totalSeconds / secondsInAMinute
         val formattedMinutes = String.format("%02d", minutes)
-        val timeminutes = RLFormatMinutesToTimeLabel(formattedMinutes.toInt())
+        val timeminutes = rl_formatMinutesToTimeLabel(formattedMinutes.toInt())
         return timeminutes
     }
 
-    fun RLnestedScrollTo(nested: NestedScrollView, targetView: View) {
-        nested.post { nested.scrollTo(500, targetView.bottom) }
-    }
-
-    fun RLcopyCode(activity: Activity, mReffralCode: String?) {
-        val clipboardManager =
-            activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("Referral Code", mReffralCode)
-        clipboardManager.setPrimaryClip(clipData)
-        //        Toast.makeText(activity, "Code Coppied", Toast.LENGTH_SHORT).show();
-    }
-
-    fun RLclearFlag(context: Activity) {
-        context.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-    }
-
-    fun RLsetFlag(activity: Activity) {
-        //diable RLuser intraction on background
-        activity.window.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
-    }
-
-    //for network state
-    fun RLisNetworkAvailable(activity: Activity): Boolean {
-        val connectivity = activity
-            .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivity == null) {
-            return false
-        } else {
-            val info = connectivity.allNetworkInfo
-            if (info != null) {
-                for (i in info.indices) {
-                    if (info[i].state == NetworkInfo.State.CONNECTED) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
-
-    fun RlconvertSecondsToDays(seconds: Long): Long {
-        val secondsInADay = 86400  // 24 * 60 * 60
-        return seconds / secondsInADay
-    }
-
-    fun RLcapitalize(name: String): String {
-        val charArray = name.toLowerCase().toCharArray()
-        for (i in 0 until name.length) {
-            if (i == 0 && charArray[i] != ' ' || charArray[i] != ' ' && charArray[i - 1] == ' ') {
-                if (charArray[i] >= 'a' && charArray[i] <= 'z') {
-                    charArray[i] = (charArray[i] - 'a' + 'A'.toInt()).toChar()
-                }
-            }
-        }
-        return String(charArray)
-    }
-
-    fun RLdialogForNetwork(activity: Activity) {
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.setMessage("There is no Internet Connection.. Please Connect to The Internet and Try Again")
-        alertDialogBuilder.setCancelable(false)
-        alertDialogBuilder.setPositiveButton(
-            "Goto Setting"
-        ) { arg0, arg1 -> //activity.finish();
-            activity.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    fun RLdialogBox(activity: Activity, msg: String?) {
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.setMessage(msg)
-        alertDialogBuilder.setCancelable(false)
-        alertDialogBuilder.setPositiveButton(
-            "Ok"
-        ) { arg0, arg1 -> RLstartApp(activity) }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    fun RLdpToPx(c: Context, dp: Int): Int {
-        val r = c.resources
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp.toFloat(),
-                r.displayMetrics
-            )
-        )
-    }
-
-    fun RLdialogBoxWithoutExit(activity: Activity?, msg: String?) {
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.setMessage(msg)
-        alertDialogBuilder.setCancelable(false)
-        alertDialogBuilder.setPositiveButton(
-            "Ok"
-        ) { arg0, arg1 -> alertDialogBuilder.create().cancel() }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    fun RLstartApp(activity: Activity) {
-        val i = activity.baseContext.packageManager
-            .getLaunchIntentForPackage(activity.baseContext.packageName)
-        i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        activity.startActivity(i)
-    }
-
-    fun RLsecureAppMthd(activity: Activity) {
-        activity.window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
-    }
-
-    fun RLsecureAppMthd(activity: FragmentActivity?) {
-        if (activity != null) {
-            activity.window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
-    }
-
-    fun RLhideKeyboard(activity: Activity) {
-        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        //Find the currently focused view, so we can grab the correct window token from it.
-        var view = activity.currentFocus
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = View(activity)
-        }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    fun RLhideKeyBoard(activity: Activity) {
-        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-    }
-
-    fun RLtransparentStatusBar(activity: Activity) {
-        //status bar transparent
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            activity.window.statusBarColor = Color.TRANSPARENT
-        }
-    }
-
-    fun RLvisitPage(activity: Activity, urlString: String?) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.setPackage("com.android.chrome")
-        try {
-            activity.startActivity(intent)
-        } catch (ex: ActivityNotFoundException) {
-            RlLogDPrint("pp", "no browser found" + ex.message)
-        }
-    }
-
-    fun RLconvertDateTimeToTimestamp(dateString:String): Long? {
-
-        // Define the date format
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-        // Parse the date string to a Date object
-        val date = dateFormat.parse(dateString)
-
-        // Get the time in milliseconds
-        val timeInMillis = date?.time
-
-        return timeInMillis
-    }
-
-    fun RLconvertTimestampToDateTime(timestamp: Long): String {
+    fun rl_convertTimestampToDateTime(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
@@ -1460,7 +1215,7 @@ object RLTools {
         }
     }
 
-    fun RLformatTime(secs: Int, isSec: Boolean): String {
+    fun rl_formatTime(secs: Int, isSec: Boolean): String {
         val secNum = secs
         val hours = secNum / 3600
         val minutes = (secNum / 60) % 60
@@ -1497,7 +1252,7 @@ object RLTools {
         return time
     }
 
-    fun RLformatTimeNoMS(secs: Int, isSec: Boolean): String {
+    fun rl_formatTimeNoMS(secs: Int, isSec: Boolean): String {
         val secNum = secs
         val hours = secNum / 3600
         val minutes = (secNum / 60) % 60
@@ -1536,8 +1291,7 @@ object RLTools {
         return time
     }
 
-
-    fun RLconvertTimestampToDAte(timestamp: Long): String {
+    fun rl_convertTimestampToDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 val formatter = DateTimeFormatter.ofPattern("EEE, MMM dd '|' HH:mm")
@@ -1553,7 +1307,7 @@ object RLTools {
         }
     }
 
-    fun RLconvertTimestampToSchdualDAte(timestamp: Long): String {
+    fun rl_convertTimestampToSchdualDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 val formatter = DateTimeFormatter.ofPattern("dd MMM hh:mm a")
@@ -1569,7 +1323,7 @@ object RLTools {
         }
     }
 
-    fun RLgetMetric(thirdPartySource: Int,cardData: RLTextOverview): RlMetric {
+    fun rl_getMetric(thirdPartySource: Int, cardData: RLTextOverview): RlMetric {
         return when (thirdPartySource) {
             in listOf(20, 26, 32, 38) -> RlMetric(
                 R.drawable.ic_heart,
@@ -1623,212 +1377,34 @@ object RLTools {
         }
     }
 
-    fun RlgetDifferenceInDays(timestampInMillis: Long,totalDays:String): String {
-        // Convert timestamp to LocalDate
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val givenDate = Instant.ofEpochMilli(timestampInMillis)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-            // Get the current date
-            val currentDate = LocalDate.now()
-
-            val different=ChronoUnit.DAYS.between(givenDate, currentDate)
-
-            val secondsInADay = 86400
-            val differentInADay = different/secondsInADay
-           RlLogEPrint("TAG","different:- $different  ,differentInADay:- $differentInADay")
-            val final=totalDays.toInt() - differentInADay.toDouble().toInt()
-            // Calculate the difference in days between the current date and the given date
-            return final.toString()
-        }else{
-            return "0"
-        }
-    }
-
-    fun RlgetDifferenceInDays1(timestampInMillis: Long,totalDays:String): String {
-        // Convert timestamp to LocalDate
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val givenDate = Instant.ofEpochMilli(timestampInMillis)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-            // Get the current date
-            val currentDate = LocalDate.now()
-
-            val different=ChronoUnit.DAYS.between(givenDate, currentDate)
-
-            val secondsInADay = 86400
-            val differentInADay = different/secondsInADay
-           RlLogEPrint("TAG","different:- $different  ,differentInADay:- $differentInADay")
-            val final=totalDays.toInt() - differentInADay.toDouble().toInt()
-            // Calculate the difference in days between the current date and the given date
-            return final.toString()
-        }else{
-            return "0"
-        }
-    }
-
-    fun RLvisitSite(activity: Context, url: String, user_id: String?) {
-        val shop_url = Intent(
-            Intent.ACTION_VIEW, Uri.parse(
-                url.replace(
-                    "{USERID}",
-                    user_id!!
-                )
-            )
-        )
-        activity.startActivity(shop_url)
-    }
-
-    fun RLcopyClipBoard(activity: Activity, str: String?) {
-        val clipboardManager =
-            activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("coupon", str)
-        clipboardManager.setPrimaryClip(clipData)
-    }
-
-    fun RLgenerateGradient(color: IntArray?): GradientDrawable {
-        return GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, color)
-    }
-
-    fun RLshareOnWhatsapp(activity: Activity, url: String?) {
-        val whatsappIntent = Intent(Intent.ACTION_SEND)
-        whatsappIntent.type = "RLText/plain"
-        whatsappIntent.setPackage("com.whatsapp")
-        whatsappIntent.putExtra(Intent.EXTRA_TEXT, url)
-        try {
-            activity.startActivity(whatsappIntent)
-        } catch (ex: ActivityNotFoundException) {
-//            RLTools.RlLogDPrint("Activity", "Whatsapp have not been installed.");
-            activity.startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=com.whatsapp")
-                )
-            )
-        }
-    }
-
-    fun RLconvertData(inputDate: String?): String? {
-        val input = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val output = SimpleDateFormat("dd-MM-yyyy hh:mm:ss aa")
-        var date: Date? = null
-        var outputString: String? = null
-        try {
-            date = input.parse(inputDate)
-            outputString = output.format(date)
-            return outputString
-        } catch (pe: ParseException) {
-            pe.printStackTrace()
-        }
-        return null
-    }
-
-    fun RLopenPlaystore(activity: Activity, url: String?) {
-        val shareOnPlaystore = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        activity.startActivity(shareOnPlaystore)
-    }
-
-    fun RLisConnected(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isAvailable && networkInfo.isConnected
-    }
-
-    fun RLisConnectingToInternet(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        if (activeNetwork != null) { // connected to the internet
-            if (activeNetwork.type == ConnectivityManager.TYPE_WIFI) {
-//                RLTools.RlLogDPrint(TAG, "Internet Active: " + activeNetwork.getTypeName());
-                return true
-            } else if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) {
-                // connected to the mobile provider's data plan
-//                RLTools.RlLogDPrint(TAG, "Internet Active: " + activeNetwork.getTypeName());
-                return true
-            }
-        }
-        return false
-    }
-
-    fun RLrupeeTOPaise(rupee: String): Int {
-        val split = rupee.split("\\.".toRegex()).toTypedArray()
-        val item1 = split[0].toInt()
-        val item2 = split[1].toInt()
-        return item1 * 100 + item2
-    }
-
-    fun RLroundOffAmount(amount: Double?): Double {
-        val decimalFormat = DecimalFormat(".##")
-        decimalFormat.roundingMode = RoundingMode.CEILING
-        return java.lang.Double.valueOf(decimalFormat.format(amount))
-    }
-
-    fun RLnextActivity(activity: Activity, cls: Class<*>?) {
-        val intent = Intent(activity, cls)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        activity.startActivity(intent)
-    }
-
-    fun RLnextFinishAllActivity(activity: Activity, cls: Class<*>?) {
-        val intent = Intent(activity, cls)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        activity.startActivity(intent)
-        activity.finish()
-    }
-
-
-    //for Device Id
-    fun RLgetDeviceId(activity: Activity): String {
-        return Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
-    }
-    fun RLisEmailValid(email: String): Boolean {
+    fun rl_isEmailValid(email: String): Boolean {
         val emailRegex = Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
         return emailRegex.matches(email)
     }
-
-    fun RLvalidateVehicleNumber(email: String): Boolean {
-        val emailRegex = Regex( "[a-zA-z]{2}+[0-9]{2}+[a-zA-z]{2}+[0-9]{4}")
-        return emailRegex.matches(email)
-    }
-
+    
     @SuppressLint("SimpleDateFormat")
-    fun RLgetCalculatedMonths(): String? {
+    fun rl_getCalculatedMonths(): String? {
         val c: Calendar = GregorianCalendar()
         val sdfr = SimpleDateFormat("MMM yyyy")
         return sdfr.format(c.time).toString()
     }
 
-    fun RLformatCommasInt(number: Double): String {
+    fun rl_formatCommasInt(number: Double): String {
           val numberFormat = NumberFormat.getNumberInstance(Locale.US)
            val integerPart = number.roundToInt()
            val formattedInteger = numberFormat.format(integerPart)
           return formattedInteger
     }
-    fun RLformatCommasInt(number: Int): String {
+    fun rl_formatCommasInt(number: Int): String {
         val numberFormat = NumberFormat.getNumberInstance(Locale.US)
         val integerPart = number
         val formattedInteger = numberFormat.format(integerPart)
         return formattedInteger
     }
 
-
-     fun RLformatCommasOLd(number: Double): String {
-         val formatter = NumberFormat.getInstance(Locale.getDefault())
-         formatter.maximumFractionDigits = 2
-         formatter.minimumFractionDigits = 0
-         return formatter.format(number?:0.00)
-    }
-
-    fun RLformatCommas(number: Double): String {
+    fun rl_formatCommas(number: Double): String {
         val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
         return formatter.format(number)
     }
-
-    fun RLnumberToUUID(number: Int): UUID {
-        val baseUUID = "0000%04x-0000-1000-8000-00805f9b34fb"
-        return UUID.fromString(String.format(baseUUID, number))
-    }
-
 
 }

@@ -10,14 +10,12 @@ import com.revoola.utils.RLPrefManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.Gson
 import com.revoola.RLBaseProgress
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
 import com.revoola.databasefirebase.RLFirebaseManager
-import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLConstants
 
 class RLSplashActivityRL : RLBaseActivity() {
@@ -25,59 +23,59 @@ class RLSplashActivityRL : RLBaseActivity() {
     lateinit var activityBinding: RlActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        RLScreenSet(false)
+        rl_screenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
-        RLRemoteConfig()
-        RLBaseProgress.RLShowProgressDialog(this)
-        val userId= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
+        rl_remoteConfig()
+        RLBaseProgress.rl_showProgressDialog(this)
+        val userId= RLPrefManager.rl_getSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){
-            RLBaseProgress.RLhideProgressDialog()
+            RLBaseProgress.rl_hideProgressDialog()
             activityBinding.btnFullExperience.setOnClickListener {
-                RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
+                RLPrefManager.rl_setSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
                 startActivity(Intent(this, RLLoginActivityRL::class.java))
                 finish()
             }
             activityBinding.btnGuestUser.setOnClickListener {
-                RLBaseProgress.RLShowProgressDialog(this)
-                RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,true)
-                RLGuestUser()
+                RLBaseProgress.rl_showProgressDialog(this)
+                RLPrefManager.rl_setSomeBooleanValue(this,RLPrefManager.isGuestUser,true)
+                rl_guestUser()
             }
         }else{
-            if (RLPrefManager.RLGetGuestUser(this)){
-                RLBaseProgress.RLhideProgressDialog()
+            if (RLPrefManager.rl_getGuestUser(this)){
+                RLBaseProgress.rl_hideProgressDialog()
                 startActivity(Intent(this, RLMainActivityRL::class.java))
                 finish()
             }else{
-                RLSetUsernameToFirebase(userId)
+                rl_setUsernameToFirebase(userId)
             }
         }
     }
 
-    private fun RLGuestUser(){
+    private fun rl_guestUser(){
         val databaseManager = RLDatabaseManagerWrite()
         val authManager = RLAuthManager()
-        authManager.RLRegisterGuestUser(){ user, error ->
+        authManager.rl_registerGuestUser(){ user, error ->
             if (user != null) {
                 val userId = user.uid
                 val email = "$userId@guestuser.com"
-                val userModel = RLUser(displayImage = user.photoUrl?.toString() ?: "",emailId = email,name = "Guest",userId = userId)
-                databaseManager.REVOOLAUSERFORSEARCHWrite(userId,userModel) { success, error ->
+                val userModel = rl_user(displayImage = user.photoUrl?.toString() ?: "",emailId = email,name = "Guest",userId = userId)
+                databaseManager.revoola_User_For_Search_Write(userId,userModel) { success, error ->
                     if (success) {
-                        RLRevoolaUserSettingFirebaseEntry(userId,email)
+                        rl_revoolaUserSettingFirebaseEntry(userId,email)
                     }else{
-                        RLBaseProgress.RLhideProgressDialog()
+                        RLBaseProgress.rl_hideProgressDialog()
                     }
                 }
             }else {
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG,"Registration failed: ${error?.message}")
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logEPrint(TAG,"Registration failed: ${error?.message}")
             }
         }
     }
 
-    private fun RLRemoteConfig() {
+    private fun rl_remoteConfig() {
 
         val remoteConfig = FirebaseRemoteConfig.getInstance()
 
@@ -95,26 +93,26 @@ class RLSplashActivityRL : RLBaseActivity() {
                     val challenge_selectFor = remoteConfig.getString("challenge_selectFor")
                     val challenge_selectTarget = remoteConfig.getString("challenge_selectTarget")
                     val challenge_selectName = remoteConfig.getString("challenge_selectName")
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
                 } else {
-                   RLTools.RlLogEPrint(TAG, "Fetch failed")
+                   RLTools.rl_logEPrint(TAG, "Fetch failed")
                 }
             })
     }
 
-    private fun RLSetUsernameToFirebase(userId:String){
+    private fun rl_setUsernameToFirebase(userId:String){
         //Firebase To Fetch UserData
-        RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
+        RLDatabaseManagerRead().rl_userBasicDataRead(userId){ data, error ->
             if (data != null) {
               //  val gson = Gson()
                // val jsonObject = gson.toJson(data)
                // val userData = gson.fromJson(jsonObject, RLRevoolaUsersSettingsModel::class.java)
                 val userData = RLTools.parseUserData(data)
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
                 if (userData!!.isBasicDataAdded){
                     startActivity(Intent(this, RLMainActivityRL::class.java))
                     finish()
@@ -123,13 +121,13 @@ class RLSplashActivityRL : RLBaseActivity() {
                     finish()
                 }
             }else{
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
             }
         }
 
     }
 
-    data class RLUser(
+    data class rl_user(
         val displayImage: String,
         val emailId: String,
         val name: String,
@@ -146,7 +144,7 @@ class RLSplashActivityRL : RLBaseActivity() {
         }
     }
 
-    private fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String) {
+    private fun rl_revoolaUserSettingFirebaseEntry(userId:String, emailId:String) {
         val versionName: String = try {
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             packageInfo.versionName ?: "0"
@@ -154,21 +152,21 @@ class RLSplashActivityRL : RLBaseActivity() {
             "0"
         }
         val firebaseManager = RLFirebaseManager()
-        firebaseManager.RLRevoolaUserSettingFirebaseEntry(userId, emailId, versionName) { success ->
+        firebaseManager.revoola_User_Setting_Firebase_Entry(userId, emailId, versionName) { success ->
             if (success) {
-                RLBaseProgress.RLhideProgressDialog()
-                RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user, userId)
-                RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email, emailId)
+                RLBaseProgress.rl_hideProgressDialog()
+                RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.current_user, userId)
+                RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.current_user_email, emailId)
                 startActivity(Intent(this, RLMainActivityRL::class.java))
                 finish()
             } else {
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
                 Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun RLInsertUserServer(userId:String,emailId:String) {
+    private fun rl_insertUserServer(userId:String,emailId:String) {
         val userGuest = mapOf(
             "displayImage" to RLConstants.GuestImg,
             "emailId" to emailId,
@@ -177,14 +175,14 @@ class RLSplashActivityRL : RLBaseActivity() {
             "name" to "Guest",
             "userId" to userId)
     }
-    private fun setMemberProfileAnonymousUser(userId:String,emailId:String) {
+    private fun rl_setMemberProfileAnonymousUser(userId:String,emailId:String) {
         val dob = "01/01/1970"
         val age = 29 //getAge(dob)
         val TMHR = 220 - age
         val AMHR = TMHR
         val RFMHR = TMHR
 
-        val userData = mapOf(
+        val rl_userData = mapOf(
             "height" to 170,
             "heightUnit" to "Metric",
             "weightkg" to 50,
@@ -195,7 +193,7 @@ class RLSplashActivityRL : RLBaseActivity() {
             "AMHR" to AMHR,
             "RFMHR" to RFMHR)
 
-        /*val setUpMyProfile = mapOf(
+        /*val rl_setUpMyProfile = mapOf(
             "email" to emailId,
             "gender" to "Male",
             "date_of_birth" to "01/01/1970",
@@ -205,7 +203,7 @@ class RLSplashActivityRL : RLBaseActivity() {
             "next_payment_date" to userService.subscriptionTime,
             "subscription_end_date" to userService.subscriptionTime)
 
-        val updateUserInsightlyMoe = mapOf(
+        val rl_updateUserInsightlyMoe = mapOf(
             "email" to emailId,
             "uid" to userId,
             "gender" to "Male",

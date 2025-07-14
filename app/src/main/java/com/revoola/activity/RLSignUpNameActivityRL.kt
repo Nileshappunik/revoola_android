@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import com.revoola.R
 import com.revoola.activity.base.RLBaseActivity
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
@@ -21,26 +20,27 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
     var emailID: String = ""
     var password: String = ""
     var IsNewUser: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        RLScreenSet(false)
+        rl_screenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_sign_up_name) as RlActivitySignUpNameBinding
-        RLUisetup()
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_sign_up_name) as RlActivitySignUpNameBinding
+        rl_uisetup()
     }
-    private fun RLUisetup() {
-        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.toolbarLogin.tvTitle.setText(R.string.basicdetails)
 
-        emailID= RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.login_email,"")
-        password=RLPrefManager.RLGetSomeStringValue(this,RLPrefManager.login_password,"")
+        emailID= RLPrefManager.rl_getSomeStringValue(this, RLPrefManager.login_email,"")
+        password=RLPrefManager.rl_getSomeStringValue(this,RLPrefManager.login_password,"")
 
         IsNewUser=intent.getBooleanExtra("IsNewUser",false)
       //  emailID= intent.getStringExtra("EmailId").toString()
       //  password= intent.getStringExtra("Password").toString()
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            val  userId=RLPrefManager.RLGetSomeStringValue(this, RLPrefManager.current_user,"")
-            RlLoginSuccessful(userId)
+            val  userId=RLPrefManager.rl_getSomeStringValue(this, RLPrefManager.current_user,"")
+            rl_loginSuccessful(userId)
 
         })
 
@@ -50,7 +50,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
                     activityBinding.tvLogin.visibility=View.GONE
                     activityBinding.tvLoginNoClick.visibility=View.VISIBLE
                 }else{
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -62,7 +62,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
                     activityBinding.tvLogin.visibility=View.GONE
                     activityBinding.tvLoginNoClick.visibility=View.VISIBLE
                 }else{
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -74,7 +74,7 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
                     activityBinding.tvLogin.visibility=View.GONE
                     activityBinding.tvLoginNoClick.visibility=View.VISIBLE
                 }else{
-                    RLvalidation()
+                    rl_validation()
                 }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -83,20 +83,18 @@ class RLSignUpNameActivityRL : RLBaseActivity(){
 
     }
 
-    private fun RlLoginSuccessful(userId:String){
-      RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,userId)
-       RLPrefManager.RLSetSomeStringValue(this,RLPrefManager.current_user_email,emailID)
-       RLPrefManager.RLSetSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
+    private fun rl_loginSuccessful(userId:String){
+      RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.current_user,userId)
+       RLPrefManager.rl_setSomeStringValue(this,RLPrefManager.current_user_email,emailID)
+       RLPrefManager.rl_setSomeBooleanValue(this,RLPrefManager.isGuestUser,false)
         startActivity(Intent(this, RLSignUpActivityRL::class.java)
             .putExtra("firstName",firstName)
             .putExtra("lastName",lastName)
             .putExtra("nickName",nickName))
         finish()
     }
-    private fun RLopentoast(messageprint: String) {
-        Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
-    }
-    private fun RLvalidation(): Boolean {
+
+    private fun rl_validation(): Boolean {
         firstName = activityBinding.etfirstname.text.toString().trim()
         lastName = activityBinding.etlastname.text.toString().trim()
         nickName = activityBinding.etnickname.text.toString().trim()

@@ -37,8 +37,8 @@ class RLGetStartedItemListAdapter(
         return  dataList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlListItemGetStarttedBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlListItemGetStarttedBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlListItemGetStarttedBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlListItemGetStarttedBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             layoutBinding.txtAccount.setText(cardData.title)

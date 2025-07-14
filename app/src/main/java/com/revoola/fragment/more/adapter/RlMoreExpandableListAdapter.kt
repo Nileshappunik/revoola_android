@@ -47,11 +47,11 @@ class RlMoreExpandableListAdapter(
         imgAccount.setImageResource(groupIcon)
         imgRight.setImageResource(R.drawable.ic_chevron_right)
 
-        RlChangeRightIcon(groupTitle,isExpanded,imgRight)
+        rl_changeRightIcon(groupTitle,isExpanded,imgRight)
         return view
     }
 
-    private fun RlChangeRightIcon(groupTitle: String, isExpanded: Boolean, imgRight: ImageView){
+    private fun rl_changeRightIcon(groupTitle: String, isExpanded: Boolean, imgRight: ImageView){
         if (isExpanded){
             if (groupTitle.equals(context.getString(R.string.edit_your_account_data))){
                 imgRight.setImageResource(R.drawable.ic_arrow_up_outline)

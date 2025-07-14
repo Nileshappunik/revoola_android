@@ -8,7 +8,7 @@ import com.revoola.commonobject.RLTools
 class RLClickActionCallback: OnClickActionListener {
 
     override fun onClick(clickData: ClickData): Boolean {
-       RLTools.RlLogEPrint("MoengageTag"," onClick() $clickData" )
+       RLTools.rl_logEPrint("MoengageTag"," onClick() $clickData" )
         // return true if the application is handling else false
         return false
     }

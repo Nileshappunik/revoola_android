@@ -1,13 +1,10 @@
 package com.revoola.fragment.start.body
 
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -27,7 +24,6 @@ import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFragBodyClassesSpeedVideoStartBinding
-import com.revoola.enumclass.RLYourWayArrayType
 import com.revoola.fragment.start.classes.RLFragClassWorkoutComplete
 
 import com.revoola.model.RLFulllVideoModel
@@ -135,11 +131,11 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(true)
-        RLBottomHideShowSet(false)
+         rl_screenSet(true)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_speed_video_start, container) as RlFragBodyClassesSpeedVideoStartBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragBodyClassesSpeedVideoStart" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_body_classes_speed_video_start, container) as RlFragBodyClassesSpeedVideoStartBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragBodyClassesSpeedVideoStart" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing or show a message
@@ -192,25 +188,25 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
                         val AvgSPEED = dataGet?.avgSpeed?:"0"
                         val CALORIES = dataGet?.calories?:"0"
 
-                        val speedSetValue=RLYourWayCalvulation.RlGetValueInt(SPEED.toString())?:0
-                        val cadenceSetValue=RLYourWayCalvulation.RlGetValueInt(CADENCE!!.toString())?:0
+                        val speedSetValue=RLYourWayCalvulation.rl_getValueInt(SPEED.toString())?:0
+                        val cadenceSetValue=RLYourWayCalvulation.rl_getValueInt(CADENCE!!.toString())?:0
                         if (cadenceSetValue>0){
                             fragBinding.inlayCadence.txtNumber.setText(CADENCE.toString())
                         }
 
-                        distanceNumber=RLYourWayCalvulation.RlGetValueDouble(DISTANCE.toString())?:0.0
-                        climbedNumber=RLYourWayCalvulation.RlGetValueInt(CADENCE.toString())?:0
-                        speedNumber=RLYourWayCalvulation.RlGetValueDouble(SPEED.toString())?:0.0
-                        activeCaloriesNumber=RLYourWayCalvulation.RlGetValueDouble(CALORIES.toString())?:0.0
-                        cadenceData=RLYourWayCalvulation.RlGetValueDouble(CADENCE.toString())?:0.0
+                        distanceNumber=RLYourWayCalvulation.rl_getValueDouble(DISTANCE.toString())?:0.0
+                        climbedNumber=RLYourWayCalvulation.rl_getValueInt(CADENCE.toString())?:0
+                        speedNumber=RLYourWayCalvulation.rl_getValueDouble(SPEED.toString())?:0.0
+                        activeCaloriesNumber=RLYourWayCalvulation.rl_getValueDouble(CALORIES.toString())?:0.0
+                        cadenceData=RLYourWayCalvulation.rl_getValueDouble(CADENCE.toString())?:0.0
                         if (!arrCadence.isNullOrEmpty()){
-                            maxCadence=RLYourWayCalvulation.RLmax(maxCadence,cadenceData.toInt())
+                            maxCadence=RLYourWayCalvulation.rl_max(maxCadence,cadenceData.toInt())
                             avgCadence=arrCadence.average()?:0.00
                         }
                         speedList.add(speedSetValue.toDouble())
                         if (!speedList.isNullOrEmpty()){
                             avgSpeed=speedList.average()?:0.00
-                            maxSpeed=RLYourWayCalvulation.RLmax(maxSpeed,speedNumber.roundToInt())
+                            maxSpeed=RLYourWayCalvulation.rl_max(maxSpeed,speedNumber.roundToInt())
                         }
                     }
                 }
@@ -311,7 +307,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         }.start()
     }
     fun RLtimerMain() {
-        timerManager.RLstart { elapsedTime ->
+        timerManager.rl_start { elapsedTime ->
             activity?.runOnUiThread {
                 totalTime=(elapsedTime/1000).toString()
                 RlDataFillAllArray()
@@ -338,7 +334,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         burntCalories=burntCalories+activeCaloriesNumber
         distance=CumDistance
         if (!arrBurntCalories.isNullOrEmpty()){
-            maxBurntCalories=RLYourWayCalvulation.RLmax(maxBurntCalories,burntCalories.roundToInt())
+            maxBurntCalories=RLYourWayCalvulation.rl_max(maxBurntCalories,burntCalories.roundToInt())
             avgBurntCalories=arrBurntCalories.average()?:0.00
         }
 
@@ -462,15 +458,15 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
         bundle.putParcelable("cardData",cardData)
 
 
-        (context as RLMainActivityRL).RLloadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
+        (context as RLMainActivityRL).rl_loadFrag(RLFragClassWorkoutComplete().newInstance(bundle), TAG, false, null, false)
     }
 
     private fun RLUserDataGet() {
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 wsWeight=userData.weightkg
                 wsHeight=userData.height
-                wsAge= RLTools.RLCalculateAge(userData.dob)
+                wsAge= RLTools.rl_calculateAge(userData.dob)
                 gender=userData.gender
                 RFMHR=userData.RFMHR
                 RestingHR=userData.restingHr
@@ -482,7 +478,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
                 isBasicDataAdded=userData.isBasicDataAdded
                 visibilityflagforthatsession=userData.visibilityflagforthatsession
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
     }
@@ -499,7 +495,7 @@ class RLFragBodyClassesSpeedVideoStart : RLBaseFragment() {
             requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         }catch (e:Exception){
-           RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+           RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
         }
     }
 }

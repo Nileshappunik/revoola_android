@@ -54,7 +54,7 @@ class RLSensorCadenceListAdapter(val context: FragmentActivity?, private val ite
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val lastConnectDeviceAddress =
-                    com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "")
+                    com.revoola.utils.RLPrefManager.rl_getSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "")
                 val cardData:RLBleListModel= dataList[position]
                 layoutBinding.img1.setImageResource(R.drawable.ic_cadence)
                 if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
@@ -71,23 +71,23 @@ class RLSensorCadenceListAdapter(val context: FragmentActivity?, private val ite
                     bundle.putString("deviceType",cardData.deviceType)
                     bundle.putString("deviceAddress",cardData.deviceAddress)
                     bundle.putString("devicename",cardData.devicename)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragEditYourSensor().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragEditYourSensor().newInstance(bundle), TAG, true, null, false)
                 }
                 layoutBinding.imgDone.setOnClickListener {
                     if (cardData.deviceAddress.equals(lastConnectDeviceAddress)){
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
+                        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, "no")
+                        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type, "")
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,false,cardData.isWatchDevice)
                     }else{
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
-                        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.SPEED_SENSOR)
+                        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect, cardData.deviceAddress)
+                        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(context, com.revoola.utils.RLPrefManager.last_device_connect_type,RLConstants.SPEED_SENSOR)
                         itemClickListener.onItemClick(cardData.deviceType,cardData.deviceAddress,true,cardData.isWatchDevice)
                     }
                     notifyDataSetChanged()
                 }
 
                 // when we Change name then display name Change
-                val changeDeviceName = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(context, com.revoola.utils.RLPrefManager.change_device_name, "")
+                val changeDeviceName = com.revoola.utils.RLPrefManager.rl_getSomeStringValue(context, com.revoola.utils.RLPrefManager.change_device_name, "")
                 if (changeDeviceName.isNullOrEmpty()){
                     layoutBinding.txtSensorName.setText(cardData.devicename)
                 }else{
@@ -104,7 +104,7 @@ class RLSensorCadenceListAdapter(val context: FragmentActivity?, private val ite
                 }
 
             } catch (e: Exception) {
-           RLTools.RlLogEPrint(TAG, "exception= " + e.message)
+           RLTools.rl_logEPrint(TAG, "exception= " + e.message)
             }
         }
     }

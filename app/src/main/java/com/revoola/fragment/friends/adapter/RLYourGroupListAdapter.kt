@@ -37,8 +37,8 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
     }
 
 
-    inner class MyViewHolder(layoutBinding: RlLayoutYourGroupBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutYourGroupBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlLayoutYourGroupBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlLayoutYourGroupBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val carddata = dataList[position]
             layoutBinding.txtGroupName.setText(carddata.group_name)
@@ -54,12 +54,12 @@ class RLYourGroupListAdapter(val context: FragmentActivity?, val groupList: List
                 bundle.putString("GroupName", carddata.group_name)
                 bundle.putString("GroupAvatar", carddata.group_avatar)
                 bundle.putString("GroupMember", carddata.number_of_members.toString())
-                (context as RLMainActivityRL).RLloadFrag(RLFragYourGroupDetails().newInstance(bundle), TAG, true, null, true)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragYourGroupDetails().newInstance(bundle), TAG, true, null, true)
             }
        }
     }
 
-    fun RLfilter(query: String) {
+    fun rl_filter(query: String) {
         dataList = if (query.isEmpty()) {
             groupList
         } else {

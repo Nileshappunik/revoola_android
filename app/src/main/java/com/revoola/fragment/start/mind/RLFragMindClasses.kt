@@ -52,17 +52,17 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
         "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClasses" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClasses" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
+        rl_helpHideShowSet(true, fragBinding.toolbar.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
         fragBinding.toolbar.ivTitle.setText(R.string.mindclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectamindfulclass)
 
@@ -91,7 +91,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLGetMindVideoList(videotype: String) {
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLREVOOLAVIDEOKEYSMINDRead(videotype){ data, error ->
+        databaseManager.rl_revoolaVideoKeysMindRead(videotype){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -147,7 +147,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
             if (selectedItems.isNullOrEmpty()){
                 dialogMainBinding.txtShowAllClasses.setText("Show All Classes")
             }else{
-                val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+                val filterVideoList = RLClassFilterService.rl_getFilterVideoList(selectedItems,videoList_Filter)
                 dialogMainBinding.txtShowAllClasses.setText("Show ${filterVideoList.size} Classes")
             }
         }
@@ -158,7 +158,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         dialogMainBinding.txtShowAllClasses.setOnClickListener {
             // Get multi-child selection from adapter
             val selectedItems: List<RLMindBodyFilterGroupItemModel> = adapter.RLGetSelectedItems()
-            val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+            val filterVideoList = RLClassFilterService.rl_getFilterVideoList(selectedItems,videoList_Filter)
             val height =  fragBinding.rvItemMindClass.height
             val adapter = RLMindClassListAdapter(filterVideoList,activity,height)
             fragBinding.rvItemMindClass.adapter = adapter

@@ -52,12 +52,12 @@ class RLFragEditChallenges : RLBaseFragment() {
         RlFragEditChallengesBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_challenges, container) as RlFragEditChallengesBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditChallenges" )
-        CurrentUserID=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_challenges, container) as RlFragEditChallengesBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditChallenges" )
+        CurrentUserID=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
@@ -75,9 +75,9 @@ class RLFragEditChallenges : RLBaseFragment() {
     }
 
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.ivhelp, RLPrefManager.start_help_content)
+        rl_helpHideShowSet(true, fragBinding.ivhelp, RLPrefManager.start_help_content)
         fragBinding.ivBack.setOnClickListener {
-            RLBottomHideShowSet(true)
+            rl_bottomHideShowSet(true)
             RLshowAlertDialog("Do you want to discard the changes?")
         }
 
@@ -96,10 +96,10 @@ class RLFragEditChallenges : RLBaseFragment() {
         fragBinding.recyclerviewEdit.layoutManager = linearLayoutMain
         val  dataList: MutableList<RLEditChallenge> = mutableListOf(
             RLEditChallenge(R.drawable.ic_award,cardData.ChallengeGivenName,"","RLFragChallengesForName",true),
-            RLEditChallenge(RLTools.RLChallengeIcon(cardData.ChallengeType),"${cardData.stepCount} ${cardData.ChallengeType}","","RLFragSetYourGoal",true),
-            RLEditChallenge(RLTools.RLChallengeTargetIcon(cardData.TargetType),cardData.TargetType,"","RLFragChallengesForType",isTagetEditable),
-            RLEditChallenge(RLTools.RLChallengeForIcon(cardData.challengeForType),cardData.challengeForType,"","RLFragChallengesFor",true),
-            RLEditChallenge(RLTools.RLCalendetIcon(cardData.CalenderType),cardData.CalenderType,cardData.selectedDate,"RLFragSetYourGoal",true)
+            RLEditChallenge(RLTools.rl_challengeIcon(cardData.ChallengeType),"${cardData.stepCount} ${cardData.ChallengeType}","","RLFragSetYourGoal",true),
+            RLEditChallenge(RLTools.rl_challengeTargetIcon(cardData.TargetType),cardData.TargetType,"","RLFragChallengesForType",isTagetEditable),
+            RLEditChallenge(RLTools.rl_challengeForIcon(cardData.challengeForType),cardData.challengeForType,"","RLFragChallengesFor",true),
+            RLEditChallenge(RLTools.rl_calendetIcon(cardData.CalenderType),cardData.CalenderType,cardData.selectedDate,"RLFragSetYourGoal",true)
         )
 
         val adapter = RLEditChallengesAdapter(requireActivity(), dataList) { challengeName ->
@@ -109,26 +109,26 @@ class RLFragEditChallenges : RLBaseFragment() {
                     val bundle: Bundle = Bundle()
                     cardData.isEditClass=true
                     bundle.putSerializable("cardData",cardData)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesForName().newInstance(bundle), TAG, true,null, false)
                 }
                 "RLFragSetYourGoal"->{
                     val bundle: Bundle = Bundle()
                     cardData.isEditClass=true
                     bundle.putSerializable("cardData",cardData)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
                 }
                 "RLFragChallengesForType"->{
                     val bundle: Bundle = Bundle()
                     cardData.isEditClass=true
                     bundle.putSerializable("cardData",cardData)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesForType().newInstance(bundle), TAG, true,null, false)
 
                 }
                 "RLFragChallengesFor"->{
                     val bundle: Bundle = Bundle()
                     cardData.isEditClass=true
                     bundle.putSerializable("cardData",cardData)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
                 }
             }
         }
@@ -136,10 +136,10 @@ class RLFragEditChallenges : RLBaseFragment() {
 
         fragBinding.btnDone.setOnClickListener {
             if (isAdded){
-                RLBaseProgress.RLShowProgressDialog(requireActivity())
+                RLBaseProgress.rl_showProgressDialog(requireActivity())
             }
             val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
-            val userData= RLGetUserDetails(requireContext())
+            val userData= rl_getUserDetails(requireContext())
             val challengePayload=RLChallengePayload()
 
             when (cardData.challengeForType.toLowerCase()){
@@ -166,20 +166,20 @@ class RLFragEditChallenges : RLBaseFragment() {
             challengePayload.groupid_userid = cardData.selectGroupList
             challengePayload.metric =cardData.ChallengeType
             challengePayload.creationdate = currentTimestamp
-            challengePayload.startdate = RLTools.RlconvertDateToTimestamp(cardData.fromDate)
-            challengePayload.enddate = RLTools.RlconvertDateToTimestamp(cardData.toDate)
+            challengePayload.startdate = RLTools.rl_convertDateToTimestamp(cardData.fromDate)
+            challengePayload.enddate = RLTools.rl_convertDateToTimestamp(cardData.toDate)
             challengePayload.goalvalue = cardData.stepCount
             challengePayload.max = "false"
             challengePayload.challenger = "${userData?.firstName ?: ""} ${userData?.lastName ?: ""}"
             challengePayload.displayImage = userData?.displayImage?:""
             challengePayload.typeOfSelect =cardData.challengeForType // chekc friend ,you group ,and
-            challengePayload.targetType = RLTools.RLChallengeTargetName(cardData.TargetType)
+            challengePayload.targetType = RLTools.rl_challengeTargetName(cardData.TargetType)
             challengePayload.challenge_name = cardData.ChallengeGivenName
             challengePayload.day_type = cardData.CalenderType
             challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
             if (payLoad!=null){
-                RLTools.RlLogDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
+                RLTools.rl_logDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
                 val cardRequestData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
                 RLInsertApiCall(cardRequestData)
             }
@@ -199,7 +199,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val jsonString= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
@@ -226,7 +226,7 @@ class RLFragEditChallenges : RLBaseFragment() {
 
         iv_ok.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
-            (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false,null, false)
         })
         iv_Cancle.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
@@ -296,30 +296,30 @@ class RLFragEditChallenges : RLBaseFragment() {
 
 
     private fun RLInsertApiCall(request: List<RLChallengesApiPayload>) {
-        if (RLApiClientRetrofit.RLisConnected()) {
-            RLTools.RlLogDPrint(TAG,"Challenges Insert Request: $request")
+        if (RLApiClientRetrofit.rl_isConnected()) {
+            RLTools.rl_logDPrint(TAG,"Challenges Insert Request: $request")
             //Insert Api Call
-            viewModel.RLInsertChallenges(request) { result ->
+            viewModel.rl_insertChallenges(request) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogDPrint(TAG, "Challenges Insert Success= ${response.text}")
-                            RLBaseProgress.RLhideProgressDialog()
-                            (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false,null, false)
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logDPrint(TAG, "Challenges Insert Success= ${response.text}")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false,null, false)
                         } else {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogEPrint(TAG, "Challenges Insert Fail= ${response.text}")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logEPrint(TAG, "Challenges Insert Fail= ${response.text}")
                         }
                     } catch (e: Exception) {
-                        RLBaseProgress.RLhideProgressDialog()
+                        RLBaseProgress.rl_hideProgressDialog()
                         e.printStackTrace()
-                        RLTools.RlLogEPrint(TAG, "Challenges Insert Catch= ${e.message}" )
+                        RLTools.rl_logEPrint(TAG, "Challenges Insert Catch= ${e.message}" )
 
                     }
                 }.onFailure { error ->
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogEPrint(TAG, "Challenges Insert Error= ${error.message}" )
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logEPrint(TAG, "Challenges Insert Error= ${error.message}" )
                 }
             }
         }

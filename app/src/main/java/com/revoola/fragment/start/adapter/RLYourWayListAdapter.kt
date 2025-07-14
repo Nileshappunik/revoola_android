@@ -75,7 +75,7 @@ class RLYourWayListAdapter(val context: FragmentActivity?,
             bundle.putBoolean(RLExtraValueKey.isBody,false)
             bundle.putBoolean(RLExtraValueKey.isMind,false)
             bundle.putBoolean(RLExtraValueKey.isYourWay,true)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
         }
     }

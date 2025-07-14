@@ -48,12 +48,12 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
 
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    fun RLaddLoadingFooter() {
+    fun rl_addLoadingFooter() {
         isLoadingAdded = true
         notifyItemInserted(groupList.size)
     }
 
-    fun RLremoveLoadingFooter() {
+    fun rl_removeLoadingFooter() {
         isLoadingAdded = false
         notifyItemRemoved(groupList.size)
     }
@@ -62,22 +62,21 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
        return groupList.size
     }
 
-    fun RLsetList(newData: List<RLNotificationDataModel>) {
+    fun rl_setList(newData: List<RLNotificationDataModel>) {
         val startPosition = groupList.size
         groupList.addAll(newData)
         notifyItemRangeInserted(startPosition, newData.size)
     }
 
 
-    inner class MyViewHolder(layoutBinding: RlLayoutNotificationListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutNotificationListBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlLayoutNotificationListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         fun bindData(position: Int, itemVIew: View) {
             val carddata = groupList[position]
-           val time:String= RLTools.RLconvertTimestampToDateTime(carddata.timestamp.toLong())
+           val time:String= RLTools.rl_convertTimestampToDateTime(carddata.timestamp.toLong())
             layoutBinding.txtNotificationTime.setText(time)
             try {
                 val jsonObject: JSONObject = JSONObject(carddata.notification_data)
-                RLTools.RlLogDPrint(TAG,"jsonObject: $jsonObject")
+                RLTools.rl_logDPrint(TAG,"jsonObject: $jsonObject")
                 val simpleJson= jsonObject.getJSONObject("simple")
                 val dataJson= simpleJson.getJSONObject("data")
                 val content:String= simpleJson.getString("content")
@@ -90,7 +89,7 @@ class RLNotificationListAdapter(val context: FragmentActivity?) :
                     .into(layoutBinding.imgNotification)
 
             }catch (e:Exception){
-                RLTools.RlLogDPrint(TAG,"EXCEPTION= "+e.message)
+                RLTools.rl_logDPrint(TAG,"EXCEPTION= "+e.message)
             }
 
         }

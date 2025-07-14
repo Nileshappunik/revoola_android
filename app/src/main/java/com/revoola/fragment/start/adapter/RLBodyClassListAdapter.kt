@@ -57,7 +57,7 @@ class RLBodyClassListAdapter(
                     val bundle = Bundle()
                     bundle.putString("VIDEODATA",cardData.key)
                     bundle.putBoolean("Ride",ride)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClassesView().newInstance(bundle), TAG, true, null, true)
                 }
 
                 //RelativeLayout Height set
@@ -73,7 +73,7 @@ class RLBodyClassListAdapter(
                 layoutBinding.imgMind.layoutParams =layoutParamsImage
 
             }catch (e:Exception){
-               RLTools.RlLogEPrint(TAG,"Exception:- ${e.message}")
+               RLTools.rl_logEPrint(TAG,"Exception:- ${e.message}")
             }
         }
         private fun RLshowSubscribeDialog() {

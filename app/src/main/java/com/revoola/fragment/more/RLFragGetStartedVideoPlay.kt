@@ -6,13 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.RadioButton
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.databasefirebase.RLDatabaseManagerRead
@@ -24,6 +21,7 @@ class RLFragGetStartedVideoPlay(private val HelpType: String)  : DialogFragment(
     private val TAG: String = RLFragGetStartedVideoPlay::class.java.simpleName
     private lateinit var fragBinding: RlFragGetStartedVideoPlayBinding
     private var player: ExoPlayer? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +46,11 @@ class RLFragGetStartedVideoPlay(private val HelpType: String)  : DialogFragment(
             player = null
             dismiss()
         }
-        RLGetVideoLink()
+        rl_getVideoLink()
 
     }
 
-    private fun RLInitializePlayer(videoUrl:String) {
+    private fun rl_initializePlayer(videoUrl:String) {
         player = ExoPlayer.Builder(requireContext()).build()
         fragBinding.videoView.player = player
 
@@ -72,14 +70,14 @@ class RLFragGetStartedVideoPlay(private val HelpType: String)  : DialogFragment(
         player = null
     }
 
-    private fun RLGetVideoLink() {
-        RLDatabaseManagerRead().RlHelpVideoGetDataRead(HelpType){ data, error ->
+    private fun rl_getVideoLink() {
+        RLDatabaseManagerRead().rl_helpVideoGetDataRead(HelpType){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
                 val videoData = gson.fromJson(jsonObject, RLGetStartedHelpVideo::class.java)
                 if (!videoData.url.isNullOrEmpty()){
-                    RLInitializePlayer(videoData.url)
+                    rl_initializePlayer(videoData.url)
                 }
             }
         }

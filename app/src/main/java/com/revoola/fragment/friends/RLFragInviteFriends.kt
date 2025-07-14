@@ -8,29 +8,28 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databinding.*
+import com.revoola.utils.RLPrefManager
 
 class RLFragInviteFriends : RLBaseFragment() {
     val TAG: String = RLFragInviteFriends::class.java.simpleName
-    lateinit var fragBinding: RlFragInviteFriendsBinding
 
-    
-    private val binding by lazy {
+
+    private val fragBinding by lazy {
         RlFragInviteFriendsBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_invite_friends, container) as RlFragInviteFriendsBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragInviteFriends" )
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragInviteFriends" )
         fragBinding.toolbar.tvTitle.visibility=View.GONE
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
-        RLuisetup()
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
         fragBinding.layInviteTwitter.txtInviteCommon.setText(R.string.sendontwitter)
         fragBinding.layInviteTwitter.imgInviteCommon.setImageResource(R.drawable.ic_send_twitter)
 

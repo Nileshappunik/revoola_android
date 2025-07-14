@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -37,27 +36,27 @@ class RLFragSchdulClassesView : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSchdulClassesView" )
-        RLuisetup()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSchdulClassesView" )
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         val cardData:ScheduleItem = requireArguments().getParcelable<ScheduleItem>("selectedSchedule") as ScheduleItem
         fragBinding.txtUsernam.setText(cardData.organizer)
         Glide.with(requireContext()).load(cardData.organizerImage).into(fragBinding.imgUser)
-        val date = RLTools.RLconvertTimestampToSchdualDAte(cardData.schedule.dateOfChallenge.toString().toLong())
+        val date = RLTools.rl_convertTimestampToSchdualDAte(cardData.schedule.dateOfChallenge.toString().toLong())
         fragBinding.txtMisseddate.setText(date)
         fragBinding.txtMissed.setText(cardData.schedule.statusLbl)
         if (isAdded) fragBinding.txtMissed.setTextColor(requireContext().resources.getColor(RLTools.getColorForScheduleStatus(cardData.schedule.statusLbl)))
 
-        RLMindUiSetup(cardData.videoItem)
+        rl_mindUiSetup(cardData.videoItem)
         val safeDateOfChallenge = safeString(cardData.schedule.dateOfChallenge.toString())
-        RLTools.RlLogEPrint(TAG,"safeDateOfChallenge: $safeDateOfChallenge")
+        RLTools.rl_logEPrint(TAG,"safeDateOfChallenge: $safeDateOfChallenge")
         if (isWithinLast10Minutes(safeDateOfChallenge)) {
             startReverseTimer(safeDateOfChallenge)
         }
@@ -66,7 +65,7 @@ class RLFragSchdulClassesView : RLBaseFragment() {
             if (isWithinLast10Minutes(safeDateOfChallenge)) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(cardData.videoItem)
-                RLTools.RLLogLarge(TAG,"jsonObject: $jsonObject")
+                RLTools.rl_logLarge(TAG,"jsonObject: $jsonObject")
                 if (cardData.schedule.isMindClass){
                     val bundle = Bundle()
                     bundle.putString(RLExtraValueKey.yourWayType,"all")
@@ -78,7 +77,7 @@ class RLFragSchdulClassesView : RLBaseFragment() {
                     bundle.putString(RLExtraValueKey.videoData,jsonObject)
                     bundle.putString(RLExtraValueKey.audioVideoType,"video")
 
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
                 }else{
                     val bundle: Bundle = Bundle()
                     val ride = if (cardData.schedule.typeOfWorkout.toLowerCase().equals("ride")) true else false
@@ -90,14 +89,14 @@ class RLFragSchdulClassesView : RLBaseFragment() {
                     bundle.putString(RLExtraValueKey.videoData,jsonObject)
                     bundle.putString(RLExtraValueKey.videoId,cardData.schedule.videoKey)
                     bundle.putBoolean(RLExtraValueKey.isRide,ride)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
                 }
             } else {
                 if (isAdded)  showAlertTenMins(requireContext())
             }
         }
     }
-    private fun RLMindUiSetup(VideoData: RLFulllVideoModel){
+    private fun rl_mindUiSetup(VideoData: RLFulllVideoModel){
         fragBinding.txtTitle.setText(VideoData.rideTitle)
         fragBinding.txtVideoTitle.setText(VideoData.rideTitle)
         fragBinding.txtNamewith.setText(VideoData.instructor)
@@ -131,26 +130,26 @@ class RLFragSchdulClassesView : RLBaseFragment() {
     }
     override fun onPause() {
         super.onPause()
-        RLBottomHideShowSet(true)
+        rl_bottomHideShowSet(true)
     }
 
     private fun isWithinLast10Minutes(dateOfChallenge: String): Boolean {
         return try {
             val challengeTimeMillis = dateOfChallenge.toLong() * 1000 // Convert seconds to milliseconds
             val currentTime = System.currentTimeMillis()
-            RLTools.RlLogEPrint(TAG, "currentTime: $currentTime")
-            RLTools.RlLogEPrint(TAG, "challengeTime: $challengeTimeMillis")
+            RLTools.rl_logEPrint(TAG, "currentTime: $currentTime")
+            RLTools.rl_logEPrint(TAG, "challengeTime: $challengeTimeMillis")
 
             val tenMinutesMillis = 10 * 60 * 1000 // 10 minutes in milliseconds
             val timeDifference = challengeTimeMillis - currentTime // Time remaining until challenge
 
-            RLTools.RlLogEPrint(TAG, "Time remaining: ${timeDifference / 1000} seconds")
-            RLTools.RlLogEPrint(TAG, "Is within 10 minutes: ${timeDifference <= tenMinutesMillis && timeDifference > 0}")
+            RLTools.rl_logEPrint(TAG, "Time remaining: ${timeDifference / 1000} seconds")
+            RLTools.rl_logEPrint(TAG, "Is within 10 minutes: ${timeDifference <= tenMinutesMillis && timeDifference > 0}")
 
             // Check if challenge time is within next 10 minutes (10 minutes or less remaining)
             timeDifference <= tenMinutesMillis && timeDifference > 0
         } catch (e: Exception) {
-            RLTools.RlLogEPrint(TAG, "Exception: ${e.localizedMessage}")
+            RLTools.rl_logEPrint(TAG, "Exception: ${e.localizedMessage}")
             false // Return false if parsing fails
         }
     }

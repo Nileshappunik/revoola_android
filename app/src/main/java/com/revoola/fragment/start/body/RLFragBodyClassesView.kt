@@ -47,16 +47,16 @@ class RLFragBodyClassesView : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesView" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesView" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
         val videoID=  requireArguments().getString("VIDEODATA","")
         var ride=  requireArguments().getBoolean("Ride")
         fragBinding.layWorklog.visibility=View.VISIBLE
@@ -84,7 +84,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
         fragBinding.linearLayout.weightSum = 3f
 
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLRevoolaVideosRead(videoID){ data, error ->
+        databaseManager.rl_revoolaVideosRead(videoID){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -110,7 +110,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
                     bundle.putString(RLExtraValueKey.videoData,jsonObject)
                     bundle.putString(RLExtraValueKey.videoId,videoID)
                     bundle.putBoolean(RLExtraValueKey.isRide,ride)
-                   (context as RLMainActivityRL).RLloadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
+                   (context as RLMainActivityRL).rl_loadFrag(RLFragChooseYourSensor().newInstance(bundle), TAG, true, null, false)
 
                 }
                 fragBinding.inlayDownload.imgIcon.setOnClickListener {
@@ -133,7 +133,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
            // bundle.putString(RLConstants.CLASSTYPE,classtype)
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message","")
-            (context as RLMainActivityRL).RLloadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
         }
     }
     private fun RLBodyUiSetup(VideoData: RLFulllVideoModel){
@@ -200,7 +200,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        RLBottomHideShowSet(true)
+        rl_bottomHideShowSet(true)
     }
     private fun RLshowSubscribeDialog() {
         val sucDialog: Dialog = Dialog(requireContext())

@@ -55,18 +55,18 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         "ALL", "HIIT","RIDE","YOGA","PILATES","DANCE","WARM")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClasses" )
         RLuisetup()
         return fragBinding.root
     }
 
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
-        RLHelpHideShowSet(true, fragBinding.toolbar.ivhelp,RLPrefManager.start_help_content)
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
+        rl_helpHideShowSet(true, fragBinding.toolbar.ivhelp,RLPrefManager.start_help_content)
         fragBinding.toolbar.ivTitle.setText(R.string.bodyclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectabodyclass)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
@@ -92,7 +92,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
     }
     private fun RLGetBodyVideoList(videoType: String,ride:Boolean) {
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLRevoolaVideoKeysRead(videoType){ data, error ->
+        databaseManager.rl_revoolaVideoKeysRead(videoType){ data, error ->
             if (data != null) {
                 val gson = Gson()
                 val jsonObject = gson.toJson(data)
@@ -144,7 +144,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
             if (selectedItems.isNullOrEmpty()){
                 dialogMainBinding.txtShowAllClasses.setText("Show All Classes")
             }else{
-                val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedItems,videoList_Filter)
+                val filterVideoList = RLClassFilterService.rl_getFilterVideoList(selectedItems,videoList_Filter)
                 dialogMainBinding.txtShowAllClasses.setText("Show ${filterVideoList.size} Classes")
             }
         }
@@ -153,7 +153,7 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
         dialogMainBinding.txtShowAllClasses.setOnClickListener {
             // Get multi-child selection from adapter
             val selectedChildData: List<RLMindBodyFilterGroupItemModel> = adapter.RLGetSelectedItems()
-            val filterVideoList = RLClassFilterService.RLGetFilterVideoList(selectedChildData,videoList_Filter)
+            val filterVideoList = RLClassFilterService.rl_getFilterVideoList(selectedChildData,videoList_Filter)
             val height =  fragBinding.rvItemMindClass.height
             val adapter = RLBodyClassListAdapter(filterVideoList,activity,false,height)
             fragBinding.rvItemMindClass.adapter = adapter

@@ -18,12 +18,12 @@ class RLWatchManager  {
         CoroutineScope(Dispatchers.IO).launch {
             val nodes = Wearable.getNodeClient(context).connectedNodes.await()
             if (nodes.isEmpty()) {
-                RLTools.RlLogEPrint("WatchManager", "No Wear OS devices connected!")
+                RLTools.rl_logEPrint("WatchManager", "No Wear OS devices connected!")
                 return@launch
             }
 
             for (node in nodes) {
-                RLTools.RlLogDPrint("WatchManager", "Sending message to node: ${node.displayName}")
+                RLTools.rl_logDPrint("WatchManager", "Sending message to node: ${node.displayName}")
 
                 val result = Wearable.getMessageClient(context).sendMessage(
                     node.id,
@@ -31,13 +31,13 @@ class RLWatchManager  {
                     packageName.toByteArray()
                 ).await()
 
-                RLTools.RlLogDPrint("WatchManager", "Message sent, result: $result")
+                RLTools.rl_logDPrint("WatchManager", "Message sent, result: $result")
             }
         }
     }
     suspend fun isWatchConnected(context: Context): Boolean {
         val nodeList: List<Node> = Wearable.getNodeClient(context).connectedNodes.await()
-        RLTools.RlLogDPrint("WatchManager", "Connected Nodes: ${nodeList.map { it.displayName }}")
+        RLTools.rl_logDPrint("WatchManager", "Connected Nodes: ${nodeList.map { it.displayName }}")
         return nodeList.isNotEmpty()
     }
 

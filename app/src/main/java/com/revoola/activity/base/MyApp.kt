@@ -1,11 +1,8 @@
 package com.revoola.activity.base
 
 import android.app.Activity
-import android.app.ActivityManager
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.firebase.FirebaseApp
@@ -15,14 +12,10 @@ import com.google.firebase.inappmessaging.model.MessageType
 import com.moengage.core.DataCenter
 import com.moengage.core.MoECoreHelper
 import com.moengage.core.MoEngage
-import com.moengage.core.Properties
-import com.moengage.core.analytics.MoEAnalyticsHelper
 import com.moengage.core.config.FcmConfig
-import com.moengage.core.config.MoEngageEnvironmentConfig
 import io.branch.referral.Branch
 import com.moengage.core.config.NotificationConfig
 import com.moengage.core.config.PushKitConfig
-import com.moengage.core.model.environment.MoEngageEnvironment
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.geofence.MoEGeofenceHelper
 import com.moengage.inapp.MoEInAppHelper
@@ -39,11 +32,7 @@ import com.revoola.commonobject.RLTools
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
 import com.revoola.databasefirebase.RlFirebaseWorker
-import com.revoola.healthconnect.HealthConnectManager
 import com.revoola.utils.RLConstants
-import org.json.JSONArray
-import org.json.JSONObject
-import java.util.Date
 
 class MyApp : Application() {
 
@@ -75,12 +64,12 @@ class MyApp : Application() {
         FirebaseInAppMessaging.getInstance().addClickListener { inAppMessage, _ ->
             // Handle the message
             if (inAppMessage.messageType == MessageType.MODAL) {
-                RLTools.RlLogEPrint("FirebaseMessage","Firebase Message:- $inAppMessage")
+                RLTools.rl_logEPrint("FirebaseMessage","Firebase Message:- $inAppMessage")
             }
         }
 
         // Initialize MoEngage SDK
-        RLInitializeMoEngage()
+        rl_initializeMoEngage()
 
         // Register activity lifecycle callbacks
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
@@ -97,9 +86,9 @@ class MyApp : Application() {
 
     }
 
-    private fun RLInitializeMoEngage() {
+    private fun rl_initializeMoEngage() {
         // Check notification permissions once
-        val isGranted = RLTools.ScxhasNotificationPermission(this)
+        val isGranted = RLTools.rl_hasNotificationPermission(this)
         MoEPushHelper.getInstance().pushPermissionResponse(this, isGranted)
 
         if (isGranted) {

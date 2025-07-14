@@ -31,8 +31,8 @@ class RLSelectedFriendListAdapter(val context: FragmentActivity?, val friendList
        return datalist.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutSelectFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutSelectFriendBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlLayoutSelectFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlLayoutSelectFriendBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = datalist[position]
             Glide.with(context!!).load(cardData.avatar)

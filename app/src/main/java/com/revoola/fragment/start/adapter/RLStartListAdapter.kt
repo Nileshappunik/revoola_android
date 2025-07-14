@@ -70,32 +70,32 @@ class RLStartListAdapter(
             layoutBinding.relayStartNew.setOnClickListener {
                 if (cardData.title.toLowerCase().equals("challenges")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChalengesType(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChalengesType(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your way")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourWay(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragYourWay(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("mind classes")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragMindClasses(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("body classes")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClasses(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("find on revoola")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragFindOnRevoola(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
                     val bundle =Bundle ()
                     bundle.putBoolean("reDirecDeepLinkPage",false)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
                     
-                    (context as RLMainActivityRL).RLloadFrag(RLFragYourGroup(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
                     val shareIntent = Intent().apply {

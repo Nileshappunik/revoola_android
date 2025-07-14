@@ -32,8 +32,8 @@ class RLFeedSessionEffortListAdapter(private val context: FragmentActivity?,
        return dataList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlCardFeedEffortBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlCardFeedEffortBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlCardFeedEffortBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlCardFeedEffortBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             val scoreNumber = String.format("%.0f", cardData.totalRev) // Removed the percentage symbol

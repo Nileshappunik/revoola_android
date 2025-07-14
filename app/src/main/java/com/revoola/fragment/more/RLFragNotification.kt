@@ -35,23 +35,23 @@ class RLFragNotification : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragNotification" )
-        currentUser= RLAuthManager().RlgetCurrentUser()?.uid ?:""
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragNotification" )
+        currentUser= RLAuthManager().rl_getCurrentUser()?.uid ?:""
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
-        if (apiClientRetrofit.RLisConnected()) {
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
+        if (apiClientRetrofit.rl_isConnected()) {
             limit = 10
             index=0
             isLoading = false
@@ -60,9 +60,9 @@ class RLFragNotification : RLBaseFragment() {
              adapter = RLNotificationListAdapter(activity)
             fragBinding.rvNotification.adapter = adapter
             //Detail Api
-            RLNotificationAPiCall()
+            rl_notificationAPiCall()
         } else {
-            RLshowDialogFullscreen()
+            rl_showDialogFullscreen()
         }
 
         // Add scroll listener for pagination
@@ -72,41 +72,41 @@ class RLFragNotification : RLBaseFragment() {
                 try {
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     if (!isLoading && layoutManager.findLastCompletelyVisibleItemPosition() == adapter!!.itemCount - 1) {
-                        RLNotificationAPiCall()
+                        rl_notificationAPiCall()
                     }
                 }catch (e:Exception){
-                    RLTools.RlLogDPrint(TAG,"Catch="+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch="+e.message)
                 }
 
             }
         })
     }
-    private fun RLNotificationAPiCall() {
+    private fun rl_notificationAPiCall() {
         isLoading = true
-        adapter?.RLaddLoadingFooter()
-        viewModel.RLgetNotificationData("getNotifications",currentUser,limit,index) { result ->
+        adapter?.rl_addLoadingFooter()
+        viewModel.rl_getNotificationData("getNotifications",currentUser,limit,index) { result ->
             result.onSuccess { response ->
-                adapter?.RLremoveLoadingFooter()
+                adapter?.rl_removeLoadingFooter()
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RLLogLarge(TAG,"Notification Object: ${Gson().toJson(response)}")
-                        adapter?.RLsetList(response.text)
+                        RLTools.rl_logLarge(TAG,"Notification Object: ${Gson().toJson(response)}")
+                        adapter?.rl_setList(response.text)
                         isLoading = false
                         index=index+10
                         limit=limit+10
                     }else {
                         isLoading = true
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
                     isLoading = true
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
-                adapter?.RLremoveLoadingFooter()
+                adapter?.rl_removeLoadingFooter()
                 isLoading = true
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }

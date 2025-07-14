@@ -23,9 +23,8 @@ class RLFeedCommentListAdapter(val dataList: List<String>, val context: Fragment
     override fun getItemCount(): Int {
         return 2  // dataList.size
     }
-    inner class MyViewHolder(layoutBinding: RlLayoutCommentUserBinding) :
-        RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutCommentUserBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlLayoutCommentUserBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        //private val layoutBinding: RlLayoutCommentUserBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
            // val cardData= dataList[position]
         }

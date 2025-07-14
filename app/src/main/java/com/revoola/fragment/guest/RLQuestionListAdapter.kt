@@ -27,8 +27,8 @@ class RLQuestionListAdapter(
     private var selectedPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlItemQuestionBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_item_question , parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlItemQuestionBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_item_question , parent, false)
+        return MyViewHolder(layoutBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -42,8 +42,8 @@ class RLQuestionListAdapter(
         return questionList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlItemQuestionBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlItemQuestionBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlItemQuestionBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlItemQuestionBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData=questionList[position]
             if (selectedPosition==position){

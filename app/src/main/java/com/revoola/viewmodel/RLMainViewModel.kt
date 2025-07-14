@@ -37,100 +37,100 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
-    fun RLgetUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
-        mainRepository.RLgetUserAggregatedData(request, callback)
+    fun rl_getUserAggregatedData(request: List<RLGetUserAggregatedDataRequest>, callback: (Result<RLOverViewModel>) -> Unit) {
+        mainRepository.rl_getUserAggregatedData(request, callback)
     }
 
-    fun RLgetUserFeedCardData(request: List<RLSetoverview_thumbRequest>, callback: (Result<RLFeedModel>) -> Unit) {
-        mainRepository.RLgetUserFeedCardData(request, callback)
+    fun rl_getUserFeedCardData(request: List<RLSetoverview_thumbRequest>, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.rl_getUserFeedCardData(request, callback)
     }
-    fun RLgetUserFeedCardDatayou(request: List<RLSetoverview_thumbRequest_you>, callback: (Result<RLFeedModel>) -> Unit) {
-        mainRepository.RLgetUserFeedCardDatayou(request, callback)
+    fun rl_getUserFeedCardDatayou(request: List<RLSetoverview_thumbRequest_you>, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.rl_getUserFeedCardDatayou(request, callback)
     }
-    fun RLJoinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
-        mainRepository.RLJoinBigChallengeFeed(request, callback)
-    }
-
-
-    fun RLgetGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
-        mainRepository.RLgetGroupData(request, callback)
+    fun rl_joinBigChallengeFeed(request: List<RLtrigger_inapp_referrer_goaled_challenges_Request>, callback: (Result<String>) -> Unit) {
+        mainRepository.rl_joinBigChallengeFeed(request, callback)
     }
 
-    fun RLGroupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
-        mainRepository.RLGroupMembers(request, callback)
-    }
-    fun RLgetOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
-        mainRepository.RLgetOverviewGraph(request, callback)
+
+    fun rl_getGroupData(request: List<RLSetGroupRequest>, callback: (Result<RLGroupModel>) -> Unit) {
+        mainRepository.rl_getGroupData(request, callback)
     }
 
-    fun RLgoaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        mainRepository.RLgoaled_challenges(request, callback)
+    fun rl_groupMembers(request: List<RLSetGroupMemberRequest>, callback: (Result<RLGetGroupMemberModel>) -> Unit) {
+        mainRepository.rl_groupMembers(request, callback)
+    }
+    fun rl_getOverviewGraph(request: List<RLOverviewGraphDataRequest>, callback: (Result<RLOverviewGraphResponse>) -> Unit) {
+        mainRepository.rl_getOverviewGraph(request, callback)
     }
 
-    fun RLgoaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        mainRepository.RLgoaled_challenges_view(request, callback)
+    fun rl_goaled_challenges(request: List<RLSetgoaled_challenges_request>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        mainRepository.rl_goaled_challenges(request, callback)
     }
 
-    fun RLgoaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
-        mainRepository.RLgoaled_challenges_Single(request, callback)
+    fun rl_goaled_challenges_view(request: List<RLrequest_goaled_challenges>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        mainRepository.rl_goaled_challenges_view(request, callback)
     }
 
-    fun RLMetricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
-        mainRepository.RLMetricChartByDay(request, callback)
+    fun rl_goaled_challenges_Single(request: List<RLSetgoaled_challenges_request_single>, callback: (Result<RLFeedChallengesModel>) -> Unit) {
+        mainRepository.rl_goaled_challenges_Single(request, callback)
     }
 
-    fun RLfriendsYouFollow(request: List<RLSetsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        mainRepository.RLfriendsYouFollow(request, callback)
+    fun rl_metricChartByDay(request: List<RLSetMetricChartByDay>, callback: (Result<RLFeedChallengesMapModel>) -> Unit) {
+        mainRepository.rl_metricChartByDay(request, callback)
     }
 
-    fun RLsearch_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        mainRepository.RLsearch_user_Data_DeepLink(request, callback)
-    }
-    fun RLFindOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
-        mainRepository.RLFindOnRevoolaEmailFilter(request, callback)
+    fun rl_friendsYouFollow(request: List<RLSetsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        mainRepository.rl_friendsYouFollow(request, callback)
     }
 
-    fun RLfriendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
-        mainRepository.RLfriendsFollowingYou(request, callback)
+    fun rl_search_user_Data_DeepLink(request: List<RLsearch_userrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        mainRepository.rl_search_user_Data_DeepLink(request, callback)
+    }
+    fun rl_findOnRevoolaEmailFilter(request: List<RLEmailFilterRequestModel>, callback: (Result<EmailFilterApiResponse>) -> Unit) {
+        mainRepository.rl_findOnRevoolaEmailFilter(request, callback)
     }
 
-    fun RLyourGroupData(request: List<RLrequestgroup_dataset>, callback: (Result<RLYourGroupModel>) -> Unit) {
-        mainRepository.RLyourGroupData(request, callback)
+    fun rl_friendsFollowingYou(request: List<RLSetget_followersrequest>, callback: (Result<RLYourFriendsModel>) -> Unit) {
+        mainRepository.rl_friendsFollowingYou(request, callback)
     }
 
-    fun RLgetOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
-        mainRepository.RLgetOverviewThumbFromIdData(request, callback)
+    fun rl_yourGroupData(request: List<RLrequestgroup_dataset>, callback: (Result<RLYourGroupModel>) -> Unit) {
+        mainRepository.rl_yourGroupData(request, callback)
     }
 
-    fun RLgetNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
-        mainRepository.RLgetNotificationData(q,user,limit,index, callback)
+    fun rl_getOverviewThumbFromIdData(request: List<RLRequestDetail_dataset>, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.rl_getOverviewThumbFromIdData(request, callback)
     }
 
-    fun RLgetCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
-        mainRepository.RLgetCommentsData(q,overviewid,limit,index, callback)
+    fun rl_getNotificationData(q:String, user:String, limit:Int, index:Int, callback: (Result<RLNotificationModel>) -> Unit) {
+        mainRepository.rl_getNotificationData(q,user,limit,index, callback)
+    }
+
+    fun rl_getCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.rl_getCommentsData(q,overviewid,limit,index, callback)
     }
 
 
     //Insert Api
-    fun RLInsertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertYourWayData(request, callback)
+    fun rl_insertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertYourWayData(request, callback)
     }
-    fun RLInsertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertFriendsData(request, callback)
+    fun rl_insertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertFriendsData(request, callback)
     }
-    fun RLInsertClassSessionData(request: Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertClassSessionData(request,images, callback)
-    }
-
-    fun RLInsertYourWayOverviewData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertYourWayOverviewData(request,images, callback)
-    }
-    fun RLInsertGroupData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images:List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertGroupData(request,images, callback)
+    fun rl_insertClassSessionData(request: Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertClassSessionData(request,images, callback)
     }
 
-    fun RLInsertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
-        mainRepository.RLInsertChallenges(request, callback)
+    fun rl_insertYourWayOverviewData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertYourWayOverviewData(request,images, callback)
+    }
+    fun rl_insertGroupData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images:List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertGroupData(request,images, callback)
+    }
+
+    fun rl_insertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertChallenges(request, callback)
     }
 
 }

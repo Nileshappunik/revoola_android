@@ -75,7 +75,7 @@ class RLChallengesListAdapter(val context: FragmentActivity?,
             val cardData = RLEditChallengeAllData()
             cardData.ChallengeType=challengeType
             bundle.putSerializable("cardData",cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragChallengesFor().newInstance(bundle), TAG, true,null, true)
         }
     }
 

@@ -10,20 +10,15 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
 import com.revoola.activity.base.RLBaseActivity
 import com.revoola.R
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlActivityLoginEmailBinding
-import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.utils.RLPrefManager
 import com.revoola.commonobject.RLTools
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.gson.Gson
 
 class RLLoginEmailActivityRL : RLBaseActivity() {
     val TAG: String = RLLoginEmailActivityRL::class.java.simpleName
@@ -32,20 +27,21 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     var password: String = ""
     var sucDialog: Dialog? = null
     private lateinit var authManager: RLAuthManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        RLScreenSet(false)
+        rl_screenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_login_email) as RlActivityLoginEmailBinding
-        RLUisetup()
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_login_email) as RlActivityLoginEmailBinding
+        rl_uisetup()
     }
-    private fun RLUisetup() {
+    private fun rl_uisetup() {
 
-        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+        rl_onBackPresAct(activityBinding.toolbarLogin.ivBack)
        activityBinding.toolbarLogin.tvTitle.setText(R.string.signuplogin)
         activityBinding.tvLogin.setOnClickListener(View.OnClickListener {
-            if (RLvalidation()) {
-                RLloginapicall()
+            if (rl_validation()) {
+                rl_loginapicall()
             }
         })
         activityBinding.txtClickme.setOnClickListener(View.OnClickListener {
@@ -89,22 +85,22 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
     private fun RLopentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
-    private fun RLvalidation(): Boolean {
+    private fun rl_validation(): Boolean {
         emailID = activityBinding.etemailid.text.toString().trim()
         password = activityBinding.etPassword.text.toString().trim()
-        if (!RLTools.RLisEmailValid(emailID)) {
-            RLshowDialog("Please Enter Valid Email and 6+ digit Password.")
+        if (!RLTools.rl_isEmailValid(emailID)) {
+            rl_showDialog("Please Enter Valid Email and 6+ digit Password.")
             return false
         }else if (password.length<6){
-            RLshowDialog("Please Enter 6+ digit Password.")
+            rl_showDialog("Please Enter 6+ digit Password.")
             return false
         }
         return true
     }
 
-    fun RLloginapicall() {
+    fun rl_loginapicall() {
         authManager = RLAuthManager()
-        authManager.RlloginUser(emailID, password) { user, exception ->
+        authManager.rl_loginUser(emailID, password) { user, exception ->
             if (user != null) {
                 try {
                     // Get provider data from the user object
@@ -113,12 +109,12 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                     val profile=providerData[0]
                     val uid = profile.uid
                     val userEmail = profile.email
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user,uid)
-                    RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
-                    RLSetUsernameToFirebase(uid)
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.current_user,uid)
+                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.current_user_email,userEmail)
+                    rl_setUsernameToFirebase(uid)
 
                 } catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"Exception:- "+e.message)
+                   RLTools.rl_logEPrint(TAG,"Exception:- "+e.message)
                 }
             }
             else {
@@ -126,26 +122,26 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
                 when (exception) {
                     is FirebaseAuthInvalidUserException -> {
                         // Handle case where user does not exist
-                        RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.login_email,emailID)
-                        RLPrefManager.RLSetSomeStringValue(this, RLPrefManager.login_password,password)
-                       RLTools.RlLogEPrint(TAG, "User does not exist: ${exception.message}")
+                        RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.login_email,emailID)
+                        RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.login_password,password)
+                       RLTools.rl_logEPrint(TAG, "User does not exist: ${exception.message}")
                         startActivity(Intent(this, RLVerificationCodeActivityRL::class.java).putExtra("EmailId",emailID).putExtra("Password",password))
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         // Handle case where password is incorrect
-                        RLshowDialog("The password is invalid or the user does not have a password.")
-                       RLTools.RlLogEPrint(TAG, "Invalid credentials: ${exception.message}")
+                        rl_showDialog("The password is invalid or the user does not have a password.")
+                       RLTools.rl_logEPrint(TAG, "Invalid credentials: ${exception.message}")
                     }
                     else -> {
                         // Handle other exceptions
                         RLopentoast("Sign-in failed")
-                       RLTools.RlLogEPrint(TAG, "Sign-in failed: ${exception!!.message}")
+                       RLTools.rl_logEPrint(TAG, "Sign-in failed: ${exception!!.message}")
                     }
                 }
             }
         }
     }
-    private fun RLshowDialog( emaildid: String) {
+    private fun rl_showDialog(emaildid: String) {
         sucDialog = Dialog(activity)
         sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog!!.setContentView(R.layout.rl_dailog_login_error)
@@ -166,9 +162,9 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 
-    private fun RLSetUsernameToFirebase(userId:String){
+    private fun rl_setUsernameToFirebase(userId:String){
         //Firebase To Fetch UserData
-        RLDatabaseManagerRead().RlUserBasicDataRead(userId){ data, error ->
+        RLDatabaseManagerRead().rl_userBasicDataRead(userId){ data, error ->
             if (data != null) {
               //  val gson = Gson()
               //  val jsonObject = gson.toJson(data)
@@ -186,7 +182,5 @@ class RLLoginEmailActivityRL : RLBaseActivity() {
         }
 
     }
-
-
 
 }

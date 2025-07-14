@@ -22,8 +22,8 @@ import com.revoola.databinding.RlFragOverviewBinding
 import com.revoola.fragment.more.RLFragNotification
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -32,48 +32,48 @@ import java.util.TimeZone
 
 class RLFragOverview : RLBaseFragment() {
     val TAG: String = RLFragOverview::class.java.simpleName
-    lateinit var fragBinding: RlFragOverviewBinding
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    //lateinit var fragBinding: RlFragOverviewBinding
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     companion object {
         const val PERMISSIONS_REQUEST_CODE = 101
         const val REQUEST_ENABLE_BLUETOOTH = 102
     }
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragOverviewBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview, container) as RlFragOverviewBinding
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragOverview" )
-        RLcheckBluetoothenabled()
-        RLcheckBluetoothPermissions()
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview, container) as RlFragOverviewBinding
+        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragOverview" )
+        rl_checkBluetoothenabled()
+        rl_checkBluetoothPermissions()
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),
             RLMainViewModelFactory(
                 userRepository
             )
         ).get(RLMainViewModel::class.java)
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        val currentmonth= RLTools.RLgetCalculatedMonths()
+    private fun rl_uisetup() {
+        val currentmonth= RLTools.rl_getCalculatedMonths()
         fragBinding.txtMonth.setText(currentmonth)
-        (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
+        (context as RLMainActivityRL).rl_bottombarcolorDarkBlue()
         fragBinding.inlaySession.cardOverview.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragOverviewSession(), TAG, true,null, false)
         }
         fragBinding.ivNotification.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragNotification(), TAG, true, null, false)
         }
 
 
@@ -95,16 +95,16 @@ class RLFragOverview : RLBaseFragment() {
         fragBinding.inlayDistance.txtNumberLeft.setText("0")
         fragBinding.inlayDistance.txtNumberRight.setText("0")
 
-        if (RLApiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             //LeadDetail Api
-            RLapicall()
+            rl_apicall()
         } else {
-            RLshowDialogFullscreen()
+            rl_showDialogFullscreen()
         }
     }
 
 
-    private fun RLapicall() {
+    private fun rl_apicall() {
         val date = Calendar.getInstance()
         val firstDay = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, 1)
@@ -122,25 +122,25 @@ class RLFragOverview : RLBaseFragment() {
                     timestampto = timestampTo)
             )
         )
-        RLTools.RlLogDPrint(TAG,"request:- $request")
-        viewModel.RLgetUserAggregatedData(request) { result ->
+        RLTools.rl_logDPrint(TAG,"request:- $request")
+        viewModel.rl_getUserAggregatedData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
 
-                        val effort= RLTools.RLformatCommas(response.text[0].aggregated[0].rev.toDouble())
+                        val effort= RLTools.rl_formatCommas(response.text[0].aggregated[0].rev.toDouble())
                         val relaxation=
-                            RLTools.RLformatTime(response.text[0].aggregated[0].rmm, false)
+                            RLTools.rl_formatTime(response.text[0].aggregated[0].rmm, false)
 
                         val session=response.text[0].aggregated[0].session.toString()
                         val activetime=
-                            RLTools.RLformatTime(response.text[0].aggregated[0].totalTime,false)
+                            RLTools.rl_formatTime(response.text[0].aggregated[0].totalTime,false)
 
-                        val totalcalories= RLTools.RLformatCommas(response.text[0].aggregated[0].calorie.toDouble())
-                        val activecalories= RLTools.RLformatCommas(response.text[0].aggregated[0].power.toDouble())
+                        val totalcalories= RLTools.rl_formatCommas(response.text[0].aggregated[0].calorie.toDouble())
+                        val activecalories= RLTools.rl_formatCommas(response.text[0].aggregated[0].power.toDouble())
 
-                        val distance= RLTools.RLformatCommas(response.text[0].aggregated[0].distance.toDouble())
-                        val steps= RLTools.RLformatCommas(response.text[0].aggregated[0].steps.toDouble())
+                        val distance= RLTools.rl_formatCommas(response.text[0].aggregated[0].distance.toDouble())
+                        val steps= RLTools.rl_formatCommas(response.text[0].aggregated[0].steps.toDouble())
 
                         fragBinding.inlayEffort.txtNumberLeft.setText(effort)
                         fragBinding.inlayEffort.txtNumberRight.setText(relaxation)
@@ -155,20 +155,20 @@ class RLFragOverview : RLBaseFragment() {
                         fragBinding.inlayDistance.txtNumberRight.setText(steps.toString())
 
                     }else {
-                        RLcommonToast(response.type)
+                        rl_commonToast(response.type)
                     }
                 }catch (e:Exception){
-                    RLTools.RlLogDPrint(TAG,"exception= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"exception= "+e.message)
                 }
             }.onFailure { error ->
                 // Handle failure
-                RLTools.RlLogDPrint(TAG,"error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"error= "+error.message)
 
             }
         }
     }
 
-    private fun RLcheckBluetoothenabled(){
+    private fun rl_checkBluetoothenabled(){
         // Check if Bluetooth is enabled
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter == null) {
@@ -183,10 +183,10 @@ class RLFragOverview : RLBaseFragment() {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH)
         } else {
             // Bluetooth is already enabled, proceed with Bluetooth operations
-            RLstartBluetoothOperations(true)
+            rl_startBluetoothOperations(true)
         }
     }
-    private fun RLcheckBluetoothPermissions() {
+    private fun rl_checkBluetoothPermissions() {
         // List of required permissions for Bluetooth operations
         val permissions = listOf(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_CONNECT)
@@ -201,10 +201,10 @@ class RLFragOverview : RLBaseFragment() {
             ActivityCompat.requestPermissions(requireActivity(), permissionsNeeded.toTypedArray(), PERMISSIONS_REQUEST_CODE)
         } else {
             // Permissions are already granted
-            RLstartBluetoothOperations(false)
+            rl_startBluetoothOperations(false)
         }
     }
-    private fun RLstartBluetoothOperations(enabled:Boolean) {
+    private fun rl_startBluetoothOperations(enabled:Boolean) {
         if (enabled){
             // Bluetooth is enabled; you can start Bluetooth operations here
             //Toast.makeText(requireContext(), "Bluetooth is enabled", Toast.LENGTH_SHORT).show()
@@ -219,7 +219,7 @@ class RLFragOverview : RLBaseFragment() {
         if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
             if (resultCode == Activity.RESULT_OK) {
                 // Bluetooth was enabled
-                RLstartBluetoothOperations(true)
+                rl_startBluetoothOperations(true)
             } else {
                 // Bluetooth was not enabled
                 Toast.makeText(requireContext(), "Bluetooth needs to be enabled", Toast.LENGTH_SHORT).show()
@@ -232,7 +232,7 @@ class RLFragOverview : RLBaseFragment() {
             PERMISSIONS_REQUEST_CODE -> {
                 if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                     // All permissions were granted
-                    RLstartBluetoothOperations(false)
+                    rl_startBluetoothOperations(false)
                 } else {
                     // Some permissions were denied
                     Toast.makeText(requireContext(), "Bluetooth permissions are required", Toast.LENGTH_SHORT).show()

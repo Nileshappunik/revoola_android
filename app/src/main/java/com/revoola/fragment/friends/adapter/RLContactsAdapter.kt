@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourGroupBinding
-import com.revoola.fragment.friends.model.EmailFilterUserInvite
 import com.revoola.fragment.friends.model.RLFindOnRevoolaInviteItem
-import com.revoola.model.RLContactModel
 
 class RLContactsAdapter(val context: FragmentActivity?, val contactsList: List<RLFindOnRevoolaInviteItem>,
                         private val onSelected: (RLFindOnRevoolaInviteItem) -> Unit) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -74,7 +72,7 @@ class RLContactsAdapter(val context: FragmentActivity?, val contactsList: List<R
        return dataList.size
     }
 
-    fun RLfilter(query: String) {
+    fun rl_filter(query: String) {
         dataList = if (query.isEmpty()) {
             contactsList // Show all items if query is empty
         } else {

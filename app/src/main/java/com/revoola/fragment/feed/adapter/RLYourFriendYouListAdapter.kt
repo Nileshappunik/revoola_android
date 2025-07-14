@@ -41,8 +41,8 @@ class RLYourFriendYouListAdapter(val context: FragmentActivity?, val Friendlay:B
         notifyDataSetChanged()
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutYourFriendYouBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutYourFriendYouBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlLayoutYourFriendYouBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        //private val layoutBinding: RlLayoutYourFriendYouBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             //val itemres = feedList!![position]
             if (Friendlay){

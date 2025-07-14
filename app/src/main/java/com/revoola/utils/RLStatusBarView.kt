@@ -6,16 +6,16 @@ import android.widget.FrameLayout
 
 class RLStatusBarView : FrameLayout {
     constructor(context: Context) : super(context){
-        minimumHeight = RLgetStatusBarHeight()
+        minimumHeight = rl_getStatusBarHeight()
     }
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs){
-        minimumHeight = RLgetStatusBarHeight()
+        minimumHeight = rl_getStatusBarHeight()
     }
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr){
-        minimumHeight = RLgetStatusBarHeight()
+        minimumHeight = rl_getStatusBarHeight()
     }
 
-    private fun RLgetStatusBarHeight(): Int {
+    private fun rl_getStatusBarHeight(): Int {
         var result = 0
         val resourceId: Int = resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {

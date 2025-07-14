@@ -19,7 +19,6 @@ import com.revoola.model.RLFeedChallengesModelData
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
-import kotlin.math.roundToInt
 
 class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -57,12 +56,12 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    fun RLaddLoadingFooter() {
+    fun rl_addLoadingFooter() {
         isLoadingAdded = true
         notifyItemInserted(dataList.size)
     }
 
-    fun RLremoveLoadingFooter() {
+    fun rl_removeLoadingFooter() {
         isLoadingAdded = false
         notifyItemRemoved(dataList.size)
     }
@@ -71,20 +70,20 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
        return dataList.size
     }
 
-    fun RLaddData(newData: List<RLFeedChallengesModelData>) {
+    fun rl_addData(newData: List<RLFeedChallengesModelData>) {
         val startPosition = dataList.size
         dataList.addAll(newData)
         notifyItemRangeInserted(startPosition, newData.size)
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
+    inner class MyViewHolder(val layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val cardData = dataList[position]
                 layoutBinding.bigChallengesLayout.visibility=View.GONE
                 layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
-                RLTools.RLheightsetRelative(layoutBinding.relayChart)
+                RLTools.rl_heightsetRelative(layoutBinding.relayChart)
                 layoutBinding.txtOrganizer.visibility=View.VISIBLE
                 layoutBinding.txtOrganizerName.visibility=View.VISIBLE
                 layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
@@ -109,8 +108,8 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 layoutBinding.txtUsername.setText(cardData.username.toString())
                 layoutBinding.txtMyride.setText(cardData.challenge_name.toString())
-                layoutBinding.txtUserdatetime.setText(RLTools.RLconvertTimestampToDateTime(cardData.startdate.toLong()))
-                layoutBinding.imgMyride.setImageResource(RLTools.RLgeticon(cardData.metric))
+                layoutBinding.txtUserdatetime.setText(RLTools.rl_convertTimestampToDateTime(cardData.startdate.toLong()))
+                layoutBinding.imgMyride.setImageResource(RLTools.rl_geticon(cardData.metric))
                 Glide.with(context!!).load(cardData.avatar)
                     .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                     .into(layoutBinding.imgUser)
@@ -129,13 +128,13 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 }else{
                     layoutBinding.layTime.txtTimeNumber.setText(cardData.totaldays.toString()+" of "+cardData.totaldays.toString()+" Days")
                 }
-                layoutBinding.layCalories.imgTime.setImageResource(RLTools.RLgeticon(cardData.metric))
+                layoutBinding.layCalories.imgTime.setImageResource(RLTools.rl_geticon(cardData.metric))
                 layoutBinding.layCalories.txtTime.setText("ACHIEVED SO FAR")
-                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.actualtotal.toDouble()))
+                layoutBinding.layCalories.txtTimeNumber.setText(RLTools.rl_formatCommas(cardData.actualtotal.toDouble()))
 
                 layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
                 layoutBinding.layAssumedeffort.txtTime.setText(cardData.targettype.uppercase()+" TARGET")
-                layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.RLformatCommas(cardData.totaltarget.toDouble()))
+                layoutBinding.layAssumedeffort.txtTimeNumber.setText(RLTools.rl_formatCommas(cardData.totaltarget.toDouble()))
 
                 layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
                 layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
@@ -144,7 +143,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.cardChalengis.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    (context as RLMainActivityRL).RLloadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragChallengeSummary().newInstance(bundle), TAG, true, null, false)
                 }
 
                 val stepsSoFar = if (cardData.actualtotal.toInt() ?: 0 > 0) cardData.actualtotal ?: 0 else 0
@@ -165,7 +164,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
                 layoutBinding.webViewChart.webViewClient = WebViewClient()
                 layoutBinding.webViewChart.loadDataWithBaseURL(null,
-                    RLAllHTMLChart.RLgetChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime,RLTools.RLGetMetricsName(cardData.metric)), "text/html", "UTF-8", null)
+                    RLAllHTMLChart.rl_getChallengeChartHtml(stepsSoFar.toInt(),targetSteps,timeGone,totalTime,RLTools.rl_getMetricsName(cardData.metric)), "text/html", "UTF-8", null)
 
                 layoutBinding.imgShare.setOnClickListener {
                  // RLBranchManager(context!!).RLGenerateBranchLink(cardData.challenge_name, cardData.adminfullname,cardData.avatar)
@@ -173,7 +172,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
 
                 }
             } catch (e: Exception) {
-                RLTools.RlLogDPrint(TAG, "exceptionAdaptermsg= " + e.message)
+                RLTools.rl_logDPrint(TAG, "exceptionAdaptermsg= " + e.message)
             }
 
 

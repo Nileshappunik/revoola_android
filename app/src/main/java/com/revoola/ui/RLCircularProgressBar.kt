@@ -66,17 +66,17 @@ class RLCircularProgressBar @JvmOverloads constructor(
         )
     }
 
-    fun RLsetProgress(progress: Int) {
+    fun rl_setProgress(progress: Int) {
         this.progress = progress
         invalidate()
     }
 
-    fun RLsetMaxProgress(maxProgress: Int) {
+    fun rl_setMaxProgress(maxProgress: Int) {
         this.maxProgress = maxProgress
         invalidate()
     }
 
-    fun RLsetProgressColor(color: Int) {
+    fun rl_setProgressColor(color: Int) {
         progressPaint.color = color
         invalidate()
     }
@@ -86,7 +86,7 @@ class RLCircularProgressBar @JvmOverloads constructor(
         invalidate()
     }
 
-    fun RLsetStrokeWidth(width: Float) {
+    fun rl_setStrokeWidth(width: Float) {
         this.strokeWidth = width
         backgroundPaint.strokeWidth = width
         progressPaint.strokeWidth = width

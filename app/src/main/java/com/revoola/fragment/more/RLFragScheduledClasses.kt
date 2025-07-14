@@ -35,24 +35,24 @@ class RLFragScheduledClasses : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragScheduledClasses" )
-        RLuisetup()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragScheduledClasses" )
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
-        currentUserId = RLAuthManager().RlgetCurrentUser()?.uid ?:""
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
+        currentUserId = RLAuthManager().rl_getCurrentUser()?.uid ?:""
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.rvSchdualclasses.layoutManager = linearLayoutManager
         adapterScheduledClasses = RLScheduledClassesListAdapter(activity,emptyList())
         fragBinding.rvSchdualclasses.adapter = adapterScheduledClasses
-        RLBaseProgress.RLShowProgressDialog(requireActivity())
+        RLBaseProgress.rl_showProgressDialog(requireActivity())
         GlobalScope.launch {
-            RLFirebaseManager().databaseRead.RlreadData(RevoolaFirebasePath.ScheduledPathRead()){  data, error ->
+            RLFirebaseManager().databaseRead.rl_readData(RevoolaFirebasePath.ScheduledPathRead()){ data, error ->
                 if (data!=null){
                     // Extract keys into a list
                     val keysList = mutableListOf<String>()
@@ -66,14 +66,14 @@ class RLFragScheduledClasses : RLBaseFragment() {
                             }
                         }
                         else -> {
-                            RLTools.RlLogEPrint(TAG, "Data is not in expected Map format")
+                            RLTools.rl_logEPrint(TAG, "Data is not in expected Map format")
                         }
                     }
                     val scheduledRequestDataList = mutableListOf<Map<String, Any?>>()
                     var completedRequests = 0
                     val totalRequests = keysList.size
                     keysList.forEach { key->
-                        RLFirebaseManager().databaseRead.RlreadData(RevoolaFirebasePath.ScheduledRequestPathRead(key)){  data, error ->
+                        RLFirebaseManager().databaseRead.rl_readData(RevoolaFirebasePath.ScheduledRequestPathRead(key)){ data, error ->
                             if (data!=null){
                                 // Simple usage example
                                 when (data) {
@@ -82,11 +82,11 @@ class RLFragScheduledClasses : RLBaseFragment() {
                                         scheduledRequestDataList.add(data as Map<String, Any?>)
                                     }
                                     else -> {
-                                        RLTools.RlLogDPrint(TAG, "Request data for key $key is not in expected Map format")
+                                        RLTools.rl_logDPrint(TAG, "Request data for key $key is not in expected Map format")
                                     }
                                 }
                             }else{
-                                RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
+                                RLTools.rl_logEPrint(TAG,"Error Fetch Scheduled Request Data: ${error?.message}")
                             }
                             completedRequests++
                             if (completedRequests == totalRequests) {
@@ -98,7 +98,7 @@ class RLFragScheduledClasses : RLBaseFragment() {
                     }
                 }else{
                     noScheduleDataShow("No schedule Data")
-                    RLTools.RlLogEPrint(TAG,"Error Fetch Scheduled Key Data: ${error?.message}")
+                    RLTools.rl_logEPrint(TAG,"Error Fetch Scheduled Key Data: ${error?.message}")
                 }
             }
         }
@@ -284,11 +284,11 @@ class RLFragScheduledClasses : RLBaseFragment() {
         val scheduleJson = Gson().toJson(schedule)
         val scheduleData = Gson().fromJson(scheduleJson, RLScheduleData::class.java)
 
-        RLDatabaseManagerRead().RLRevoolaVideosMindRead(videoKey) { data, error ->
+        RLDatabaseManagerRead().rl_revoolaVideosMindRead(videoKey) { data, error ->
             if (data != null) {
                 val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
 
-                RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { userDataRaw, _ ->
+                RLDatabaseManagerRead().rl_userBasicDataRead(createdBy) { userDataRaw, _ ->
                     if (userDataRaw != null) {
                         val userData = RLTools.parseUserData(userDataRaw)
                         if (userData != null) {
@@ -316,11 +316,11 @@ class RLFragScheduledClasses : RLBaseFragment() {
         val createdBy = schedule["createdBy"] as? String ?: ""
         val scheduleJson = Gson().toJson(schedule)
         val scheduleData = Gson().fromJson(scheduleJson, RLScheduleData::class.java)
-        RLDatabaseManagerRead().RLRevoolaVideosRead(videoKey) { data, error ->
+        RLDatabaseManagerRead().rl_revoolaVideosRead(videoKey) { data, error ->
             if (data != null) {
                 val videoCardData = Gson().fromJson(Gson().toJson(data), RLFulllVideoModel::class.java)
 
-                RLDatabaseManagerRead().RlUserBasicDataRead(createdBy) { userDataRaw, _ ->
+                RLDatabaseManagerRead().rl_userBasicDataRead(createdBy) { userDataRaw, _ ->
                     if (userDataRaw != null) {
                         val userData = RLTools.parseUserData(userDataRaw)
                         if (userData != null) {
@@ -348,12 +348,12 @@ class RLFragScheduledClasses : RLBaseFragment() {
         adapterScheduledClasses.updateList(scheduleKeyList)
         fragBinding.rvSchdualclasses.visibility=View.VISIBLE
         fragBinding.txtNoData.visibility=View.GONE
-        RLBaseProgress.RLhideProgressDialog()
+        RLBaseProgress.rl_hideProgressDialog()
     }
     private fun noScheduleDataShow(value :String) {
         fragBinding.rvSchdualclasses.visibility=View.GONE
         fragBinding.txtNoData.visibility=View.VISIBLE
-        RLBaseProgress.RLhideProgressDialog()
-        RLTools.RlLogEPrint(TAG,"Error:- $value")
+        RLBaseProgress.rl_hideProgressDialog()
+        RLTools.rl_logEPrint(TAG,"Error:- $value")
     }
 }

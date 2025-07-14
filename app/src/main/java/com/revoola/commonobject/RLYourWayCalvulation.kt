@@ -5,7 +5,6 @@ import com.revoola.model.RlOverviewGraphData
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -58,14 +57,14 @@ object RLYourWayCalvulation {
         return REVPer
     }
 
-    public fun RLmax(previous: Int, next: Int): Int {
+    public fun rl_max(previous: Int, next: Int): Int {
         return when {
             previous > next -> previous
             else ->next
         }
     }
 
-    public fun RLmin(previous: Int, next: Int): Int {
+    public fun rl_min(previous: Int, next: Int): Int {
         return when {
             next == 0 -> previous
             previous == 0 -> next
@@ -118,7 +117,7 @@ object RLYourWayCalvulation {
         }
     }
 
-    public fun RlGetValueInt(value:String):Int{
+    public fun rl_getValueInt(value:String):Int{
         if (value.isNullOrEmpty()){
             return 0
         }else if(value.toDouble() < 0) {
@@ -128,7 +127,7 @@ object RLYourWayCalvulation {
         }
     }
 
-    public fun RlGetValueDouble(value:String):Double{
+    public fun rl_getValueDouble(value:String):Double{
         if (value.isNullOrEmpty()){
             return 0.0
         } else if(value.toDouble() < 0) {
@@ -138,7 +137,7 @@ object RLYourWayCalvulation {
         }
     }
 
-    public fun RLformatElapsedTime(elapsedTime: Long): String {
+    public fun rl_formatElapsedTime(elapsedTime: Long): String {
         val seconds = (elapsedTime / 1000) % 60
         val minutes = (elapsedTime / (1000 * 60)) % 60
         val hours = (elapsedTime / (1000 * 60 * 60)) % 24
@@ -176,30 +175,30 @@ object RLYourWayCalvulation {
     }
 
 
-     fun RLGetValueForTitle(title: String, cardOvData: RlOverviewGraphData,appUnit:String): String {
-        val isImperial = RLTools.RLGetIsImperial(appUnit)
+     fun rl_getValueForTitle(title: String, cardOvData: RlOverviewGraphData, appUnit:String): String {
+        val isImperial = RLTools.rl_getIsImperial(appUnit)
 
         return when (title) {
-            RLValueOvName.Effort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_REV))
-            RLValueOvName.MaxEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_REV_per_session))
-            RLValueOvName.AvgEffort  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_REV_per_session))
+            RLValueOvName.Effort  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.total_REV))
+            RLValueOvName.MaxEffort  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.max_REV_per_session))
+            RLValueOvName.AvgEffort  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.avg_REV_per_session))
 
             RLValueOvName.Awards  -> {
                 val totalAwards = cardOvData.medals_bronze + cardOvData.medals_silver + cardOvData.medals_gold
                 if (totalAwards != 0) totalAwards.toString() else "0"
             }
-            RLValueOvName.Steps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_steps))
-            RLValueOvName.MaxSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_steps_per_session))
-            RLValueOvName.AvgSteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_steps_per_session))
-            RLValueOvName.MaxDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.max_daily_steps))
-            RLValueOvName.AvgDailySteps  -> RLTools.RLformatCommasInt(convertToInt(cardOvData.avg_daily_steps))
+            RLValueOvName.Steps  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.total_steps))
+            RLValueOvName.MaxSteps  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.max_steps_per_session))
+            RLValueOvName.AvgSteps  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.avg_steps_per_session))
+            RLValueOvName.MaxDailySteps  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.max_daily_steps))
+            RLValueOvName.AvgDailySteps  -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.avg_daily_steps))
 
-            RLValueOvName.Distance  -> RLConvertDistance(isImperial,cardOvData)
-            RLValueOvName.DistanceNormal  -> RLTools.RLformatCommas(convertToDouble(cardOvData.total_distance))
-            RLValueOvName.MaxDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.max_distance_per_session) )
-            RLValueOvName.AvgDistance  -> RLTools.RLformatCommas(convertToDouble(cardOvData.avg_distance_per_session))
+            RLValueOvName.Distance  -> rl_convertDistance(isImperial,cardOvData)
+            RLValueOvName.DistanceNormal  -> RLTools.rl_formatCommas(convertToDouble(cardOvData.total_distance))
+            RLValueOvName.MaxDistance  -> RLTools.rl_formatCommas(convertToDouble(cardOvData.max_distance_per_session) )
+            RLValueOvName.AvgDistance  -> RLTools.rl_formatCommas(convertToDouble(cardOvData.avg_distance_per_session))
 
-            RLValueOvName.Relaxation -> RLTools.RLminutesget(convertToInt(cardOvData.total_rmm))
+            RLValueOvName.Relaxation -> RLTools.rl_minutesget(convertToInt(cardOvData.total_rmm))
             RLValueOvName.MaxRelaxation -> convertToInt(cardOvData.max_rmm_per_session).toString()
             RLValueOvName.AvgRelaxation -> convertToInt(cardOvData.avg_rmm_per_session).toString()
             RLValueOvName.TotalCalories -> convertToInt(cardOvData.total_calories).toString()
@@ -207,19 +206,19 @@ object RLYourWayCalvulation {
 
             RLValueOvName.AvgClimbed -> convertToInt(cardOvData.avg_elevation_per_session).toString()
             RLValueOvName.MaxClimbed -> convertToInt(cardOvData.max_elevation_per_session).toString()
-            RLValueOvName.ClimbedNormal -> RLTools.RLformatCommasInt(convertToInt(cardOvData.total_elevation))
+            RLValueOvName.ClimbedNormal -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.total_elevation))
             RLValueOvName.Climbed  -> {
                 val demsElevation:Int = convertToInt(cardOvData.total_elevation?:-1)
                 val elevation = if (!isImperial) {
-                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt(demsElevation)
+                    if (demsElevation == -1) "Pending" else RLTools.rl_formatCommasInt(demsElevation)
                 } else {
-                    if (demsElevation == -1) "Pending" else RLTools.RLformatCommasInt((demsElevation * 3.28084).toInt())
+                    if (demsElevation == -1) "Pending" else RLTools.rl_formatCommasInt((demsElevation * 3.28084).toInt())
                 }
                 elevation.toString()
             }
             RLValueOvName.Session -> convertToInt(cardOvData.session).toString()
-            RLValueOvName.AvgSession -> RLTools.RLminutesget(convertToInt(cardOvData.avg_time_per_session))
-            RLValueOvName.LongestSession -> RLTools.RLminutesget(convertToInt(cardOvData.max_time_per_session))
+            RLValueOvName.AvgSession -> RLTools.rl_minutesget(convertToInt(cardOvData.avg_time_per_session))
+            RLValueOvName.LongestSession -> RLTools.rl_minutesget(convertToInt(cardOvData.max_time_per_session))
             RLValueOvName.MaxCalories -> convertToInt(cardOvData.max_total_calories_per_session).toString()
             RLValueOvName.AvgCalories -> convertToInt(cardOvData.avg_total_calories_per_session).toString()
             RLValueOvName.MaxDailyTotal -> convertToInt(cardOvData.max_daily_total_calories).toString()
@@ -230,12 +229,12 @@ object RLYourWayCalvulation {
         }
 
     }
-     fun RLConvertDistance(isImperial: Boolean, cardOvData: RlOverviewGraphData): String {
+     fun rl_convertDistance(isImperial: Boolean, cardOvData: RlOverviewGraphData): String {
         val distance=convertToDouble(cardOvData.total_distance)
         if (!isImperial) {
-            return RLTools.RLformatCommas(distance)
+            return RLTools.rl_formatCommas(distance)
         } else{
-            return  RLTools.RLformatCommas(distance * 0.621371)
+            return  RLTools.rl_formatCommas(distance * 0.621371)
         }
     }
      fun convertToInt(value: Any): Int {
@@ -257,8 +256,8 @@ object RLYourWayCalvulation {
             else -> 0.0
         }
     }
-     fun RLGetKmMiles(km:String,miles:String,appUnit:String):String{
-        val isImperial = RLTools.RLGetIsImperial(appUnit)
+     fun rl_getKmMiles(km:String, miles:String, appUnit:String):String{
+        val isImperial = RLTools.rl_getIsImperial(appUnit)
         return if (isImperial) miles else km
     }
      data class DateRange(val fromDate: Long?, val toDate: Long?)
@@ -314,7 +313,7 @@ object RLYourWayCalvulation {
             }
         }
 
-        RLTools.RlLogDPrint("RLFragOverviewSession","period: $period   fromDate: $fromDate , toDate: $toDate")
+        RLTools.rl_logDPrint("RLFragOverviewSession","period: $period   fromDate: $fromDate , toDate: $toDate")
         return DateRange(
             fromDate = fromDate?.atStartOfDay()?.atOffset(ZoneOffset.UTC)?.toEpochSecond(),
             toDate = toDate?.atTime(23, 59, 59)?.atOffset(ZoneOffset.UTC)?.toEpochSecond()

@@ -20,50 +20,50 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
     var sucDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        RLScreenSet(false)
+        rl_screenSet(false)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        activityBinding = RLinflateBindLayout(this, R.layout.rl_activity_forgot_password) as RlActivityForgotPasswordBinding
-        RLUisetup()
+        activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_forgot_password) as RlActivityForgotPasswordBinding
+        rl_uisetup()
 
     }
-    private fun RLUisetup() {
-        RLonBackPresAct(activityBinding.toolbarLogin.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(activityBinding.toolbarLogin.ivBack)
         activityBinding.toolbarLogin.tvTitle.setText(R.string.resetpassword)
         activityBinding.tvnext.setOnClickListener(View.OnClickListener {
-            if (RLvalidation()) {
-                RLSendPasswordResetEmail()
+            if (rl_validation()) {
+                rl_sendPasswordResetEmail()
             }
         })
 
     }
-    private fun RLSendPasswordResetEmail() {
+    private fun rl_sendPasswordResetEmail() {
         // Initialize Firebase Auth
         val  authManager = RLAuthManager()
-        authManager.RLForgotPasswordUser(emailID) { data, error ->
+        authManager.rl_forgotPasswordUser(emailID) { data, error ->
             if (!data.isNullOrEmpty()) {
-                RLopentoast(data)
+                rl_opentoast(data)
                 finish()
             } else {
-                RLopentoast("Registration failed: ${error?.message}")
+                rl_opentoast("Registration failed: ${error?.message}")
             }
         }
     }
 
-    private fun RLvalidation(): Boolean {
+    private fun rl_validation(): Boolean {
         emailID = activityBinding.etemailid.text.toString().trim()
         if (emailID.isEmpty()) {
-            RLshowDialog("Please enter valid Email")
+            rl_showDialog("Please enter valid Email")
             return false
-        }else if (!RLTools.RLisEmailValid(emailID)) {
-            RLshowDialog("Please enter valid Email")
+        }else if (!RLTools.rl_isEmailValid(emailID)) {
+            rl_showDialog("Please enter valid Email")
 
             return false
         }
         return true
     }
 
-    private fun RLshowDialog( emaildid: String) {
+    private fun rl_showDialog(emaildid: String) {
         sucDialog = Dialog(activity)
         sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog!!.setContentView(R.layout.rl_alertdialog_custom_layout)
@@ -85,7 +85,7 @@ class RLForgotPasswordActivityRL : RLBaseActivity() {
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 
-    private fun RLopentoast(messageprint: String) {
+    private fun rl_opentoast(messageprint: String) {
         Toast.makeText(this,messageprint, Toast.LENGTH_SHORT).show()
     }
 }

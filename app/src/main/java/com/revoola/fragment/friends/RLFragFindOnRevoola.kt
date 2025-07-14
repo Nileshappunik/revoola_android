@@ -1,7 +1,6 @@
 package com.revoola.fragment.friends
 
 import android.Manifest
-import android.content.ContentResolver
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,7 +37,7 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragFindOnRevoola : RLBaseFragment() {
     val TAG: String = RLFragFindOnRevoola::class.java.simpleName
-    lateinit var fragBinding: RlFragFingOnRevoolaBinding
+  //  lateinit var fragBinding: RlFragFingOnRevoolaBinding
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private val CONTACTS_PERMISSION_CODE = 1
@@ -47,31 +45,31 @@ class RLFragFindOnRevoola : RLBaseFragment() {
     private var contactsList = mutableListOf<RLContactModel>()
     private val emailList = mutableListOf<String>()
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragFingOnRevoolaBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
-        currentUser= RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
+        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
+        currentUser= RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
         fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
-        fragBinding.toolbar.ivBack.setOnClickListener { RLcloseFragment()}
+        fragBinding.toolbar.ivBack.setOnClickListener { rl_closeFragment()}
        // RLCheckContactPermission()
         fragBinding.txtSyncContact.setOnClickListener {
-            RLCheckContactPermission()
+            rl_checkContactPermission()
         }
     }
 
@@ -124,12 +122,11 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             }
         }
         //Api Call
-        RLEmailFilterApiCall()
+        rl_emailFilterApiCall()
 
     }
 
-
-    private fun RLCheckContactPermission(){
+    private fun rl_checkContactPermission(){
         // Check if the app has permission to read contacts
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             // Request the permission
@@ -140,35 +137,35 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         }
     }
 
-    private fun RLEmailFilterApiCall() {
+    private fun rl_emailFilterApiCall() {
         if (isAdded){
-            RLBaseProgress.RLShowProgressDialog(requireActivity())
+            RLBaseProgress.rl_showProgressDialog(requireActivity())
         }
         val request = listOf(RLEmailFilterRequestModel(syncContactNew = RLSyncContactFilterModel(currentUser = currentUser,email=emailList.toSet().toMutableList())))
-        RLTools.RlLogDPrint(TAG,"Email Filter Request: $request")
-        viewModel.RLFindOnRevoolaEmailFilter(request) { result ->
+        RLTools.rl_logDPrint(TAG,"Email Filter Request: $request")
+        viewModel.rl_findOnRevoolaEmailFilter(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Email Filter Success: ${response.type}")
-                        RLHandleApiResponse(response.text)
+                        RLTools.rl_logDPrint(TAG,"Email Filter Success: ${response.type}")
+                        rl_handleApiResponse(response.text)
                     }else {
-                        RLBaseProgress.RLhideProgressDialog()
-                        RLTools.RlLogDPrint(TAG,"Email Filter Fail: ${response.type}")
+                        RLBaseProgress.rl_hideProgressDialog()
+                        RLTools.rl_logDPrint(TAG,"Email Filter Fail: ${response.type}")
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogDPrint(TAG,"Email Filter Catch: ${e.message}")
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logDPrint(TAG,"Email Filter Catch: ${e.message}")
                 }
             }.onFailure { error ->
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogDPrint(TAG,"Email Filter Error: ${error.message}")
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logDPrint(TAG,"Email Filter Error: ${error.message}")
             }
         }
     }
 
-    private fun RLHandleApiResponse(cardData: EmailFilterInviteData) {
+    private fun rl_handleApiResponse(cardData: EmailFilterInviteData) {
         val combinedList = mutableListOf<RLFindOnRevoolaInviteItem>()
         contactsList = contactsList.distinctBy { it.phoneNumber }.toMutableList()
         // Create a new list where `isInvite` is set to true if the email is in `emailList`
@@ -195,7 +192,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
                 is RLFindOnRevoolaInviteItem.RLFollow -> {
                     // Handle the UserInvite item (EmailFilterUserInvite)
                     val followUserData = selectedItem.user
-                    RLTools.RlLogDPrint(TAG,"Selected Follow: ${followUserData.username}")
+                    RLTools.rl_logDPrint(TAG,"Selected Follow: ${followUserData.username}")
                     val contact_data= listOf(RLInsertContactData(
                         myidstatus = followUserData.myIdStatus,
                         contact_userid = followUserData.userId,
@@ -206,7 +203,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
                 is RLFindOnRevoolaInviteItem.RLInvite -> {
                     // Handle the ContactInvite item (RLContactModel)
                     val inviteContactData = selectedItem.contact
-                    RLTools.RlLogDPrint(TAG,"Selected Invite: ${inviteContactData.name}")
+                    RLTools.rl_logDPrint(TAG,"Selected Invite: ${inviteContactData.name}")
                     val contact_data= listOf(RLInsertContactData(
                         myidstatus = "",
                         contact_userid = "",
@@ -221,22 +218,22 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         // Set up RecyclerView with fetched email contacts
         fragBinding.listSyncContacts.layoutManager = LinearLayoutManager(requireContext())
         fragBinding.listSyncContacts.adapter = myAdapter
-        RLBaseProgress.RLhideProgressDialog()
+        RLBaseProgress.rl_hideProgressDialog()
         fragBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                myAdapter.RLfilter(s.toString())
+                myAdapter.rl_filter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun RLInsertFriendsApiCall(contact_data: List<RLInsertContactData>) {
+    private fun rl_insertFriendsApiCall(contact_data: List<RLInsertContactData>) {
         //Contact Status:1- Invited , 2- Requested ,3- Accepted ,4- Blocked
         if (isAdded){
-            RLBaseProgress.RLShowProgressDialog(requireActivity())
+            RLBaseProgress.rl_showProgressDialog(requireActivity())
         }
         val request=  listOf(RLFriendsInsertApiPayload(
         users_contacts_mk2 = RLUsersContactsMk2(
@@ -244,23 +241,23 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             contact_data = contact_data)
         ))
 
-        RLTools.RlLogDPrint(TAG,"Insert Friends Request: $request")
-        viewModel.RLInsertFriendsData(request) { result ->
+        RLTools.rl_logDPrint(TAG,"Insert Friends Request: $request")
+        viewModel.rl_insertFriendsData(request) { result ->
             result.onSuccess { response ->
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Insert Friends Success: ${response.type}")
+                        RLTools.rl_logDPrint(TAG,"Insert Friends Success: ${response.type}")
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Insert Friends Fail: ${response.type}")
+                        RLTools.rl_logDPrint(TAG,"Insert Friends Fail: ${response.type}")
                     }
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Insert Friends Catch: ${e.message}")
+                    RLTools.rl_logDPrint(TAG,"Insert Friends Catch: ${e.message}")
                 }
             }.onFailure { error ->
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogDPrint(TAG,"Insert Friends Error: ${error.message}")
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logDPrint(TAG,"Insert Friends Error: ${error.message}")
             }
         }
     }

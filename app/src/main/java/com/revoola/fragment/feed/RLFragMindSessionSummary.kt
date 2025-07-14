@@ -23,20 +23,21 @@ import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.overview.RLFragOverviewSession
+import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragMindSessionSummary : RLBaseFragment() {
     val TAG: String = RLFragMindSessionSummary::class.java.simpleName
-    lateinit var fragBinding: RlFragMindSessionSummaryBinding
+   // lateinit var fragBinding: RlFragMindSessionSummaryBinding
     lateinit var cardData: RLTextOverview
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var  selectTag:String=""
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragMindSessionSummaryBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
@@ -45,29 +46,29 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_session_summary, container) as RlFragMindSessionSummaryBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindSessionSummary" )
-        currentUser=  com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
+       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_session_summary, container) as RlFragMindSessionSummaryBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindSessionSummary" )
+        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
-        RLuisetup()
+        rl_uisetup()
         return fragBinding.root
     }
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
         val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
         fragBinding.ivBack.setOnClickListener {
-            RLcloseScreen(isSessionComplete)
+            rl_closeScreen(isSessionComplete)
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing or show a message
-                RLcloseScreen(isSessionComplete)
+                rl_closeScreen(isSessionComplete)
             }
         })
 
@@ -76,38 +77,38 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
-        RLTools.RLLogLarge(TAG,"Card Data: ${Gson().toJson(cardData)}")
-        RLsummaryDataSet()
+        RLTools.rl_logLarge(TAG,"Card Data: ${Gson().toJson(cardData)}")
+        rl_summaryDataSet()
     }
 
-    private fun RLcloseScreen(isSessionComplete:Boolean){
+    private fun rl_closeScreen(isSessionComplete:Boolean){
         if (isSessionComplete){
-            RLBottomHideShowSet(true)
-            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+            rl_bottomHideShowSet(true)
+            (context as RLMainActivityRL).rl_bottombarcolorDarkBlue()
+            (context as RLMainActivityRL).rl_loadFrag(RLFragOverviewSession(), TAG, false, null, false)
         }else{
-            RLcloseFragment()
+            rl_closeFragment()
         }
     }
 
-    private fun RLsummaryDataSet() {
+    private fun rl_summaryDataSet() {
         //Image Set
-        Glide.with(requireContext()).load(RLTools.RLFeedSetImage(cardData,currentUser,selectTag)).into(fragBinding.testImage)
+        Glide.with(requireContext()).load(RLTools.rl_feedSetImage(cardData,currentUser,selectTag)).into(fragBinding.testImage)
 
         val totalAward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         //Main Data List Set
         val dataListWithoutHR:List<Pair<RLTypeOfMetrics, RLMetricData>> = listOf(
-            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
-            RLTypeOfMetrics.AssumeRelaxation to RLMetricData(RLTools.RLformatCommas(cardData.totalRMS.toDouble()).toString()),
+            RLTypeOfMetrics.MindfulMinutes to RLMetricData(RLTools.rl_formatTime(cardData.totalTime.toInt(),true)),
+            RLTypeOfMetrics.AssumeRelaxation to RLMetricData(RLTools.rl_formatCommas(cardData.totalRMS.toDouble()).toString()),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totalAward.toString())
         )
 
         val dataListWithHR:List<Pair<RLTypeOfMetrics, RLMetricData>> =listOf(
-            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.RLformatTime(cardData.totalTime.toInt(),true)),
-            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.RLformatCommas(cardData.totalREV.toDouble())),
-            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.RLformatCommas(cardData.burntCalories.toDouble())),
+            RLTypeOfMetrics.TotalTime to RLMetricData(RLTools.rl_formatTime(cardData.totalTime.toInt(),true)),
+            RLTypeOfMetrics.AssumedEffort to RLMetricData(RLTools.rl_formatCommas(cardData.totalREV.toDouble())),
+            RLTypeOfMetrics.AssumedCalories to RLMetricData(RLTools.rl_formatCommas(cardData.burntCalories.toDouble())),
             RLTypeOfMetrics.Boosts to RLMetricData(cardData.total_kudos.toString()),
             RLTypeOfMetrics.Comments to RLMetricData(cardData.total_comments.toString()),
             RLTypeOfMetrics.Awards to RLMetricData(totalAward.toString())
@@ -115,25 +116,25 @@ class RLFragMindSessionSummary : RLBaseFragment() {
 
         if (cardData.hrm==0) {
             //WITHOUT HR
-            RLsummaryListDataSet(dataListWithoutHR)
+            rl_summaryListDataSet(dataListWithoutHR)
         }else{
             //WITH HR
             //RLsummaryListDataSet(dataListWithHR)
-            RLsummaryListDataSet(dataListWithoutHR)
+            rl_summaryListDataSet(dataListWithoutHR)
 
         }
     }
-    private fun RLsummaryListDataSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
+    private fun rl_summaryListDataSet(dataList: List<Pair<RLTypeOfMetrics, RLMetricData>>) {
         //Main Data List Set
         val glinearLayoutManager = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
-        RLTools.RLheightsetimageview( fragBinding.testImage)
+        RLTools.rl_heightsetimageview( fragBinding.testImage)
     }
     override fun onPause() {
         super.onPause()
-        RLBottomHideShowSet(true)
+        rl_bottomHideShowSet(true)
     }
 
 }

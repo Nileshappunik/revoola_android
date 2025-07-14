@@ -32,8 +32,8 @@ class RLAllDialogListAdapter(
         return data.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutAllDialogListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutAllDialogListBinding = layoutBinding
+    inner class MyViewHolder(private  val layoutBinding: RlLayoutAllDialogListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+       // private val layoutBinding: RlLayoutAllDialogListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val datastring = data[position]
             layoutBinding.tvmindbody.setText(datastring)

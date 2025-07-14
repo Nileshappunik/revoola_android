@@ -33,41 +33,36 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragYourGroup : RLBaseFragment() {
     val TAG: String = RLFragYourGroup::class.java.simpleName
-    lateinit var fragBinding: RlFragYourGroupBinding
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    //lateinit var fragBinding: RlFragYourGroupBinding
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
     var isGroup:Boolean=true
     private var selectUserdata: List<RLuserData> = mutableListOf()
     
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragYourGroupBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
+        rl_screenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
-        RLPrefManager.RLSetSomeStringValue(activity,RLPrefManager.current_fragment,"RLFragYourGroup" )
+       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
+        RLPrefManager.rl_setSomeStringValue(activity,RLPrefManager.current_fragment,"RLFragYourGroup" )
         fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
-        RLonBackPresAct(fragBinding.toolbar.ivBack)
-        currentUser= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        rl_onBackPresAct(fragBinding.toolbar.ivBack)
+        currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
-
-        RLuisetup()
+        viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLgroupApiCall()
+    private fun rl_uisetup() {
+        rl_groupApiCall()
         fragBinding.txtMyGroup.setOnClickListener {
             fragBinding.txtMyGroup.setBackgroundResource(R.drawable.full_round_green)
             fragBinding.txtMyGroup.setTextColor(resources.getColor(R.color.AppWhiteColor))
@@ -79,7 +74,7 @@ class RLFragYourGroup : RLBaseFragment() {
             fragBinding.tvCreate.visibility=View.GONE
             fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
             isGroup=true
-            RLgroupApiCall()
+            rl_groupApiCall()
         }
 
         fragBinding.txtCreateGroup.setOnClickListener {
@@ -93,14 +88,14 @@ class RLFragYourGroup : RLBaseFragment() {
             fragBinding.tvCreate.visibility=View.VISIBLE
             fragBinding.toolbar.tvTitle.setText(R.string.addmembers)
             isGroup=false
-            RLfriendsApiCall()
+            rl_friendsApiCall()
         }
 
         fragBinding.rvSelectedFriend.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         fragBinding.txtInviteyourfriend.setOnClickListener {
             if (isGroup){
-                (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragInviteFriends(), TAG, true, null, false)
             }
         }
         fragBinding.tvCreateClick.setOnClickListener {
@@ -123,37 +118,37 @@ class RLFragYourGroup : RLBaseFragment() {
             }
             cardData.selectFriendList=selectFriendList
             bundle.putParcelable("cardData",cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragCreateGroup().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragCreateGroup().newInstance(bundle), TAG, true,null, false)
 
         }
     }
-    private fun RLfriendsApiCall() {
+
+    private fun rl_friendsApiCall() {
         val request = listOf(
             RLSetsearch_userrequest(
                 search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)
-            )
-        )
-        RLTools.RlLogDPrint(TAG,"setyouFollowdata= "+request)
+            ))
+        RLTools.rl_logDPrint(TAG,"setyouFollowdata= "+request)
 
-        viewModel.RLfriendsYouFollow(request) { result ->
+        viewModel.rl_friendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandlefriendsApi(response.text.user)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
+                        rl_responsehandlefriendsApi(response.text.user)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }
-    private fun RLresponsehandlefriendsApi(userdata: List<RLuserData>) {
+    private fun rl_responsehandlefriendsApi(userdata: List<RLuserData>) {
          selectUserdata = emptyList()
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourgroup.layoutManager = linearLayoutManager
@@ -174,39 +169,39 @@ class RLFragYourGroup : RLBaseFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter.RLfilter(s.toString())
+                adapter.rl_filter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-    private fun RLgroupApiCall() {
+    private fun rl_groupApiCall() {
         val request = listOf(
             RLrequestgroup_dataset(
                 group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)
             )
         )
-        RLTools.RlLogDPrint(TAG,"setgroupdata= "+request)
+        RLTools.rl_logDPrint(TAG,"setgroupdata= "+request)
 
-        viewModel.RLyourGroupData(request) { result ->
+        viewModel.rl_yourGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.RlLogDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandleGroupsApi(response.text)
+                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
+                        rl_responsehandleGroupsApi(response.text)
                     }else {
-                        RLTools.RlLogDPrint(TAG,"Fail= "+response.type)
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.RlLogDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
                 }
             }.onFailure { error ->
 
-                RLTools.RlLogDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
             }
         }
     }
-    private fun RLresponsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>) {
+    private fun rl_responsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>) {
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourgroup.layoutManager = linearLayoutManager
         val adaptergroup = RLYourGroupListAdapter(activity,groupdata)
@@ -216,17 +211,12 @@ class RLFragYourGroup : RLBaseFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adaptergroup.RLfilter(s.toString())
+                adaptergroup.rl_filter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-
-
-
-
-
 
 
 }

@@ -5,7 +5,8 @@ import com.revoola.model.RLZoneChartData
 import org.json.JSONArray
 
 object RLAllHTMLChart {
-    fun RLgetEffortChartHtml(jsondata: String) : String {
+
+    fun rl_getEffortChartHtml(jsondata: String) : String {
         val webdata:String="""
            <!DOCTYPE html>
 <meta charset="utf-8">
@@ -192,7 +193,7 @@ object RLAllHTMLChart {
 """.trimIndent()
         return webdata
     }
-    fun RLgetElevationHtml(arrCumDistance:String, arrElevation:String,metersLabel:String,kmsLabel:String): String{
+    fun rl_getElevationHtml(arrCumDistance:String, arrElevation:String, metersLabel:String, kmsLabel:String): String{
         return """
             <!DOCTYPE html>
             <head>
@@ -320,7 +321,7 @@ object RLAllHTMLChart {
             </html>
         """.trimIndent()
     }
-    fun RLgetSpeedHtml(arrCumDistance: String, arrElevation: String, arrCumSpeed: String, kmhLabel: String, kmsLabel: String): String {
+    fun rl_getSpeedHtml(arrCumDistance: String, arrElevation: String, arrCumSpeed: String, kmhLabel: String, kmsLabel: String): String {
         return """
                     <!DOCTYPE html>
                     <head>
@@ -393,7 +394,7 @@ object RLAllHTMLChart {
 
                         """.trimIndent()
     }
-    fun RLgetPaceChartHtml(jsondata: String) : String{
+    fun rl_getPaceChartHtml(jsondata: String) : String{
 
         return """
            <!DOCTYPE html>
@@ -576,7 +577,7 @@ object RLAllHTMLChart {
                                 </html>  
         """.trimIndent()
     }
-    fun RLgetChallengeChartHtml (steps_so_far:Int,target_steps:Int,time_gone:Int,total_time:Int,title:String) : String{
+    fun rl_getChallengeChartHtml (steps_so_far:Int, target_steps:Int, time_gone:Int, total_time:Int, title:String) : String{
         return """
          <!DOCTYPE html>
          <html>
@@ -693,7 +694,7 @@ object RLAllHTMLChart {
 
         """.trimIndent()
     }
-    fun RLgetChallengeSessionChartHtml (steps_so_far:Int,target_steps:Int) : String{
+    fun rl_getChallengeSessionChartHtml (steps_so_far:Int, target_steps:Int) : String{
         return """
        
        <!DOCTYPE html>
@@ -793,413 +794,7 @@ object RLAllHTMLChart {
         """.trimIndent()
     }
 
-    fun RLgetRankingChartHtmlOld(jsondata: JSONArray, userid:String): String{
-        return """     
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Bar</title>
-                <style>
-                    body {
-                        margin: 0;
-                        top: 0;
-                        right: 0;
-                        bottom: 0;
-                        left: 0;
-                    }
-                    .image {
-                        stroke: white;
-                        border-width: 1px;
-                        border-radius: 50%;
-                        overflow: hidden;
-                    }
-                    .x-axis text{
-                        fill: none;
-                        font-family: "Omnes";
-                    }
-                    .x-axis path{
-                        stroke: none;
-                    }
-
-                    .x-axis line{
-                        stroke: white;
-                    }
-                </style>
-                <!-- Load d3.js -->
-                <script src="https://d3js.org/d3.v7.js"></script>
-            </head>
-
-            <body>
-                <script>
-                    
-
-          
-         
-                
-               // Define your data (sample data)
-                       var data = $jsondata;
-                       
-                       
-            		var bar_color = "#ebf7ed";
-                    var percentage_label_color = "#4a4c4f";
-                    var user_name_label_color = "#4a4c4f"; // Change user_name_label_color to white
-                    var name_label_color = "#4a4c4f";
-                    var index_label_color = "black";
-                    var name_font_size = "45px";
-                    var percentage_font_size = "45px";
-                    var index_font_size = "50px";
-                    var font_family = "Omnes, sans-serif";
-                    var barHeight = 65;
-                    var user_name ='$userid';
-                    var font_vertical_pos = 13;
-
-              
-                   	 // Sort data by value in descending order
-                   data.sort((a, b) => b.value - a.value);
-
-
-
-
-                    // Find the index of the user's bar
-                    const userIndex = data.findIndex(d => d.userid === user_name);
-
-                    // Determine which bars to display
-                    let displayData=data;
-                    //if (userIndex <= userIndex) {
-                      //  displayData = data;
-            			
-            //			.slice(0, userIndex);
-                    //} else {
-                      //  displayData = data.slice(0, 14).concat(data[userIndex]);
-                    //}
-            		// Now, sort displayData in ascending order based on the value
-            //displayData.sort((a, b) => a.value - b.value);
-            	
-                    const svgWidth = (window.innerWidth / 100) * 90;
-                    //const svgHeight = data.length * 90;
-            		const svgHeight = data.length > 1 ? data.length * 90 : 180; // Adjust overall SVG height if only one bar
-                    const margin = {top: 20, right: 80, bottom: 40, left: 120};
-                    const width = svgWidth - margin.left - margin.right;
-                    const height = svgHeight - margin.top - margin.bottom;
-
-                    const svg = d3.select("body")
-                            .append("svg")
-                            .attr("width", svgWidth)
-                            .attr("height", svgHeight)
-                            .style("overflow", "visible")
-                            .append("g")
-                            .attr("transform", `translate(`+ margin.left +`,`+ margin.top +`)`);
-            		
-
-                    
-                    // Set the ranges
-                 //   const x = d3.scaleLinear().range([0, width]);
-                 //   const y = d3.scaleBand().range([height, 0]).padding(0.1);
-            			
-            				        // Create scales
-                    const xScale = d3.scaleLinear()
-                            .domain([0, d3.max(data, d => d.value)])
-                            .range([0, width]);
-
-                    const yScale = d3.scaleBand()
-                            .domain(displayData.map(d => d.name))
-                            .range([0, height])
-                            .padding(0.25);
-
-                    // Add axes if needed
-                    const xAxis = d3.axisBottom(xScale).tickSize(-height);
-                    svg.append("g")
-                            .attr("class", "x-axis")
-                            .attr("transform", `translate(0, `+ height +`)`)
-                            .call(xAxis);
-
-                    const yAxis = d3.axisLeft(yScale);
-                    svg.append("g")
-                            .attr("class", "y-axis")
-                            .style("display", "none")
-                            .call(yAxis);
-
-                    // Create bars
-                    svg.selectAll(".gap")
-                            .data(displayData)
-                            .enter()
-                            .append("rect")
-                            .attr("class", "gap")
-                            .attr("x", 10)
-                            .attr("y", d => yScale(d.name))
-                            .attr("width", d => xScale(d.value))
-                            .attr("height", yScale.bandwidth())
-                            .attr("rx", 12)
-                            //.style("fill", d => d.userid.startsWith(user_name) ? "#39b54a" : bar_color); // Dark blue color for user_name, bar_color for others
-            				 .style("fill", (d, i) => i === userIndex ? "#39b54a" : bar_color); // Use index to determine fill color
-                    svg
-                            .append("defs")
-                            .selectAll("pattern")
-                            .data(displayData)
-                            .enter()
-                            .append("pattern")
-                            .attr("id", (d, i) => "image-pattern-" + i)
-                            .attr("width", 1) // Adjust the width of the pattern as needed
-                            .attr("height", 1) // Adjust the height of the pattern as needed
-                            .attr("x", 0)
-                            .attr("y", 0)
-                            .attr("patternContentUnits", "objectBoundingBox")
-                            .append("image")
-                            .attr("x", 0)
-                            .attr("y", 0)
-                            .attr("width", 1)
-                            .attr("height", 1)
-                            .attr("xlink:href", (d) => d.image)
-                            .attr("preserveAspectRatio", "xMinYMin slice");
-
-                    svg.selectAll(".circle")
-                            .data(displayData)
-                            .enter()
-                            .append("circle")
-                            .attr("class", "circle")
-                            .attr("cx", -margin.left + 60)
-                            .attr("cy", d => yScale(d.name) + yScale.bandwidth() / 2 + 2)
-                            .attr("r", yScale.bandwidth() / 2) //
-                            .style("fill", (d, i) => `url(#image-pattern-`+ i+`)`);
-            				
-            				
-            				
-            				// This code goes after the section where you create the bars.
-
-            if (userIndex > userIndex) {
-                // Calculate the y-position of the 14th bar. Since bars are drawn using yScale,
-                // you can use yScale to find the y-position of the 14th item's name.
-                // We add half of the bandwidth to position the line below the 14th bar.
-                const yPositionOf14thBar = yScale(displayData[13].name) + yScale.bandwidth();
-
-                // Draw a horizontal line at the y-position of the 14th bar
-                svg.append("line")
-                    .style("stroke", "black") // Color of the line
-                    .style("stroke-width", 4) // Thickness of the line
-                     .style("stroke-dasharray", "10,10") // Make the line dashed: 10 pixels dash, 10 pixels gap
-            		.attr("x1", 0) // Starting x-position of the line
-                    .attr("y1", yPositionOf14thBar+25) // Starting y-position of the line (same as ending y-position)
-                    .attr("x2", width) // Ending x-position of the line
-                    .attr("y2", yPositionOf14thBar+25); // Ending y-position of the line
-            }
-
-            				
-            				
-            				
-            // metric values at right hand end of bars
-               svg.selectAll(".label3")
-                            .data(displayData)
-                            .enter()
-                            .append("text")
-                            .attr("class", "label")
-                            .attr("x", d => width - 10) // Adjust the position to right-align the text
-                            .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4) // Center the text vertically
-                            .style("fill", (d) => {
-                                if (d.userid.startsWith(user_name)) {
-                                    return user_name_label_color;
-                                } else {
-                                    return name_label_color;
-                                }
-                            })
-                            .style("font-size", name_font_size)
-                            .style("font-family", font_family)
-                            .style("text-anchor", "end") // Right-align the text
-                            .text(d => d.number2);
-
-            // right hand side % labels
-
-               svg.selectAll(".label4")
-                            .data(displayData)
-                            .enter()
-                            .append("text")
-                            .attr("class", "label")
-                            .attr("x", width + 150) // Adjust the position to right-align the text
-                            .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)
-                            .style("fill", percentage_label_color)
-                            .style("font-size", percentage_font_size)
-                            .style("font-family", font_family)
-                            .style("text-anchor", "end") // Right-align the text
-                            .text(d => d.value + "%");
-
-            // Find the index of the user in the data array
-            var userRowIndex = (data.findIndex(d => d.userid === user_name)+1);
-            	
-
-
-            // labels in bars
-            // Find the first index where the value is 0 to adjust ranking shown for users with value 0
-            const firstZeroValueIndex = data.findIndex(d => d.value === 0) + 1; // Adding 1 for 1-based indexing
-
-
-            // Determine the lowest ranking for users with a value of 0 among the bars
-            let ranksWithZeroValue = data
-              .map((d, i) => ({ value: d.value, rank: i + 1 }))
-              .filter(d => d.value === 0 && d.rank <= userRowIndex)
-              .map(d => d.rank);
-
-            let lowestRankForZeroValue = Math.min(...ranksWithZeroValue, data.length + 1); // Use a fallback if no 0 values
-
-
-            // labels in bars
-            svg.selectAll(".label1")
-                .data(displayData)
-                .enter()
-                .append("text")
-                .attr("class", "label")
-                .attr("x", d => 15)  // Position the label slightly right of the y-axis
-                .attr("y", d => yScale(d.name) + yScale.bandwidth() / 2 + font_vertical_pos + 4)  // Vertically center the text in the bar
-                .style("fill", (d, i) => (i === userIndex && d.value === 0) ? "#39b54a" : name_label_color)  // Change font color to blue if bar length is zero and it's the userIndex
-                .style("font-size", name_font_size)
-                .style("font-family", font_family)
-                .text(d => {
-                    // Determine the ranking directly based on displayData for simplicity and clarity
-                    let ranking = displayData.findIndex(x => x.userid === d.userid) + 1;
-                    return ``+ ranking +` - `+  d.name.split(" - ")[1]+``;  // Display ranking and name
-                });
-			   
-                </script>
-            </body>
-            </html>
-        """.trimIndent()
-    }
-    fun RLgetIndividualStepsChartHtmlOlD(jsondata: JSONArray): String{
-        return """     
-           <!DOCTYPE html>
-           <html>
-           <head>
-             <script src="https://d3js.org/d3.v4.min.js"></script>
-             <style>
-               body {
-                 font: 25px sans-serif;
-               }
-               svg {
-                 font-family: Sans-Serif, Arial;
-                 padding-bottom: 135px; /* Add padding-bottom to create space for x-axis labels and values */
-               }
-               .axis path,
-               .axis line {
-                 stroke: black;
-               }
-               .bar {
-                 fill: #39B54A; /* Green color for the bars */
-               }
-               .tick line {
-                 stroke-opacity: 0.99;
-               }
-             </style>
-           </head>
-           <body>
-           <div id="chart"></div>
-           <script>
-               var array = [
-
-                 {
-                   name: "Challenge Metric",
-                   values: $jsondata
-                 }
-               
-           ];
-
-           var challengeData = array.find(entry => entry.name === "Challenge Metric");
-           createGraph(challengeData);
-
-           function createGraph(data) {
-             var margin = { top: 20, right: 20, bottom: 85, left: 100 },
-                 barWidth = 56,
-                 width = data.values.length * barWidth + margin.left + margin.right, // Adjust the overall width based on the number of bars
-                 height = 600,
-                 gapWidth = barWidth / 2; // Adjust gapWidth to ensure the first tick starts under the middle of the first bar
-
-             /* Format Data */
-             var parseDate = d3.timeParse("%d/%m/%Y");
-             data.values.forEach(function(d) {
-               d.date = parseDate(d.date);
-               d.value = +d.value;
-             });
-
-             /* Scales */
-             var xScale = d3.scaleBand()
-                            .rangeRound([margin.left, width - margin.right])
-                            .paddingInner(0.1)
-                            .domain(data.values.map(d => d.date));
-
-             var yScale = d3.scaleLinear()
-                            .domain([0, d3.max(data.values, d => d.value)])
-                            .range([height - margin.bottom, margin.top]);
-
-             var svg = d3.select("#chart").append("svg")
-                         .attr("width", width)
-                         .attr("height", height);
-
-             /* Add Axes */
-             var xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%d %b")),
-                 yAxis = d3.axisLeft(yScale).ticks(10);
-                var heightminusmarginbottom=height - margin.bottom
-             svg.append("g")
-                .attr("transform", `translate(0,`+heightminusmarginbottom+`)`)
-                .call(xAxis)
-                .selectAll("text")
-                  .style("text-anchor", "end")
-                  .attr("dx", "-.8em")
-                  .attr("dy", ".15em")
-           	   .style("font-size", 18)
-                  .attr("transform", "rotate(-65)");
-
-             svg.append("g")
-                .attr("transform", `translate(`+ margin.left +`,0)`)
-                .call(yAxis)
-           	   .style("font-size", 18);
-
-            /* Draw Bars with Rounded Tops Only */
-           svg.selectAll(".bar")
-              .data(data.values)
-              .enter().append("path")
-                .attr("d", function(d) {
-                  const x = xScale(d.date) + gapWidth - 28; // Adjust the starting x position
-                  const y = yScale(d.value);
-                  const barHeight = height - margin.bottom - yScale(d.value);
-                  const barWidth = xScale.bandwidth();
-                   const ybarheight=y + barHeight
-                    const barheightminusten= barHeight-10
-                    const barwidthminustwenty= barWidth-20
-                  
-                  // Move to the bottom left, draw line up to the start of top left curve,
-                  // arc for the top left corner, line across the top, arc for the top right corner,
-                  // then line down the right side and close the path.
-               
-                 return `M`+x+`,`+ybarheight+` ` + // Move to bottom left
-                    `v-`+ barheightminusten +` ` +   // Line up to start of top left curve
-                    `q0,-10 10,-10 ` +         // Top left corner curve
-                    `h`+barwidthminustwenty+` ` +     // Line across the top
-                    `q10,0 10,10 ` +           // Top right corner curve
-                    `v`+ barheightminusten +` ` +    // Line down the right side
-                    `h-`+barWidth+`z`;          // Close path
-                    })
-                    .attr("fill", "#ebf7ed");
-
-
-               /* Adjust label positions if you have them, assuming here how you might add them */
-           	svg.selectAll(".bar-label").data(data.values).enter().append("text")
-                .attr("class", "bar-label")
-                .attr("x", d => xScale(d.date) + 26) // Adjusted for 40px offset
-                .attr("y", d => yScale(d.value) - 5) // Example position above the bar
-                .attr("text-anchor", "middle")
-           	 .text(d => d3.format(",")(d.value)) // Format the value with commas
-              	 .style("font-size", 18)
-                .style("fill", "black");
-         
-           }
-           </script>
-           </body>
-           </html>
-
-        """.trimIndent()
-
-    }
-
-
-    fun RLGetNewZoneChartHtml(zoneData: List<RLZoneChartData>, efforZoneBgrClr: String): String{
+    fun rl_getNewZoneChartHtml(zoneData: List<RLZoneChartData>, efforZoneBgrClr: String): String{
         return """
             <!DOCTYPE html>
             <html lang="en">
@@ -1227,92 +822,7 @@ object RLAllHTMLChart {
                     { zone: "Zone6", value: 680, color: "rgb(153, 0, 204)" },
                     { zone: "Zone7", value: 120, color: "rgb(237, 69, 65)" }
                 ];
-                 var data = ${RLTools.RLZoneDataToJson(zoneData)};
-
-                var margin = { top: 20, right: 20, bottom: 40, left: 30 }, // Reduced left margin
-                width = window.innerWidth - margin.left - margin.right,
-                height = window.innerHeight - margin.top - margin.bottom;
-
-                var svg = d3.select("#chart").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    var g = svg.append("g")
-                    .attr("transform", "translate(" + (width/2 - 120.0) + "," + margin.top + ")");
-
-                var barWidth = 240; // Set the bar width to 120 pixels
-
-                var y = d3.scaleLinear()
-                    .range([height, 0])
-                    .domain([0, d3.sum(data, function(d) { return d.value; }) / 60]); // Convert total seconds to minutes
-
-                var x = d3.scaleBand()
-                    .range([0, barWidth]) // Set the range for the single bar width
-                    .padding(0.1);
-
-                var runningTotal = 0;
-                var bar = g.selectAll(".bar")
-                    .data(data)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", 10) // Set a smaller x value to reduce the gap
-                    .attr("width", barWidth)
-                    .attr("y", function(d) { var yVal = y(runningTotal + d.value / 60); runningTotal += d.value / 60; return yVal; })
-                    .attr("height", function(d) { return height - y(d.value / 60); })        
-                    .attr("fill", function(d) { return d.color; });
-                    
-
-                    // Add foreignObject
-                 const foreignObject = g.append("foreignObject")
-                     .attr("width", barWidth+13)
-                     .attr("height", height)
-                     .style("zIndex", 1)
-                     .attr("x", 4)
-                     .attr("y", -6);
-
-                 // Add div inside foreignObject
-                 const foreignDiv = foreignObject.append("xhtml:div")
-                     .style("width", "94%")
-                     .style("height", "100%")
-                     .style("fill", "none")
-                     .style("zIndex", 1)
-                     .style("border", "10px solid white")
-                     .style("border-top-right-radius", "20px")
-                     .style("border-top-left-radius", "20px");
-
-                // Add the Y Axis with exactly 5 ticks
-                var yAxis = d3.axisLeft(y).ticks(5).tickFormat(function(d) {
-                     return d === 0 ? "Mins" : d; // Replace the 0 with 'Mins'
-                });
-                g.append("g")
-                    .attr("class", "axis")
-                    .call(yAxis);
-            });
-            </script>
-            </body>
-            </html>
-
-        """.trimIndent()
-    }
-
-    fun RLGetNewZoneChartHtml1(jsonArray: JSONArray): String{
-        return """
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>Stacked Effort Zone Bar Chart</title>
-                <script src="https://d3js.org/d3.v6.min.js"></script>
-                <style>
-                    body { font: 12px Arial; background-color: #FFFFFF; }
-                    .axis { font-size:40px }
-                    .axis path, .axis line { fill: none; stroke: black; shape-rendering: crispEdges; }
-                </style>
-            </head>
-            <body>
-            <div id="chart"></div>
-            <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var data = $jsonArray
+                 var data = ${RLTools.rl_zoneDataToJson(zoneData)};
 
                 var margin = { top: 20, right: 20, bottom: 40, left: 30 }, // Reduced left margin
                 width = window.innerWidth - margin.left - margin.right,
@@ -1380,7 +890,7 @@ object RLAllHTMLChart {
     }
 
     //Challenge Feed Summary Page Chart
-    fun RLgetRankingChartHtml(jsondata: JSONArray, userid:String): String{
+    fun rl_getRankingChartHtml(jsondata: JSONArray, userid:String): String{
         return """ 
 
 <!DOCTYPE html>
@@ -1646,7 +1156,7 @@ object RLAllHTMLChart {
 
 
     }
-    fun RLgetIndividualStepsChartHtml(jsonData: JSONArray): String{
+    fun rl_getIndividualStepsChartHtml(jsonData: JSONArray): String{
         return """ <!DOCTYPE html>
                         <html>
                         <head>

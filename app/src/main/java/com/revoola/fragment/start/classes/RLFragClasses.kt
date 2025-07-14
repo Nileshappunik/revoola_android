@@ -22,16 +22,16 @@ class RLFragClasses : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(true)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes, container) as RlFragClassesBinding
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClasses" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes, container) as RlFragClassesBinding
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragClasses" )
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
 
         fragBinding.layYourmind.imgClass.visibility=View.VISIBLE
         fragBinding.layYourmind.imgClass.setImageResource(R.drawable.ic_mind_read)
@@ -49,11 +49,11 @@ class RLFragClasses : RLBaseFragment() {
         fragBinding.layYourbody.txtClassName.visibility=View.VISIBLE
 
         fragBinding.layYourmind.imgFull.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragMindClasses(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragMindClasses(), TAG, true, null, false)
 
         }
         fragBinding.layYourbody.imgFull.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragBodyClasses(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragBodyClasses(), TAG, true, null, false)
 
         }
 

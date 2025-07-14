@@ -7,6 +7,6 @@ import com.revoola.commonobject.RLTools
 class RLSelfHandledCallback: SelfHandledAvailableListener {
 
     override fun onSelfHandledAvailable(data: SelfHandledCampaignData?) {
-       RLTools.RlLogEPrint("MoengageTag"," onSelfHandledAvailable() $data" )
+       RLTools.rl_logEPrint("MoengageTag"," onSelfHandledAvailable() $data" )
     }
 }

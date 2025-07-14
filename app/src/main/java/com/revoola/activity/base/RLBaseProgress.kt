@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 class RLBaseProgress : AppCompatActivity() {
     companion object {
         var dialog: Dialog? = null
-        fun RLShowProgressDialog(activity: Activity) {
+        fun rl_showProgressDialog(activity: Activity) {
             if (dialog != null) {
                 dialog!!.dismiss()
             }
@@ -29,7 +29,7 @@ class RLBaseProgress : AppCompatActivity() {
             }
         }
 
-        fun RLShowProgressDialogWithoutText(activity: Activity) {
+        fun rl_showProgressDialogWithoutText(activity: Activity) {
             if (dialog != null) {
                 dialog!!.dismiss()
             }
@@ -49,7 +49,7 @@ class RLBaseProgress : AppCompatActivity() {
             }
         }
 
-        fun RLhideProgressDialog() {
+        fun rl_hideProgressDialog() {
             if (dialog != null && dialog!!.isShowing) dialog!!.dismiss()
         }
     }

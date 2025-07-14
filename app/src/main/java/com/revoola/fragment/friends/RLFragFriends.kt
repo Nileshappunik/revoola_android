@@ -27,21 +27,21 @@ class RLFragFriends : RLBaseFragment() {
         RlFragFriendsBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFriends" )
-        RLFriendsList()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFriends" )
+        rl_friendsList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
                 // For example, show a confirmation dialog or navigate back
-                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+                RLTools.rl_showAlertDialog(requireContext(),requireActivity())
             }
         })
         return fragBinding.root
     }
-    private fun RLuisetupNew(dataList: List<RLStartAllMenuModel>) {
+    private fun rl_uisetupNew(dataList: List<RLStartAllMenuModel>) {
         fragBinding.inlayTop.ivBack.visibility=View.GONE
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.friends))
@@ -62,19 +62,19 @@ class RLFragFriends : RLBaseFragment() {
             }
         })
     }
-    private fun RLFriendsList() {
+    private fun rl_friendsList() {
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLALLMENULISTRead(RLConstants.FRIENDS){ data, error ->
+        databaseManager.rl_allMenuListRead(RLConstants.FRIENDS){ data, error ->
             if (data != null) {
                 try{
                     val gson = Gson()
                     val jsonArray =  Gson().toJson(data)
-                    RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
+                    RLTools.rl_logDPrint(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
-                    RLuisetupNew(dataList)
+                    rl_uisetupNew(dataList)
                 }catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
+                   RLTools.rl_logEPrint(TAG,"Catch:- ${e.message}")
                 }
             }
         }

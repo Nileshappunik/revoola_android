@@ -22,12 +22,12 @@ class RLFragNoInternet : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         noInternetConnectionBinding = DataBindingUtil.inflate(inflater, R.layout.rl_no_internet_connection, container, false) as RlNoInternetConnectionBinding
         noInternetConnectionBinding.layoutNotConnect.setOnClickListener(View.OnClickListener { })
-        com.revoola.utils.RLPrefManager.RLSetSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragNoInternet" )
+        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragNoInternet" )
         noInternetConnectionBinding.tvRetry.setOnClickListener(View.OnClickListener {
             RLApiClientRetrofit =
                 RLApiClientRet(activity)
-            if (RLApiClientRetrofit.RLisConnected()) {
-                RLsendDataResult()
+            if (RLApiClientRetrofit.rl_isConnected()) {
+                rl_sendDataResult()
             }
         })
         return noInternetConnectionBinding.root
@@ -53,15 +53,15 @@ class RLFragNoInternet : DialogFragment() {
         fun sendResult(requestCode: Int, obj: Any?)
     }
 
-    fun RLsetOnCallbackResult(callbackResult: CallbackResult?) {
+    fun rl_setOnCallbackResult(callbackResult: CallbackResult?) {
         this.callbackResult = callbackResult
     }
 
-    fun RLsetRequestCode(request_code: Int) {
+    fun rl_setRequestCode(request_code: Int) {
         this.request_code = request_code
     }
 
-    private fun RLsendDataResult() {
+    private fun rl_sendDataResult() {
         if (callbackResult != null) {
             dialog!!.cancel()
             callbackResult!!.sendResult(request_code, true)

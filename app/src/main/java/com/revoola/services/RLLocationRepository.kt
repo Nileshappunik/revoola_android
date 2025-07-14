@@ -2,23 +2,18 @@ package com.revoola.services
 
 import android.Manifest
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
-import android.os.Build
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.revoola.utils.RLConstants
 import com.google.android.gms.location.*
-import com.revoola.commonobject.RLTools
 
 class RLLocationRepository(val application: Application) : SensorEventListener  {
 
@@ -68,7 +63,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
     }
 
-    fun RLstartLocationUpdates() {
+    fun rl_startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 1000
             fastestInterval = 1000
@@ -140,7 +135,7 @@ class RLLocationRepository(val application: Application) : SensorEventListener  
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
-    fun RLstopLocationUpdates() {
+    fun rl_stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         sensorManager.unregisterListener(this)
     }

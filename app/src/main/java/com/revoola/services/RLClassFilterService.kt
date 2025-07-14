@@ -6,7 +6,7 @@ import java.util.Locale
 
 object RLClassFilterService {
 
-     fun RLGetFilterVideoList(selectedChildData: List<RLMindBodyFilterGroupItemModel>,videoList_Filter:MutableList<RLVideoModel>):List<RLVideoModel>{
+     fun rl_getFilterVideoList(selectedChildData: List<RLMindBodyFilterGroupItemModel>, videoList_Filter:MutableList<RLVideoModel>):List<RLVideoModel>{
         return videoList_Filter.filter { video ->
             selectedChildData.all { filterGroup ->
                 when (filterGroup.title.lowercase(Locale.getDefault())) {

@@ -24,27 +24,27 @@ class RLFragMore : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMore" )
-        RLsetupuiList()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMore" )
+        rl_setupuiList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
                 // For example, show a confirmation dialog or navigate back
-                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+                RLTools.rl_showAlertDialog(requireContext(),requireActivity())
             }
         })
         return fragBinding.root
     }
 
-    private fun RLsetupuiList(){
+    private fun rl_setupuiList(){
         fragBinding.cardNotification.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragNotification(), TAG, true, null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragNotification(), TAG, true, null, false)
         }
         fragBinding.cardSchdualedclasses.setOnClickListener {
-            (context as RLMainActivityRL).RLloadFrag(RLFragScheduledClasses(), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragScheduledClasses(), TAG, true,null, false)
         }
         val groupDataList = listOf(RLMoreGroupItemModel(R.drawable.ic_account_g,resources.getString(R.string.profile), emptyList()),
             RLMoreGroupItemModel(R.drawable.ic_settings_g,resources.getString(R.string.application_setting),emptyList()),
@@ -58,19 +58,19 @@ class RLFragMore : RLBaseFragment() {
             // Handle group click if needed
             when(groupDataList[groupPosition].title){
                 resources.getString(R.string.profile)->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragProfile(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragProfile(), TAG, true, null, false)
                 }
                 resources.getString(R.string.application_setting)->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragApplicationSetting(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragApplicationSetting(), TAG, true, null, false)
                 }
                 resources.getString(R.string.permission)->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragPermission(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragPermission(), TAG, true, null, false)
                 }
                 resources.getString(R.string.purchase)->{
-                    (context as RLMainActivityRL).RLloadFrag(RLFragPurchase(), TAG, true, null, false)
+                    (context as RLMainActivityRL).rl_loadFrag(RLFragPurchase(), TAG, true, null, false)
                 }
                 resources.getString(R.string.signout)->{
-                    RLshowDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
+                    rl_showDialog(RLConstants.LOGOUT_D,getString(R.string.exit_app))
                 }
             }
             false
@@ -78,7 +78,7 @@ class RLFragMore : RLBaseFragment() {
 
     }
 
-    private fun RLshowDialog(type: String, message: String) {
+    private fun rl_showDialog(type: String, message: String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_layout_dailog)
@@ -100,7 +100,7 @@ class RLFragMore : RLBaseFragment() {
         tvYes.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
             if (type.equals(RLConstants.LOGOUT_D)){
-                RLSignOut()
+                rl_signOut()
             }
         })
         sucDialog.show()

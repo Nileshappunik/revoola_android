@@ -30,7 +30,6 @@ import com.revoola.model.RLFulllVideoModel
 import com.google.gson.Gson
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
-import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -62,11 +61,11 @@ class RLClassesSchedule : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
       //  fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -77,7 +76,7 @@ class RLClassesSchedule : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLUiSetUp(){
-        RLonBackPresAct(fragBinding.ivBack)
+        rl_onBackPresAct(fragBinding.ivBack)
         fragBinding.txtSelectDatatime.setOnClickListener {
             RLShowDatePickerDialog()
         }
@@ -172,7 +171,7 @@ class RLClassesSchedule : RLBaseFragment() {
             selectedCalendar.set(Calendar.MINUTE, selectedMinute)
             val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val formattedTime = timeFormat.format(selectedCalendar.time)
-            RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
+            RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.selected_schedule_date,"$selectdate  $formattedTime" )
             //fragBinding.txtSelectDatatime.text = "$selectdate  $selectedHour:$selectedMinute"
             fragBinding.txtSelectDatatime.text = "$selectdate  $formattedTime"
             val color = ContextCompat.getColor(requireContext(), R.color.AppMainColor)
@@ -189,9 +188,9 @@ class RLClassesSchedule : RLBaseFragment() {
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("selectDate",fragBinding.txtSelectDatatime.text.toString())
             //Future Time
-            (context as RLMainActivityRL).RLloadFrag(RLClassesScheduleJoinSession().newInstance(bundle), TAG, false,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLClassesScheduleJoinSession().newInstance(bundle), TAG, false,null, false)
         }else{
-            RLcommonToast("Please Select Future Time")
+            rl_commonToast("Please Select Future Time")
         }
     }
 
@@ -221,7 +220,7 @@ class RLClassesSchedule : RLBaseFragment() {
     }
 
     private fun scduleDataStoreServer(videoCardData: RLFulllVideoModel) {
-        val userData= RLGetUserDetails(requireContext())
+        val userData= rl_getUserDetails(requireContext())
 //        val updateMoengageInsightly = mapOf(
 //            "uid" to RLAuthManager().RlgetCurrentUser()?.uid,
 //            "schedule_initiator_userid" to RLAuthManager().RlgetCurrentUser()?.uid,
@@ -232,7 +231,7 @@ class RLClassesSchedule : RLBaseFragment() {
 //            "schedule_title" to videoCardData.rideTitle
 //        )
 
-        (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+        (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false, null, false)
 
     }
 
@@ -264,7 +263,7 @@ class RLClassesSchedule : RLBaseFragment() {
     }
     private fun RLAddEventToCalendar(){
         try {
-            val dateString = com.revoola.utils.RLPrefManager.RLGetSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
+            val dateString = com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
 
             val calendar = RLParseDateString(dateString.toString())
             val startMillis = calendar.timeInMillis
@@ -295,7 +294,7 @@ class RLClassesSchedule : RLBaseFragment() {
             }
 
         }catch (e:Exception){
-           RLTools.RlLogEPrint(TAG,"EXCEPTION DATE:- ${e.message}")
+           RLTools.rl_logEPrint(TAG,"EXCEPTION DATE:- ${e.message}")
         }
     }
     private fun RLParseDateString(dateString: String):Calendar{
@@ -311,7 +310,7 @@ class RLClassesSchedule : RLBaseFragment() {
         }
         //Log.e(TAG, "Event added successfully with ID: $eventId")
         requireActivity().contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, values)
-        (context as RLMainActivityRL).RLloadFrag(RLFragStart(), TAG, false, null, false)
+        (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false, null, false)
     }
 
     private fun RLGetPrimaryCalendarId():Long{

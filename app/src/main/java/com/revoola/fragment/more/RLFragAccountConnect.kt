@@ -1,87 +1,54 @@
 package com.revoola.fragment.more
 
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsLogger
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
-import com.revoola.databinding.RlFragAccountBinding
 import com.revoola.utils.RLPrefManager
 import com.revoola.commonobject.RLTools
-import com.revoola.activity.RLLoginEmailActivityRL
-import com.revoola.activity.RLMainActivityRL
-import com.revoola.activity.RLSignUpNameActivityRL
-import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databasefirebase.RLFirebaseManager
 import com.revoola.databinding.RlFragAccountConnectBinding
-import com.revoola.fragment.more.adapter.PaywallItem
-import com.revoola.fragment.more.adapter.RLPaywallAdapter
-import com.revoola.model.RLRevoolaUsersSettingsModel
 
 class RLFragAccountConnect : RLBaseFragment() {
     val TAG: String = RLFragAccountConnect::class.java.simpleName
-    lateinit var fragBinding: RlFragAccountConnectBinding
+    //lateinit var fragBinding: RlFragAccountConnectBinding
     var emailID: String = ""
     var password: String = ""
     var sucDialog: Dialog? = null
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragAccountConnectBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_account_connect, container) as RlFragAccountConnectBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragAccountConnect" )
-        RLuisetup()
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_account_connect, container) as RlFragAccountConnectBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragAccountConnect" )
+        rl_uisetup()
         return fragBinding.root
     }
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         fragBinding.tvConnect.setOnClickListener(View.OnClickListener {
-            if (RLvalidation()) {
+            if (rl_validation()) {
                 if (isAdded){
-                    RLBaseProgress.RLShowProgressDialog(requireActivity())
+                    RLBaseProgress.rl_showProgressDialog(requireActivity())
                 }
-                RLLoginConvertGuestUser(emailID, password)
+                rl_loginConvertGuestUser(emailID, password)
             }
         })
 
@@ -119,20 +86,20 @@ class RLFragAccountConnect : RLBaseFragment() {
         })
     }
 
-    private fun RLvalidation(): Boolean {
+    private fun rl_validation(): Boolean {
         emailID = fragBinding.ivEmailId.text.toString().trim()
         password = fragBinding.ivPassword.text.toString().trim()
-        if (!RLTools.RLisEmailValid(emailID)) {
-            RLshowDialog("Please Enter Valid Email and 6+ digit Password.")
+        if (!RLTools.rl_isEmailValid(emailID)) {
+            rl_showDialog("Please Enter Valid Email and 6+ digit Password.")
             return false
         }else if (password.length<6){
-            RLshowDialog("Please Enter 6+ digit Password.")
+            rl_showDialog("Please Enter 6+ digit Password.")
             return false
         }
         return true
     }
 
-    private fun RLshowDialog( emaildid: String) {
+    private fun rl_showDialog(emaildid: String) {
         sucDialog = Dialog(requireContext())
         sucDialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog!!.setContentView(R.layout.rl_dailog_login_error)
@@ -153,19 +120,19 @@ class RLFragAccountConnect : RLBaseFragment() {
         sucDialog!!.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }
 
-    private fun RLLoginConvertGuestUser(email: String, password: String) {
+    private fun rl_loginConvertGuestUser(email: String, password: String) {
         val credential = EmailAuthProvider.getCredential(email, password)
         val user = FirebaseAuth.getInstance().currentUser
         user?.linkWithCredential(credential)
             ?.addOnCompleteListener { task ->
-                RLBaseProgress.RLhideProgressDialog()
+                RLBaseProgress.rl_hideProgressDialog()
                 if (task.isSuccessful) {
-                   RLSignOut()
+                   rl_signOut()
                 } else {
                     if (task.exception is FirebaseAuthUserCollisionException) {
-                        RLshowDialog("Email already in use!")
+                        rl_showDialog("Email already in use!")
                     }else{
-                        RLshowDialog("Email linking failed: ${task.exception?.message}")
+                        rl_showDialog("Email linking failed: ${task.exception?.message}")
                     }
 
                 }

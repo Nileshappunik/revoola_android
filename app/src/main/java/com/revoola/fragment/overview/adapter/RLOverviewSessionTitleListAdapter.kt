@@ -34,7 +34,7 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
 
     }
 
-    fun RLsetList(itemres: String) {
+    fun rl_setList(itemres: String) {
         texttypeset=itemres
         notifyDataSetChanged()
     }
@@ -43,8 +43,8 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
        return titleList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutOveriviewSessionTitleListBinding) : RecyclerView.ViewHolder(layoutBinding.root){
-        private val layoutBinding: RlLayoutOveriviewSessionTitleListBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlLayoutOveriviewSessionTitleListBinding) : RecyclerView.ViewHolder(layoutBinding.root){
+      //  private val layoutBinding: RlLayoutOveriviewSessionTitleListBinding = layoutBinding
 
         fun bindData(position: Int, itemVIew: View) {
             val itemres = titleList[position]

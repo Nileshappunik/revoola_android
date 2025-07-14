@@ -39,10 +39,6 @@ import com.revoola.permission.RLHealthConnectManager
 import com.revoola.utils.RLPrefManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -54,17 +50,17 @@ class RLFragStart : RLBaseFragment() {
         RlFragStartBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater:LayoutInflater, container:ViewGroup?,savedInstanceState:Bundle?): View? {
-        RLScreenSet(false)
-        RLBottomHideShowSet(true)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         RLStartList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
                 // For example, show a confirmation dialog or navigate back
-                RLTools.RLshowAlertDialog(requireContext(),requireActivity())
+                RLTools.rl_showAlertDialog(requireContext(),requireActivity())
             }
         })
         return fragBinding.root
@@ -98,8 +94,8 @@ class RLFragStart : RLBaseFragment() {
             RLshowHelpDialog()
         }
 
-        RLHelpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
-        (context as RLMainActivityRL).RLCheckAllPermission()
+        rl_helpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
+        (context as RLMainActivityRL).rl_checkAllPermission()
 
         lifecycleScope.launch {
             val  healthConnectManager = RLHealthConnectManager(requireContext())
@@ -112,32 +108,32 @@ class RLFragStart : RLBaseFragment() {
     }
 
     private fun RLfetchUserDetails() {
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 val gson = Gson()
                 val json = gson.toJson(userData)
                 if (isAdded) {  // Check if fragment is attached
-                    RLPrefManager.RLSetSomeStringValue(requireContext(), RLPrefManager.user_model_data, json)
+                    RLPrefManager.rl_setSomeStringValue(requireContext(), RLPrefManager.user_model_data, json)
                 }
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
     }
 
     private fun RLStartList() {
         val databaseManager= RLDatabaseManagerRead()
-        databaseManager.RLALLMENULISTRead(RLConstants.MAIN){ data, error ->
+        databaseManager.rl_allMenuListRead(RLConstants.MAIN){ data, error ->
             if (data != null) {
                 try {
                     val gson = Gson()
                     val jsonArray = gson.toJson(data)
-                    RLTools.RlLogDPrint(TAG,"Response:- $jsonArray")
+                    RLTools.rl_logDPrint(TAG,"Response:- $jsonArray")
                     val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                     val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                     RLUiSetUP(dataList)
                 }catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"Catch:- ${e.message}")
+                   RLTools.rl_logEPrint(TAG,"Catch:- ${e.message}")
                 }
             }
         }
@@ -150,18 +146,18 @@ class RLFragStart : RLBaseFragment() {
                     try {
                         val gson = Gson()
                         val jsonArray = gson.toJson(snapshot.value)
-                        RLTools.RlLogDPrint(TAG, "Response:- $jsonArray")
+                        RLTools.rl_logDPrint(TAG, "Response:- $jsonArray")
                         val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
                         val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
                         RLUiSetUP(dataList)
                     } catch (e: Exception) {
-                       RLTools.RlLogEPrint(TAG, "Catch:- ${e.message}")
+                       RLTools.rl_logEPrint(TAG, "Catch:- ${e.message}")
                     }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-               RLTools.RlLogEPrint(TAG, "Firebase Error: ${error.message}")
+               RLTools.rl_logEPrint(TAG, "Firebase Error: ${error.message}")
             }
         })
     }
@@ -177,7 +173,7 @@ class RLFragStart : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.start_help_content,"")
+        val jsonString= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.start_help_content,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
@@ -195,10 +191,10 @@ class RLFragStart : RLBaseFragment() {
 
     private val permissionsLauncher = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
         if (granted.containsAll(HealthConnectManager.PERMISSIONS)) {
-            RLTools.RlLogDPrint(TAG, "Permissions granted.")
+            RLTools.rl_logDPrint(TAG, "Permissions granted.")
             readStepsData()
         } else {
-            RLTools.RlLogEPrint(TAG, "Permissions denied.")
+            RLTools.rl_logEPrint(TAG, "Permissions denied.")
         }
     }
 
@@ -227,7 +223,7 @@ class RLFragStart : RLBaseFragment() {
             for (record in stepsRecords) {
                 val step = "Steps: ${record.count}, Start: ${record.startTime}, End: ${record.endTime}"
                 fragBinding.tempText.setText(step)
-               RLTools.RlLogDPrint(TAG, step)
+               RLTools.rl_logDPrint(TAG, step)
             }
         }
     }

@@ -1,31 +1,22 @@
 package com.revoola.databasefirebase
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
-import com.revoola.RLBaseProgress
-import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.firebaseModel.RLElevationPoint
 import com.revoola.firebaseModel.RLLocationDetails
-import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.start.yourway.RLSessionDataTransferModelNew
 import com.revoola.model.RLClassLeaderboard
 import com.revoola.model.RLInsightlyMoEngageResponse
 import com.revoola.model.RLInsightlyMoengageApiPayload
 import com.revoola.model.RLRevoolaUsersSettingsModel
-import com.revoola.model.RLTextOverview
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.utils.RLConstants
 import com.revoola.viewmodel.RLMainRepository
-import com.revoola.viewmodel.RLMainViewModel
-import com.revoola.viewmodel.RLMainViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,10 +34,10 @@ class RLFirebaseManager {
     private val TAG ="FirebaseManager"
     val databaseManager = RLDatabaseManagerWrite()
     val databaseRead = RLDatabaseManagerRead()
-    private val currentUser = RLAuthManager().RlgetCurrentUser()?.uid ?: ""
+    private val currentUser = RLAuthManager().rl_getCurrentUser()?.uid ?: ""
     private lateinit var apiClientRetrofit: RLApiClientRet
 
-     fun RLRevoolaUserSettingFirebaseEntry(userId:String,emailId:String,versionName:String,callback: (Boolean) -> Unit) {
+     fun revoola_User_Setting_Firebase_Entry(userId:String, emailId:String, versionName:String, callback: (Boolean) -> Unit) {
         val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
         val currentSubscriptionMap = hashMapOf(
             "validDaysMonth" to 0,
@@ -70,7 +61,7 @@ class RLFirebaseManager {
             "timestamp" to currentTimestamp,
             "validDays" to 14)
 
-        val revoolaUserSettingsMap = hashMapOf(
+        val revoola_User_Settings_Map = hashMapOf(
             "FCMToken" to "",
             "RFMHR" to 196,
             "TMHR" to 196,
@@ -109,14 +100,14 @@ class RLFirebaseManager {
             "visibilityflagforthatsession" to 0,
             "weightUnit" to "Metric",
             "weightkg" to "77")
-        databaseManager.REVOOLAUSERSETTINGSWrite(userId,revoolaUserSettingsMap) { success, error ->
+        databaseManager.revoola_User_Settings_Write(userId,revoola_User_Settings_Map) { success, error ->
             callback(success)
         }
     }
 
     fun readWatchData(userData: RLRevoolaUsersSettingsModel, context: Context) {
         val path = "/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser"
-        databaseRead.RlreadData(path) { success, error ->
+        databaseRead.rl_readData(path) { success, error ->
             if (success != null && success is Map<*, *>) {
                 success.forEach { (key, value) ->
                     val sessionValueMap = value as? Map<String, Any>
@@ -131,8 +122,8 @@ class RLFirebaseManager {
                             makeDataToFirebase(sessionData,userData,sessionKey)
                         }catch (e:Exception){
                             Log.d(TAG,"Exception:- ${e.localizedMessage}")
-                            databaseManager.RlUpdateAllData("/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser/$sessionKey/singleValueData/speedForOneKm", listOf(0))
-                            databaseManager.RlUpdateAllData("/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser/$sessionKey/singleValueData/speedForOneMile", listOf(0))
+                            databaseManager.rl_update_All_Data("/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser/$sessionKey/singleValueData/speedForOneKm", listOf(0))
+                            databaseManager.rl_update_All_Data("/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser/$sessionKey/singleValueData/speedForOneMile", listOf(0))
                         }
 
                     }
@@ -239,7 +230,7 @@ class RLFirebaseManager {
 
         cardData.wsWeight = userData.weightkg
         cardData.wsHeight = userData.height
-        cardData.wsAge = RLTools.RLCalculateAge(userData.dob)
+        cardData.wsAge = RLTools.rl_calculateAge(userData.dob)
         cardData.gender = userData.gender
         cardData.RFMHR = userData.RFMHR
         cardData.RestingHR = userData.restingHr
@@ -480,15 +471,15 @@ class RLFirebaseManager {
 
 
         // Writing DataForTesting Data to Firebase
-        RLDatabaseManagerWrite().RlWriteDataForTestingData(
+        RLDatabaseManagerWrite().rl_write_Data_For_Testing_Data(
             RevoolaFirebasePath.dataForTestingDataPath(
                 currentUser
             ), dataForTestingDataMap
         ) { success, error ->
             if (success) {
-                RLTools.RlLogDPrint(TAG, "Successful DataForTesting Entry")
+                RLTools.rl_logDPrint(TAG, "Successful DataForTesting Entry")
             } else {
-                RLTools.RlLogEPrint(TAG, "Error DataForTesting Entry:- $error")
+                RLTools.rl_logEPrint(TAG, "Error DataForTesting Entry:- $error")
             }
         }
 
@@ -500,10 +491,10 @@ class RLFirebaseManager {
         databaseRefGhostLast.child(justRide_).setValue(ghostDataMap)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint(TAG, "Entry  GhostData LastForClass saved successfully!")
+                    RLTools.rl_logDPrint(TAG, "Entry  GhostData LastForClass saved successfully!")
 
                 } else {
-                    RLTools.RlLogEPrint(
+                    RLTools.rl_logEPrint(
                         TAG,
                         "Failed  GhostData LastForClass to save entry :- ${task.exception}"
                     )
@@ -516,10 +507,10 @@ class RLFirebaseManager {
         databaseRefGhostBest.child(justRide_).setValue(ghostDataMap)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint(TAG, "Entry  GhostData bestForClass saved successfully!")
+                    RLTools.rl_logDPrint(TAG, "Entry  GhostData bestForClass saved successfully!")
 
                 } else {
-                    RLTools.RlLogEPrint(
+                    RLTools.rl_logEPrint(
                         TAG,
                         "Failed  GhostData bestForClass to save entry :- ${task.exception}"
                     )
@@ -534,13 +525,13 @@ class RLFirebaseManager {
             databaseRefSummery.child(it).setValue(summaryDataMap)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint(
+                        RLTools.rl_logDPrint(
                             TAG,
                             "Entry saved successfully! revoolaUserSessionSummaryData"
                         )
 
                     } else {
-                        RLTools.RlLogEPrint(
+                        RLTools.rl_logEPrint(
                             TAG,
                             "Failed to save entry revoolaUserSessionSummaryData :- ${task.exception}"
                         )
@@ -555,12 +546,12 @@ class RLFirebaseManager {
                 databaseRefGraph.child(it).setValue(graphDataMap)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            RLTools.RlLogDPrint(
+                            RLTools.rl_logDPrint(
                                 TAG,
                                 "Entry saved successfully! revoolaUserSessionSummaryGraphData"
                             )
                         } else {
-                            RLTools.RlLogEPrint(
+                            RLTools.rl_logEPrint(
                                 TAG,
                                 "Failed to save entry revoolaUserSessionSummaryGraphData :- ${task.exception}"
                             )
@@ -576,17 +567,17 @@ class RLFirebaseManager {
                 databaseRef.child(it).setValue(detailsDataMap)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) { // 2. Insert API
-                            RLInsertApiCall(cardData, currentTimestamp)
-                            RLTools.RlLogDPrint(
+                            rl_insertApiCall(cardData, currentTimestamp)
+                            RLTools.rl_logDPrint(
                                 TAG,
                                 "Entry saved successfully revoolaUserSessionDetailData!"
                             )
                         } else {
-                            RLTools.RlLogEPrint(
+                            RLTools.rl_logEPrint(
                                 TAG,
                                 "Failed to save entry revoolaUserSessionDetailData :- ${task.exception}"
                             )
-                            RLInsertApiCall(cardData, currentTimestamp)
+                            rl_insertApiCall(cardData, currentTimestamp)
                         }
                     }
             }
@@ -616,35 +607,35 @@ class RLFirebaseManager {
         // Convert to JSON String
         return Gson().toJson(apiPayload)
     }
-    private fun RLInsertApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
+    private fun rl_insertApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
 
-        if (apiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             val jsonPayload = createPayload(cardData,currentTimestamp)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
 
-            RLTools.RlLogDPrint(TAG,"YourWay Insert Request: $request")
+            RLTools.rl_logDPrint(TAG,"YourWay Insert Request: $request")
             //Insert Api Call
-            userRepository.RLInsertYourWayData(request) { result ->
+            userRepository.rl_insertYourWayData(request) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLInsertOverviewApiCall(cardData,currentTimestamp)
-                            RLTools.RlLogDPrint(TAG, "YourWay Insert Success: ${response.text}")
+                            rl_insertOverviewApiCall(cardData,currentTimestamp)
+                            RLTools.rl_logDPrint(TAG, "YourWay Insert Success: ${response.text}")
                         } else {
-                            RLInsertOverviewApiCall(cardData,currentTimestamp)
-                            RLTools.RlLogEPrint(TAG, "YourWay Insert Fail: ${response.text}")
+                            rl_insertOverviewApiCall(cardData,currentTimestamp)
+                            RLTools.rl_logEPrint(TAG, "YourWay Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
-                        RLInsertOverviewApiCall(cardData,currentTimestamp)
+                        rl_insertOverviewApiCall(cardData,currentTimestamp)
                         e.printStackTrace()
-                        RLTools.RlLogEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
+                        RLTools.rl_logEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
-                    RLInsertOverviewApiCall(cardData,currentTimestamp)
-                    RLTools.RlLogEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
+                    rl_insertOverviewApiCall(cardData,currentTimestamp)
+                    RLTools.rl_logEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
                 }
             }
         }
@@ -719,38 +710,38 @@ class RLFirebaseManager {
 
         return requestBodyMap
     }
-    private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
+    private fun rl_insertOverviewApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
         val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        if (apiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
             val imageParts = mutableListOf<MultipartBody.Part>()
-            RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
+            RLTools.rl_logDPrint(TAG,"Overview Insert Request: $dataMap")
             //Insert Api Call
-            userRepository.RLInsertYourWayOverviewData(dataMap,imageParts) { result ->
+            userRepository.rl_insertYourWayOverviewData(dataMap,imageParts) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
-                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
-                            RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
+                            RLTools.rl_logDPrint(TAG, "Overview Insert Success: ${response.text}")
+                            rl_updateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
                         } else {
-                            RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
-                            RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
+                            RLTools.rl_logEPrint(TAG, "Overview Insert Fail: ${response.text}")
+                            rl_updateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
                         }
                     } catch (e: Exception) {
-                        RLTools.RlLogEPrint(TAG, "Overview Insert Catch: ${e.message}" )
-                        RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
+                        RLTools.rl_logEPrint(TAG, "Overview Insert Catch: ${e.message}" )
+                        rl_updateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
                     }
                 }.onFailure { error ->
-                    RLTools.RlLogEPrint(TAG, "Overview Insert Error: ${error.message}" )
-                    RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
+                    RLTools.rl_logEPrint(TAG, "Overview Insert Error: ${error.message}" )
+                    rl_updateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
                 }
             }
         }
 
     }
 
-    private fun RLupdateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModelNew,currentTimestamp:String) {
+    private fun rl_updateUserInsightlyMoengageApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp:String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val requestApi = RLInsightlyMoengageApiPayload(
@@ -758,9 +749,9 @@ class RLFirebaseManager {
                     uid= currentUser,
                     device_type= "Android",
                     Is_basic_data_added= cardData.isBasicDataAdded,
-                    your_way= RLTools.RLgetCurrentISO8601())
+                    your_way= RLTools.rl_getCurrentISO8601())
 
-                RLTools.RlLogDPrint(TAG, "Insightly Moengage requestApi: $requestApi")
+                RLTools.rl_logDPrint(TAG, "Insightly Moengage requestApi: $requestApi")
 
                 val client = OkHttpClient()
                 val mediaType = "application/json".toMediaType()
@@ -775,25 +766,25 @@ class RLFirebaseManager {
                 val responseBody = response.body?.string()
 
                 // Log response on background thread
-                RLTools.RlLogDPrint(TAG, "Insightly Moengage Response: $responseBody")
+                RLTools.rl_logDPrint(TAG, "Insightly Moengage Response: $responseBody")
                 val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
                 // If UI update needed, switch to Main Thread
                 CoroutineScope(Dispatchers.Main).launch {
                     if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
                         // Show success message in UI
                         // Handle UI updates if required (e.g., Toast message)
-                        RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
-                        RLAllProcessDone(currentTimestamp)
+                        RLTools.rl_logDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
+                        rl_allProcessDone(currentTimestamp)
                     }else{
-                        RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
-                        RLAllProcessDone(currentTimestamp)
+                        RLTools.rl_logEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
+                        rl_allProcessDone(currentTimestamp)
                     }
 
                 }
 
             } catch (e: Exception) {
-                RLTools.RlLogEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
-                RLAllProcessDone(currentTimestamp)
+                RLTools.rl_logEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
+                rl_allProcessDone(currentTimestamp)
             }
         }
     }
@@ -806,7 +797,7 @@ class RLFirebaseManager {
         return if (value == null || value < 0 ) 0 else value
     }
 
-    private fun RLAllProcessDone(currentTimestamp:String){
+    private fun rl_allProcessDone(currentTimestamp:String){
         val path = "/proposedstructure/revoolaUserSessionDetailDataWatch/$currentUser/$currentTimestamp"
         databaseRead.deleteFirebaseData(path){success,error->
             if (success!=null){

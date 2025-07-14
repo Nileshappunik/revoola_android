@@ -52,37 +52,37 @@ class RLFragPermission : RLBaseFragment() {
     )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        RLScreenSet(false)
-        RLBottomHideShowSet(false)
+        rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragPermission")
-        RLuisetup()
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragPermission")
+        rl_uisetup()
         return fragBinding.root
     }
 
-    private fun RLuisetup() {
-        RLonBackPresAct(fragBinding.ivBack)
+    private fun rl_uisetup() {
+        rl_onBackPresAct(fragBinding.ivBack)
         //Firebase To Fetch UserData
-        RLFirebaseToFetchUserData { userData ->
+        rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 userBasicDataCard = userData
                 if (isAdded){
                     when (userData.visibilityflagforthatsession) {
                         0 -> {//EveryOne
-                            RLactivitySet(resources.getColor(R.color.AppPrivacyEveryOneBGColor),
+                            rl_activitySet(resources.getColor(R.color.AppPrivacyEveryOneBGColor),
                                 R.drawable.ic_privacyeveryone,
                                 R.string.everyone,
                                 resources.getColor(R.color.AppPrivacyEveryOneColor))
                         }
                         1 -> {//Private
-                            RLactivitySet(resources.getColor(R.color.AppPrivacyPrivateBGColor),
+                            rl_activitySet(resources.getColor(R.color.AppPrivacyPrivateBGColor),
                                 R.drawable.ic_privacyprivate,
                                 R.string.privatetx,
                                 resources.getColor(R.color.AppPrivacyPrivateColor))
                         }
 
                         2 -> {//Friends
-                            RLactivitySet(resources.getColor(R.color.AppPrivacyFriendsBGColor),
+                            rl_activitySet(resources.getColor(R.color.AppPrivacyFriendsBGColor),
                                 R.drawable.ic_privacyfriends,
                                 R.string.friendstx,
                                 resources.getColor(R.color.AppPrivacyFriendsColor))
@@ -90,7 +90,7 @@ class RLFragPermission : RLBaseFragment() {
                     }
                 }
             } else {
-                RLTools.RlLogEPrint(TAG, "Error fetching user data")
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
             }
         }
 
@@ -102,22 +102,22 @@ class RLFragPermission : RLBaseFragment() {
             layPrivacy.setOnClickListener {
                 val titletxt: String = tvsharetitle.text.toString()
                 if (titletxt.uppercase().equals("PRIVATE")) {
-                    RLBasicDataUpdateToFirebase("visibilityflagforthatsession", 0)
-                    RLactivitySet(resources.getColor(R.color.AppPrivacyEveryOneBGColor),
+                    rl_basicDataUpdateToFirebase("visibilityflagforthatsession", 0)
+                    rl_activitySet(resources.getColor(R.color.AppPrivacyEveryOneBGColor),
                         R.drawable.ic_privacyeveryone,
                         R.string.everyone,
                         resources.getColor(R.color.AppPrivacyEveryOneColor))
 
                 }else if (titletxt.uppercase().equals("FRIENDS")) {
-                    RLBasicDataUpdateToFirebase("visibilityflagforthatsession", 1)
-                    RLactivitySet(resources.getColor(R.color.AppPrivacyPrivateBGColor),
+                    rl_basicDataUpdateToFirebase("visibilityflagforthatsession", 1)
+                    rl_activitySet(resources.getColor(R.color.AppPrivacyPrivateBGColor),
                         R.drawable.ic_privacyprivate,
                         R.string.privatetx,
                         resources.getColor(R.color.AppPrivacyPrivateColor))
 
                 }else if (titletxt.uppercase().equals("EVERYONE")) {
-                    RLBasicDataUpdateToFirebase("visibilityflagforthatsession", 2)
-                    RLactivitySet(resources.getColor(R.color.AppPrivacyFriendsBGColor),
+                    rl_basicDataUpdateToFirebase("visibilityflagforthatsession", 2)
+                    rl_activitySet(resources.getColor(R.color.AppPrivacyFriendsBGColor),
                         R.drawable.ic_privacyfriends,
                         R.string.friendstx,
                         resources.getColor(R.color.AppPrivacyFriendsColor))
@@ -129,7 +129,7 @@ class RLFragPermission : RLBaseFragment() {
     }
 
 
-    private fun RLactivitySet(bgColor:Int,icon:Int,title:Int,titleColor:Int){
+    private fun rl_activitySet(bgColor:Int, icon:Int, title:Int, titleColor:Int){
         fragBinding.layActivities.apply {
             layPrivacy.visibility = View.VISIBLE
             layPrivacy.backgroundTintList = ColorStateList.valueOf(bgColor)
@@ -140,14 +140,14 @@ class RLFragPermission : RLBaseFragment() {
     }
 
     //Firebase One By One BasicData Update
-    private fun RLBasicDataUpdateToFirebase(endPoint: String, data: Any, ) {
+    private fun rl_basicDataUpdateToFirebase(endPoint: String, data: Any, ) {
         val firebasePath = RevoolaFirebasePath.basicDataPathWrite(endPoint)
         // Firebase to Update BasicData
-        RLDatabaseManagerWrite().RlWriteBasicDataUpdate(firebasePath, data) { isSuccessful, error ->
+        RLDatabaseManagerWrite().rl_write_Basic_Data_Update(firebasePath, data) { isSuccessful, error ->
             if (isSuccessful) {
-                RLTools.RlLogDPrint(TAG, "BasicData Update Successfully")
+                RLTools.rl_logDPrint(TAG, "BasicData Update Successfully")
             } else {
-                RLTools.RlLogEPrint(TAG, "Error Update BasicData: $error")
+                RLTools.rl_logEPrint(TAG, "Error Update BasicData: $error")
             }
         }
     }

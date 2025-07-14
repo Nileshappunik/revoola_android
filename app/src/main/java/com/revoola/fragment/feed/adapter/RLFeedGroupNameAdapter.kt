@@ -45,9 +45,9 @@ class RLFeedGroupNameAdapter (val context: Activity, val radioenable:Boolean) : 
         notifyItemRangeInserted(startPosition, newData.size)
     }
 
-    inner class MyViewHolder(layoutBinding: RlLayoutGroupFeedListBinding) :
+    inner class MyViewHolder(val layoutBinding: RlLayoutGroupFeedListBinding) :
         RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutGroupFeedListBinding = layoutBinding
+       // private val layoutBinding: RlLayoutGroupFeedListBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val carddata= dataList[position]
             layoutBinding.tvGroupName.setText(carddata.group_name)

@@ -113,14 +113,14 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionComplete" )
-        currentUser=  RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.current_user, "")
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionComplete" )
+        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         if (currentUser.isEmpty()){
-            currentUser=RLAuthManager().RlgetCurrentUser()?.uid?:""
+            currentUser=RLAuthManager().rl_getCurrentUser()?.uid?:""
         }
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -200,14 +200,14 @@ class RLFragSessionComplete : RLBaseFragment(){
             RLchooseFromGallery()
         }
         fragBinding.imgCancle.setOnClickListener {
-            RLBottomHideShowSet(true)
-            (context as RLMainActivityRL).RLbottombarcolorDarkBlue()
-            (context as RLMainActivityRL).RLloadFrag(RLFragOverviewSession(), TAG, false, null, false)
+            rl_bottomHideShowSet(true)
+            (context as RLMainActivityRL).rl_bottombarcolorDarkBlue()
+            (context as RLMainActivityRL).rl_loadFrag(RLFragOverviewSession(), TAG, false, null, false)
         }
         fragBinding.inlayButton.commonButton.setText(R.string.save)
         fragBinding.inlayButton.commonButton.setOnClickListener {
             if(isAdded){
-                RLBaseProgress.RLShowProgressDialog(requireActivity())
+                RLBaseProgress.rl_showProgressDialog(requireActivity())
             }
             val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
             RLMakeSensorData(cardData,currentTimestamp)
@@ -226,7 +226,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private fun RLfetchServerUrl() {
         // Firebase to fetch user data
         val path = RevoolaFirebasePath.worldUrlGetDataPath()
-        RLDatabaseManagerRead().RlreadData(path) { data, error ->
+        RLDatabaseManagerRead().rl_readData(path) { data, error ->
             if (data != null) {
                 val jason = Gson().toJson(data)
                 val type = object : TypeToken<Map<String, String>>() {}.type
@@ -253,7 +253,7 @@ class RLFragSessionComplete : RLBaseFragment(){
     private suspend fun RLGetElevationServer1ApiCall(objOfLatLong: JSONObject, cardData: RLSessionDataTransferModelNew) {
         withContext(Dispatchers.IO) {
             try {
-                RLTools.RlLogDPrint(TAG, "getElevation Request: $objOfLatLong")
+                RLTools.rl_logDPrint(TAG, "getElevation Request: $objOfLatLong")
 
                 val requestBody = objOfLatLong.toString()
                     .toRequestBody("application/json".toMediaTypeOrNull())
@@ -267,32 +267,32 @@ class RLFragSessionComplete : RLBaseFragment(){
                 httpClient.newCall(request).execute().use { response ->
                     val responseBody = response.body?.string()
                     if (!response.isSuccessful || responseBody.isNullOrEmpty()) {
-                        RLTools.RlLogEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
+                        RLTools.rl_logEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
                         RLGetElevationServer2ApiCall(objOfLatLong, cardData)
                         return@use
                     }
-                    RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
+                    RLTools.rl_logDPrint(TAG, "getElevation Response: $responseBody")
                     val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
                     withContext(Dispatchers.Main) {
                         if (apiResponse.results.isNotEmpty()) {
-                            RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
+                            RLTools.rl_logDPrint(TAG, "getElevation Success: $apiResponse")
                             RLHandleElevationResponse(apiResponse, cardData, 1)
                         } else {
-                            RLTools.RlLogEPrint(TAG, "getElevation Error: Empty Response")
+                            RLTools.rl_logEPrint(TAG, "getElevation Error: Empty Response")
                             RLGetElevationServer2ApiCall(objOfLatLong, cardData)
                         }
                     }
                 }
             } catch (e: Exception) {
                 RLGetElevationServer2ApiCall(objOfLatLong, cardData)
-                RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
+                RLTools.rl_logEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
             }
         }
     }
     private suspend fun RLGetElevationServer2ApiCall(objOfLatLong: JSONObject, cardData: RLSessionDataTransferModelNew) {
         withContext(Dispatchers.IO) {
             try {
-                RLTools.RlLogDPrint(TAG, "getElevation Request: $objOfLatLong")
+                RLTools.rl_logDPrint(TAG, "getElevation Request: $objOfLatLong")
                 val requestBody = objOfLatLong.toString().toRequestBody("application/json".toMediaTypeOrNull())
                 val request = Request.Builder()
                     .url(server2Url)
@@ -303,26 +303,26 @@ class RLFragSessionComplete : RLBaseFragment(){
                 httpClient.newCall(request).execute().use { response ->
                     val responseBody = response.body?.string()
                     if (!response.isSuccessful || responseBody.isNullOrEmpty()) {
-                        RLTools.RlLogEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
+                        RLTools.rl_logEPrint(TAG, "getElevation API Failed: HTTP ${response.code}, ${response.message}")
                         return@use
                     }
 
-                    RLTools.RlLogDPrint(TAG, "getElevation Response: $responseBody")
+                    RLTools.rl_logDPrint(TAG, "getElevation Response: $responseBody")
 
                     val apiResponse = Gson().fromJson(responseBody, RLGetElevationResponseModel::class.java)
 
                     withContext(Dispatchers.Main) {
                         if (apiResponse.results.isNotEmpty()) {
                             RLHandleElevationResponse(apiResponse, cardData, 2)
-                            RLTools.RlLogDPrint(TAG, "getElevation Success: $apiResponse")
+                            RLTools.rl_logDPrint(TAG, "getElevation Success: $apiResponse")
                         } else {
-                            RLTools.RlLogEPrint(TAG, "getElevation Error: Empty Response")
+                            RLTools.rl_logEPrint(TAG, "getElevation Error: Empty Response")
                         }
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    RLTools.RlLogEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
+                    RLTools.rl_logEPrint(TAG, "getElevation Exception: ${e.localizedMessage}")
                 }
             }
         }
@@ -542,7 +542,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         withContext(Dispatchers.IO) {
             try {
                 val formattedUrl = googleMapUrl.replace("http://", "https://")
-                RLTools.RlLogDPrint(TAG, "getMap Request: $formattedUrl")
+                RLTools.rl_logDPrint(TAG, "getMap Request: $formattedUrl")
 
                 val request = Request.Builder().url(formattedUrl).build()
 
@@ -556,18 +556,18 @@ class RLFragSessionComplete : RLBaseFragment(){
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
                             val base64Data = "data:image/jpeg;base64,"+Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.NO_WRAP)
                             cardData.mapGeneratedUrl = base64Data
-                            RLTools.RlLogDPrint(TAG, "Map Successful Create")
+                            RLTools.rl_logDPrint(TAG, "Map Successful Create")
                         }
                     } else {
-                        RLTools.RlLogEPrint(TAG, "getMap Error: ${response.message}")
+                        RLTools.rl_logEPrint(TAG, "getMap Error: ${response.message}")
                         cardData.mapGeneratedUrl = saveGraphUrl
                     }
                 }
             } catch (e: IOException) {
-                RLTools.RlLogEPrint(TAG, "getMap Network Exception: ${e.localizedMessage}")
+                RLTools.rl_logEPrint(TAG, "getMap Network Exception: ${e.localizedMessage}")
                 cardData.mapGeneratedUrl = saveGraphUrl
             } catch (e: Exception) {
-                RLTools.RlLogEPrint(TAG, "getMap Exception: ${e.localizedMessage}")
+                RLTools.rl_logEPrint(TAG, "getMap Exception: ${e.localizedMessage}")
                 cardData.mapGeneratedUrl = saveGraphUrl
             }
         }
@@ -928,11 +928,11 @@ class RLFragSessionComplete : RLBaseFragment(){
         graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModelNew,currentTimestamp: String) {
 
         // Writing DataForTesting Data to Firebase
-        RLDatabaseManagerWrite().RlWriteDataForTestingData(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataForTestingDataMap) { success, error ->
+        RLDatabaseManagerWrite().rl_write_Data_For_Testing_Data(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataForTestingDataMap) { success, error ->
             if (success) {
-                RLTools.RlLogDPrint(TAG,"Successful DataForTesting Entry")
+                RLTools.rl_logDPrint(TAG,"Successful DataForTesting Entry")
             }else {
-                RLTools.RlLogEPrint(TAG,"Error DataForTesting Entry:- $error")
+                RLTools.rl_logEPrint(TAG,"Error DataForTesting Entry:- $error")
                 printToast(TAG,"Error DataForTesting Entry:- $error")
             }
         }
@@ -944,10 +944,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostLast.child(justRide_).setValue(ghostDataMap)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
+                    RLTools.rl_logDPrint("FirebaseDatabase", "Entry  GhostData LastForClass saved successfully!")
 
                 } else {
-                    RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
+                    RLTools.rl_logEPrint("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                     printToast("FirebaseDatabase", "Failed  GhostData LastForClass to save entry :- ${ task.exception}")
                 }
             }
@@ -957,10 +957,10 @@ class RLFragSessionComplete : RLBaseFragment(){
         databaseRefGhostBest.child(justRide_).setValue(ghostDataMap)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    RLTools.RlLogDPrint("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
+                    RLTools.rl_logDPrint("FirebaseDatabase", "Entry  GhostData bestForClass saved successfully!")
 
                 } else {
-                    RLTools.RlLogEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
+                    RLTools.rl_logEPrint("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                     printToast("FirebaseDatabase", "Failed  GhostData bestForClass to save entry :- ${ task.exception}")
                 }
             }
@@ -972,10 +972,10 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefSummery.child(it).setValue(summaryDataMap)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
+                        RLTools.rl_logDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryData")
 
                     } else {
-                        RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
+                        RLTools.rl_logEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                         printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryData :- ${ task.exception}")
                     }
                 }
@@ -988,9 +988,9 @@ class RLFragSessionComplete : RLBaseFragment(){
             databaseRefGraph.child(it).setValue(graphDataMap)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
+                        RLTools.rl_logDPrint("FirebaseDatabase", "Entry saved successfully! revoolaUserSessionSummaryGraphData")
                     } else {
-                        RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
+                        RLTools.rl_logEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                         printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionSummaryGraphData :- ${ task.exception}")
                     }
                 }
@@ -1004,9 +1004,9 @@ class RLFragSessionComplete : RLBaseFragment(){
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) { // 2. Insert API
                         RLInsertApiCall(cardData,currentTimestamp)
-                        RLTools.RlLogDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
+                        RLTools.rl_logDPrint("FirebaseDatabase", "Entry saved successfully revoolaUserSessionDetailData!")
                     } else {
-                        RLTools.RlLogEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
+                        RLTools.rl_logEPrint("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                         printToast("FirebaseDatabase", "Failed to save entry revoolaUserSessionDetailData :- ${ task.exception}")
                     }
                 }
@@ -1054,33 +1054,33 @@ class RLFragSessionComplete : RLBaseFragment(){
         return Gson().toJson(apiPayload)
     }
     private fun RLInsertApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
-        if (apiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             val jsonPayload = createPayload(cardData,currentTimestamp)
             val request = Gson().fromJson(jsonPayload, Array<RLYourWayApiPayload>::class.java).toList()
 
-            RLTools.RlLogDPrint(TAG,"YourWay Insert Request: $request")
+            RLTools.rl_logDPrint(TAG,"YourWay Insert Request: $request")
             //Insert Api Call
-            viewModel.RLInsertYourWayData(request) { result ->
+            viewModel.rl_insertYourWayData(request) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
                             RLInsertOverviewApiCall(cardData,currentTimestamp)
-                            RLTools.RlLogDPrint(TAG, "YourWay Insert Success: ${response.text}")
+                            RLTools.rl_logDPrint(TAG, "YourWay Insert Success: ${response.text}")
                         } else {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogEPrint(TAG, "YourWay Insert Fail: ${response.text}")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logEPrint(TAG, "YourWay Insert Fail: ${response.text}")
                             printToast(TAG, "YourWay Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
-                        RLBaseProgress.RLhideProgressDialog()
+                        RLBaseProgress.rl_hideProgressDialog()
                         e.printStackTrace()
-                        RLTools.RlLogEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
+                        RLTools.rl_logEPrint(TAG, "YourWay Insert Catch: ${e.message}" )
                         printToast(TAG, "YourWay Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logEPrint(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
                     printToast(TAG, "YourWay Insert Error: ${error.localizedMessage}" )
                 }
             }
@@ -1153,32 +1153,32 @@ class RLFragSessionComplete : RLBaseFragment(){
         return requestBodyMap
     }
     private fun RLInsertOverviewApiCall(cardData: RLSessionDataTransferModelNew, currentTimestamp: String) {
-        if (apiClientRetrofit.RLisConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             val dataMap  = createOverviewPayloadNew(cardData,currentTimestamp)
             val images=getUserImages()
-            RLTools.RlLogDPrint(TAG,"Overview Insert Request: $dataMap")
+            RLTools.rl_logDPrint(TAG,"Overview Insert Request: $dataMap")
             //Insert Api Call
-            viewModel.RLInsertYourWayOverviewData(dataMap,images) { result ->
+            viewModel.rl_insertYourWayOverviewData(dataMap,images) { result ->
                 result.onSuccess { response ->
                     try {
                         if (response.type.equals("success")) {
                             RLupdateUserInsightlyMoengageApiCall(cardData,currentTimestamp)
-                            RLTools.RlLogDPrint(TAG, "Overview Insert Success: ${response.text}")
+                            RLTools.rl_logDPrint(TAG, "Overview Insert Success: ${response.text}")
                         } else {
-                            RLBaseProgress.RLhideProgressDialog()
-                            RLTools.RlLogEPrint(TAG, "Overview Insert Fail: ${response.text}")
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logEPrint(TAG, "Overview Insert Fail: ${response.text}")
                             printToast(TAG, "Overview Insert Fail: ${response.text}")
                         }
                     } catch (e: Exception) {
-                        RLBaseProgress.RLhideProgressDialog()
+                        RLBaseProgress.rl_hideProgressDialog()
                         e.printStackTrace()
-                        RLTools.RlLogEPrint(TAG, "Overview Insert Catch: ${e.message}" )
+                        RLTools.rl_logEPrint(TAG, "Overview Insert Catch: ${e.message}" )
                         printToast(TAG, "Overview Insert Catch: ${e.message}" )
 
                     }
                 }.onFailure { error ->
-                    RLBaseProgress.RLhideProgressDialog()
-                    RLTools.RlLogEPrint(TAG, "Overview Insert Error: ${error.message}" )
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logEPrint(TAG, "Overview Insert Error: ${error.message}" )
                     printToast(TAG, "Overview Insert Error: ${error.message}" )
                 }
             }
@@ -1197,9 +1197,9 @@ class RLFragSessionComplete : RLBaseFragment(){
                     uid= currentUser,
                     device_type= "Android",
                     Is_basic_data_added= cardData.isBasicDataAdded,
-                    your_way= RLTools.RLgetCurrentISO8601())
+                    your_way= RLTools.rl_getCurrentISO8601())
 
-                RLTools.RlLogDPrint(TAG, "Insightly Moengage requestApi: $requestApi")
+                RLTools.rl_logDPrint(TAG, "Insightly Moengage requestApi: $requestApi")
 
                 val client = OkHttpClient()
                 val mediaType = "application/json".toMediaType()
@@ -1214,35 +1214,35 @@ class RLFragSessionComplete : RLBaseFragment(){
                 val responseBody = response.body?.string()
 
                 // Log response on background thread
-                RLTools.RlLogDPrint(TAG, "Insightly Moengage Response: $responseBody")
+                RLTools.rl_logDPrint(TAG, "Insightly Moengage Response: $responseBody")
                 val apiResponse = Gson().fromJson(responseBody, RLInsightlyMoEngageResponse::class.java)
                 // If UI update needed, switch to Main Thread
                 CoroutineScope(Dispatchers.Main).launch {
                     if (apiResponse.response.isNotEmpty() && apiResponse.response[0].success == "true") {
                         // Show success message in UI
                         // Handle UI updates if required (e.g., Toast message)
-                        RLBaseProgress.RLhideProgressDialog()
-                        RLTools.RlLogDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
+                        RLBaseProgress.rl_hideProgressDialog()
+                        RLTools.rl_logDPrint(TAG, "Insightly Moengage Insert Success: ${response}")
                         printToast(TAG, "Success")
                         RLAllProcessDone(cardData,currentTimestamp)
                     }else{
-                        RLBaseProgress.RLhideProgressDialog()
-                        RLTools.RlLogEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
+                        RLBaseProgress.rl_hideProgressDialog()
+                        RLTools.rl_logEPrint(TAG, "Moengage Error: ${apiResponse.response[0].status}")
                         printToast(TAG, "Moengage Error: ${apiResponse.response[0].status}")
                     }
 
                 }
 
             } catch (e: Exception) {
-                RLBaseProgress.RLhideProgressDialog()
-                RLTools.RlLogEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logEPrint(TAG, "Insightly Moengage Error: ${e.localizedMessage}")
             }
         }
     }
     private fun getUserImages(): List<MultipartBody.Part> {
         val imageParts = mutableListOf<MultipartBody.Part>()
         imgUriList.forEachIndexed { index, uri ->
-            val imageFile = RLTools.RLGetFileFromUri(requireContext(), uri)
+            val imageFile = RLTools.rl_getFileFromUri(requireContext(), uri)
             val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val imagePart = MultipartBody.Part.createFormData("userImage[]", imageFile.name, requestFile)
             imageParts.add(imagePart)
@@ -1276,7 +1276,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             return imageFile
         } catch (e: IOException) {
             e.printStackTrace()
-            RLTools.RlLogEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
+            RLTools.rl_logEPrint("CAMERAIMAGHE","ERROR=="+e.localizedMessage)
             return null
         }
     }
@@ -1367,7 +1367,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         bundle.putSerializable(RLConstants.CardData, modelData)
         bundle.putString(RLConstants.FeedSelectTag, "FRIENDS")
         bundle.putBoolean("isSessionComplete", true)
-        (context as RLMainActivityRL).RLloadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
+        (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
     }
 
   //Below All Code ImagePicker
@@ -1399,7 +1399,7 @@ class RLFragSessionComplete : RLBaseFragment(){
                 .imageEngine(GlideEngine())  // Requires implementation
                 .forResult(REQUEST_CODE_CHOOSE_IMAGE)
         }catch (e:Exception){
-            RLTools.RlLogEPrint(TAG,"Exception: ${e.localizedMessage}")
+            RLTools.rl_logEPrint(TAG,"Exception: ${e.localizedMessage}")
         }
     }
     private fun RLimageListVisible(isVisible: Boolean){

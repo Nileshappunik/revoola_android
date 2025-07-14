@@ -37,8 +37,8 @@ class RLHelpItemListAdapter(
         return  dataList.size
     }
 
-    inner class MyViewHolder(layoutBinding: RlExpandableListItemMoreBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlExpandableListItemMoreBinding = layoutBinding
+    inner class MyViewHolder( private val layoutBinding: RlExpandableListItemMoreBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
+        //private val layoutBinding: RlExpandableListItemMoreBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
             layoutBinding.txtAccount.setText(cardData.title)
@@ -49,16 +49,16 @@ class RLHelpItemListAdapter(
                     context.resources.getString(R.string.aquickintroduction)->{
                         val bundle=Bundle()
                         bundle.putBoolean("isFAqs",false)
-                        (context as RLMainActivityRL).RLloadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
+                        (context as RLMainActivityRL).rl_loadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
 
                     }
                     context.resources.getString(R.string.getttingstarted)->{
-                        (context as RLMainActivityRL).RLloadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)
+                        (context as RLMainActivityRL).rl_loadFrag(RLFragGetStarted(), TAG, true, RLFragGetStarted::class.java.simpleName, false)
                     }
                     context.resources.getString(R.string.faqs)->{
                         val bundle=Bundle()
                         bundle.putBoolean("isFAqs",true)
-                        (context as RLMainActivityRL).RLloadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
+                        (context as RLMainActivityRL).rl_loadFrag(RLFragFaQs().newInstance(bundle), TAG, true, RLFragFaQs::class.java.simpleName, false)
 
                     }
                 }

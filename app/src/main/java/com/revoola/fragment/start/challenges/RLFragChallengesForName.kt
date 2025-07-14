@@ -39,35 +39,35 @@ class RLFragChallengesForName : RLBaseFragment() {
         RlFragChallengesForNameBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_name, container) as RlFragChallengesForNameBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForName" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
                 // For example, show a confirmation dialog or navigate
-                RLcloseFragment()
+                rl_closeFragment()
             }
         })
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectName)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectName)
 
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
 
         if (cardData.isEditClass){
             fragBinding.edtStepCount.setText(cardData.ChallengeGivenName)
             fragBinding.txtHeader.setText(cardData.ChallengeGivenName)
-            RLTools.RlLogEPrint(TAG,"cardData: ${cardData.selectedDate}")
+            RLTools.rl_logEPrint(TAG,"cardData: ${cardData.selectedDate}")
 
         }
 
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLcloseFragment()
+            rl_closeFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(cardData.ChallengeType+" Challenge")
         fragBinding.inlayTop.ivDescription.setText(R.string.giveyourchallengename)
@@ -123,7 +123,7 @@ class RLFragChallengesForName : RLBaseFragment() {
             cardData.ChallengeGivenName=ChallengeGivenName
             val bundle: Bundle = Bundle()
             bundle.putSerializable("cardData",cardData)
-            (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
         }
 
     }
@@ -139,7 +139,7 @@ class RLFragChallengesForName : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
+        val jsonString= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.challenge_selectName,"")
         val gson = Gson()
        // RLTools.RlLogEPrint(TAG,"jsonString: ${gson.toJson(jsonString)}")
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)

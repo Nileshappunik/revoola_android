@@ -36,28 +36,28 @@ class RLFragChallengesForType : RLBaseFragment() {
         RlFragChallengesForTypeBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         RLScreenSet(false)
-        RLBottomHideShowSet(false)
+         rl_screenSet(false)
+        rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_type, container) as RlFragChallengesForTypeBinding
-        RLPrefManager.RLSetSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForType" )
+        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_challenges_for_type, container) as RlFragChallengesForTypeBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChallengesForType" )
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom action here
                 // For example, show a confirmation dialog or navigate
-                RLBottomHideShowSet(true)
-                RLcloseFragment()
+                rl_bottomHideShowSet(true)
+                rl_closeFragment()
             }
         })
         RLuisetup()
         return fragBinding.root
     }
     private fun RLuisetup() {
-        RLHelpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.challenge_selectTarget)
+        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.challenge_selectTarget)
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
         fragBinding.inlayTop.ivBack.setOnClickListener {
-            RLBottomHideShowSet(true)
-            RLcloseFragment()
+            rl_bottomHideShowSet(true)
+            rl_closeFragment()
         }
         if (cardData.IsGroup){
             fragBinding.inlayTop.ivTitle.setText("Group Challenge")
@@ -74,9 +74,9 @@ class RLFragChallengesForType : RLBaseFragment() {
             val bundle: Bundle = Bundle()
             bundle.putSerializable("cardData",cardData)
             if (cardData.isEditClass){
-                (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
             }else{
-                (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
             }
         }
 
@@ -85,9 +85,9 @@ class RLFragChallengesForType : RLBaseFragment() {
             val bundle: Bundle = Bundle()
             bundle.putSerializable("cardData",cardData)
             if (cardData.isEditClass){
-                (context as RLMainActivityRL).RLloadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragEditChallenges().newInstance(bundle), TAG, true,null, false)
             }else{
-                (context as RLMainActivityRL).RLloadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragSetYourGoal().newInstance(bundle), TAG, true,null, false)
             }
 
         }
@@ -105,7 +105,7 @@ class RLFragChallengesForType : RLBaseFragment() {
         val linearLayoutMain = LinearLayoutManager(activity)
         dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
 
-        val jsonString= RLPrefManager.RLGetSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
+        val jsonString= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.challenge_selectTarget,"")
         val gson = Gson()
         val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
         val adapter = RLHelpListAdapter(activity,StartHelpModel.data)

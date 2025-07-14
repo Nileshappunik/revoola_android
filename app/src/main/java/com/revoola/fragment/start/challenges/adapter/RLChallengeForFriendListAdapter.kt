@@ -67,7 +67,7 @@ class RLChallengeForFriendListAdapter(
                     // Notify item changed instead of whole dataset
                     notifyItemChanged(adapterPosition)
                 }catch (e:Exception){
-                   RLTools.RlLogEPrint(TAG,"EXCEPTION:- ${e.message}")
+                   RLTools.rl_logEPrint(TAG,"EXCEPTION:- ${e.message}")
                 }
             }
         }
