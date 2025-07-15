@@ -49,7 +49,7 @@ import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragFeed : RLBaseFragment() , RLItemClickListener {
-    val TAG: String = RLFragFeed::class.java.simpleName
+    private val TAG: String = RLFragFeed::class.java.simpleName
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private lateinit var   adaptertitle: RLOverviewSessionTitleListAdapter
@@ -64,7 +64,7 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
     private var currentUser:String=""
     private var groupId:String=""
     private var lastfragmentopen=""
-    var appUnit:String="Metric"
+    private var appUnit:String="Metric"
 
     private val fragBinding by lazy {
         RlFragFeedBinding.inflate(layoutInflater)

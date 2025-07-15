@@ -1310,7 +1310,7 @@ object RLTools {
     fun rl_convertTimestampToSchdualDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("dd MMM hh:mm a")
+                val formatter = DateTimeFormatter.ofPattern("dd MMM HH:MM")
                 //val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
                 val dateall=dateTime.format(formatter)//+" | "+dateTime.format(formatter2)

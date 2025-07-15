@@ -86,6 +86,15 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaChallengeRequest/$docId"
     }
 
+    fun revoolaChallengeRequestPathWrite():String{
+        return "/$basePath/revoolaChallengeRequest"
+    }
+
+    fun schedulePathWrite():String{
+        val userId =  RLAuthManager().rl_getCurrentUser()?.uid ?:""
+        return "/$basePath/revoolaUserSettings/$userId/schedule"
+    }
+
 
 
 }

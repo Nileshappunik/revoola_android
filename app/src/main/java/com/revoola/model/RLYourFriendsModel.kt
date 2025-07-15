@@ -3,13 +3,15 @@ package com.revoola.model
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class RLYourFriendsModel(val type:String, val text: RLuser)
 
 data class RLuser(val user:List<RLuserData>)
+@Parcelize
 data class RLuserData(val first_name:String, val last_name:String, val userid:String, val username:String,
                       val avatar:String, val myid:String, val myidstatus:String, val theirid:String,
-                      val theiridstatus:String, var isSelected: Boolean = false)
+                      val theiridstatus:String, var isSelected: Boolean = false) : Parcelable
 
 
 data class RLSetsearch_userrequest(var search_user: RLSetsearch_user)

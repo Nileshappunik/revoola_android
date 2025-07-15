@@ -1,8 +1,11 @@
 package com.revoola.databasefirebase
 
+import android.util.Log
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.revoola.activity.RLMainActivityRL
+import com.revoola.fragment.start.RLFragStart
 
 class RLDatabaseManagerWrite {
     private val database: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -90,6 +93,37 @@ class RLDatabaseManagerWrite {
                 }
         }
     }
+
+    fun rl_write_Schdule(path: String, data: String, callback: (Boolean, Exception?) -> Unit) {
+        val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
+        entryIdSummery.let {
+            database.child(path).child(data).setValue(true)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        callback(true, null)
+                    } else {
+                        callback(false, task.exception)
+                    }
+                }
+        }
+    }
+
+    fun rl_write_revoolaChallengeRequest(path: String, data: Any, callback: (String?, Exception?) -> Unit) {
+        val ref = database.child(path).push()
+//        val ref = FirebaseDatabase.getInstance()
+//            .getReference("/proposedstructure/revoolaChallengeRequest")
+//            .push() // generates a unique key here
+        val generatedKey = ref.key  // <-- This is your unique key
+        ref.setValue(data)
+            .addOnSuccessListener {
+                // You can use generatedKey here (e.g., store locally, navigate, etc.)
+               callback(generatedKey,null)
+            }
+            .addOnFailureListener { e ->
+               callback(null,e)
+            }
+    }
+
 
     fun rl_write_Data_For_Testing_Data(path: String, dataMap: Map<String,Any>, callback: (Boolean, Exception?) -> Unit) {
         dataMap.forEach { (category, entry) ->

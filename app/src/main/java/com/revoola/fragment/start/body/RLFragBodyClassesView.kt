@@ -90,7 +90,7 @@ class RLFragBodyClassesView : RLBaseFragment() {
                 val jsonObject = gson.toJson(data)
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLBodyUiSetup(VideoData)
-                RLClickToSechedule(jsonObject,RLConstants.BODY,"")
+                RLClickToSechedule(jsonObject,videoID,"")
                 if ( VideoData.classType.toLowerCase().equals("ride")){
                     ride=true
                 }else{
@@ -125,14 +125,15 @@ class RLFragBodyClassesView : RLBaseFragment() {
         }
 
     }
-    private fun RLClickToSechedule(data: String, classtype: String?, audioVideoType: String?) {
+    private fun RLClickToSechedule(data: String, videoKey: String?, audioVideoType: String?) {
         fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
             //RLshowSubscribeDialog()
             val bundle = Bundle()
             bundle.putString("videoCardData",data)
-           // bundle.putString(RLConstants.CLASSTYPE,classtype)
+            bundle.putString("videoKey",videoKey)
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message","")
+            bundle.putBoolean("isMindClass",false)
             (context as RLMainActivityRL).rl_loadFrag(RLClassesSchedule().newInstance(bundle), TAG, true,null, false)
         }
     }

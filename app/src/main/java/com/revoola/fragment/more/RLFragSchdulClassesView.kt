@@ -56,7 +56,6 @@ class RLFragSchdulClassesView : RLBaseFragment() {
 
         rl_mindUiSetup(cardData.videoItem)
         val safeDateOfChallenge = safeString(cardData.schedule.dateOfChallenge.toString())
-        RLTools.rl_logEPrint(TAG,"safeDateOfChallenge: $safeDateOfChallenge")
         if (isWithinLast10Minutes(safeDateOfChallenge)) {
             startReverseTimer(safeDateOfChallenge)
         }

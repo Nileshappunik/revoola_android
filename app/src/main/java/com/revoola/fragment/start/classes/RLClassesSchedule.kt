@@ -30,6 +30,11 @@ import com.revoola.model.RLFulllVideoModel
 import com.google.gson.Gson
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerWrite
+import com.revoola.databasefirebase.RevoolaFirebasePath
+import com.revoola.model.RLuserData
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -40,15 +45,12 @@ import java.util.Locale
 import java.util.TimeZone
 
 class RLClassesSchedule : RLBaseFragment() {
-    val TAG: String = RLClassesSchedule::class.java.simpleName
+    private val TAG: String = RLClassesSchedule::class.java.simpleName
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-
-   // lateinit var fragBinding: RlFragClassesScheduleBinding
     private var selectedCalendar = Calendar.getInstance()
     private val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
-    var calenderEventDescription=""
-
+    private var calenderEventDescription=""
 
     private val fragBinding by lazy {
         RlFragClassesScheduleBinding.inflate(layoutInflater)
@@ -61,10 +63,9 @@ class RLClassesSchedule : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-      //  fragBinding = RLinflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule, container) as RlFragClassesScheduleBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesSchedule" )
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -72,24 +73,24 @@ class RLClassesSchedule : RLBaseFragment() {
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
 
-        RLUiSetUp()
+        rl_uiSetUp()
         return fragBinding.root
     }
-    private fun RLUiSetUp(){
+    private fun rl_uiSetUp(){
         rl_onBackPresAct(fragBinding.ivBack)
         fragBinding.txtSelectDatatime.setOnClickListener {
-            RLShowDatePickerDialog()
+            rl_showDatePickerDialog()
         }
         val data=  requireArguments().getString("videoCardData","")
         val selectedFriend =  requireArguments().getString("Message","")
         val gson = Gson()
         val VideoCardData = gson.fromJson(data, RLFulllVideoModel::class.java)
+        RLTools.rl_logLarge(TAG,"videoData:- ${gson.toJson(VideoCardData)}")
         fragBinding.txtTitle.setText(VideoCardData.rideTitle)
         fragBinding.txtNamewith.setText(VideoCardData.instructor)
         fragBinding.txtMinutes.setText(VideoCardData.duration)
         calenderEventDescription="${VideoCardData.instructor}'s ${VideoCardData.duration}"
         Glide.with(requireContext()).load(VideoCardData.imageLinkSquareV2)
-            // .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
             .into(fragBinding.imgMainBanner)
 
         if (selectedFriend.isEmpty()){
@@ -104,37 +105,11 @@ class RLClassesSchedule : RLBaseFragment() {
 
         fragBinding.btnScheduleclass.setOnClickListener {
            if (fragBinding.btnScheduleclass.text.equals("CONFIRM")){
-               RLshowSDialog("Would you like to add to your calendar?",VideoCardData)
+               rl_showSDialog("Would you like to add to your calendar?",VideoCardData)
            }else{
-               RLCheckIfFuture(data,"")
+               rl_checkIfFuture(data,"")
            }
         }
-
-
-
-
-       /* if (classtype.equals(RLConstants.MIND)){
-            val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
-            fragBinding.txtVideo.setText(audioVideoType)
-            if (audioVideoType.equals("Video")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_video)
-            }else{
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_audio)
-            }
-
-        }else{
-            fragBinding.txtVideo.setText(VideoCardData.difficulty)
-            if(VideoCardData.difficulty.equals("Beginner")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_easy)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppMainColor))
-            }else if (VideoCardData.difficulty.equals("Advanced")){
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_hard)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppRedColor))
-            }else{
-                fragBinding.imgVideo.setImageResource(R.drawable.ic_medium)
-                fragBinding.txtVideo.setTextColor(resources.getColor(R.color.AppOrangeColor))
-            }
-        }*/
 
         fragBinding.txtVideo.setText(VideoCardData.difficulty)
         if(VideoCardData.difficulty.equals("Beginner")){
@@ -149,7 +124,8 @@ class RLClassesSchedule : RLBaseFragment() {
         }
 
     }
-    private fun RLShowDatePickerDialog(){
+
+    private fun rl_showDatePickerDialog(){
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -157,12 +133,12 @@ class RLClassesSchedule : RLBaseFragment() {
         val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
             selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
             val selectdate="$selectedDay/${selectedMonth + 1}/$selectedYear"
-            RLShowTimePickerDialog(selectdate)
+            rl_showTimePickerDialog(selectdate)
         }, year, month, day)
         datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
     }
-    private fun RLShowTimePickerDialog(selectdate:String){
+    private fun rl_showTimePickerDialog(selectdate:String){
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
@@ -179,23 +155,26 @@ class RLClassesSchedule : RLBaseFragment() {
         }, hour, minute, true)
         timePickerDialog.show()
     }
-    private fun RLCheckIfFuture(data: String, audioVideoType: String){
+    private fun rl_checkIfFuture(data: String, audioVideoType: String){
         val currentCalendar = Calendar.getInstance()
         val isFuture = selectedCalendar.timeInMillis > currentCalendar.timeInMillis
         if (isFuture){
+            val videoKey =  requireArguments().getString("videoKey","")
+            val isMindClass =  requireArguments().getBoolean("isMindClass",false)
             val bundle = Bundle()
             bundle.putString("videoCardData",data)
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("selectDate",fragBinding.txtSelectDatatime.text.toString())
+            bundle.putString("videoKey",videoKey)
+            bundle.putBoolean("isMindClass",isMindClass)
             //Future Time
             (context as RLMainActivityRL).rl_loadFrag(RLClassesScheduleJoinSession().newInstance(bundle), TAG, false,null, false)
         }else{
             rl_commonToast("Please Select Future Time")
         }
     }
-
     //Subscribe Dialog
-    private fun RLshowSDialog(message: String, videoCardData: RLFulllVideoModel){
+    private fun rl_showSDialog(message: String, videoCardData: RLFulllVideoModel){
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_subscribe)
@@ -212,30 +191,13 @@ class RLClassesSchedule : RLBaseFragment() {
             scduleDataStoreServer(videoCardData)
         })
         tvYes.setOnClickListener(View.OnClickListener {
-            RLCheckCalendarPermission()
+            rl_checkCalendarPermission()
             sucDialog.dismiss()
         })
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
-
-    private fun scduleDataStoreServer(videoCardData: RLFulllVideoModel) {
-        val userData= rl_getUserDetails(requireContext())
-//        val updateMoengageInsightly = mapOf(
-//            "uid" to RLAuthManager().RlgetCurrentUser()?.uid,
-//            "schedule_initiator_userid" to RLAuthManager().RlgetCurrentUser()?.uid,
-//            "schedule_target_userids" to selectedUidList,
-//            "schedule_target_name" to userData!!.displayName,
-//            "schedule_time_for_start" to dateTime,
-//            "schedule_activity_type" to classType,
-//            "schedule_title" to videoCardData.rideTitle
-//        )
-
-        (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false, null, false)
-
-    }
-
-    private fun RLCheckCalendarPermission(){
+    private fun rl_checkCalendarPermission(){
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
 
@@ -245,32 +207,31 @@ class RLClassesSchedule : RLBaseFragment() {
                 PERMISSIONS_REQUEST_WRITE_CALENDAR
             )
         } else {
-            RLAddEventToCalendar()
+            rl_addEventToCalendar()
         }
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PERMISSIONS_REQUEST_WRITE_CALENDAR -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    RLAddEventToCalendar()
+                    rl_addEventToCalendar()
                 } else {
                     // Permission denied
                 }
             }
         }
     }
-    private fun RLAddEventToCalendar(){
+    private fun rl_addEventToCalendar(){
         try {
             val dateString = com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.selected_schedule_date,"" )
 
-            val calendar = RLParseDateString(dateString.toString())
+            val calendar = rl_parseDateString(dateString.toString())
             val startMillis = calendar.timeInMillis
             val endMillis = startMillis + 60 * 60 * 1000 // 1-hour event
 
             // Use Google Calendar ID if available
-            val calendarID = RLGetWritableCalendarId() ?:RLGetPrimaryCalendarId() // Get the primary calendar ID
+            val calendarID = rl_getWritableCalendarId() ?:rl_getPrimaryCalendarId() // Get the primary calendar ID
             val values = ContentValues().apply {
                 put(CalendarContract.Events.CALENDAR_ID, calendarID)
                 put(CalendarContract.Events.TITLE, "Revoola Schedule Reminder")
@@ -289,7 +250,7 @@ class RLClassesSchedule : RLBaseFragment() {
 
                 // Add reminder
                 if (eventId != null) {
-                    RLAddReminderToEvent(eventId)
+                    rl_addReminderToEvent(eventId)
                 }
             }
 
@@ -297,23 +258,21 @@ class RLClassesSchedule : RLBaseFragment() {
            RLTools.rl_logEPrint(TAG,"EXCEPTION DATE:- ${e.message}")
         }
     }
-    private fun RLParseDateString(dateString: String):Calendar{
+    private fun rl_parseDateString(dateString: String):Calendar{
         val dateFormat = SimpleDateFormat("dd/M/yyyy hh:mm a", Locale.getDefault())
         val date = dateFormat.parse(dateString) ?: throw IllegalArgumentException("Invalid date format")
         return Calendar.getInstance().apply { time = date }
     }
-    private fun RLAddReminderToEvent(eventId: Long){
+    private fun rl_addReminderToEvent(eventId: Long){
         val values = ContentValues().apply {
             put(CalendarContract.Reminders.EVENT_ID, eventId)
             put(CalendarContract.Reminders.MINUTES, 10) // Reminder 10 minutes before
             put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
         }
-        //Log.e(TAG, "Event added successfully with ID: $eventId")
         requireActivity().contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, values)
         (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false, null, false)
     }
-
-    private fun RLGetPrimaryCalendarId():Long{
+    private fun rl_getPrimaryCalendarId():Long{
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
@@ -342,8 +301,7 @@ class RLClassesSchedule : RLBaseFragment() {
         }
         throw IllegalStateException("No calendar found.")
     }
-
-    private fun RLGetWritableCalendarId():Long?{
+    private fun rl_getWritableCalendarId():Long?{
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
@@ -380,5 +338,86 @@ class RLClassesSchedule : RLBaseFragment() {
         // Return null if no writable calendar was found
         return null
     }
+    private fun scduleDataStoreServer(videoCardData: RLFulllVideoModel) {
+        val createdBy = RLAuthManager().rl_getCurrentUser()?.uid?:""
+        var groupId = requireArguments().getString("groupId")
+        val isMindClass = requireArguments().getBoolean("isMindClass")
+        val selectedDateTime = requireArguments().getString("selectDate")
+        val videoKey = requireArguments().getString("videoKey")
+        val selectUserData = arguments?.getParcelableArrayList<RLuserData>("selectUserData")
+        val selectedTimestamp = RLYourWayCalvulation.scheduleDateTimeToTimestamp(selectedDateTime?:"")
+        val currentTimeMillis = System.currentTimeMillis()
 
+        var isGroup = false
+        if (groupId.isNullOrEmpty()){
+            isGroup=false
+            groupId =""
+        }else{
+            isGroup=true
+        }
+        var challengersMap = mutableMapOf<String, Map<String, Any>>()
+        if (!selectUserData.isNullOrEmpty()){
+            selectUserData.forEach{ selectUserCard->
+                challengersMap[selectUserCard.userid] = mapOf(
+                    "isDeline" to false,
+                    "rank" to 0,
+                    "status" to false,
+                    "totalRev" to 0,
+                    "totalTime" to 0
+                )
+            }
+        }
+
+        challengersMap[createdBy] = mapOf(
+            "isDeline" to false,
+            "rank" to 0,
+            "status" to true,
+            "totalRev" to 0,
+            "totalTime" to 0
+        )
+        val challengeMap = mapOf(
+            "challengeName" to videoCardData.rideTitle,
+            "challengeStatus" to 0,
+            "challenger" to challengersMap,
+            "createdBy" to createdBy,
+            "dateOfChallenge" to selectedTimestamp,
+            "goal" to "",
+            "groupId" to groupId,
+            "groupName" to "",
+            "isClass" to true,
+            "isGroup" to isGroup,
+            "isMindClass" to isMindClass,
+            "location" to "",
+            "remark" to "android",
+            "timestamp" to currentTimeMillis,
+            "typeOfChallenge" to 2,
+            "typeOfGoal" to "",
+            "typeOfWorkout" to videoCardData.classType,
+            "videoKey" to videoKey
+        )
+        val firebasePath = RevoolaFirebasePath.revoolaChallengeRequestPathWrite()
+        // Firebase to Update BasicData
+        RLDatabaseManagerWrite().rl_write_revoolaChallengeRequest(firebasePath,challengeMap) { generatedKey, error ->
+            if (!generatedKey.isNullOrEmpty()){
+                updateSchduleKey(generatedKey)
+            }else{
+                RLTools.rl_logEPrint(TAG, "Error storing challenge: ${error?.message}")
+            }
+        }
+
+    }
+    private fun updateSchduleKey(generatedKey: String?) {
+        val firebasePath = RevoolaFirebasePath.schedulePathWrite()
+        // Firebase to Update BasicData
+        RLDatabaseManagerWrite().rl_write_Schdule(firebasePath,generatedKey?:"") { isSuccessfully, error ->
+            if (isSuccessfully){
+                (context as RLMainActivityRL).rl_loadFrag(RLFragStart(), TAG, false, null, false)
+            }else{
+                RLTools.rl_logEPrint(TAG, "Failed to add challenge: ${error?.message}")
+            }
+        }
+
+    }
 }
+
+

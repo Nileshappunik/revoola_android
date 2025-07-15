@@ -1,6 +1,7 @@
 package com.revoola.fragment.start.classes
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -31,14 +32,14 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 
 class RLClassesScheduleJoinSession : RLBaseFragment() {
-    val TAG: String = RLClassesScheduleJoinSession::class.java.simpleName
-    lateinit var fragBinding: RlFragClassesScheduleSessionBinding
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private val TAG: String = RLClassesScheduleJoinSession::class.java.simpleName
+    //lateinit var fragBinding: RlFragClassesScheduleSessionBinding
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var currentUser:String=""
-
-
-    private val binding by lazy {
+    private var currentUser:String=""
+    private var  selectGroupId:String=""
+    private var selectUserData: List<RLuserData> = mutableListOf()
+    private val fragBinding by lazy {
         RlFragClassesScheduleSessionBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
@@ -48,40 +49,35 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule_session, container) as RlFragClassesScheduleSessionBinding
+        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_classes_schedule_session, container) as RlFragClassesScheduleSessionBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLClassesScheduleJoinSession" )
         currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
-        viewModel = ViewModelProvider(requireActivity(),
-            RLMainViewModelFactory(
-                userRepository
-            )
-        ).get(RLMainViewModel::class.java)
-
-        RLuisetup()
+        viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
+        rl_uisetup()
         return fragBinding.root
     }
-    private fun RLuisetup() {
+    private fun rl_uisetup() {
         rl_onBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(R.string.selectfriendsgroups)
         fragBinding.inlayTop.ivDescription.setText("")
 
-        RLButtonClickEvent(false,"")
-        RLfriendsApiCall()
+        rl_buttonClickEvent(false,"",null,null)
+        rl_friendsApiCall()
         fragBinding.btnFriend.setOnClickListener {
             fragBinding.btnFriend.setTextColor(resources.getColor(R.color.AppWhiteColor))
             fragBinding.btnFriend.setBackgroundResource(R.drawable.full_round_green)
             fragBinding.btnGroup.setTextColor(resources.getColor(R.color.AppMainColor))
             fragBinding.btnGroup.background = null
-            RLButtonClickEvent(false,"")
-            RLfriendsApiCall()
+            rl_buttonClickEvent(false,"",null,null)
+            rl_friendsApiCall()
 
         }
         fragBinding.btnGroup.setOnClickListener {
@@ -89,12 +85,12 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
             fragBinding.btnFriend.background = null
             fragBinding.btnGroup.setTextColor(resources.getColor(R.color.AppWhiteColor))
             fragBinding.btnGroup.setBackgroundResource(R.drawable.full_round_green)
-            RLButtonClickEvent(false,"")
-            RLgroupApiCall()
+            rl_buttonClickEvent(false,"",null,null)
+            rl_groupApiCall()
         }
     }
 
-    private fun RLfriendsApiCall() {
+    private fun rl_friendsApiCall() {
         val request = listOf(
             RLSetsearch_userrequest(
                 search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)
@@ -107,7 +103,7 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                 try {
                     if (response.type.equals("success")){
                         RLTools.rl_logDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandlefriendsApi(response.text.user)
+                        rl_responsehandlefriendsApi(response.text.user)
                     }else {
                         RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
@@ -120,38 +116,35 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
             }
         }
     }
-    private fun RLresponsehandlefriendsApi(userdata: List<RLuserData>) {
-        var selectUserdata: List<RLuserData> = mutableListOf()
+    private fun rl_responsehandlefriendsApi(userdata: List<RLuserData>) {
+       // var selectUserData: List<RLuserData> = mutableListOf()
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recyclerList.layoutManager = linearLayoutManager
-
-        val adapter = RLChallengeForFriendListAdapter(activity, userdata) { cardData ->
+        val adapterFriends = RLChallengeForFriendListAdapter(activity, userdata) { cardData ->
             // Handle selection
             if (cardData.isSelected){
-                selectUserdata += listOf(cardData)
+                selectUserData += listOf(cardData)
             }else{
-                selectUserdata -= listOf(cardData)
+                selectUserData -= listOf(cardData)
             }
-            if (selectUserdata.size>0){
-                RLButtonClickEvent(true,selectUserdata.size.toString())
+            if (selectUserData.size>0){
+                rl_buttonClickEvent(true,selectUserData.size.toString(),selectGroupId,selectUserData)
             }else{
-                RLButtonClickEvent(false,"")
+                rl_buttonClickEvent(false,"",null,null)
             }
         }
-        fragBinding.recyclerList.adapter = adapter
-
+        fragBinding.recyclerList.adapter = adapterFriends
         fragBinding.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter.RLfilter(s.toString())
+                adapterFriends.RLfilter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-
-    private fun RLgroupApiCall() {
+    private fun rl_groupApiCall() {
         val request = listOf(
             RLrequestgroup_dataset(
                 group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)
@@ -164,7 +157,7 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                 try {
                     if (response.type.equals("success")){
                         RLTools.rl_logDPrint(TAG,"Success= "+response.type)
-                        RLresponsehandleGroupsApi(response.text)
+                        rl_responsehandleGroupsApi(response.text)
                     }else {
                         RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
@@ -177,12 +170,11 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
             }
         }
     }
-    private fun RLresponsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>) {
-        var  selectGroupId:String=""
+    private fun rl_responsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>) {
+       // var  selectGroupId:String=""
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recyclerList.layoutManager = linearLayoutManager
-
-        val adaptergroup = RLMindBodyClassForGroupListAdapter(activity,groupdata){ cardData,isSelected ->
+        val adapterGroup = RLMindBodyClassForGroupListAdapter(activity,groupdata){ cardData,isSelected ->
             // Handle selection
             if (isSelected){
                 selectGroupId=cardData.group_id
@@ -190,27 +182,25 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
                 selectGroupId=""
             }
             if (selectGroupId.isEmpty()){
-                RLButtonClickEvent(false,"")
+                rl_buttonClickEvent(false,"",null,null)
             }else{
-                RLButtonClickEvent(true,cardData.group_name)
+                rl_buttonClickEvent(true,cardData.group_name,cardData.group_id,selectUserData)
             }
         }
 
-        fragBinding.recyclerList.adapter = adaptergroup
-
+        fragBinding.recyclerList.adapter = adapterGroup
         fragBinding.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adaptergroup.RLfilter(s.toString())
+                adapterGroup.RLfilter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
 
-
     }
-    private fun RLButtonClickEvent(isClickVisible:Boolean,message:String){
+    private fun rl_buttonClickEvent(isClickVisible:Boolean, message:String,groupId:String?,selectUserData: List<RLuserData>?){
         if (isClickVisible){
             fragBinding.btnInviteClick.visibility=View.VISIBLE
             fragBinding.btnInvite.visibility=View.GONE
@@ -220,11 +210,19 @@ class RLClassesScheduleJoinSession : RLBaseFragment() {
         }
         fragBinding.btnInviteClick.setOnClickListener {
             val data=  requireArguments().getString("videoCardData","")
+            val selectDate=  requireArguments().getString("selectDate","")
+            val isMindClass=  requireArguments().getBoolean("isMindClass",false)
+            val videoKey=  requireArguments().getString("videoKey","")
             val audioVideoType=  requireArguments().getString("audioVideoType","")
             val bundle = Bundle()
             bundle.putString("videoCardData",data)
             bundle.putString("audioVideoType",audioVideoType)
             bundle.putString("Message",message)
+            bundle.putString("groupId",groupId)
+            bundle.putString("videoKey",videoKey)
+            bundle.putString("selectDate",selectDate)
+            bundle.putBoolean("isMindClass",isMindClass)
+            bundle.putParcelableArrayList("selectUserData", ArrayList(selectUserData ?: emptyList()))
             (context as RLMainActivityRL).rl_loadFrag(RLClassesSchedule().newInstance(bundle), TAG, false,null, false)
 
         }

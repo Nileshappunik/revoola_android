@@ -1,10 +1,15 @@
 package com.revoola.commonobject
 
+import android.os.Build
 import com.revoola.enumclass.RLValueOvName
 import com.revoola.model.RlOverviewGraphData
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -326,4 +331,24 @@ object RLYourWayCalvulation {
         // Convert to start of day in UTC and get timestamp
         return localDate.atStartOfDay().atOffset(ZoneOffset.UTC).toEpochSecond()
     }
+
+    fun scheduleDateTimeToTimestamp(dateString: String): Long {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val formatter = DateTimeFormatter.ofPattern("d/M/yyyy  hh:mm a")
+                val dateTime = LocalDateTime.parse(dateString, formatter)
+                val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+                return instant.epochSecond
+            } else {
+                // For older Android versions, use SimpleDateFormat
+                val sdf = SimpleDateFormat("d/M/yyyy  hh:mm a", Locale.getDefault())
+                val date = sdf.parse(dateString)
+                return date?.time?.div(1000) ?: 0L // Convert milliseconds to seconds
+            }
+        } catch (ex: Exception) {
+            return 0L
+        }
+    }
+
+
 }
