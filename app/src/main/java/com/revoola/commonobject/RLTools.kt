@@ -1310,8 +1310,7 @@ object RLTools {
     fun rl_convertTimestampToSchdualDAte(timestamp: Long): String {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                val formatter = DateTimeFormatter.ofPattern("dd MMM HH:MM")
-                //val formatter2 = DateTimeFormatter.ofPattern("HH:mm")
+                val formatter = DateTimeFormatter.ofPattern("dd MMM HH:mm")
                 val dateTime: LocalDateTime =LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault())
                 val dateall=dateTime.format(formatter)//+" | "+dateTime.format(formatter2)
                 return dateall
@@ -1403,8 +1402,13 @@ object RLTools {
     }
 
     fun rl_formatCommas(number: Double): String {
-        val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
-        return formatter.format(number)
+        if (number>0){
+            val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
+            return formatter.format(number)
+        }else{
+            return "0"
+        }
+
     }
 
 }

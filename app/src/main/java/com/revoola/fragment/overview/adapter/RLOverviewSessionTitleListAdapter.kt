@@ -13,18 +13,16 @@ import com.revoola.databinding.RlLayoutOveriviewSessionTitleListBinding
 import com.revoola.interfaceall.RLItemClickListener
 
 
-class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemClickListener: RLItemClickListener, valueslist: Array<String>, val context: FragmentActivity?) :
+class RLOverviewSessionTitleListAdapter(texttypeset: String, private val itemClickListener: RLItemClickListener, valueslist: Array<String>, val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLOverviewSessionTitleListAdapter"
     var bundle: Bundle = Bundle()
     var titleList = valueslist
     var texttypeset=texttypeset
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutOveriviewSessionTitleListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_overiview_session_title_list, parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlLayoutOveriviewSessionTitleListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_overiview_session_title_list, parent, false)
+        return MyViewHolder(layoutBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -44,8 +42,6 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
     }
 
     inner class MyViewHolder( private val layoutBinding: RlLayoutOveriviewSessionTitleListBinding) : RecyclerView.ViewHolder(layoutBinding.root){
-      //  private val layoutBinding: RlLayoutOveriviewSessionTitleListBinding = layoutBinding
-
         fun bindData(position: Int, itemVIew: View) {
             val itemres = titleList[position]
             layoutBinding.txtTitleSession.setText(itemres.toUpperCase().toString())
@@ -71,7 +67,7 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val RLItemC
 
             itemVIew.setOnClickListener {
                 texttypeset=itemres
-                RLItemClickListener.onItemClick(position)
+                itemClickListener.onItemClick(position)
                 notifyDataSetChanged()
             }
 

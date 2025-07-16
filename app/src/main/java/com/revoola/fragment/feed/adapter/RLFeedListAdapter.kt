@@ -75,10 +75,15 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
     override fun getItemCount(): Int {
        return dataList.size
     }
-    fun rl_addData(newData: List<RLTextOverview>) {
+    fun rl_addData(newData: List<RLTextOverview>,isSwitchOn: Boolean) {
+        val filteredData = if (isSwitchOn) {
+            newData.filter { it.from_third_party_source != 2 }
+        } else {
+            newData
+        }
         val startPosition = dataList.size
-        dataList.addAll(newData)
-        notifyItemRangeInserted(startPosition, newData.size)
+        dataList.addAll(filteredData)
+        notifyItemRangeInserted(startPosition, filteredData.size)
     }
     inner class MyViewHolder(layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
         private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
@@ -685,14 +690,25 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             }
 
     }
+//    private fun convertToInt(value: Any): Int {
+//        return when (value) {
+//            is Double -> value.roundToInt()
+//            is Float -> value.roundToInt()
+//            is Int -> value
+//            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
+//            else -> 0 // Default fallback for unsupported types
+//        }
+//    }
+
     private fun convertToInt(value: Any): Int {
-        return when (value) {
+        val result = when (value) {
             is Double -> value.roundToInt()
             is Float -> value.roundToInt()
             is Int -> value
             is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
-            else -> 0 // Default fallback for unsupported types
+            else -> 0
         }
+        return if (result < 0) 0 else result
     }
 
 }

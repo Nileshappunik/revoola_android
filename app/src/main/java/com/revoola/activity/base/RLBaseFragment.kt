@@ -36,8 +36,14 @@ open class RLBaseFragment : Fragment() {
     val TAG1: String = RLBaseFragment::class.java.simpleName
 
 
-    open fun rl_onBackPresAct(o: ImageView) {
-        o.setOnClickListener { v: View? -> super.requireActivity().onBackPressed() }
+    open fun rl_onBackPresAct_Old(imageview: ImageView) {
+        imageview.setOnClickListener { v: View? -> super.requireActivity().onBackPressed() }
+    }
+
+    open fun rl_onBackPresAct(imageView: ImageView) {
+        imageView.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     fun rl_getCurrentDateTimeIsoFormatted(): String {

@@ -335,20 +335,22 @@ object RLYourWayCalvulation {
     fun scheduleDateTimeToTimestamp(dateString: String): Long {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val formatter = DateTimeFormatter.ofPattern("d/M/yyyy  hh:mm a")
+                val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                 val dateTime = LocalDateTime.parse(dateString, formatter)
                 val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
                 return instant.epochSecond
             } else {
                 // For older Android versions, use SimpleDateFormat
-                val sdf = SimpleDateFormat("d/M/yyyy  hh:mm a", Locale.getDefault())
+                val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 val date = sdf.parse(dateString)
                 return date?.time?.div(1000) ?: 0L // Convert milliseconds to seconds
             }
         } catch (ex: Exception) {
+            RLTools.rl_logEPrint("RLClassesSchedule","DateConvertException: ${ex.message}")
             return 0L
         }
     }
+
 
 
 }

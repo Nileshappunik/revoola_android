@@ -44,6 +44,7 @@
                             android:textAllCaps="true"
                             android:layout_toEndOf="@+id/img_user"
                             android:text="Orgainser"
+                            android:textStyle="bold"
                             android:fontFamily="@font/omnes_regular"
                             android:textColor="@color/AppTextGrayColor"
                             android:textSize="10sp"/>

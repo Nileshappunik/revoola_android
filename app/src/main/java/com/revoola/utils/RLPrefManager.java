@@ -13,7 +13,7 @@ public class RLPrefManager {
 
     public static String user_model_data = "usermodeldata";
 
-    public static String selected_schedule_date = "selectedscheduledate";
+
 
     public static String last_device_connect = "LastDeviceConnect";
     public static String last_device_connect_type = "LastDeviceConnectType";

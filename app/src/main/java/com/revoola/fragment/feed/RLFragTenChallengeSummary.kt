@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -64,7 +65,16 @@ class RLFragTenChallengeSummary : RLBaseFragment() {
         return fragBinding.root
     }
     private fun rl_uisetup() {
-        rl_onBackPresAct(fragBinding.ivBack)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing or show a message
+                rl_closeFragment()
+            }
+        })
+        fragBinding.ivBack.setOnClickListener {
+            rl_closeFragment()
+        }
+
         fragBinding.ivTitle.setText(R.string.challengesummery)
         RLDatabaseManagerRead().rl_appUnitRead { data, error ->
             if (data != null) {
