@@ -130,7 +130,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
-        RLTools.rl_heightsetimageview( fragBinding.testImage)
+       // RLTools.rl_heightsetimageview( fragBinding.testImage)
     }
     override fun onPause() {
         super.onPause()

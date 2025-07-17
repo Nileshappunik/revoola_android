@@ -8,6 +8,7 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import android.webkit.WebSettings
@@ -139,9 +140,10 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
 
     //All Card Common Value Like UserImage Title Click Event
     private fun rl_commonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
-        RLTools.rl_heightsetimageview(layoutBinding.imgMain)
-
-        RLTools.rl_heightsetRelative(layoutBinding.relayChart)
+      //  RLTools.rl_heightsetRelative(layoutBinding.relayChart)
+      //  RLTools.rl_heightsetimageview(layoutBinding.imgMain)
+        // Ensure the layout has been completed before getting the width
+        //-----------------------------------------------------------------------------------------------------
         if (cardData.classType.isNullOrEmpty()){
             classType=""
         }else{
@@ -158,22 +160,25 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.imgOrganizerUser.visibility=View.GONE
         layoutBinding.relayChart.visibility=View.GONE
         layoutBinding.imgMain.visibility=View.VISIBLE
+        layoutBinding.imageChart.visibility=View.VISIBLE
         layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
-
+        // Set comment count
         if (cardData.total_comments > 0) {
             layoutBinding.txtComment.setText(cardData.total_comments.toString())
-        } else {
+        }
+        else {
             layoutBinding.txtComment.setText("")
         }
-
+        // Set kudos count and icon
         if (cardData.total_kudos > 0) {
             layoutBinding.txtThum.setText(cardData.total_kudos.toString())
             layoutBinding.imgThum.setImageResource(R.drawable.fd_thumbs_gray)
-        } else {
+        }
+        else {
             layoutBinding.txtThum.setText("")
             layoutBinding.imgThum.setImageResource(R.drawable.ic_thumbs_g)
         }
-
+        // Set award count and icon
         val totalAward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
         if (totalAward > 0) {
             layoutBinding.txtAward.setText(totalAward.toString())
@@ -182,7 +187,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             layoutBinding.txtAward.setText("0")
             layoutBinding.imgAward.setImageResource(R.drawable.ic_award_g)
         }
-
+        // Set visibility based on current user
         if (currentUser.equals(cardData.userid)){
             layoutBinding.imgThreedot.visibility=View.VISIBLE
             layoutBinding.layoutAward.visibility=View.VISIBLE
@@ -192,7 +197,8 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             layoutBinding.layoutComment.visibility=View.VISIBLE
             layoutBinding.blanckView.visibility=View.GONE
             layoutBinding.blanckView1.visibility=View.GONE
-        }else{
+        }
+        else{
             layoutBinding.imgThreedot.visibility=View.GONE
             layoutBinding.layoutAward.visibility=View.GONE
             layoutBinding.layoutShare.visibility=View.GONE
@@ -201,7 +207,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             layoutBinding.layoutComment.visibility=View.VISIBLE
             layoutBinding.blanckView1.visibility=View.GONE
         }
-
+         // Set text content
         layoutBinding.txtUsername.setText(cardData.username.toString())
         layoutBinding.txtMyride.setText(cardData.className.toString())
 
@@ -214,7 +220,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         Glide.with(context).load(imageLinkMain).into(layoutBinding.imgMain)
 
         layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}, HR:- ${cardData.hrm.toString()}")
-
+        // Set click listeners (same as original)
         layoutBinding.cardChalengis.setOnClickListener{
             if (cardData.from_third_party_source == 0){
                 when (cardData.bmo){
@@ -259,6 +265,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
                 rl_showAlertDialog()
             }
         }
+
         layoutBinding.imgThreedot.setOnClickListener {
             rl_showEditDeleteDialog(cardData)
         }
@@ -296,7 +303,9 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
                 (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
             }
         }*/
+
     }
+
     //When ThirdParty >10 Challenges Card once Check
     private fun rl_thirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, pos: Int, isImperial: Boolean){
         layoutBinding.txtOrganizer.visibility=View.VISIBLE
@@ -304,6 +313,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
         layoutBinding.relayChart.visibility=View.VISIBLE
         layoutBinding.imgMain.visibility=View.GONE
+        layoutBinding.imageChart.visibility=View.GONE
 
         layoutBinding.txtOrganizerName.setText(cardData.instructor.toString())
 
@@ -466,12 +476,6 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             layoutBinding.imgThreedot.visibility=View.GONE
             layoutBinding.blanckView1.visibility=View.VISIBLE
         }
-
-       /* layoutBinding.layoutAward.visibility=View.GONE
-        layoutBinding.layoutThumb.visibility=View.GONE
-        layoutBinding.layoutComment.visibility=View.GONE
-        layoutBinding.imgThreedot.visibility=View.GONE
-        layoutBinding.blanckView1.visibility=View.VISIBLE*/
 
     }
     //when ThirdParty 1 and GoogleFit Card done
@@ -690,15 +694,6 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
             }
 
     }
-//    private fun convertToInt(value: Any): Int {
-//        return when (value) {
-//            is Double -> value.roundToInt()
-//            is Float -> value.roundToInt()
-//            is Int -> value
-//            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
-//            else -> 0 // Default fallback for unsupported types
-//        }
-//    }
 
     private fun convertToInt(value: Any): Int {
         val result = when (value) {

@@ -83,7 +83,7 @@ class RLFeedListChallengesAdapter(val context: FragmentActivity?) :
                 val cardData = dataList[position]
                 layoutBinding.bigChallengesLayout.visibility=View.GONE
                 layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
-                RLTools.rl_heightsetRelative(layoutBinding.relayChart)
+               // RLTools.rl_heightsetRelative(layoutBinding.relayChart)
                 layoutBinding.txtOrganizer.visibility=View.VISIBLE
                 layoutBinding.txtOrganizerName.visibility=View.VISIBLE
                 layoutBinding.imgOrganizerUser.visibility=View.VISIBLE

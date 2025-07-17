@@ -105,7 +105,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         }else{
             classType = cardData.classType!!
         }
-        RLTools.rl_heightsetimageview(layoutBinding.imgMain)
+      //  RLTools.rl_heightsetimageview(layoutBinding.imgMain)
         layoutBinding.layTime.viewCommon.visibility = View.GONE
         layoutBinding.layCalories.viewCommon.visibility = View.GONE
         layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
@@ -372,12 +372,12 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         if (clickType.equals("Comment")){
             fragBinding.relativeComment.visibility=View.VISIBLE
             fragBinding.relativeThumb.visibility=View.GONE
-            RLTools.rl_heightsetimageview(fragBinding.inlayMain.imgMain)
+           // RLTools.rl_heightsetimageview(fragBinding.inlayMain.imgMain)
             rl_commentThumbUiSet(cardData,fragBinding.inlayMain)
         }else if (clickType.equals("Thumb")){
             fragBinding.relativeComment.visibility=View.GONE
             fragBinding.relativeThumb.visibility=View.VISIBLE
-            RLTools.rl_heightsetimageview(fragBinding.inlayMainThumb.imgMain)
+           // RLTools.rl_heightsetimageview(fragBinding.inlayMainThumb.imgMain)
             rl_commentThumbUiSet(cardData,fragBinding.inlayMainThumb)
         }
         fragBinding.btnSend.setOnClickListener {

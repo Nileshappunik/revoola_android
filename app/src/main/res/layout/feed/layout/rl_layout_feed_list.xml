@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -179,22 +179,56 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:orientation="vertical">
-                        <RelativeLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/relay_chart"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            tools:ignore="WebViewLayout">
                             <WebView
                                 android:id="@+id/webView_chart"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"/>
-                        </RelativeLayout>
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="H,100:76"/>
 
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/img_Main"
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/image_Chart"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:scaleType="centerCrop"
-                            app:shapeAppearanceOverlay="@style/CornerCut" />
+                            android:layout_height="wrap_content">
+                            <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/img_Main"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:scaleType="centerCrop"
+                                app:shapeAppearanceOverlay="@style/CornerCut"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="H,100:76"/>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--                        <RelativeLayout-->
+<!--                            android:id="@+id/relay_chart"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent">-->
+<!--                            <WebView-->
+<!--                                android:id="@+id/webView_chart"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="match_parent"/>-->
+<!--                        </RelativeLayout>-->
+
+<!--                        <com.google.android.material.imageview.ShapeableImageView-->
+<!--                            android:id="@+id/img_Main"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="0dp"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            app:shapeAppearanceOverlay="@style/CornerCut" />-->
                         <LinearLayout
                             android:id="@+id/lay_bottom"
                             android:layout_width="match_parent"

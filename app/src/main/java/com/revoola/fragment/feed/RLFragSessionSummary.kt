@@ -90,7 +90,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
 
     //Start Ui
     private fun rl_uisetup() {
-        if (isAdded) RLBaseProgress.rl_showProgressDialog(requireActivity())
+      //  if (isAdded) RLBaseProgress.rl_showProgressDialog(requireActivity())
         val isSessionComplete = requireArguments().getBoolean("isSessionComplete")
        // RLonBackPresAct(fragBinding.ivBack)
         fragBinding.ivBack.setOnClickListener {
@@ -608,7 +608,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
-        RLTools.rl_heightsetimageview( fragBinding.testImage)
+       // RLTools.rl_heightsetimageview( fragBinding.testImage)
     }
     private fun rl_getValueForTitle(title: String): String {
         if (userCardData!=null && fireBaseCardData != null){

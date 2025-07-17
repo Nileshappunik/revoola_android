@@ -407,10 +407,8 @@ object RLTools {
 
         return age
     }
-
+//-----------------------------------------------------------------------------------------------------
     fun rl_heightsetimageview(testImage:ImageView) {
-
-
         // Ensure the layout has been completed before getting the width
         testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -435,34 +433,34 @@ object RLTools {
         layoutParamsImage.height = height
         testImage.layoutParams =layoutParamsImage
     }
-
-    fun rl_heightsetRelative(testImage:RelativeLayout) {
+    fun rl_heightsetRelative(testRelative:RelativeLayout) {
 
         // Ensure the layout has been completed before getting the width
-        testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        testRelative.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // Remove the listener to prevent multiple calls
-                testImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                testRelative.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                 // Get the width of the ImageView
-                val width = testImage.width
+                val width = testRelative.width
 
                 // Calculate height as 75% of width
                 val height = (width * 0.76).toInt()
 
                 // Set the calculated height to the ImageView
-                val layoutParams = testImage.layoutParams
+                val layoutParams = testRelative.layoutParams
                 layoutParams.height = height
-                testImage.layoutParams = layoutParams
+                testRelative.layoutParams = layoutParams
             }
         })
-        val layoutParamsImage: ViewGroup.LayoutParams = testImage.layoutParams
-        val width = testImage.width
+        val layoutParamsImage: ViewGroup.LayoutParams = testRelative.layoutParams
+        val width = testRelative.width
         val height = (width * 0.76).toInt()
         layoutParamsImage.height = height
-        testImage.layoutParams =layoutParamsImage
+        testRelative.layoutParams =layoutParamsImage
     }
 
+//-----------------------------------------------------------------------------------------------------
     fun rl_challengesTypeGet(typename:String): String {
         var ChallengeName=""
         when(typename.toLowerCase()){

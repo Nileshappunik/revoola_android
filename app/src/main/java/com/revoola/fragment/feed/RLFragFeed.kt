@@ -357,8 +357,8 @@ class RLFragFeed : RLBaseFragment() , RLItemClickListener {
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.rl_logDPrint(TAG,"Success: ${response.type}")
-                        RLTools.rl_logDPrint(TAG,"ChResponse: ${Gson().toJson(response.text)}")
+                        RLTools.rl_logLarge(TAG,"Success: ${response.type}")
+                        RLTools.rl_logLarge(TAG,"ChResponse: ${Gson().toJson(response.text)}")
                         if (response.text.data.isNullOrEmpty()){
                             fragBinding.inlayNoData.noDataLayout.visibility=View.VISIBLE
                         }else{
