@@ -17,8 +17,6 @@
             <include
                 android:id="@+id/inlayTop"
                 layout="@layout/rl_layout_common_start_top"/>
-
-
             <RelativeLayout
                 android:id="@+id/relay_OverviewName"
                 android:layout_width="match_parent"
@@ -149,14 +147,35 @@
                     android:textColor="@color/AppBlackColor"
                     android:textSize="25sp" />
 
-                <WebView
-                    android:id="@+id/webView"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/relay_web"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="10dp"
                     android:visibility="gone"
-                    android:layout_below="@+id/txt_totalsession_number"/>
+                    android:layout_below="@+id/txt_totalsession_number"
+                    tools:ignore="WebViewLayout">
+                    <WebView
+                        android:id="@+id/webView"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="H,100:76"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--                <WebView-->
+<!--                    android:id="@+id/webView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:visibility="gone"-->
+<!--                    android:layout_below="@+id/txt_totalsession_number"/>-->
 
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -164,7 +183,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:layout_below="@+id/webView"/>
+                    android:layout_below="@+id/relay_web"/>
 
 
             </RelativeLayout>

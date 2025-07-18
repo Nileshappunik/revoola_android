@@ -24,6 +24,8 @@ import com.revoola.commonobject.RLTools
 import com.google.gson.Gson
 import com.revoola.RLBaseProgress
 import com.revoola.api.RLApiClientRet
+import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlFragEditChallengesBinding
 import com.revoola.fragment.start.RLFragStart
 import com.revoola.fragment.start.challenges.adapter.RLEditChallengesAdapter
@@ -37,10 +39,9 @@ import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragEditChallenges : RLBaseFragment() {
-    val TAG: String = RLFragEditChallenges::class.java.simpleName
-    lateinit var fragBinding: RlFragEditChallengesBinding
-    var CurrentUserID:String=""
-    lateinit var RLApiClientRetrofit: RLApiClientRet
+    private val TAG: String = RLFragEditChallenges::class.java.simpleName
+    private var currentUserID:String=""
+    lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
 
     fun newInstance(bundle: Bundle?): Fragment {
@@ -48,16 +49,15 @@ class RLFragEditChallenges : RLBaseFragment() {
         fragment.arguments = bundle
         return fragment
     }
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragEditChallengesBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_edit_challenges, container) as RlFragEditChallengesBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragEditChallenges" )
-        CurrentUserID=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
+        currentUserID= RLAuthManager().rl_getCurrentUser()?.uid?:""
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Perform your custom logic here
@@ -66,8 +66,8 @@ class RLFragEditChallenges : RLBaseFragment() {
             }
         })
         // Api call
-        RLApiClientRetrofit = RLApiClientRet(activity)
-        val apiService = RLApiClientRetrofit.networkService
+        apiClientRetrofit = RLApiClientRet(activity)
+        val apiService = apiClientRetrofit.networkService
         val userRepository = RLMainRepository(apiService)
         viewModel = ViewModelProvider(requireActivity(), RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         RLuisetup()
@@ -179,6 +179,8 @@ class RLFragEditChallenges : RLBaseFragment() {
             challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
             if (payLoad!=null){
+                RLTools.rl_logDPrint(TAG,"startdate: ${cardData.fromDate}")
+                RLTools.rl_logDPrint(TAG,"todate: ${cardData.toDate}")
                 RLTools.rl_logDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
                 val cardRequestData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
                 RLInsertApiCall(cardRequestData)
@@ -237,7 +239,7 @@ class RLFragEditChallenges : RLBaseFragment() {
 
     private fun createGoaledChallenges(cardData:RLEditChallengeAllData,challengePayload: RLChallengePayload): Any? {
         val body: List<Map<String, Any>>?
-        val groupid_userid =if (challengePayload.groupid_userid.isEmpty()) listOf<String>(CurrentUserID) else challengePayload.groupid_userid
+        val groupid_userid =if (challengePayload.groupid_userid.isEmpty()) listOf<String>(currentUserID) else challengePayload.groupid_userid
        var scenario = 1
         when (cardData.CalenderType.toLowerCase()) {
             "daily" -> scenario = 1
@@ -248,7 +250,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         if (cardData.CalenderType.toLowerCase().equals("custom")){
             body = listOf(mapOf(
                 "goaled_challenges_new" to mapOf(
-                    "challengeadmin" to CurrentUserID,
+                    "challengeadmin" to currentUserID,
                     "groupid_userid" to groupid_userid,
                     "groupongroup" to challengePayload.groupongroup,
                     "group" to challengePayload.group,
@@ -268,7 +270,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         }else{
             body = listOf(mapOf(
                 "goaled_challenges_new" to mapOf(
-                    "challengeadmin" to CurrentUserID,
+                    "challengeadmin" to currentUserID,
                     "groupid_userid" to groupid_userid,
                     "groupongroup" to challengePayload.groupongroup,
                     "group" to challengePayload.group,
@@ -294,9 +296,8 @@ class RLFragEditChallenges : RLBaseFragment() {
         return body
     }
 
-
     private fun RLInsertApiCall(request: List<RLChallengesApiPayload>) {
-        if (RLApiClientRetrofit.rl_isConnected()) {
+        if (apiClientRetrofit.rl_isConnected()) {
             RLTools.rl_logDPrint(TAG,"Challenges Insert Request: $request")
             //Insert Api Call
             viewModel.rl_insertChallenges(request) { result ->

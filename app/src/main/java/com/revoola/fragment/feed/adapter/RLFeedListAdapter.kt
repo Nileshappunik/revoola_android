@@ -19,6 +19,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
@@ -91,6 +92,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
         fun bindData(position: Int, itemVIew: View) {
             try {
                 val cardData: RLTextOverview = dataList[position]
+                RLTools.rl_logLarge(TAG,"cardData:- ${Gson().toJson(cardData)}")
                 rl_commonDataSet(cardData, layoutBinding,position+1)
                 layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
                 layoutBinding.bigChallengesLayout.visibility=View.GONE
@@ -230,8 +232,7 @@ class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
                         bundle.putSerializable(RLConstants.CardData, cardData)
                         bundle.putString(RLConstants.FeedSelectTag, selectTag)
                         bundle.putBoolean("isSessionComplete", false)
-                        //(context as RLMainActivityRL).RLloadFrag(RLFragBodySessionSummary().newInstance(bundle), TAG, true, null, true)
-                        (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
+                       (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
                     }
                     1->{
                         //MIND

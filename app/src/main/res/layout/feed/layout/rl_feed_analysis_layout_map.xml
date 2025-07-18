@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/relative_card"
@@ -28,18 +29,31 @@
             android:textColor="@color/AppBlackColor"
             android:textSize="28sp" />
         
-        <WebView
-            android:id="@+id/webView_analysis"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/relay_webView_analysis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_title_analysis"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            tools:ignore="WebViewLayout">
+            <WebView
+                android:id="@+id/webView_analysis"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="H,100:76"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle_analysis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/webView_analysis"
+            android:layout_below="@+id/relay_webView_analysis"
             android:layout_marginTop="10dp"
             android:nestedScrollingEnabled="false" />
 

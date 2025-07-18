@@ -141,8 +141,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
          adapterdata = RLOverviewSessionListAdapter(activity,false)
         fragBinding.recycleSession.adapter = adapterdata
 
-        RLTools.rl_heightsetdisplaywebview(fragBinding.webView,activity)
-        RLTools.rl_heightsetdisplayAll(fragBinding.relayOverviewName,activity)
+       // RLTools.rl_heightsetdisplayAll(fragBinding.relayOverviewName,activity)
 
         fragBinding.webView.webViewClient = WebViewClient()
 
@@ -260,6 +259,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.txtTotalsessionNumber.visibility=View.VISIBLE
         fragBinding.txtTotalsession.visibility=View.VISIBLE
         fragBinding.webView.visibility=View.VISIBLE
+        fragBinding.relayWeb.visibility=View.VISIBLE
         fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppWhiteColor))
 
         when (valueType){
@@ -274,6 +274,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 fragBinding.txtTotalsessionNumber.visibility=View.GONE
                 fragBinding.txtTotalsession.visibility=View.GONE
                 fragBinding.webView.visibility=View.GONE
+                fragBinding.relayWeb.visibility=View.GONE
                 fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppNEWBGColor))
                 //Value Set
                 val currentMonth= RLTools.rl_getCalculatedMonths()

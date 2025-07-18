@@ -94,12 +94,31 @@
                             android:id="@+id/relative_session"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <androidx.viewpager.widget.ViewPager
-                                android:id="@+id/viewPager_image"
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/constant_pager"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:visibility="gone"
-                                android:layout_marginTop="0dp" />
+                                tools:ignore="WebViewLayout">
+                                <androidx.viewpager.widget.ViewPager
+                                    android:id="@+id/viewPager_image"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginTop="0dp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintDimensionRatio="H,100:76"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--                            <androidx.viewpager.widget.ViewPager-->
+<!--                                android:id="@+id/viewPager_image"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:visibility="gone"-->
+<!--                                android:layout_marginTop="0dp" />-->
                             <com.google.android.material.tabs.TabLayout
                                 android:id="@+id/into_tab_layout"
                                 android:layout_width="wrap_content"
@@ -129,7 +148,7 @@
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintDimensionRatio="H,100:76"/>
+                                    app:layout_constraintDimensionRatio="H,100:7"/>
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
 

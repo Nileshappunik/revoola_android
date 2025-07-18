@@ -22,6 +22,7 @@ import com.revoola.enumclass.RLTypeOfMetrics
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.fragment.overview.RLFragOverviewSession
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
@@ -30,7 +31,6 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragMindSessionSummary : RLBaseFragment() {
     val TAG: String = RLFragMindSessionSummary::class.java.simpleName
-   // lateinit var fragBinding: RlFragMindSessionSummaryBinding
     lateinit var cardData: RLTextOverview
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
@@ -46,12 +46,11 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         return fragment
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_session_summary, container) as RlFragMindSessionSummaryBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindSessionSummary" )
-        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
+        currentUser= RLAuthManager().rl_getCurrentUser()?.uid?:""
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -71,9 +70,7 @@ class RLFragMindSessionSummary : RLBaseFragment() {
                 rl_closeScreen(isSessionComplete)
             }
         })
-
         fragBinding.ivTitle.setText(getString(R.string.sessionsummerys))
-
         // Data Get TO List
         cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         selectTag = requireArguments().getString(RLConstants.FeedSelectTag) as String
@@ -130,7 +127,6 @@ class RLFragMindSessionSummary : RLBaseFragment() {
         fragBinding.recycleSession.layoutManager = glinearLayoutManager
         val adapterdata = RLFeedSessionSummryListAdapter(activity, dataList, cardData)
         fragBinding.recycleSession.adapter = adapterdata
-       // RLTools.rl_heightsetimageview( fragBinding.testImage)
     }
     override fun onPause() {
         super.onPause()

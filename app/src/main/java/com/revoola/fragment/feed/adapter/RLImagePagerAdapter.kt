@@ -64,7 +64,6 @@ class RLImagePagerAdapter(
         layoutBinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
         layoutBinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
 
-        RLTools.rl_heightsetdisplaywebview(layoutBinding.inlayChart.webViewChart,context)
         layoutBinding.inlayChart.webViewChart.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = layoutBinding.inlayChart.webViewChart.settings

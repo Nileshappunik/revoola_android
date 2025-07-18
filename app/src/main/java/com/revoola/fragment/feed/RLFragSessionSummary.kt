@@ -52,7 +52,6 @@ import kotlin.math.roundToInt
 
 class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
     val TAG: String = RLFragSessionSummary::class.java.simpleName
-   // lateinit var fragBinding: RlFragSessionSummaryBinding
     lateinit var cardData: RLTextOverview
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
@@ -76,7 +75,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-      // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_summary, container) as RlFragSessionSummaryBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionSummary" )
         currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
@@ -181,6 +179,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         RLBaseProgress.rl_hideProgressDialog()
         fragBinding.testImage.visibility=View.GONE
         fragBinding.viewPagerImage.visibility=View.VISIBLE
+        fragBinding.constantPager.visibility=View.VISIBLE
         fragBinding.intoTabLayout.visibility=View.VISIBLE
         fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
 
@@ -227,7 +226,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
             imageList.add("CHART")
         }
 
-        RLTools.rl_heightsetViewPager(fragBinding.viewPagerImage)
+       // RLTools.rl_heightsetViewPager(fragBinding.viewPagerImage)
         val viewPagerAdapter = RLImagePagerAdapter(activity,imageList,zoneDataList,ZoneTextData,effort,effortScore,maxEffort,this)
         fragBinding.viewPagerImage.adapter = viewPagerAdapter
 
@@ -618,7 +617,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
             val avgHeartRate = RLTools.rl_formatCommasInt(fireBaseCardData?.avgHr?:0.0)
             val maxHeartRate = RLTools.rl_formatCommasInt(fireBaseCardData?.maxHr?:0)
 
-
             return when (title) {
                 RLValueName.TotalTime -> RLTools.rl_formatTime(fireBaseCardData!!.totalTime.toInt(),true)
                 RLValueName.Effort  -> RLTools.rl_formatCommasInt(cardData.totalREV.roundToInt())
@@ -765,7 +763,9 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         RLTools.rl_logEPrint(TAG,"AVGSPD:- $tempAvgSpeed")
         // Ensure valid output
         return if (tempAvgSpeed.isNaN() || tempAvgSpeed.isInfinite()) {
-            "0"
+           // "0"
+            val speedavg= fireBaseCardData?.avgSpeed?:0.0
+            String.format("%.2f", speedavg / 1.609) // Convert to miles per hour if imperial
         } else if (isImperial) {
             String.format("%.2f", tempAvgSpeed / 1.609) // Convert to miles per hour if imperial
         }else{
@@ -906,7 +906,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
             RLTypeOfMetrics.MaxHeartRate to RLMetricData(rl_getValueForTitle(RLValueName.MaxHeartRate))
         )
 
-        rl_heightsetdisplaywebview(fragBinding.includeEffort.webViewAnalysis)
         fragBinding.includeEffort.webViewAnalysis.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = fragBinding.includeEffort.webViewAnalysis.settings
@@ -972,7 +971,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         fragBinding.includeSpeed.imgTitleAnalysis.setImageResource(R.drawable.ic_speeed)
         fragBinding.includeSpeed.txtTitleAnalysis.setText("Speed")
 
-        rl_heightsetdisplaywebview(fragBinding.includeSpeed.webViewAnalysis)
         fragBinding.includeSpeed.webViewAnalysis.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = fragBinding.includeSpeed.webViewAnalysis.settings
@@ -1007,7 +1005,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         fragBinding.includeElevation.imgTitleAnalysis.setImageResource(R.drawable.ic_climb)
         fragBinding.includeElevation.txtTitleAnalysis.setText("Elevation")
 
-        rl_heightsetdisplaywebview(fragBinding.includeElevation.webViewAnalysis)
         fragBinding.includeElevation.webViewAnalysis.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = fragBinding.includeElevation.webViewAnalysis.settings
@@ -1126,7 +1123,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         fragBinding.inlayChart.layMaxEffort.txtName.setText("MAX EFFORT %")
         fragBinding.inlayChart.layMaxEffort.txtNumber.setText(maxEffort)
 
-        RLTools.rl_heightsetdisplaywebview(fragBinding.inlayChart.webViewChart,activity)
         fragBinding.inlayChart.webViewChart.webViewClient = WebViewClient()
 
         val webSettings: WebSettings = fragBinding.inlayChart.webViewChart.settings
@@ -1170,10 +1166,6 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
         }
     }
 
-    //Common All UI Setup
-    private fun rl_heightsetdisplaywebview(webView: WebView) {
-       RLTools.rl_heightsetdisplaywebview(webView,activity)
-    }
     override fun onPause() {
         super.onPause()
         rl_bottomHideShowSet(true)
@@ -1213,7 +1205,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
 
     override fun onImageClick(position: Int, imageUrl: String) {
         // Example: open full-screen image
-        if (position ==0 && cardData.map_image.isNotEmpty() ){
+        if (position == 0 && (cardData.map_image.isNotEmpty() || !cardData.map_url.isNullOrEmpty())) {
             openFullGoogleMap(position)
         }
 

@@ -100,29 +100,16 @@ object RLTools {
         }
     }
 
-    fun View.rl_adjustWidthToHeight() {
-        this.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val height = this@rl_adjustWidthToHeight.height
-                if (height > 0) {
-                    this@rl_adjustWidthToHeight.layoutParams.width = height
-                    this@rl_adjustWidthToHeight.requestLayout()
-                    this@rl_adjustWidthToHeight.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
-            }
-        })
-    }
-
     fun rl_logDPrint(tag_log:String, message_log:String){
-       Log.d(tag_log,message_log)
+        Log.d(tag_log,message_log)
     }
 
     fun rl_logEPrint(tag_log:String, message_log:String){
-       Log.e(tag_log,message_log)
+        Log.e(tag_log,message_log)
     }
 
     fun rl_challengeIcon(challengeType:String):Int{
-          when (challengeType.toLowerCase()){
+        when (challengeType.toLowerCase()){
             "steps"-> return R.drawable.fd_steps_green
             "effort"-> return R.drawable.ic_heart
             "calories"-> return R.drawable.fd_calories_green
@@ -133,7 +120,7 @@ object RLTools {
         }
     }
     fun rl_challengeTargetIcon(TargetType:String):Int{
-          when (TargetType.toLowerCase()){
+        when (TargetType.toLowerCase()){
             "individualtarget"-> return R.drawable.ic_goal
             "sharedtarget"-> return R.drawable.goal_shared
             else -> return R.drawable.ic_goal
@@ -259,14 +246,6 @@ object RLTools {
         return outputFormatter.format(legacyDate)
     }
 
-    fun rl_convertDateToTimestamp(dateString: String): String {
-        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
-        dateFormat.timeZone = TimeZone.getTimeZone("GMT") // Ensure consistent parsing
-
-        val date = dateFormat.parse(dateString) // Parse the date
-        return (date?.time?.div(1000)).toString() // Convert to seconds (Unix timestamp)
-    }
-
     fun rl_convertDate(inputDate: String): String {
         return try {
             // Define the input date format
@@ -286,7 +265,7 @@ object RLTools {
         }
     }
 
-     fun rl_showAlertDialog(context: Context, activity: Activity) {
+    fun rl_showAlertDialog(context: Context, activity: Activity) {
         val sucDialog: Dialog = Dialog(context)
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sucDialog.setContentView(R.layout.rl_dialog_subscribe)
@@ -301,7 +280,7 @@ object RLTools {
 
         iv_ok.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
-           activity.finish()
+            activity.finish()
         })
         iv_Cancle.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
@@ -310,8 +289,8 @@ object RLTools {
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
 
-     fun rl_hasNotificationPermission(context: Context): Boolean {
-         return  ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    fun rl_hasNotificationPermission(context: Context): Boolean {
+        return  ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
     fun rl_calculateCircularGraph(rev: Int): String {
@@ -407,60 +386,7 @@ object RLTools {
 
         return age
     }
-//-----------------------------------------------------------------------------------------------------
-    fun rl_heightsetimageview(testImage:ImageView) {
-        // Ensure the layout has been completed before getting the width
-        testImage.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to prevent multiple calls
-                testImage.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-                // Get the width of the ImageView
-                val width = testImage.width
-
-                // Calculate height as 75% of width
-                val height = (width * 0.76).toInt()
-
-                // Set the calculated height to the ImageView
-                val layoutParams = testImage.layoutParams
-                layoutParams.height = height
-                testImage.layoutParams = layoutParams
-            }
-        })
-        val layoutParamsImage: ViewGroup.LayoutParams = testImage.layoutParams
-        val width = testImage.width
-        val height = (width * 0.76).toInt()
-        layoutParamsImage.height = height
-        testImage.layoutParams =layoutParamsImage
-    }
-    fun rl_heightsetRelative(testRelative:RelativeLayout) {
-
-        // Ensure the layout has been completed before getting the width
-        testRelative.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to prevent multiple calls
-                testRelative.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                // Get the width of the ImageView
-                val width = testRelative.width
-
-                // Calculate height as 75% of width
-                val height = (width * 0.76).toInt()
-
-                // Set the calculated height to the ImageView
-                val layoutParams = testRelative.layoutParams
-                layoutParams.height = height
-                testRelative.layoutParams = layoutParams
-            }
-        })
-        val layoutParamsImage: ViewGroup.LayoutParams = testRelative.layoutParams
-        val width = testRelative.width
-        val height = (width * 0.76).toInt()
-        layoutParamsImage.height = height
-        testRelative.layoutParams =layoutParamsImage
-    }
-
-//-----------------------------------------------------------------------------------------------------
     fun rl_challengesTypeGet(typename:String): String {
         var ChallengeName=""
         when(typename.toLowerCase()){
@@ -562,7 +488,7 @@ object RLTools {
         }
         return ChallengeName
     }
-     fun rl_getMetricsName(metric:String?): String {
+    fun rl_getMetricsName(metric:String?): String {
         val metric = metric ?: return "STEPS"
         return if (metric.equals("elevation", ignoreCase = true)) {
             "CLIMBED"
@@ -570,7 +496,7 @@ object RLTools {
             metric.uppercase()
         }
     }
-     fun rl_getClassTypeValue(classType: String?): String {
+    fun rl_getClassTypeValue(classType: String?): String {
         return when {
             classType?.contains("steps", ignoreCase = true) == true -> "steps"
             classType?.contains("effort", ignoreCase = true) == true -> "effort"
@@ -578,110 +504,110 @@ object RLTools {
         }
     }
     fun rl_geticon(typename:String): Int {
-       if( typename.toLowerCase().equals("walk")){
-           return R.drawable.ic_walk
-       }else if( typename.toLowerCase().equals("calories")){
-           return R.drawable.fd_calories_green
-       }else if( typename.toLowerCase().equals("steps")){
-           return R.drawable.fd_steps_green
-       }else if( typename.toLowerCase().equals("dance")){
-           return R.drawable.ic_dance
-       }else if( typename.toLowerCase().equals("run")){
-           return R.drawable.ic_run
-       }else if( typename.toLowerCase().equals("effort")){
-           return R.drawable.ic_heart
-       }else if( typename.toLowerCase().equals("elevation")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-effort")){
-           return R.drawable.ic_heart
-       }else if (typename.toLowerCase().equals("challenge-custom-effort")){
-           return R.drawable.ic_heart
-       }else if (typename.toLowerCase().equals("challenge-daily-effort")){
-           return R.drawable.ic_heart
-       }else if (typename.toLowerCase().equals("challenge-weekly-effort")){
-           return R.drawable.ic_heart
-       }else if (typename.toLowerCase().equals("challenge-monthly-effort")){
-           return R.drawable.ic_heart
-       }else if (typename.toLowerCase().equals("challenge-steps")){
-           return R.drawable.fd_steps_green
-       }else if (typename.toLowerCase().equals("challenge-custom-steps")){
-           return R.drawable.fd_steps_green
-       }else if (typename.toLowerCase().equals("challenge-daily-steps")){
-           return R.drawable.fd_steps_green
-       }else if (typename.toLowerCase().equals("challenge-weekly-steps")){
-           return R.drawable.fd_steps_green
-       }else if (typename.toLowerCase().equals("challenge-monthly-steps")){
-           return R.drawable.fd_steps_green
-       }else if (typename.toLowerCase().equals("challenge-calories")){
-           return R.drawable.fd_calories_green
-       }else if (typename.toLowerCase().equals("challenge-custom-calories")){
-           return R.drawable.fd_calories_green
-       }else if (typename.toLowerCase().equals("challenge-daily-calories")){
-           return R.drawable.fd_calories_green
-       }else if (typename.toLowerCase().equals("challenge-weekly-calories")){
-           return R.drawable.fd_calories_green
-       }else if (typename.toLowerCase().equals("challenge-monthly-calories")){
-           return R.drawable.fd_calories_green
-       }else if (typename.toLowerCase().equals("challenge-distance")){
-           return R.drawable.ic_distance
-       }else if (typename.toLowerCase().equals("challenge-custom-distance")){
-           return R.drawable.ic_distance
-       }else if (typename.toLowerCase().equals("challenge-daily-distance")){
-           return R.drawable.ic_distance
-       }else if (typename.toLowerCase().equals("challenge-weekly-distance")){
-           return R.drawable.ic_distance
-       }else if (typename.toLowerCase().equals("challenge-monthly-distance")){
-           return R.drawable.ic_distance
-       }else if (typename.toLowerCase().equals("challenge-climbed")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-custom-climbed")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-daily-climbed")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-weekly-climbed")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-monthly-climbed")){
-           return R.drawable.ic_climb
-       }else if (typename.toLowerCase().equals("challenge-duration")){
-           return R.drawable.fd_active_time_green
-       }else if (typename.toLowerCase().equals("challenge-custom-duration")){
-           return R.drawable.fd_active_time_green
-       }else if (typename.toLowerCase().equals("challenge-daily-duration")){
-           return R.drawable.fd_active_time_green
-       }else if (typename.toLowerCase().equals("challenge-weekly-duration")){
-           return R.drawable.fd_active_time_green
-       }else if (typename.toLowerCase().equals("challenge-monthly-duration")){
-           return R.drawable.fd_active_time_green
-       }
-       else if( typename.toLowerCase().equals("yoga")){
-           return R.drawable.ic_yoga
-       } else if( typename.toLowerCase().equals("warm")){
-           return R.drawable.ic_warmup
-       } else if( typename.toLowerCase().equals("hiit")){
-           return R.drawable.ic_hiit
-       }else if( typename.toLowerCase().equals("pilates")){
-           return R.drawable.ic_pilates
-       }else if( typename.toLowerCase().equals("ride")){
-           return R.drawable.fd_ride_green
-       }else if( typename.toLowerCase().equals("energise")){
-           return R.drawable.ic_power
-       }else if( typename.toLowerCase().equals("workout")){
-           return R.drawable.ic_workout
-       }else if( typename.toLowerCase().equals("mindful movement")){
-           return R.drawable.ic_move
-       }else if( typename.toLowerCase().equals("relax")){
-           return R.drawable.ic_relax
-       }else if( typename.toLowerCase().equals("sleep")){
-           return R.drawable.ic_speeed
-       }else if( typename.toLowerCase().equals("focus")){
-           return R.drawable.ic_focus
-       }else if( typename.toLowerCase().equals("energise")){
-           return R.drawable.ic_power
-       }else if( typename.toLowerCase().equals("happiness")){
-           return R.drawable.ic_sun
-       }else{
-           return R.drawable.ic_dance
-       }
+        if( typename.toLowerCase().equals("walk")){
+            return R.drawable.ic_walk
+        }else if( typename.toLowerCase().equals("calories")){
+            return R.drawable.fd_calories_green
+        }else if( typename.toLowerCase().equals("steps")){
+            return R.drawable.fd_steps_green
+        }else if( typename.toLowerCase().equals("dance")){
+            return R.drawable.ic_dance
+        }else if( typename.toLowerCase().equals("run")){
+            return R.drawable.ic_run
+        }else if( typename.toLowerCase().equals("effort")){
+            return R.drawable.ic_heart
+        }else if( typename.toLowerCase().equals("elevation")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-effort")){
+            return R.drawable.ic_heart
+        }else if (typename.toLowerCase().equals("challenge-custom-effort")){
+            return R.drawable.ic_heart
+        }else if (typename.toLowerCase().equals("challenge-daily-effort")){
+            return R.drawable.ic_heart
+        }else if (typename.toLowerCase().equals("challenge-weekly-effort")){
+            return R.drawable.ic_heart
+        }else if (typename.toLowerCase().equals("challenge-monthly-effort")){
+            return R.drawable.ic_heart
+        }else if (typename.toLowerCase().equals("challenge-steps")){
+            return R.drawable.fd_steps_green
+        }else if (typename.toLowerCase().equals("challenge-custom-steps")){
+            return R.drawable.fd_steps_green
+        }else if (typename.toLowerCase().equals("challenge-daily-steps")){
+            return R.drawable.fd_steps_green
+        }else if (typename.toLowerCase().equals("challenge-weekly-steps")){
+            return R.drawable.fd_steps_green
+        }else if (typename.toLowerCase().equals("challenge-monthly-steps")){
+            return R.drawable.fd_steps_green
+        }else if (typename.toLowerCase().equals("challenge-calories")){
+            return R.drawable.fd_calories_green
+        }else if (typename.toLowerCase().equals("challenge-custom-calories")){
+            return R.drawable.fd_calories_green
+        }else if (typename.toLowerCase().equals("challenge-daily-calories")){
+            return R.drawable.fd_calories_green
+        }else if (typename.toLowerCase().equals("challenge-weekly-calories")){
+            return R.drawable.fd_calories_green
+        }else if (typename.toLowerCase().equals("challenge-monthly-calories")){
+            return R.drawable.fd_calories_green
+        }else if (typename.toLowerCase().equals("challenge-distance")){
+            return R.drawable.ic_distance
+        }else if (typename.toLowerCase().equals("challenge-custom-distance")){
+            return R.drawable.ic_distance
+        }else if (typename.toLowerCase().equals("challenge-daily-distance")){
+            return R.drawable.ic_distance
+        }else if (typename.toLowerCase().equals("challenge-weekly-distance")){
+            return R.drawable.ic_distance
+        }else if (typename.toLowerCase().equals("challenge-monthly-distance")){
+            return R.drawable.ic_distance
+        }else if (typename.toLowerCase().equals("challenge-climbed")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-custom-climbed")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-daily-climbed")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-weekly-climbed")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-monthly-climbed")){
+            return R.drawable.ic_climb
+        }else if (typename.toLowerCase().equals("challenge-duration")){
+            return R.drawable.fd_active_time_green
+        }else if (typename.toLowerCase().equals("challenge-custom-duration")){
+            return R.drawable.fd_active_time_green
+        }else if (typename.toLowerCase().equals("challenge-daily-duration")){
+            return R.drawable.fd_active_time_green
+        }else if (typename.toLowerCase().equals("challenge-weekly-duration")){
+            return R.drawable.fd_active_time_green
+        }else if (typename.toLowerCase().equals("challenge-monthly-duration")){
+            return R.drawable.fd_active_time_green
+        }
+        else if( typename.toLowerCase().equals("yoga")){
+            return R.drawable.ic_yoga
+        } else if( typename.toLowerCase().equals("warm")){
+            return R.drawable.ic_warmup
+        } else if( typename.toLowerCase().equals("hiit")){
+            return R.drawable.ic_hiit
+        }else if( typename.toLowerCase().equals("pilates")){
+            return R.drawable.ic_pilates
+        }else if( typename.toLowerCase().equals("ride")){
+            return R.drawable.fd_ride_green
+        }else if( typename.toLowerCase().equals("energise")){
+            return R.drawable.ic_power
+        }else if( typename.toLowerCase().equals("workout")){
+            return R.drawable.ic_workout
+        }else if( typename.toLowerCase().equals("mindful movement")){
+            return R.drawable.ic_move
+        }else if( typename.toLowerCase().equals("relax")){
+            return R.drawable.ic_relax
+        }else if( typename.toLowerCase().equals("sleep")){
+            return R.drawable.ic_speeed
+        }else if( typename.toLowerCase().equals("focus")){
+            return R.drawable.ic_focus
+        }else if( typename.toLowerCase().equals("energise")){
+            return R.drawable.ic_power
+        }else if( typename.toLowerCase().equals("happiness")){
+            return R.drawable.ic_sun
+        }else{
+            return R.drawable.ic_dance
+        }
     }
 
     fun rl_getImage1(typename:String): Int {
@@ -736,14 +662,14 @@ object RLTools {
                 }
                 2 -> {
                     if (datas.source.toLowerCase().equals("ios")) {
-                       return "https://video.revoola.com/v2/images/v3_app_applehealth.png"
+                        return "https://video.revoola.com/v2/images/v3_app_applehealth.png"
                     } else {
-                       return "https://video.revoola.com/v2/images/_app_healthconnect.png"
+                        return "https://video.revoola.com/v2/images/_app_healthconnect.png"
                     }
                 }
                 else ->{
                     if (datas.from_third_party_source > 10) {
-                       return "https://video.revoola.com/v2/start/challenges_start.jpg"
+                        return "https://video.revoola.com/v2/start/challenges_start.jpg"
                     }else {
                         val userImages = datas.user_images?.split(",") ?: emptyList()
                         if (userImages.isNotEmpty()&& !userImages[0].isNullOrEmpty()) {
@@ -752,18 +678,25 @@ object RLTools {
                         else if (!datas.imageLinkSmall.isNullOrEmpty()) {
                             return datas.imageLinkSmall
                         }
+                        else if (!datas.map_url.isNullOrEmpty() && (selectTag.toLowerCase() == "you" ||datas.userid == currentUserId || (selectTag.toLowerCase() == "friends" && datas.share_map == 1))) {
+                            var secureMapUrl = datas.map_url
+                            if (secureMapUrl.startsWith("http://")) {
+                                secureMapUrl = secureMapUrl.replaceFirst("http://", "https://")
+                            }
+                            return "$secureMapUrl&key=AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
+                        }
                         else if (!datas.map_image.isNullOrEmpty() && (selectTag.toLowerCase() == "you" ||datas.userid == currentUserId || (selectTag.toLowerCase() == "friends" && datas.share_map == 1))) {
                             return  datas.map_image
                         }
                         else {
-                          return  when (datas.classType?.toLowerCase()) {
+                            return  when (datas.classType?.toLowerCase()) {
                                 RLYourWayName.Workout.toString().toLowerCase() -> "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
                                 RLYourWayName.Pilates.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
                                 RLYourWayName.Ride.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_ride.png"
                                 RLYourWayName.Run.toString().toLowerCase() -> "https://video.revoola.com/v2/images/iphone8landscape_run.png"
                                 RLYourWayName.Walk.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
                                 RLYourWayName.Yoga.toString().toLowerCase() ->  "https://video.revoola.com/v2/images/iphone8landscape_yoga.png"
-                              else -> "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
+                                else -> "https://video.revoola.com/v2/images/iphone8landscape_walk.png"
                             }
                         }
                     }
@@ -775,7 +708,7 @@ object RLTools {
 
     }
 
-     fun rl_getLinkImage(classType:String):String{
+    fun rl_getLinkImage(classType:String):String{
         when (classType) {
             RLYourWayName.Workout.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_workout.png"
             RLYourWayName.Pilates.toString().toLowerCase() -> return  "https://video.revoola.com/v2/images/iphone8landscape_pilates.png"
@@ -847,7 +780,14 @@ object RLTools {
                 cloriesImage = "/assets/icon/svg/calories-peak.svg",
                 timeImage = "/assets/icon/svg/time/time-peak.svg"
             )
-            else -> EffortZoneFeedModel("", "", "", "", "", "")
+            else ->  EffortZoneFeedModel(
+                efforZoneText = "PEEK",
+                efforZoneBgrClr = "#FEEDEC",
+                efforZoneTxtClr = "#ED4541",
+                effortImage = "https://video.revoola.com/v2/icons/05metrics/zonehearts/peak.svg",
+                cloriesImage = "/assets/icon/svg/calories-peak.svg",
+                timeImage = "/assets/icon/svg/time/time-peak.svg"
+            )
         }
     }
 
@@ -944,23 +884,6 @@ object RLTools {
         }
     }
 
-    fun rl_heightsetdisplaywebview(imageView: WebView, context: FragmentActivity?) {
-        // Ensure the layout has been completed before getting the width
-        // Get the screen width
-        val displayMetrics = DisplayMetrics()
-        context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
-
-        // Calculate the desired height (75% of screen width)
-        val desiredHeight = (screenWidth * 0.76).toInt()
-
-        // Set the ImageView height
-        val layoutParams = imageView.layoutParams
-        layoutParams.height = desiredHeight
-        imageView.layoutParams = layoutParams
-
-    }
-
     fun rl_heightsetdisplayAll(relativeLayout: RelativeLayout, context: FragmentActivity?) {
         // Ensure the layout has been completed before getting the width
         // Get the screen width
@@ -983,11 +906,6 @@ object RLTools {
             override fun onGlobalLayout() {
                 // Remove the listener to avoid multiple calls
                 relativeLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                // Get the current width of the RelativeLayout
-                val width = relativeLayout.width
-                //val newHeight= (width *0.99).toInt()
-
                 val displayMetrics = DisplayMetrics()
                 context!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
                 val screenWidth = displayMetrics.widthPixels
@@ -996,28 +914,6 @@ object RLTools {
                 val cardHeight:Int= contentHeight / 2
 
                 val newHeight= cardHeight
-
-                // Set the new height
-                val layoutParams = relativeLayout.layoutParams
-                layoutParams.height = newHeight
-                relativeLayout.layoutParams = layoutParams
-            }
-        })
-
-
-    }
-
-    fun rl_heightsetViewPager(relativeLayout: ViewPager) {
-        relativeLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
-                relativeLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                // Get the current width of the RelativeLayout
-                val width = relativeLayout.width
-
-                // Calculate the new height (75% of the width)
-                val newHeight = (width * 0.75).toInt()
 
                 // Set the new height
                 val layoutParams = relativeLayout.layoutParams
@@ -1079,7 +975,7 @@ object RLTools {
         return time.trim() // Removes any trailing spaces
     }
 
-     fun rl_getFileFromUri(context: Context, uri: Uri): File {
+    fun rl_getFileFromUri(context: Context, uri: Uri): File {
         val inputStream = context.contentResolver.openInputStream(uri)
         val file = File.createTempFile("temp_img", ".jpg", context.cacheDir)
         FileOutputStream(file).use { output ->
@@ -1320,6 +1216,15 @@ object RLTools {
         }
     }
 
+    fun rl_convertDateToTimestamp(dateString: String): String {
+        //val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault())
+        //dateFormat.timeZone = TimeZone.getTimeZone("GMT") // Ensure consistent parsing
+
+        val date = dateFormat.parse(dateString) // Parse the date
+        return (date?.time?.div(1000)).toString() // Convert to seconds (Unix timestamp)
+    }
+
     fun rl_getMetric(thirdPartySource: Int, cardData: RLTextOverview): RlMetric {
         return when (thirdPartySource) {
             in listOf(20, 26, 32, 38) -> RlMetric(
@@ -1378,7 +1283,7 @@ object RLTools {
         val emailRegex = Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
         return emailRegex.matches(email)
     }
-    
+
     @SuppressLint("SimpleDateFormat")
     fun rl_getCalculatedMonths(): String? {
         val c: Calendar = GregorianCalendar()
@@ -1387,16 +1292,24 @@ object RLTools {
     }
 
     fun rl_formatCommasInt(number: Double): String {
-          val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-           val integerPart = number.roundToInt()
-           val formattedInteger = numberFormat.format(integerPart)
-          return formattedInteger
+        if (number<0){
+            return "0"
+        }else{
+            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+            val integerPart = number.roundToInt()
+            val formattedInteger = numberFormat.format(integerPart)
+            return formattedInteger
+        }
     }
     fun rl_formatCommasInt(number: Int): String {
-        val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-        val integerPart = number
-        val formattedInteger = numberFormat.format(integerPart)
-        return formattedInteger
+        if (number<0){
+            return "0"
+        }else{
+            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+            val integerPart = number
+            val formattedInteger = numberFormat.format(integerPart)
+            return formattedInteger
+        }
     }
 
     fun rl_formatCommas(number: Double): String {
