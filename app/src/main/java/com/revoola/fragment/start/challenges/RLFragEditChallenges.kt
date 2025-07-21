@@ -138,6 +138,7 @@ class RLFragEditChallenges : RLBaseFragment() {
             if (isAdded){
                 RLBaseProgress.rl_showProgressDialog(requireActivity())
             }
+
             val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
             val userData= rl_getUserDetails(requireContext())
             val challengePayload=RLChallengePayload()
@@ -163,25 +164,24 @@ class RLFragEditChallenges : RLBaseFragment() {
                     challengePayload.group = "true"
                 }
             }
+
             challengePayload.groupid_userid = cardData.selectGroupList
             challengePayload.metric =cardData.ChallengeType
             challengePayload.creationdate = currentTimestamp
-            challengePayload.startdate = RLTools.rl_convertDateToTimestamp(cardData.fromDate)
-            challengePayload.enddate = RLTools.rl_convertDateToTimestamp(cardData.toDate)
+            challengePayload.startdate = RLTools.rl_convertDateToTimestamp(cardData.fromDate,true)
+            challengePayload.enddate = RLTools.rl_convertDateToTimestamp(cardData.toDate,false)
             challengePayload.goalvalue = cardData.stepCount
             challengePayload.max = "false"
             challengePayload.challenger = "${userData?.firstName ?: ""} ${userData?.lastName ?: ""}"
             challengePayload.displayImage = userData?.displayImage?:""
-            challengePayload.typeOfSelect =cardData.challengeForType // chekc friend ,you group ,and
+            challengePayload.typeOfSelect =cardData.challengeForType // check friend ,you group ,and
             challengePayload.targetType = RLTools.rl_challengeTargetName(cardData.TargetType)
             challengePayload.challenge_name = cardData.ChallengeGivenName
             challengePayload.day_type = cardData.CalenderType
             challengePayload.isChallengeEdit= cardData.isEditClass
             val payLoad = createGoaledChallenges(cardData,challengePayload)
             if (payLoad!=null){
-                RLTools.rl_logDPrint(TAG,"startdate: ${cardData.fromDate}")
-                RLTools.rl_logDPrint(TAG,"todate: ${cardData.toDate}")
-                RLTools.rl_logDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
+               RLTools.rl_logDPrint(TAG,"Payload: ${Gson().toJson(payLoad)}")
                 val cardRequestData = Gson().fromJson(Gson().toJson(payLoad), Array<RLChallengesApiPayload>::class.java).toList()
                 RLInsertApiCall(cardRequestData)
             }
@@ -298,7 +298,7 @@ class RLFragEditChallenges : RLBaseFragment() {
 
     private fun RLInsertApiCall(request: List<RLChallengesApiPayload>) {
         if (apiClientRetrofit.rl_isConnected()) {
-            RLTools.rl_logDPrint(TAG,"Challenges Insert Request: $request")
+            RLTools.rl_logDPrint(TAG,"Challenges Insert Request: ${Gson().toJson(request)}")
             //Insert Api Call
             viewModel.rl_insertChallenges(request) { result ->
                 result.onSuccess { response ->

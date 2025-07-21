@@ -204,7 +204,6 @@ object RLTools {
     }
 
     fun rl_stringDateToDateFormate(dateString:String):Date? {
-
         // Define the input date format
         val inputFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT'XXX yyyy", Locale.ENGLISH)
@@ -1216,14 +1215,37 @@ object RLTools {
         }
     }
 
-    fun rl_convertDateToTimestamp(dateString: String): String {
-        //val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
-        val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.getDefault())
-        //dateFormat.timeZone = TimeZone.getTimeZone("GMT") // Ensure consistent parsing
+    fun rl_convertDateToTimestamp(dateString: String, isStartDate: Boolean): String {
+        return try {
+            val dateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
+            val date = dateFormat.parse(dateString)
 
-        val date = dateFormat.parse(dateString) // Parse the date
-        return (date?.time?.div(1000)).toString() // Convert to seconds (Unix timestamp)
+            val calendar = Calendar.getInstance()
+            calendar.time = date!!
+
+            if (isStartDate) {
+                // Set to start of day: 00:00:00.000
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+            } else {
+                // Set to end of day: 23:59:59.999
+                calendar.set(Calendar.HOUR_OF_DAY, 23)
+                calendar.set(Calendar.MINUTE, 59)
+                calendar.set(Calendar.SECOND, 59)
+                calendar.set(Calendar.MILLISECOND, 999)
+            }
+
+            // Return Unix timestamp in seconds
+            (calendar.timeInMillis / 1000).toString()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "0"
+        }
     }
+
 
     fun rl_getMetric(thirdPartySource: Int, cardData: RLTextOverview): RlMetric {
         return when (thirdPartySource) {
