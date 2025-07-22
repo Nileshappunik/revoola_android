@@ -16,19 +16,16 @@ import com.revoola.databinding.*
 import com.revoola.utils.RLPrefManager
 
 class RLFragPurchase : RLBaseFragment() {
-    val TAG: String = RLFragPurchase::class.java.simpleName
-    lateinit var fragBinding: RlFragPurchaseBinding
+    private val TAG: String = RLFragPurchase::class.java.simpleName
 
-    
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragPurchaseBinding.inflate(layoutInflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_purchase, container) as RlFragPurchaseBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragPurchase")
         rl_uisetup()
         return fragBinding.root
@@ -36,20 +33,17 @@ class RLFragPurchase : RLBaseFragment() {
 
     private fun rl_uisetup() {
         rl_onBackPresAct(fragBinding.ivBack)
-
         if (RLPrefManager.rl_getGuestUser(requireContext())){
             fragBinding.layTryPremiumForFree.relayUser.visibility=View.VISIBLE
         }else{
             fragBinding.layTryPremiumForFree.relayUser.visibility=View.GONE
         }
-
         fragBinding.layCurrentSubscription.txtusertitle.setText(R.string.current_subscription)
         fragBinding.layCurrentSubscription.txtUsername.visibility=View.GONE
         fragBinding.layCurrentSubscription.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layCurrentSubscription.relayUser.setOnClickListener {
             (context as RLMainActivityRL).rl_loadFrag(RLFragCurrentSubScription(), TAG, true, null, false)
         }
-
         fragBinding.layTryPremiumForFree.txtusertitle.setText(R.string.trypremiumforfree)
         fragBinding.layTryPremiumForFree.txtUsername.visibility=View.GONE
         fragBinding.layTryPremiumForFree.imgEdit.setImageResource(R.drawable.ic_chevron_right)
@@ -62,14 +56,12 @@ class RLFragPurchase : RLBaseFragment() {
         fragBinding.layRestoreYourPurchase.relayUser.setOnClickListener {
             rl_showDialogAlert(getString(R.string.youhavesuccessfullyrestored))
         }
-
         fragBinding.layViewTransaction.txtusertitle.setText(R.string.viewtransation)
         fragBinding.layViewTransaction.txtUsername.visibility=View.GONE
         fragBinding.layViewTransaction.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layViewTransaction.relayUser.setOnClickListener {
-         //click ViewTransaction
+        //click ViewTransaction
         }
-
     }
 
     private fun rl_showDialogAlert(message: String) {
@@ -84,11 +76,9 @@ class RLFragPurchase : RLBaseFragment() {
         val tvSubTitle: TextView = sucDialog.findViewById(R.id.tvSubTitle)
         val tvOk: TextView = sucDialog.findViewById(R.id.tvOk)
         tvSubTitle.setText(message)
-
         tvOk.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
         })
-
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
     }

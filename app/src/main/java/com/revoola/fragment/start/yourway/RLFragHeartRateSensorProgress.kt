@@ -49,7 +49,6 @@ import com.revoola.databasefirebase.RevoolaKeys
 
 class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedListener{
     val TAG: String = RLFragHeartRateSensorProgress::class.java.simpleName
-    lateinit var fragBinding: RlFragHeartrateSensorProgressBinding
     private val timerManager = RLTimerManager()
 
     private lateinit var rlLocationViewModel: RLLocationViewModel
@@ -162,14 +161,13 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
         return fragment
     }
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragHeartrateSensorProgressBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_heartrate_sensor_progress, container) as RlFragHeartrateSensorProgressBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSensorProgress" )
         yourWayType = requireArguments().getString(RLExtraValueKey.yourWayType).toString().trim()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -991,8 +989,5 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
             zoneDataMapDetails[name] = defaultZoneDetailData
         }
     }
-
-
-
 
 }

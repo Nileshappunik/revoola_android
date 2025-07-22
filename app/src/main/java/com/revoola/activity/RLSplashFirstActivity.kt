@@ -14,9 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.activity.base.RLBaseActivity
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlActivitySplashFirstBinding
 import com.revoola.healthconnect.domain.AppConstants
 import com.revoola.healthconnect.domain.AppConstants.currentDate
@@ -49,6 +51,7 @@ class RLSplashFirstActivity : RLBaseActivity() {
             // The device is running in Mobile mode
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
+
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, RLSplashActivityRL::class.java)
             startActivity(intent)

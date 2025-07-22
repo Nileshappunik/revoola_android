@@ -71,18 +71,16 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.Serializable
 import java.text.SimpleDateFormat
-//import java.util.Base64
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
 class RLFragSessionComplete : RLBaseFragment(){
-    val TAG: String = RLFragSessionComplete::class.java.simpleName
-    private lateinit var fragBinding: RlFragSessionCompleteBinding
+    private val TAG: String = RLFragSessionComplete::class.java.simpleName
     private lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var imgUriList = mutableListOf<Uri>()
-    var currentUser =""
+    private var imgUriList = mutableListOf<Uri>()
+    private var currentUser =""
     private var displayImage =""
     private var displayName =""
     private var visibilityflagforthatsession:Int =0
@@ -101,7 +99,8 @@ class RLFragSessionComplete : RLBaseFragment(){
         fragment.arguments = bundle
         return fragment
     }
-    private val binding by lazy {
+
+    private val fragBinding by lazy {
         RlFragSessionCompleteBinding.inflate(layoutInflater)
     }
 
@@ -113,15 +112,11 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_session_complete, container) as RlFragSessionCompleteBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSessionComplete" )
-        currentUser=  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
-        if (currentUser.isEmpty()){
-            currentUser=RLAuthManager().rl_getCurrentUser()?.uid?:""
-        }
+        currentUser=RLAuthManager().rl_getCurrentUser()?.uid?:""
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -212,6 +207,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
             RLMakeSensorData(cardData,currentTimestamp)
         }
+
         val yourWayType = cardData.yourWayType.toLowerCase()
         if (yourWayType.equals("walk")||yourWayType.equals("run")||yourWayType.equals("ride")){
             //Generate DemsElevation , generatedDistance , generatedElevation
@@ -221,7 +217,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
 
     }
-
     //Firebase To Fetch Server Data
     private fun RLfetchServerUrl() {
         // Firebase to fetch user data
@@ -231,8 +226,8 @@ class RLFragSessionComplete : RLBaseFragment(){
                 val jason = Gson().toJson(data)
                 val type = object : TypeToken<Map<String, String>>() {}.type
                 val responseMap: Map<String, String> = Gson().fromJson(jason, type)
-                 server1Url = responseMap["server1"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
-                 server2Url = responseMap["server2"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
+                server1Url = responseMap["server1"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
+                server2Url = responseMap["server2"] ?: "http://demsworld.revoola.com:10000/api/v1/lookup"
             }
         }
     }
@@ -924,8 +919,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     }
 
     private fun RLFirebaseEntry(dataForTestingDataMap : HashMap<String, Any>,
-        ghostDataMap: HashMap<String, Any>,summaryDataMap : HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
-        graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModelNew,currentTimestamp: String) {
+                                ghostDataMap: HashMap<String, Any>,summaryDataMap : HashMap<String, Serializable?>,detailsDataMap: HashMap<String, Any?>,
+                                graphDataMap: HashMap<String, Any>,cardData: RLSessionDataTransferModelNew,currentTimestamp: String) {
 
         // Writing DataForTesting Data to Firebase
         RLDatabaseManagerWrite().rl_write_Data_For_Testing_Data(RevoolaFirebasePath.dataForTestingDataPath(currentUser),dataForTestingDataMap) { success, error ->
@@ -1026,7 +1021,7 @@ class RLFragSessionComplete : RLBaseFragment(){
 
     private fun printToast(TAG:String,Message:String){
         if (isAdded){
-           // Toast.makeText(requireContext(),Message,Toast.LENGTH_SHORT).show()
+            // Toast.makeText(requireContext(),Message,Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -1354,7 +1349,8 @@ class RLFragSessionComplete : RLBaseFragment(){
             spike_timestamp = "",
             share_map =shareMap,
             from_third_party_source =0,
-            map_url = cardData.mapGeneratedUrl,
+            map_url = "",
+            //map_url = cardData.mapGeneratedUrl,
             dom =0,
             rhr =safeIntNumber(cardData.RestingHR.toInt()),
             mhr =cardData.maxHeartRate,
@@ -1370,7 +1366,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
     }
 
-  //Below All Code ImagePicker
+    //Below All Code ImagePicker
     private fun RLHandleSelectedImageList(imgUriList:MutableList<Uri>){
         if (imgUriList.size > 0) {
             RLimageListVisible(true)

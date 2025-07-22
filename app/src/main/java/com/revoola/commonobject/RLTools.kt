@@ -316,7 +316,7 @@ object RLTools {
                 return "#ED4541"
             }
             else -> {
-                return "#000000"
+                return "#ED4541"
             }
         }
     }

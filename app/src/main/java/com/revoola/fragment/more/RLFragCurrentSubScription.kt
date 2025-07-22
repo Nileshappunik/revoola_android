@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.revenuecat.purchases.CustomerInfo
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.utils.RLPrefManager
@@ -15,16 +17,17 @@ import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.Offerings
 import com.revenuecat.purchases.PurchaseParams
 import com.revenuecat.purchases.getOfferingsWith
+import com.revenuecat.purchases.logInWith
 import com.revenuecat.purchases.models.StoreProduct
 import com.revenuecat.purchases.models.SubscriptionOption
 import com.revenuecat.purchases.purchaseWith
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlFragCurrentSubscriptionBinding
 import com.revoola.fragment.more.adapter.PaywallItem
 import com.revoola.fragment.more.adapter.RLPaywallAdapter
 
 class RLFragCurrentSubScription : RLBaseFragment() {
-    val TAG: String = RLFragCurrentSubScription::class.java.simpleName
-    //lateinit var fragBinding: RlFragCurrentSubscriptionBinding
+    private val TAG: String = RLFragCurrentSubScription::class.java.simpleName
 
     private val fragBinding by lazy {
         RlFragCurrentSubscriptionBinding.inflate(layoutInflater)
@@ -34,9 +37,7 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_current_subscription, container) as RlFragCurrentSubscriptionBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCurrentSubScription" )
-
         rl_uisetup()
         return fragBinding.root
     }
@@ -92,6 +93,16 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         })
 
         fragBinding.paywallList.adapter = adapter
+
+        Purchases.sharedInstance.logInWith(
+            appUserID = RLAuthManager().rl_getCurrentUser()?.uid ?: ""
+        ) { customerInfo: CustomerInfo, created: Boolean ->
+            RLTools.rl_logEPrint(TAG, "✅ Login successful!")
+            RLTools.rl_logEPrint(TAG, "Customer Info: $customerInfo")
+            RLTools.rl_logEPrint(TAG, "New customer created: $created")
+            RLTools.rl_logEPrint(TAG, "Active subscriptions: ${customerInfo.activeSubscriptions}")
+        }
+
         //Load offerings when the paywall is displayed
         fetchOfferings(adapter)
     }
@@ -100,7 +111,8 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         Purchases.sharedInstance.getOfferingsWith { offerings: Offerings ->
             val gson = Gson()
             val offeringsJson = gson.toJson(offerings.current)
-            RLTools.rl_logEPrint(TAG,offeringsJson)
+            val list = parseOffering(offeringsJson)
+            RLTools.rl_logLarge(TAG,"Offering:  ${gson.toJson(list)}")
             adapter.offering = offerings.current
             adapter.notifyDataSetChanged()
         }
@@ -135,5 +147,114 @@ class RLFragCurrentSubScription : RLBaseFragment() {
             },
         )
     }
+   private fun parseOffering(jsonResponse: String): List<SubscriptionOffer> {
+        return try {
+            val gson = Gson()
+            val jsonObject = gson.fromJson(jsonResponse, JsonObject::class.java)
 
+            val availablePackages = jsonObject.getAsJsonArray("availablePackages")
+            val offers = mutableListOf<SubscriptionOffer>()
+
+            availablePackages?.forEach { packageElement ->
+                val packageObj = packageElement.asJsonObject
+                val product = packageObj.getAsJsonObject("product")
+                val subscriptionOptions = product.getAsJsonArray("subscriptionOptions")
+
+                subscriptionOptions?.forEach { optionElement ->
+                    val option = optionElement.asJsonObject
+                    val offerId = option.get("offerId")?.asString ?: "regular"
+                    val pricingPhases = option.getAsJsonArray("pricingPhases")
+
+                    val phases = mutableListOf<PricingPhase>()
+                    pricingPhases?.forEach { phaseElement ->
+                        val phase = phaseElement.asJsonObject
+                        phases.add(
+                            PricingPhase(
+                                formattedPrice = phase.getAsJsonObject("price").get("formatted").asString,
+                                billingPeriod = phase.getAsJsonObject("billingPeriod").get("iso8601").asString,
+                                billingCycleCount = phase.get("billingCycleCount").asInt,
+                                recurrenceMode = phase.get("recurrenceMode").asString
+                            )
+                        )
+                    }
+
+                    val tags = option.getAsJsonArray("tags")?.map { it.asString } ?: emptyList()
+
+                    offers.add(
+                        SubscriptionOffer(
+                            offerId = offerId,
+                            title = "Revoola Subscription",
+                            description = "Enterprise subscription",
+                            phases = phases,
+                            tags = tags
+                        )
+                    )
+                }
+            }
+
+            // Sort offers by savings (best deals first)
+            offers.sortedByDescending { offer ->
+                when {
+                    offer.offerId.contains("90-per-6-months") -> 90
+                    offer.offerId.contains("85-per-6-months") -> 85
+                    offer.offerId.contains("50-per-12-months") -> 50
+                    offer.offerId.contains("50-per-6-months") -> 50
+                    offer.offerId.contains("25-per-12-months") -> 25
+                    else -> 0
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+}
+
+//Data Classes for parsing the subscription response
+data class SubscriptionOffer(
+    val offerId: String,
+    val title: String,
+    val description: String,
+    val phases: List<PricingPhase>,
+    val tags: List<String> = emptyList()
+) {
+    val isPromotional: Boolean get() = phases.size > 1
+    val finalPrice: String get() = phases.lastOrNull()?.formattedPrice ?: ""
+    val introductoryPrice: String? get() = if (isPromotional) phases.firstOrNull()?.formattedPrice else null
+    val introductoryDuration: String? get() = if (isPromotional) phases.firstOrNull()?.durationText else null
+
+    val displayTitle: String get() = when {
+        offerId.contains("90-per-6-months") -> "90% OFF - 6 Months"
+        offerId.contains("85-per-6-months") -> "85% OFF - 6 Months"
+        offerId.contains("50-per-12-months") -> "50% OFF - 12 Months"
+        offerId.contains("50-per-6-months") -> "50% OFF - 6 Months"
+        offerId.contains("25-per-12-months") -> "25% OFF - 12 Months"
+        else -> "Regular Plan"
+    }
+
+    val savings: String? get() = when {
+        offerId.contains("90-per-6-months") -> "Save 90%"
+        offerId.contains("85-per-6-months") -> "Save 85%"
+        offerId.contains("50-per-12-months") -> "Save 50%"
+        offerId.contains("50-per-6-months") -> "Save 50%"
+        offerId.contains("25-per-12-months") -> "Save 25%"
+        else -> null
+    }
+}
+
+data class PricingPhase(
+    val formattedPrice: String,
+    val billingPeriod: String,
+    val billingCycleCount: Int,
+    val recurrenceMode: String
+) {
+    val durationText: String get() = when {
+        billingCycleCount == 0 -> "Ongoing"
+        billingCycleCount == 1 -> "1 month"
+        else -> "$billingCycleCount months"
+    }
+
+    val isIntroductory: Boolean get() = recurrenceMode == "FINITE_RECURRING"
 }
