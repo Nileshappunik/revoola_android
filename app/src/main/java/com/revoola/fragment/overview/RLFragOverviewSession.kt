@@ -17,6 +17,7 @@ import androidx.annotation.OptIn
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,10 +67,15 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private var isFilterResponse:Boolean = false
     private var fromDateTimestemp:Long = 0
     private var toDateTimestemp:Long = 0
+    private var timerRange: String = "this_month"
+    private var qType = "overviewGraphChartHTMAll"
+
+
 
     private var fromDate = ""
     private var toDate = ""
     private var selectionPeriod = "This Month"
+
     private var selectionSource = "All Available"
     private var selectionType  = listOf("All")
     var  selectedPositionsSource :MutableList<Int> = mutableListOf(0)
@@ -475,10 +481,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampTo = endDay.toEpochSecond()
 
         if (isFilterResponse){
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
             fragBinding.webView.loadUrl(imageUrl)
         }else{
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=overviewGraphChartHTMAll&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=this_month&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
             fragBinding.webView.loadUrl(imageUrl)
         }
         // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
@@ -687,6 +693,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             requireContext(),toDate,fromDate,
             listPeriod,selectedPositionsPeriod,
             { selectionData, selectionType ->
+                rl_titlesetGraph(selectionData)
+
                 // Handle selectionData
                 when(selectionData.toLowerCase()){
                     "from"-> {
@@ -836,4 +844,32 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
 
+    private fun RLFragOverviewSession.rl_titlesetGraph(selectionData: String) {
+        when(selectionData){
+            "Last 3 Months"-> {
+                timerRange = "3_months"
+                qType = "overviewGraphChartHTMAll"
+            }
+            "Last 6 Months"-> {
+                timerRange = "6_months"
+                qType = "overviewGraphChartHTMAll"
+            }
+            "This Year"-> {
+                timerRange = "this_year"
+                qType = "overviewGraphChartHTMAll"
+            }
+            "This Month"-> {
+                timerRange = "this_month"
+                qType = "overviewGraphChartHTMAll"
+            }
+            else -> {
+                timerRange = "custom"
+                qType = "overviewGraphChartHTMCT"
+            }
+
+        }
+    }
+
+
 }
+
