@@ -69,8 +69,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private var toDateTimestemp:Long = 0
     private var timerRange: String = "this_month"
     private var qType = "overviewGraphChartHTMAll"
-
-
+    private var fromThirdParty = "y"
+    private var imperial = "y"
 
     private var fromDate = ""
     private var toDate = ""
@@ -165,6 +165,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 val userId = authManager.rl_getCurrentUser()?.uid?:""
                 currentUser = userId
                 appUnit = userData.appUnit
+                if (userData.appUnit.toString().toLowerCase().equals("imperial")){
+                    imperial = "y"
+                }else{
+                    imperial = "n"
+                }
                 fragBinding.txtUsername.setText("Hi ${ userData.firstName},")
                 rl_apicallAggregatedData(userData.joiningDate?:0)
                 if (isAdded){
@@ -222,7 +227,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     classtype = "mindAndBody",
                     timestampfrom = timestampFrom.toInt(),
                     timestampto = timestampTo.toInt(),
-                    fromthirdparty="n")))
+                    fromthirdparty=fromThirdParty)))
 
         if (isFilterApi){
             request =   requestFilter
@@ -481,10 +486,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val timestampTo = endDay.toEpochSecond()
 
         if (isFilterResponse){
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=$fromThirdParty&imperial=$imperial"
             fragBinding.webView.loadUrl(imageUrl)
         }else{
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=n&imperial=y"
+            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=$fromThirdParty&imperial=$imperial"
             fragBinding.webView.loadUrl(imageUrl)
         }
         // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
@@ -739,6 +744,11 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             { selectionData, selectionType ->
                 // Handle selectionData
                 selectionSource = selectionData
+                when(selectionData){
+                    "All Available" -> fromThirdParty="y"
+                    "Revoola Only" -> fromThirdParty="n"
+                    else -> fromThirdParty="y"
+                }
             },
             { selectedPositions ->
                 // Handle selected positions here
@@ -832,7 +842,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     classtype = classType,
                     timestampfrom = fromDateTimestemp.toInt(),
                     timestampto = toDateTimestemp.toInt(),
-                    fromthirdparty="n")
+                    fromthirdparty=fromThirdParty)
             )
         )
 
