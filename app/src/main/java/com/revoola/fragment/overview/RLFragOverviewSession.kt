@@ -100,8 +100,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private val fragBinding by lazy {
         RlFragOverviewSessionsBinding.inflate(layoutInflater)
     }
-
-
+//TODO Temp
+    private lateinit var filterManager: OverViewFilterManager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          rl_screenSet(false)
         rl_bottomHideShowSet(true)
@@ -230,9 +230,18 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         } else {
             rl_showDialogFullscreen()
         }
-        fragBinding.inlayFilter.ivFilter.setOnClickListener {
-            rl_filterdialogopen()
+        //TODO TEMP
+        filterManager = OverViewFilterManager(requireContext()) { fromDate, toDate, selectionPeriod, selectionSource, selectionType ->
+            // Handle the selected filters here
+            RLTools.rl_logEPrint (TAG,"From: $fromDate, To: $toDate, Period: $selectionPeriod, Source: $selectionSource, Type: $selectionType")
+            /// updateFilters(fromDate, toDate, selectionPeriod, selectionSource, selectionType)
         }
+        fragBinding.inlayFilter.ivFilter.setOnClickListener {
+         //   rl_filterdialogopen()
+            //TODO TEMP
+            filterManager.showFilterDialog()
+        }
+
 
         // Set the touch listener to the root view (or any full-screen view)
         fragBinding.webView.setOnTouchListener { v, event ->
