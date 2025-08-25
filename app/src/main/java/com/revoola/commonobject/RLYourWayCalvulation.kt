@@ -132,7 +132,7 @@ object RLYourWayCalvulation {
         }
     }
 
-    public fun rl_getValueDouble(value:String):Double{
+     fun rl_getValueDouble(value:String):Double{
         if (value.isNullOrEmpty()){
             return 0.0
         } else if(value.toDouble() < 0) {
@@ -142,14 +142,14 @@ object RLYourWayCalvulation {
         }
     }
 
-    public fun rl_formatElapsedTime(elapsedTime: Long): String {
+     fun rl_formatElapsedTime(elapsedTime: Long): String {
         val seconds = (elapsedTime / 1000) % 60
         val minutes = (elapsedTime / (1000 * 60)) % 60
         val hours = (elapsedTime / (1000 * 60 * 60)) % 24
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    public fun calculatePace(speed: Float): Int {
+     fun calculatePace(speed: Float): Int {
         // Cadence is typically measured in revolutions per minute (RPM)
         // We can estimate cadence based on speed, assuming a typical stride length
         // of 2.5 meters per revolution
@@ -158,7 +158,7 @@ object RLYourWayCalvulation {
         return cadence.toInt()
     }
 
-    public fun getClimbData(elevation: Number,appUnit:String): String {
+     fun getClimbData(elevation: Number,appUnit:String): String {
         if (!isValidValue(elevation)) return "0"
         val convertedElevation = if (getIsImperial(appUnit)) elevation.toDouble() * 3.281 else elevation.toDouble()
         val climbData=convertedElevation?:0
@@ -178,8 +178,6 @@ object RLYourWayCalvulation {
             return false;
         }
     }
-
-
      fun rl_getValueForTitle(title: String, cardOvData: RlOverviewGraphData, appUnit:String): String {
         val isImperial = RLTools.rl_getIsImperial(appUnit)
 
@@ -206,8 +204,8 @@ object RLYourWayCalvulation {
             RLValueOvName.Relaxation -> RLTools.rl_minutesget(convertToInt(cardOvData.total_rmm))
             RLValueOvName.MaxRelaxation -> convertToInt(cardOvData.max_rmm_per_session).toString()
             RLValueOvName.AvgRelaxation -> convertToInt(cardOvData.avg_rmm_per_session).toString()
-            RLValueOvName.TotalCalories -> convertToInt(cardOvData.total_calories).toString()
-            RLValueOvName.ActiveCalories -> convertToInt(cardOvData.active_calories).toString()
+            RLValueOvName.TotalCalories -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.total_calories)).toString()
+            RLValueOvName.ActiveCalories -> RLTools.rl_formatCommasInt(convertToInt(cardOvData.active_calories)).toString()
 
             RLValueOvName.AvgClimbed -> convertToInt(cardOvData.avg_elevation_per_session).toString()
             RLValueOvName.MaxClimbed -> convertToInt(cardOvData.max_elevation_per_session).toString()
@@ -350,6 +348,9 @@ object RLYourWayCalvulation {
             return 0L
         }
     }
+
+
+
 
 
 

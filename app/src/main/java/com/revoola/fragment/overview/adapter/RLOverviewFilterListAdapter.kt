@@ -21,8 +21,6 @@ class RLOverviewFilterListAdapter(
     private val onPositionsSelected: (MutableList<Int>) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val TAG = "RLFilterListAdapter"
-
     // Track selected positions (can be multiple for date items)
     private val selectedPositions = dataPosition //mutableSetOf<Int>(0)
 
@@ -33,13 +31,8 @@ class RLOverviewFilterListAdapter(
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlCommonFilterOverviewBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
-            R.layout.rl_common_filter_overview,
-            parent,
-            false
-        )
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlCommonFilterOverviewBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_common_filter_overview, parent, false)
+        return MyViewHolder(layoutBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

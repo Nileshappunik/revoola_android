@@ -2,8 +2,12 @@ package com.revoola.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RLPrefManager {
     private static final String PREF_NAME = "base_pref";
@@ -32,6 +36,11 @@ public class RLPrefManager {
 
     public static String challenge_selectTarget = "challengeSelectTarget";
     public static String challenge_selectName = "challengeSelectName";
+
+    public static String selectionPeriod = "selectionPeriod";
+    public static String selectionClassType = "selectionClassType";
+    public static String selectionFromDate = "selectionFromDate";
+    public static String selectionToDate = "selectionToDate";
 
 
 
@@ -77,6 +86,66 @@ public class RLPrefManager {
         final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
         editor.clear();
         editor.apply();
+    }
+
+    // Method to store a MutableList<Integer> as a comma-separated string
+    public static void rl_setSomeIntListValue(Context context, String key, List<Integer> newList) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
+
+        // Convert the list to a comma-separated string
+        String listAsString = TextUtils.join(",", newList);
+
+        // Save the string
+        editor.putString(key, listAsString);
+        editor.apply();
+    }
+
+    // Method to retrieve a MutableList<Integer> from SharedPreferences
+    public static List<Integer> rl_getSomeIntListValue(Context context, String key) {
+        // Get the string from SharedPreferences
+        String listAsString = rl_getSharedPreferences(context).getString(key, "");
+
+        // If the list is not empty, convert it to a List of Integers
+        if (listAsString != null && !listAsString.isEmpty()) {
+            String[] parts = listAsString.split(",");
+            List<Integer> list = new ArrayList<>();
+            for (String part : parts) {
+                list.add(Integer.parseInt(part));  // Convert each part to an Integer and add it to the list
+            }
+            return list;
+        } else {
+            return new ArrayList<>();  // Return an empty list if no data is found
+        }
+    }
+
+    // Method to store a MutableList<Integer> as a comma-separated string
+    public static void rl_setSomeStringListValue(Context context, String key, List<String> newList) {
+        final SharedPreferences.Editor editor = rl_getSharedPreferences(context).edit();
+
+        // Convert the list to a comma-separated string
+        String listAsString = TextUtils.join(",", newList);
+
+        // Save the string
+        editor.putString(key, listAsString);
+        editor.apply();
+    }
+
+    // Method to retrieve a MutableList<Integer> from SharedPreferences
+    public static List<String> rl_getSomeStringListValue(Context context, String key, List<String> defaultValue) {
+        // Get the string from SharedPreferences
+        String listAsString = rl_getSharedPreferences(context).getString(key, "");
+
+        // If the list is not empty, convert it to a List of Strings
+        if (listAsString != null && !listAsString.isEmpty()) {
+            String[] parts = listAsString.split(",");
+            List<String> list = new ArrayList<>();
+            for (String part : parts) {
+                list.add(part);  // Add each part to the list
+            }
+            return list;
+        } else {
+            return defaultValue;  // Return the provided default value if no data is found
+        }
     }
 
 }

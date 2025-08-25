@@ -18,8 +18,7 @@ import com.revoola.utils.loadSvg
 
 class RLYourWayListAdapter(val context: FragmentActivity?,
                            val  dataList: List<RLStartAllMenuModel>,
-                           val heightTotal: Int) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                           val heightTotal: Int) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLYourWayListAdapter"
     var bundle: Bundle = Bundle()
 

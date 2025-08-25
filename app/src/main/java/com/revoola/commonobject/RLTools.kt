@@ -1327,16 +1327,20 @@ object RLTools {
         if (number<0){
             return "0"
         }else{
-            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
-            val integerPart = number
-            val formattedInteger = numberFormat.format(integerPart)
-            return formattedInteger
+            val formatter = DecimalFormat("##,##,##,##0") // Keeps up to 2 decimals without rounding
+            return formatter.format(number)
+
+//            val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+//            val integerPart = number
+//            val formattedInteger = numberFormat.format(integerPart)
+//            return formattedInteger
         }
     }
 
     fun rl_formatCommas(number: Double): String {
         if (number>0){
-            val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
+           // val formatter = DecimalFormat("#,##0.##") // Keeps up to 2 decimals without rounding
+            val formatter = DecimalFormat("##,##,##,##0.##") // Keeps up to 2 decimals without rounding
             return formatter.format(number)
         }else{
             return "0"

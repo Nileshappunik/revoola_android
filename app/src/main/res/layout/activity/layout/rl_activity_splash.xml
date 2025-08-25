@@ -17,6 +17,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginTop="30dp"
+        app:tint="@color/AppWhiteColor"
         android:src="@drawable/revoola_logo_black" />
 
     <androidx.cardview.widget.CardView

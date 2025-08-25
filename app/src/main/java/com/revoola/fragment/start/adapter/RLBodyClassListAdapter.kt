@@ -68,8 +68,8 @@ class RLBodyClassListAdapter(
 
                 //Image Height Width set
                 val layoutParamsImage: ViewGroup.LayoutParams = layoutBinding.imgMind.layoutParams
-                layoutParamsImage.height =  totalScreenHeight/6
-                layoutParamsImage.width =  totalScreenHeight/4
+                layoutParamsImage.height =  totalScreenHeight/7
+                layoutParamsImage.width =  totalScreenHeight/5
                 layoutBinding.imgMind.layoutParams =layoutParamsImage
 
             }catch (e:Exception){

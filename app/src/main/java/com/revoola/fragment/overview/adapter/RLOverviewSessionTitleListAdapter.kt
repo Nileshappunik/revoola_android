@@ -13,7 +13,10 @@ import com.revoola.databinding.RlLayoutOveriviewSessionTitleListBinding
 import com.revoola.interfaceall.RLItemClickListener
 
 
-class RLOverviewSessionTitleListAdapter(texttypeset: String, private val itemClickListener: RLItemClickListener, valueslist: Array<String>, val context: FragmentActivity?) :
+class RLOverviewSessionTitleListAdapter(texttypeset: String,
+                                        private val itemClickListener: RLItemClickListener,
+                                        valueslist: Array<String>,
+                                        val context: FragmentActivity?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLOverviewSessionTitleListAdapter"
     var bundle: Bundle = Bundle()
@@ -71,12 +74,6 @@ class RLOverviewSessionTitleListAdapter(texttypeset: String, private val itemCli
                 notifyDataSetChanged()
             }
 
-            /*layoutBinding.txtTitleSession.setOnClickListener {
-                texttypeset=itemres
-                RLItemClickListener.onItemClick(position)
-               notifyDataSetChanged()
-
-            }*/
         }
 
     }
