@@ -53,9 +53,10 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textStyle="bold"
+                        android:textAllCaps="true"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="15dp"
-                        android:textColor="@color/AppBlackColor"
+                        android:textColor="@color/AppMainColor"
                         android:text="@string/period"/>
 
                     <TextView
@@ -63,20 +64,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         android:layout_marginEnd="10dp"
                         android:layout_marginTop="15dp"
                         android:textAllCaps="true"
-                        android:textColor="@color/AppMainColor"
+                        android:textColor="@color/AppBlackColor"
                         android:layout_alignParentEnd="true"
                         android:text="@string/thismonth"/>
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <include
                         android:id="@+id/recyclePeriod"
                         android:visibility="gone"
                         android:layout_below="@+id/TxtPeriod"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        layout="@layout/overview_item_filter_period_button"/>
+
+<!--                    <androidx.recyclerview.widget.RecyclerView-->
+<!--                        android:id="@+id/recyclePeriod"-->
+<!--                        android:visibility="gone"-->
+<!--                        android:layout_below="@+id/TxtPeriod"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"/>-->
+
+
                 </RelativeLayout>
                 <RelativeLayout
                     android:id="@+id/layoutActivity"
@@ -94,22 +104,23 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textStyle="bold"
+                        android:textAllCaps="true"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="15dp"
-                        android:textColor="@color/AppBlackColor"
-                        android:text="@string/activity"/>
+                        android:textColor="@color/AppMainColor"
+                        android:text="SOURCE"/>
 
                     <TextView
                         android:id="@+id/txtAll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         android:layout_marginEnd="10dp"
                         android:layout_marginTop="15dp"
-                        android:textColor="@color/AppMainColor"
+                        android:textAllCaps="true"
+                        android:textColor="@color/AppBlackColor"
                         android:layout_alignParentEnd="true"
-                        android:text="@string/all"/>
+                        android:text="ALL AVAILABLE"/>
 
                     <LinearLayout
                         android:id="@+id/activityLayout"
@@ -123,6 +134,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textStyle="bold"
+                            android:visibility="gone"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/AppBlackColor"
@@ -131,7 +143,8 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycleSource"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -140,13 +153,44 @@
                             android:textStyle="bold"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="5dp"
+                            android:textAllCaps="true"
                             android:textColor="@color/AppBlackColor"
-                            android:text="Type Select Any"/>
+                            android:text="Type"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recycleType"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/sourceSwitchLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="end"
+                            android:visibility="gone"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Set as Default"
+                                android:textAllCaps="true"
+                                android:textColor="@color/AppBlackColor"
+                                android:textSize="16sp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginEnd="8dp" />
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/set_default_switch_source"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:thumbTint="@color/AppWhiteColor"
+                                android:checked="false"
+                                app:track="@drawable/custom_track"/>
+
+                        </LinearLayout>
 
                     </LinearLayout>
                 </RelativeLayout>

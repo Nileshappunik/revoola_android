@@ -6,58 +6,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <RelativeLayout
-            android:id="@+id/layout_Box"
+
+        <Button
+            android:id="@+id/boxButton"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center"
-            android:layout_margin="20dp"
-            android:background="@drawable/rl_filter_border_overview">
-
-            <TextView
-                android:id="@+id/BoxTextFirst"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:padding="3dp"
-                android:textAlignment="center"
-                android:textColor="@color/AppBlackColor" />
-
-            <TextView
-                android:id="@+id/BoxTextSecond"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:text="DD/MM/YY"
-                android:layout_below="@+id/BoxTextFirst"
-                android:textColor="@color/AppBlackColor"/>
+            android:layout_height="wrap_content"
+            android:textColor="@color/AppMainColor"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/rl_filter_border_overview"
+            android:text="CUSTOM DATE RANGE" />
 
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/layout_Box_Type"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_margin="20dp"
-            android:background="@drawable/rl_filter_border_overview">
-
-            <TextView
-                android:id="@+id/BoxText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:padding="3dp"
-                android:textAlignment="center"
-                android:textColor="@color/AppBlackColor" />
-
-        </RelativeLayout>
     </RelativeLayout>
 
 

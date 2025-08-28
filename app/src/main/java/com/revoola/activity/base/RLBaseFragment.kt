@@ -138,7 +138,7 @@ open class RLBaseFragment : Fragment() {
     }
 
     open fun rl_helpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
-        val helpString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, startHelpContent,"" )
+        val helpString= RLPrefManager.rl_getSomeStringValue(activity, startHelpContent,"" )
 
         if (helpString.isNotEmpty()){
             try {

@@ -1,4 +1,6 @@
 package com.revoola.utils
+
+
  class RLConstants {
     companion object {
         const val LOGOUT_D = "4"

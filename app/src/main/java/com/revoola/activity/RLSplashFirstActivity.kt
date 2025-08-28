@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
+import com.revoola.BuildConfig
 import com.revoola.R
 import com.revoola.activity.base.RLBaseActivity
 import com.revoola.commonobject.RLTools

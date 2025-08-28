@@ -1,6 +1,5 @@
 package com.revoola.fragment.overview
 
-import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
@@ -9,15 +8,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.view.Window
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.OptIn
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.util.UnstableApi
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -29,29 +27,26 @@ import com.revoola.fragment.overview.adapter.RLOverviewSessionListAdapter
 import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databasefirebase.RLAuthManager
-import com.revoola.databinding.RlFilterOverviewBinding
 import com.revoola.databinding.RlFragOverviewSessionsBinding
 import com.revoola.interfaceall.RLItemClickListener
 import com.revoola.model.RLOverviewGraphDataRequest
 import com.revoola.model.RLOverview_graphData
 import com.revoola.model.RLSessionitemset
 import com.revoola.model.RlOverviewGraphData
-import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 import com.google.gson.Gson
+import com.revoola.aisetup.AiViewModel
+import com.revoola.aisetup.MonthlyStats
 import com.revoola.commonobject.RLYourWayCalvulation
+import com.revoola.commonobject.RLYourWayCalvulation.convertToInt
 import com.revoola.enumclass.RLValueOvName
-import com.revoola.fragment.overview.adapter.RLOverviewFilterListAdapter
-import com.revoola.fragment.overview.adapter.RLOverviewFilterListMultipleSelectedAdapter
 import com.revoola.model.RLGetUserAggregatedData
 import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.utils.RLPrefManager
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -64,22 +59,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private var currentUser:String=""
     private var appUnit:String="Metric"
 
-    private var isFilterResponse:Boolean = false
-    private var fromDateTimestemp:Long = 0
-    private var toDateTimestemp:Long = 0
-    private var timerRange: String = "this_month"
-    private var qType = "overviewGraphChartHTMAll"
     private var fromThirdParty = "y"
     private var imperial = "y"
-
-    private var fromDate = ""
     private var toDate = ""
+    private var fromDate = ""
     private var selectionPeriod = "This Month"
-
+    private var selectionType = listOf("All")
     private var selectionSource = "All Available"
-    private var selectionType  = listOf("All")
-    private var  selectedPositionsSource :MutableList<Int> = mutableListOf(0)
-    private var  selectedPositionsPeriod :MutableList<Int> = mutableListOf(0)
 
     private val titleValueList = arrayOf("OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
@@ -87,20 +73,17 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED")
 
-    private val filterListPeriod = listOf("This Month", "Last 3 Months", "Last 6 Months", "This Year","From","To")
-    private val filterListSource = listOf("All Available", "Revoola Only")
-    private val filterListType = listOf("All", "Walk", "Run","Ride","Workout","HIIT",  "Yoga", "Pilates", "Dance", "Other")
-    private var totalDisplayItem=9
+   private var totalDisplayItem=9
     private var swipePosition:Int=16
     private lateinit var gestureDetector: GestureDetector
     private val timezone = TimeZone.getDefault().rawOffset / 1000
-    private lateinit var adapterdata: RLOverviewSessionListAdapter
+    private lateinit var adapterData: RLOverviewSessionListAdapter
     private lateinit var adapterTitle: RLOverviewSessionTitleListAdapter
     private  var cardDate: RlOverviewGraphData? = null
     private val fragBinding by lazy {
         RlFragOverviewSessionsBinding.inflate(layoutInflater)
     }
-//TODO Temp
+
     private lateinit var filterManager: OverViewFilterManager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          rl_screenSet(false)
@@ -117,6 +100,16 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         // Initialize GestureDetector
         gestureDetector = GestureDetector(requireContext(), rl_swipeGestureListener())
+        //Filter Dialog Use
+        toDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "toDate", "")
+        fromDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "fromDate", "")
+        selectionPeriod =  RLPrefManager.rl_getSomeStringValue(requireContext()  , "selectionPeriod", "This Month")
+        selectionType = RLPrefManager.rl_getSomeStringListValue(requireContext()  , "selectionType", listOf("All"))
+        selectionSource =  RLPrefManager.rl_getSomeStringValue(requireContext()  , "selectionSource", "All Available")
+        filterManager = OverViewFilterManager(requireContext()) { fromDate, toDate, selectionPeriod, selectionSource, selectionType ->
+            // Handle the selected filters here
+            updateFilters(fromDate, toDate, selectionPeriod, selectionSource, selectionType)
+        }
         rl_uisetup()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -134,7 +127,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
         rl_moveToCenter(position)
         if (cardDate!=null){
-            rl_handleApiResponse(cardDate!!,titleValueList[position])
+            rl_handleApiResponse(cardDate!!,titleValueList[position],true)
         }
     }
     private  fun  rl_uisetup(){
@@ -156,10 +149,9 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         //DATA SET below
         val linearLayoutManagerMain = GridLayoutManager(activity, 2)
         fragBinding.recycleSession.layoutManager = linearLayoutManagerMain
-         adapterdata = RLOverviewSessionListAdapter(activity,false)
-        fragBinding.recycleSession.adapter = adapterdata
+         adapterData = RLOverviewSessionListAdapter(activity,false)
+        fragBinding.recycleSession.adapter = adapterData
 
-       // RLTools.rl_heightsetdisplayAll(fragBinding.relayOverviewName,activity)
 
         fragBinding.webView.webViewClient = WebViewClient()
 
@@ -183,7 +175,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                     imperial = "n"
                 }
                 fragBinding.txtUsername.setText("Hi ${ userData.firstName},")
-                rl_apicallAggregatedData(userData.joiningDate?:0)
+
                 if (isAdded){
                     Glide.with(requireContext()).load(userData.displayImage)
                         .placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(fragBinding.imgUser)
@@ -193,20 +185,20 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
         }
 
-
-
         if (apiClientRetrofit.rl_isConnected()) {
             //Detail Api
-           // rl_apiCall("OVERVIEW",false, emptyList())
-            val period = RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.selectionPeriod, "This Month" )
-            val selectionType =   RLPrefManager.rl_getSomeStringListValue(activity, RLPrefManager.selectionClassType, listOf("All") )
-            val toDate =  RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.selectionToDate,"" )
-            val fromDate =   RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.selectionFromDate,"" )
-            fragBinding.txtCurrentMonth.setText(period)
+            val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
+            if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
+                fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
+            }else{
+                fragBinding.txtCurrentMonth.setText(selectionPeriod)
+            }
+
+            fromThirdParty =  if (selectionSource.equals("All Available")) "y" else "n"
 
             val classType=selectionType.joinToString(",") { it.lowercase() }
-            val selectedPeriod = getSelectionPeriod(period)
-            val result = getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
+
+            val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
 
             val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
                 result["comparisonFromTimestamp"] as Long + timezone
@@ -226,22 +218,16 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         fromthirdparty=fromThirdParty)
                 )
             )
-            rl_apiCall(titleValueList[swipePosition],true,request)
+            rl_apiCall(titleValueList[swipePosition],request,false)
         } else {
             rl_showDialogFullscreen()
         }
-        //TODO TEMP
-        filterManager = OverViewFilterManager(requireContext()) { fromDate, toDate, selectionPeriod, selectionSource, selectionType ->
-            // Handle the selected filters here
-            RLTools.rl_logEPrint (TAG,"From: $fromDate, To: $toDate, Period: $selectionPeriod, Source: $selectionSource, Type: $selectionType")
-            /// updateFilters(fromDate, toDate, selectionPeriod, selectionSource, selectionType)
-        }
-        fragBinding.inlayFilter.ivFilter.setOnClickListener {
-         //   rl_filterdialogopen()
-            //TODO TEMP
-            filterManager.showFilterDialog()
-        }
 
+        fragBinding.inlayFilter.ivFilter.setOnClickListener {
+            if (::filterManager.isInitialized) {
+                filterManager.showFilterDialog()
+            }
+        }
 
         // Set the touch listener to the root view (or any full-screen view)
         fragBinding.webView.setOnTouchListener { v, event ->
@@ -253,29 +239,55 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             true
         }
     }
+    private fun updateFilters(fromSelectDate: String?, toSelectDate: String?,
+                              selectionFPeriod: String, selectionFSource: String, selectionFType: List<String>) {
 
-    private fun rl_apiCall(valueType:String, isFilterApi:Boolean, requestFilter: List<RLOverviewGraphDataRequest>) {
-        val offset = Date().timezoneOffset
-        val date = Date()
-        val firstDay= Date(date.year, date.month, 1)
-        val timestampFrom = ((if (firstDay!=null) firstDay.time else firstDay) / 1000 - offset * 60).toInt()
-        val timestampTo = (date.time / 1000 - offset * 60).toInt()
+        toDate = toSelectDate?:""
+        fromDate = fromSelectDate?:""
+        selectionPeriod = selectionFPeriod
+        selectionSource = selectionFSource
+        selectionType = selectionFType
 
-        var  request = listOf(
+        fromThirdParty =  if (selectionFSource.equals("All Available")) "y" else "n"
+
+        val classType=selectionFType.joinToString(",") { it.lowercase() }
+        val selectedPeriod = filterManager.getSelectionPeriod(selectionFPeriod)
+        val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromSelectDate?:"",toSelectDate?:"")
+
+        if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
+            fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromSelectDate) +" - " +filterManager.formatToMonthYear(toSelectDate))
+        }else{
+            fragBinding.txtCurrentMonth.setText(selectionFPeriod)
+        }
+
+        val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
+            result["comparisonFromTimestamp"] as Long + timezone
+        }else {
+            result["fromTimestamp"] as Long + timezone
+        }
+
+        val dateTo = result["toTimestamp"] as Long + timezone
+
+        val request = listOf(
             RLOverviewGraphDataRequest(
                 overview_graph = RLOverview_graphData(
                     user = currentUser,
-                    classtype = "mindAndBody",
-                    timestampfrom = timestampFrom.toInt(),
-                    timestampto = timestampTo.toInt(),
-                    fromthirdparty=fromThirdParty)))
-
-        if (isFilterApi){
-            request =   requestFilter
+                    classtype = classType,
+                    timestampfrom = dateFrom.toInt(),
+                    timestampto = dateTo.toInt(),
+                    fromthirdparty=fromThirdParty)
+            )
+        )
+        if (apiClientRetrofit.rl_isConnected()) {
+            //Detail Api
+            rl_apiCall(titleValueList[swipePosition],request,true)
+        } else {
+            rl_showDialogFullscreen()
         }
-
-        RLTools.rl_logDPrint(TAG,"request Overview:- ${Gson().toJson(request)}")
-        viewModel.rl_getOverviewGraph(request) { result ->
+    }
+    private fun rl_apiCall(valueType:String,requestFilter: List<RLOverviewGraphDataRequest>,isFilter: Boolean) {
+        RLTools.rl_logDPrint(TAG,"request Overview:- ${Gson().toJson(requestFilter)}")
+        viewModel.rl_getOverviewGraph(requestFilter) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
@@ -283,7 +295,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                         cardDate=response.text[0].overviewGraph[0]
                         val jsonArray = Gson().toJson(response)
                         RLTools.rl_logDPrint(TAG,"Overview_response:-  $jsonArray")
-                        rl_handleApiResponse(response.text[0].overviewGraph[0],valueType)
+                        rl_handleApiResponse(response.text[0].overviewGraph[0],valueType,isFilter)
 
                     }else {
                         RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
@@ -297,7 +309,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
         }
     }
-    private fun rl_handleApiResponse(carddate: RlOverviewGraphData, valueType:String) {
+    private fun rl_handleApiResponse(carddate: RlOverviewGraphData, valueType:String,isFilter: Boolean) {
         val dataList= mutableListOf<RLSessionitemset>()
         var isTextColorSetWhite=false
         rl_bottomHideShowSet(true)
@@ -327,9 +339,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 fragBinding.webView.visibility=View.GONE
                 fragBinding.relayWeb.visibility=View.GONE
                 fragBinding.relayMain.setBackgroundColor(resources.getColor(R.color.AppNEWBGColor))
-                //Value Set
-               // val currentMonth= RLTools.rl_getCalculatedMonths()
-               // fragBinding.txtCurrentMonth.setText(currentMonth)
                 isTextColorSetWhite=true
 
                 totalDisplayItem=8
@@ -496,440 +505,61 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                             RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.AvgClimbed,carddate,appUnit),R.drawable.ic_climb))
                         2-> dataList.add(RLSessionitemset("DISTANCE (${RLYourWayCalvulation.rl_getKmMiles("km","miles",appUnit)})",
                             RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Distance,carddate,appUnit),R.drawable.ic_distance))
-                        3-> dataList.add(RLSessionitemset("AWARDS",
-                            RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Awards,carddate,appUnit),R.drawable.ic_award))
+                        3-> dataList.add(RLSessionitemset("CLIMBED (${RLYourWayCalvulation.rl_getKmMiles("m","ft",appUnit)})",
+                            RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Climbed,carddate,appUnit),R.drawable.ic_climb))
                     }
                 }
             }
         }
-        adapterdata.RLsetList(dataList,isTextColorSetWhite)
-    }
+        adapterData.RLsetList(dataList,isTextColorSetWhite)
 
+        if (!isFilter){
+            val viewModelAI: AiViewModel = ViewModelProvider(this).get(AiViewModel::class.java)
+            val stats = MonthlyStats(sessions = convertToInt(carddate.session),
+                steps = convertToInt(carddate.total_steps),
+                calories = convertToInt(carddate.total_calories))
+            // Call load method to start data processing
+            viewModelAI.loadMotivationMessage(stats)
+            // Observe the state to get the result and print messages
+            lifecycleScope.launchWhenStarted {
+                viewModelAI.state.collect { state ->
+                    // Print messages to Logcat when state changes
+                    fragBinding.txtGoodtoseeyou.setText(state.motivation)
+                    // RLTools.rl_logDPrint(TAG, "Motivation: ${state.motivation}")
+                    // Optionally, handle errors
+                    state.error?.let {
+                        RLTools.rl_logEPrint(TAG, "Error: $it")
+                    }
+                }
+            }
+        }
+    }
     private fun rl_webviewurlload(type:String){
-        // Set the timezone to GMT
-        val zoneId = ZoneId.of("GMT")
+        val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
+        val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
+        val dateFrom = result["comparisonFromTimestamp"] as Long + timezone
+        val dateTo = result["fromTimestamp"] as Long + timezone
+        val timeRef = result["timeRef"] as String
+        val queryType = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) "overviewGraphChartHTMCT" else "overviewGraphChartHTMAll"
+        val classTypeString=selectionType.joinToString(",") { it.lowercase() }
 
-        // Get the current date-time in GMT
-        val now = ZonedDateTime.now(zoneId)
+        val _timezone = if (timezone > 0) "%2B${timezone}" else "%2D${kotlin.math.abs(timezone)}"
 
-        // Get the first day of the previous month
-        val firstDay = now.minusMonths(1).withDayOfMonth(1)
+        val params = "?q=$queryType" +
+                "&user=$currentUser" +
+                "&classtype=$classTypeString" +
+                "&graphtimefrom=$dateFrom" +
+                "&graphtimeto=$dateTo" +
+                "&timerange=$timeRef" +
+                "&gmtdiff=$_timezone" +
+                "&type=${type.lowercase()}" +
+                "&fromthirdparty=$fromThirdParty" +
+                "&imperial=$imperial"
 
-        // Get the start of the current month
-        val endDay = now.withDayOfMonth(1)
+        val chart = "https://video.revoola.com/_stuff/getCharts.php$params"
+        RLTools.rl_logDPrint(TAG,"chart:- $chart")
+        fragBinding.webView.loadUrl(chart)
 
-        // Get the offset in minutes
-        val offset = firstDay.offset.totalSeconds / 60
-
-        // Get the Unix timestamp (in seconds)
-        val timestampFrom = firstDay.toEpochSecond()
-        val timestampTo = endDay.toEpochSecond()
-
-        if (isFilterResponse){
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$fromDateTimestemp&graphtimeto=$toDateTimestemp&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=$fromThirdParty&imperial=$imperial"
-            fragBinding.webView.loadUrl(imageUrl)
-        }else{
-            val imageUrl="${RLConstants.BASE_URL}_stuff/getCharts.php?q=$qType&user=$currentUser&classtype=all&graphtimefrom=$timestampFrom&graphtimeto=$timestampTo&timerange=$timerRange&gmtdiff=%2D0&type=$type&fromthirdparty=$fromThirdParty&imperial=$imperial"
-            fragBinding.webView.loadUrl(imageUrl)
-        }
-        // RLTools.RlLogEPrint(TAG,"$type CHART URL:- $imageUrl")
-        //fragBinding.webView.loadUrl(imageUrl)
-    }
-
-    //API Call for userData Get
-    private fun rl_apicallAggregatedData(joiningDate:Long) {
-        val date = Calendar.getInstance()
-        val firstDay = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-        }
-        val offset = TimeZone.getDefault().rawOffset / 1000
-        val timestampFrom = (firstDay.timeInMillis / 1000) - offset
-        val timestampTo = (date.timeInMillis / 1000) - offset
-
-        val request = listOf(
-            RLGetUserAggregatedDataRequest(
-                getUserAggregatedData = RLGetUserAggregatedData(
-                    userid = currentUser,
-                    classtype = "all",
-                    timestampfrom = timestampFrom,
-                    timestampto = timestampTo)
-            )
-        )
-        RLTools.rl_logDPrint(TAG,"request:- $request")
-        viewModel.rl_getUserAggregatedData(request) { result ->
-            result.onSuccess { response ->
-                try {
-                    if (response.type.equals("success")){
-                        val session=response.text[0].aggregated[0].session
-                        val displayMessage = RLTools.rl_getDisplayMessage(joiningDate = joiningDate,session)
-                        fragBinding.txtGoodtoseeyou.setText(displayMessage)
-                    }else {
-                        rl_commonToast(response.type)
-                    }
-                }catch (e:Exception){
-                    RLTools.rl_logDPrint(TAG,"exception= "+e.message)
-                }
-            }.onFailure { error ->
-                // Handle failure
-                RLTools.rl_logDPrint(TAG,"error= "+error.message)
-
-            }
-        }
-    }
-    // Filter Screen Open
-    private fun rl_filterdialogopen() {
-        var isExpandPeriod:Boolean=false
-        var isExpandActivity:Boolean=false
-
-        val  dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val binding = RlFilterOverviewBinding.inflate(layoutInflater)
-        dialog.setContentView(binding.root)
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        if (toDate.isNullOrEmpty() && fromDate.isNullOrEmpty()){
-            binding.txtThisMonth.setText(selectionPeriod)
-        }else{
-            if (toDate.isNullOrEmpty() || fromDate.isNullOrEmpty()){
-                binding.txtThisMonth.setText("Custom")
-            }else{
-                binding.txtThisMonth.setText(fromDate + " - "+ toDate)
-            }
-        }
-        if (selectionType.size== 1){
-            binding.txtAll.setText(selectionType[0])
-        }else{
-            binding.txtAll.setText("MULTI")
-        }
-        //List Period
-        val adapterPeriod = RLOverviewFilterListAdapter(
-            requireContext(),toDate,fromDate,
-            filterListPeriod,selectedPositionsPeriod,
-            { selectionData, selectionType ->
-                rl_titlesetGraph(selectionData)
-
-                // Handle selectionData
-                when(selectionData.toLowerCase()){
-                    "from"-> {
-                        fromDate = selectionType.toString()
-                        selectionPeriod = "This Month"
-                    }
-                    "to"-> {
-                        toDate = selectionType.toString()
-                        selectionPeriod = "This Month"
-                    }
-                    else -> {
-                        fromDate = ""
-                        toDate = ""
-                        selectionPeriod = selectionData
-                    }
-                }
-                if (toDate.isNullOrEmpty() && fromDate.isNullOrEmpty()){
-                    binding.txtThisMonth.setText(selectionPeriod)
-                }else{
-                    if (toDate.isNullOrEmpty() || fromDate.isNullOrEmpty()){
-                        binding.txtThisMonth.setText("Custom")
-                    }else{
-                        binding.txtThisMonth.setText(fromDate + " - "+ toDate)
-                    }
-
-                }
-            },
-            { selectedPositions ->
-                // Handle selected positions here
-                selectedPositionsPeriod = selectedPositions
-
-            }
-        )
-        val layoutManagerPeriod = GridLayoutManager(requireContext(), 2)  // 2 columns
-        binding.recyclePeriod.layoutManager = layoutManagerPeriod
-        binding.recyclePeriod.adapter = adapterPeriod
-        //List Source
-        val adapterSource = RLOverviewFilterListAdapter(
-            requireContext(),toDate,fromDate,
-            filterListSource,selectedPositionsSource,
-            { selectionData, selectionType ->
-                // Handle selectionData
-                selectionSource = selectionData
-                when(selectionData){
-                    "All Available" -> fromThirdParty="y"
-                    "Revoola Only" -> fromThirdParty="n"
-                    else -> fromThirdParty="y"
-                }
-            },
-            { selectedPositions ->
-                // Handle selected positions here
-                selectedPositionsSource = selectedPositions
-
-            }
-        )
-        val layoutManagerSource = GridLayoutManager(requireContext(), 2)  // 2 columns
-        binding.recycleSource.layoutManager = layoutManagerSource
-        binding.recycleSource.adapter = adapterSource
-        //List Type
-        val adapterType = RLOverviewFilterListMultipleSelectedAdapter(requireContext(),filterListType,selectionType.toMutableList()) { selectedItems  ->
-            // Handle selectionData
-            selectionType = selectedItems
-            if (selectionType.size== 1){
-                binding.txtAll.setText(selectionType[0])
-            }else{
-                binding.txtAll.setText("MULTI")
-            }
-        }
-        val layoutManagerType = GridLayoutManager(requireContext(), 2)  // 2 columns
-        binding.recycleType.layoutManager = layoutManagerType
-        binding.recycleType.adapter = adapterType
-        // Click event for "txtThisMonth" - Show recyclePeriod, Hide activityLayout
-        binding.txtThisMonth.setOnClickListener {
-            if (isExpandPeriod) {
-                // Currently expanded, so collapse
-                isExpandPeriod = false
-                binding.recyclePeriod.visibility = View.GONE
-            } else {
-                // Currently collapsed, so expand
-                isExpandPeriod = true
-                binding.recyclePeriod.visibility = View.VISIBLE
-                // Hide activity layout when showing period
-                binding.activityLayout.visibility = View.GONE
-                isExpandActivity = false
-            }
-        }
-        // Click event for "txtAll" - Show activityLayout, Hide recyclePeriod
-        binding.txtAll.setOnClickListener {
-            if (isExpandActivity) {
-                // Currently expanded, so collapse
-                isExpandActivity = false
-                binding.activityLayout.visibility = View.GONE
-            } else {
-                // Currently collapsed, so expand
-                isExpandActivity = true
-                binding.activityLayout.visibility = View.VISIBLE
-                // Hide period layout when showing activity
-                binding.recyclePeriod.visibility = View.GONE
-                isExpandPeriod = false
-            }
-        }
-        binding.btnShowResults.setOnClickListener{
-            isFilterResponse = true
-            if (toDate.isNullOrEmpty() && fromDate.isNullOrEmpty()){
-                toDate = ""
-                fromDate = ""
-            }
-            filterClickHandle(toDate,fromDate,selectionPeriod,selectionSource,selectionType)
-            dialog.dismiss()
-        }
-        binding.tvClose.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
-    //Filter Result Handle
-    private fun filterClickHandle(toDate: String, fromDate: String, period: String, selectionSource: String, selectionType: List<String>) {
-        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.selectionPeriod,period )
-        RLPrefManager.rl_setSomeStringListValue(activity, RLPrefManager.selectionClassType,selectionType )
-        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.selectionToDate,toDate )
-        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.selectionFromDate,fromDate )
-
-
-        val classType=selectionType.joinToString(",") { it.lowercase() }
-      val selectedPeriod = getSelectionPeriod(period)
-      val result = getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
-
-      val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
-          result["comparisonFromTimestamp"] as Long + timezone
-      }else {
-              result["fromTimestamp"] as Long + timezone
-        }
-
-    val dateTo = result["toTimestamp"] as Long + timezone
-
-        val request = listOf(
-            RLOverviewGraphDataRequest(
-                overview_graph = RLOverview_graphData(
-                    user = currentUser,
-                    classtype = classType,
-                    timestampfrom = dateFrom.toInt(),
-                    timestampto = dateTo.toInt(),
-                    fromthirdparty=fromThirdParty)
-            )
-        )
-        if (apiClientRetrofit.rl_isConnected()) {
-            //Detail Api
-            rl_apiCall(titleValueList[swipePosition],true,request)
-        } else {
-            rl_showDialogFullscreen()
-        }
-    }
-    private fun RLFragOverviewSession.rl_titlesetGraph(selectionData: String) {
-        when(selectionData){
-            "Last 3 Months"-> {
-                timerRange = "3_months"
-                qType = "overviewGraphChartHTMAll"
-            }
-            "Last 6 Months"-> {
-                timerRange = "6_months"
-                qType = "overviewGraphChartHTMAll"
-            }
-            "This Year"-> {
-                timerRange = "this_year"
-                qType = "overviewGraphChartHTMAll"
-            }
-            "This Month"-> {
-                timerRange = "this_month"
-                qType = "overviewGraphChartHTMAll"
-            }
-            else -> {
-                timerRange = "custom"
-                qType = "overviewGraphChartHTMCT"
-            }
-
-        }
-    }
-    //Date get
-    private fun getDateNewRangeForPeriod(selectedPeriod: String,fromDate: String,toDate: String): Map<String, Any> {
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        val now = Date()
-        fun startOfDay(date: Date): Date {
-            calendar.time = date
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            calendar.set(Calendar.MILLISECOND, 0)
-            return calendar.time
-        }
-        return when (selectedPeriod) {
-            "THIS_MONTH" -> {
-                val startOfMonth = calendar.getActualMinimum(Calendar.DAY_OF_MONTH).let {
-                    calendar.set(Calendar.DAY_OF_MONTH, it)
-                    startOfDay(calendar.time)
-                }
-                val endOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH).let {
-                    calendar.set(Calendar.DAY_OF_MONTH, it)
-                    startOfDay(calendar.time)
-                }
-                val previousMonth = calendar.apply {
-                    add(Calendar.MONTH, -1)
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-
-                val startOfPreviousMonth = startOfDay(previousMonth)
-
-                mapOf(
-                    "fromTimestamp" to startOfMonth.time / 1000,
-                    "toTimestamp" to endOfMonth.time / 1000,
-                    "comparisonFromTimestamp" to startOfPreviousMonth.time / 1000,
-                    "timeRef" to "this_month"
-                )
-            }
-            "LAST_3_MONTHS" -> {
-                val startOfCurrentMonth = calendar.apply {
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-                val endOfCurrentMonth = calendar.apply {
-                    set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-                }.time
-                val startOf3MonthsAgo = calendar.apply {
-                    add(Calendar.MONTH, -2)
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-                val startOfComparison6MonthsAgo = calendar.apply {
-                    add(Calendar.MONTH, -5)
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-
-                mapOf(
-                    "fromTimestamp" to startOf3MonthsAgo.time / 1000,
-                    "toTimestamp" to endOfCurrentMonth.time / 1000,
-                    "comparisonFromTimestamp" to startOfComparison6MonthsAgo.time / 1000,
-                    "timeRef" to "3_months"
-                )
-            }
-            "LAST_6_MONTHS" -> {
-                val startOfCurrentMonth = calendar.apply {
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-                val endOfCurrentMonth = calendar.apply {
-                    set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-                }.time
-                val startOf6MonthsAgo = calendar.apply {
-                    add(Calendar.MONTH, -5)
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-                val startOfComparison12MonthsAgo = calendar.apply {
-                    add(Calendar.MONTH, -11)
-                    set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DAY_OF_MONTH))
-                }.time
-
-                mapOf(
-                    "fromTimestamp" to startOf6MonthsAgo.time / 1000,
-                    "toTimestamp" to endOfCurrentMonth.time / 1000,
-                    "comparisonFromTimestamp" to startOfComparison12MonthsAgo.time / 1000,
-                    "timeRef" to "6_months"
-                )
-            }
-            "THIS_YEAR" -> {
-                val currentYear = calendar.get(Calendar.YEAR)
-                val startOfYear = calendar.apply {
-                    set(Calendar.YEAR, currentYear)
-                    set(Calendar.MONTH, Calendar.JANUARY)
-                    set(Calendar.DAY_OF_MONTH, 1)
-                }.time
-                val endOfYear = calendar.apply {
-                    set(Calendar.YEAR, currentYear)
-                    set(Calendar.MONTH, Calendar.DECEMBER)
-                    set(Calendar.DAY_OF_MONTH, 31)
-                }.time
-                val startOfLastYear = calendar.apply {
-                    set(Calendar.YEAR, currentYear - 1)
-                    set(Calendar.MONTH, Calendar.JANUARY)
-                    set(Calendar.DAY_OF_MONTH, 1)
-                }.time
-
-                mapOf(
-                    "fromTimestamp" to startOfYear.time / 1000,
-                    "toTimestamp" to endOfYear.time / 1000,
-                    "comparisonFromTimestamp" to startOfLastYear.time / 1000,
-                    "timeRef" to "this_year"
-                )
-            }
-            "CUSTOM_DATE_RANGE" -> {
-                val fromTimestamp = convertDate(fromDate)?.let { startOfDay(it).time / 1000 } ?: startOfDay(now).time / 1000
-                val toTimestamp = convertDate(toDate)?.let { startOfDay(it).time / 1000 } ?: startOfDay(now).time / 1000
-
-                mapOf(
-                    "fromTimestamp" to fromTimestamp,
-                    "toTimestamp" to toTimestamp,
-                    "comparisonFromTimestamp" to fromTimestamp,
-                    "timeRef" to "custom"
-                )
-            }
-            else -> {
-                mapOf(
-                    "fromTimestamp" to 0,
-                    "toTimestamp" to 0,
-                    "comparisonFromTimestamp" to 0,
-                    "timeRef" to "this_year"
-                )
-            }
-        }
-    }
-    private fun convertDate(dateString: String): Date? {
-        val format = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
-        return try {
-            format.parse(dateString)
-        } catch (e: Exception) {
-            null
-        }
-    }
-    private  fun getSelectionPeriod(period: String): String{
-        return when (period) {
-            "This Month" ->  "THIS_MONTH"
-            "Last 3 Months" -> "LAST_3_MONTHS"
-            "Last 6 Months" ->"LAST_6_MONTHS"
-            "This Year" ->"THIS_YEAR"
-            else -> "CUSTOM_DATE_RANGE"
-        }
     }
 
     //Swipe to move Code
@@ -1025,7 +655,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
             rl_moveToCenter(position)
             if (cardDate!=null){
-                rl_handleApiResponse(cardDate!!,titleValueList[position])
+                rl_handleApiResponse(cardDate!!,titleValueList[position],true)
             }
         }catch (e:Exception){
             println("Exception:- ${e.message}")
@@ -1045,34 +675,13 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
             rl_moveToCenter(position)
             if (cardDate!=null){
-                rl_handleApiResponse(cardDate!!,titleValueList[position])
+                rl_handleApiResponse(cardDate!!,titleValueList[position],true)
             }
         }catch (e:Exception){
             println("Exception:- ${e.message}")
         }
 
     }
-
-   // val params = "?q=$queryType&user=${RELAccountManager.shared().getUser().globalUid}&classtype=$classTypeString&graphtimefrom=$comparisonFromTimestamp&graphtimeto=$dateFrom&timerange=$refDateFrom&gmtdiff=$_timezone&type=${type.rawValue.lowercase()}&fromthirdparty=$fromthirdparty&imperial=$isImperial"
-
-   // val chart = "https://video.revoola.com/_stuff/getCharts.php$params"
-//
-//    val dateFrom = if (filterManager.isCustomDate()) filterManager.getDateNewRangeForPeriod()["comparisonFromTimestamp"] as Long + timezone
-//    else filterManager.getDateNewRangeForPeriod()["fromTimestamp"] as Long + timezone
-//
-//    val dateTo = filterManager.getDateNewRangeForPeriod()["toTimestamp"] as Long + timezone
-//    val classTypeString = filterManager.getClassType()
-//    val fromThirdParty = filterManager.getSource()
-//
-//    val overviewThumb = mapOf(
-//        "timestampfrom" to dateFrom,
-//        "timestampto" to dateTo,
-//        "classtype" to classTypeString,
-//        "user" to RELAccountManager.shared().getUser().globalUid,
-//        "fromthirdparty" to fromThirdParty
-//    )
-
-
 
 }
 

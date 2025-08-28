@@ -40,23 +40,23 @@ class RLOverviewFilterListMultipleSelectedAdapter(
 
         fun bindData(position: Int, itemVIew: View) {
             val title = dataList[position]
-            layoutBinding.layoutBox.visibility = View.GONE
-            layoutBinding.layoutBoxType.visibility = View.VISIBLE
-            layoutBinding.BoxText.setText(title)
+            //layoutBinding.layoutBox.visibility = View.GONE
+           // layoutBinding.layoutBoxType.visibility = View.VISIBLE
+            layoutBinding.boxButton.setText(title)
 
             // Add this: Update visual state based on selection
             val isSelected = selectedItems.contains(title)
             if (isSelected) {
                 // Selected state - customize these colors as needed
-                layoutBinding.layoutBoxType.setBackgroundResource(R.drawable.rl_filter_border_green_overview) // or setBackgroundColor
-                layoutBinding.BoxText.setTextColor(context.getColor(R.color.AppWhiteColor))
+                layoutBinding.boxButton.setBackgroundResource(R.drawable.rl_filter_border_green_overview) // or setBackgroundColor
+                layoutBinding.boxButton.setTextColor(context.getColor(R.color.AppWhiteColor))
             } else {
                 // Unselected state
-                layoutBinding.layoutBoxType.setBackgroundResource(R.drawable.rl_filter_border_overview) // or setBackgroundColor
-                layoutBinding.BoxText.setTextColor(context.getColor(R.color.AppBlackColor))
+                layoutBinding.boxButton.setBackgroundResource(R.drawable.rl_filter_border_overview) // or setBackgroundColor
+                layoutBinding.boxButton.setTextColor(context.getColor(R.color.AppMainColor))
             }
 
-            layoutBinding.layoutBoxType.setOnClickListener {
+            layoutBinding.boxButton.setOnClickListener {
                 // Handle "All" selection logic
                 if (title == "All") {
                     if (selectedItems.contains("All")) {

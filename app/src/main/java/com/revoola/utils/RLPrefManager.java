@@ -41,6 +41,7 @@ public class RLPrefManager {
     public static String selectionClassType = "selectionClassType";
     public static String selectionFromDate = "selectionFromDate";
     public static String selectionToDate = "selectionToDate";
+    public static String selectionFSource = "selectionFSource";
 
 
 

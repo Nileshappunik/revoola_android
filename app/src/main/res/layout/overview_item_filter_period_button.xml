@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:id="@+id/periodLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
+
+        <!-- Row 1 -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/thisMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/AppMainColor"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/rl_filter_border_overview"
+                android:layout_weight="1"
+                android:text="This Month" />
+
+            <Button
+                android:id="@+id/last3Month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/AppMainColor"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/rl_filter_border_overview"
+                android:layout_weight="1"
+                android:text="Last 3 Month" />
+        </LinearLayout>
+
+        <!-- Row 2 -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/last6Month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/AppMainColor"
+                android:background="@drawable/rl_filter_border_overview"
+                android:text="Last 6 Month" />
+
+            <Button
+                android:id="@+id/thisYear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/AppMainColor"
+                android:background="@drawable/rl_filter_border_overview"
+                android:text="THIS YEAR" />
+        </LinearLayout>
+
+        <!-- Last Item -->
+        <Button
+            android:id="@+id/customDateRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/AppMainColor"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rl_filter_border_overview"
+            android:text="CUSTOM DATE RANGE" />
+
+        <LinearLayout
+            android:id="@+id/layout_customDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <!-- FROM DATE Section -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FROM DATE :"
+                    android:textColor="@color/AppBlackColor"
+                    android:textSize="16sp"/>
+
+                <Button
+                    android:id="@+id/fromDateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/AppBlackColor"
+                    android:background="@drawable/rl_filter_border_green_overview"
+                    app:backgroundTint="@color/AppSilverColor"
+                    android:text="10-july-2025"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+            <!-- TO DATE Section -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/AppBlackColor"
+                    android:text="TO DATE :"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/toDateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/AppBlackColor"
+                    android:background="@drawable/rl_filter_border_green_overview"
+                    app:backgroundTint="@color/AppSilverColor"
+                    android:text="10-july-2025"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/periodSwitchLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set as Default"
+                android:textAllCaps="true"
+                android:textColor="@color/AppBlackColor"
+                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="8dp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/set_default_switch_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:thumbTint="@color/AppWhiteColor"
+                android:checked="false"
+                app:track="@drawable/custom_track"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
+
+
