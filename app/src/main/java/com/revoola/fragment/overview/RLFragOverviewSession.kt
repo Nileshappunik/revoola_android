@@ -535,6 +535,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
     private fun rl_webviewurlload(type:String){
+        RLTools.rl_logDPrint(TAG,"selectionPeriod:- $selectionPeriod")
         val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
         val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
         val dateFrom = result["comparisonFromTimestamp"] as Long + timezone
@@ -558,6 +559,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
         val chart = "https://video.revoola.com/_stuff/getCharts.php$params"
         RLTools.rl_logDPrint(TAG,"chart:- $chart")
+
         fragBinding.webView.loadUrl(chart)
 
     }

@@ -8,13 +8,13 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -23,688 +23,640 @@ import com.google.gson.Gson
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.branchManagerIo.RLBranchManager
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlLayoutFeedListBinding
+import com.revoola.enumclass.RLValueName
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.feed.RLFragTenChallengeSummary
 import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
-import com.revoola.commonobject.RLTools
-import com.revoola.enumclass.RLValueName
+import java.util.Locale
 import kotlin.math.roundToInt
 
-class RLFeedListAdapter(val context: FragmentActivity?,currentUser: String,
-                        val selectTag:String,val appUnit:String,private val onItemClicked: (RLTextOverview) -> Unit) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLFeedListAdapter"
-    private var isLoadingAdded = false
-    private val dataList = mutableListOf<RLTextOverview>()
-    val currentUser = currentUser
-    var classType=""
+class RLFeedListAdapter(
+    val activity: FragmentActivity,
+    private val currentUserId: String,
+    private val selectTag: String,
+    private val appUnit: String,
+    private val onItemClicked: (RLTextOverview) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     companion object {
         private const val ITEM_TYPE_DATA = 0
         private const val ITEM_TYPE_LOADING = 1
+        private const val TAG = "RLFeedListAdapter"
     }
+
+    private val dataList = mutableListOf<RLTextOverview>()
+    private var isLoadingAdded: Boolean = false
+
+    // ---------- Public API ----------
+    fun clear() {
+        isLoadingAdded = false
+        dataList.clear()
+        notifyDataSetChanged()
+    }
+
+    fun setItems(items: List<RLTextOverview>) {
+        isLoadingAdded = false
+        dataList.clear()
+        dataList.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Adds data; if isSwitchOn=false, filters out items with from_third_party_source == 2
+     */
+    fun rl_addData(newData: List<RLTextOverview>, isSwitchOn: Boolean) {
+        val filtered = if (isSwitchOn) newData else newData.filter { it.from_third_party_source != 2 }
+        val start = dataList.size
+        dataList.addAll(filtered)
+        notifyItemRangeInserted(start, filtered.size)
+    }
+
+    fun rl_addLoadingFooter() {
+        if (isLoadingAdded) return
+        isLoadingAdded = true
+        // We render an extra row for footer; notify insertion at the new "footer" position.
+        notifyItemInserted(dataList.size)
+    }
+
+    fun rl_removeLoadingFooter() {
+        if (!isLoadingAdded) return
+        isLoadingAdded = false
+        // Footer lives at index == dataList.size
+        notifyItemRemoved(dataList.size)
+    }
+
+    // ---------- RecyclerView.Adapter ----------
+    override fun getItemCount(): Int = dataList.size + if (isLoadingAdded) 1 else 0
+
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoadingAdded && position == dataList.size) ITEM_TYPE_LOADING else ITEM_TYPE_DATA
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ITEM_TYPE_DATA) {
-            val layoutBinding: RlLayoutFeedListBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_feed_list , parent, false)
-            return MyViewHolder(layoutBinding)
+            val binding: RlLayoutFeedListBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.rl_layout_feed_list,
+                parent,
+                false
+            )
+            DataViewHolder(binding)
         } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.rl_item_loading_layout, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.rl_item_loading_layout, parent, false)
             LoadingViewHolder(view)
         }
     }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == ITEM_TYPE_DATA) {
-            if (holder is MyViewHolder) {
-                holder.bindData(position, holder.itemView)
-            }
-        }
+        if (holder is DataViewHolder) holder.bind(position)
     }
-    override fun getItemViewType(position: Int): Int {
-        return if (position == dataList.size - 1 && isLoadingAdded) ITEM_TYPE_LOADING else ITEM_TYPE_DATA
-    }
-    inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-    fun rl_addLoadingFooter() {
-        isLoadingAdded = true
-        notifyItemInserted(dataList.size)
-    }
-    fun rl_removeLoadingFooter() {
-        isLoadingAdded = false
-        notifyItemRemoved(dataList.size)
-    }
-    override fun getItemCount(): Int {
-       return dataList.size
-    }
-    fun rl_addData(newData: List<RLTextOverview>,isSwitchOn: Boolean) {
-        val filteredData = if (isSwitchOn) {
-            newData.filter { it.from_third_party_source != 2 }
-        } else {
-            newData
-        }
-        val startPosition = dataList.size
-        dataList.addAll(filteredData)
-        notifyItemRangeInserted(startPosition, filteredData.size)
-    }
-    inner class MyViewHolder(layoutBinding: RlLayoutFeedListBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-        private val layoutBinding: RlLayoutFeedListBinding = layoutBinding
-        fun bindData(position: Int, itemVIew: View) {
+
+    // ---------- ViewHolders ----------
+    private class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    private inner class DataViewHolder(
+        private val binding: RlLayoutFeedListBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(position: Int) {
             try {
-                val cardData: RLTextOverview = dataList[position]
-                RLTools.rl_logLarge(TAG,"cardData:- ${Gson().toJson(cardData)}")
-                rl_commonDataSet(cardData, layoutBinding,position+1)
-                layoutBinding.mainLayoutFeed.visibility=View.VISIBLE
-                layoutBinding.bigChallengesLayout.visibility=View.GONE
+                val card = dataList[position]
+                RLTools.rl_logLarge(TAG, "cardData: ${Gson().toJson(card)}")
+
+                commonHeader(card, binding, position + 1)
+
                 val isImperial = RLTools.rl_getIsImperial(appUnit)
-                when(cardData.from_third_party_source){
-                    0->{
-                        when(cardData.bmo){
-                            0->{
-                                //BODY
-                                rl_bodyClassesBodySet(cardData, layoutBinding,isImperial)
-                            }
-                            1->{
-                                //MIND
-                                rl_mindClassBodySet(cardData, layoutBinding,isImperial)
-                            }
-                            2->{
-                                //OTHER Your Way
-                                rl_otherClassesBodySet(cardData, layoutBinding,isImperial)
-                            }
+                when (card.from_third_party_source) {
+                    0 -> { // Revoola native
+                        when (card.bmo) {
+                            0 -> bodyCard(card, binding, isImperial) // BODY
+                            1 -> mindCard(card, binding)            // MIND
+                            2 -> yourWayCard(card, binding, isImperial) // OTHER / Your Way
                         }
                     }
-                    1->{ // 3rd party card
-                        rl_thirdPartyOneBodySet(cardData, layoutBinding,isImperial)
+                    1 -> thirdPartyGoogleFit(card, binding, isImperial)
+                    2 -> thirdPartyAppleHealth(card, binding, isImperial)
+                    101 -> {
+                        // Big Challenges Join Session
+                        binding.mainLayoutFeed.visibility = View.GONE
+                        binding.bigChallengesLayout.visibility = View.VISIBLE
+                        bigChallengeJoinCard(card, binding)
                     }
-                    2->{ // Metric Card
-                        rl_thirdPartyTwoBodySet(cardData, layoutBinding,isImperial)
-                    }
-                    101->{
-                        //Big Challenges Join Session
-                        layoutBinding.mainLayoutFeed.visibility=View.GONE
-                        layoutBinding.bigChallengesLayout.visibility=View.VISIBLE
-                        rl_bigChallengesJoinBodySet(cardData, layoutBinding)
-                    }
-                     else -> {// >10 Challenges
-                        rl_thirdPartyTenBodySet(cardData, layoutBinding,position+1,isImperial)
-
+                    else -> {
+                        // >10 => Challenge design
+                        challengeDesignCard(card, binding, position + 1, isImperial)
                     }
                 }
+            } catch (e: Exception) {
+                RLTools.rl_logDPrint(TAG, "exception= ${e.message}")
+                val temp = "pos: ${position}, third: ${dataList[position].from_third_party_source}, bmo: ${dataList[position].bmo}, HR: ${dataList[position].hrm}"
+                binding.temptext.text = "exception: ${e.message} :: $temp"
             }
-            catch (e: Exception) {
-            RLTools.rl_logDPrint(TAG, "exception= " + e.message)
-                val temptext="pos:- ${position.toString()} , ctype:- $classType , third:- ${dataList[position].from_third_party_source.toString()} , bmo:- ${dataList[position].bmo.toString()}, HR:- ${dataList[position].hrm.toString()}"
-                layoutBinding.temptext.setText("exception:- ${e.message.toString()} :- $temptext")
+        }
+
+        // ---------- Common top section ----------
+        private fun commonHeader(card: RLTextOverview, b: RlLayoutFeedListBinding, pos: Int) {
+            val classType = card.classType.orEmpty()
+
+            // Hide metric chips by default
+            b.layTime.viewCommon.visibility = View.GONE
+            b.layCalories.viewCommon.visibility = View.GONE
+            b.layAssumedeffort.viewCommon.visibility = View.GONE
+            b.laySteps.viewCommon.visibility = View.GONE
+
+            b.txtOrganizer.visibility = View.GONE
+            b.txtOrganizerName.visibility = View.GONE
+            b.imgOrganizerUser.visibility = View.GONE
+            b.relayChart.visibility = View.GONE
+            b.imgMain.visibility = View.VISIBLE
+            b.imageChart.visibility = View.VISIBLE
+
+            b.layAssumedeffort.txtTimeNumber.setTextColor(
+                ContextCompat.getColor(activity, R.color.AppBlackColor)
+            )
+
+            // counts
+            b.txtComment.text = if (card.total_comments > 0) card.total_comments.toString() else ""
+            if (card.total_kudos > 0) {
+                b.txtThum.text = card.total_kudos.toString()
+                b.imgThum.setImageResource(R.drawable.fd_thumbs_gray)
+            } else {
+                b.txtThum.text = ""
+                b.imgThum.setImageResource(R.drawable.ic_thumbs_g)
             }
-        }
-    }
+            val totalAward = card.medals_gold + card.medals_silver + card.medals_bronze
+            if (totalAward > 0) {
+                b.txtAward.text = totalAward.toString()
+                b.imgAward.setImageResource(R.drawable.ic_award)
+            } else {
+                b.txtAward.text = "0"
+                b.imgAward.setImageResource(R.drawable.ic_award_g)
+            }
 
-    //All Card Common Value Like UserImage Title Click Event
-    private fun rl_commonDataSet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, position: Int){
-      //  RLTools.rl_heightsetRelative(layoutBinding.relayChart)
-      //  RLTools.rl_heightsetimageview(layoutBinding.imgMain)
-        // Ensure the layout has been completed before getting the width
-        //-----------------------------------------------------------------------------------------------------
-        if (cardData.classType.isNullOrEmpty()){
-            classType=""
-        }else{
-            classType = cardData.classType!!
-        }
+            // visibility by user
+            if (currentUserId == card.userid) {
+                b.imgThreedot.visibility = View.VISIBLE
+                b.layoutAward.visibility = View.VISIBLE
+                b.imgThum.visibility = View.VISIBLE
+                b.layoutShare.visibility = View.VISIBLE
+                b.layoutThumb.visibility = View.VISIBLE
+                b.layoutComment.visibility = View.VISIBLE
+                b.blanckView.visibility = View.GONE
+                b.blanckView1.visibility = View.GONE
+            } else {
+                b.imgThreedot.visibility = View.GONE
+                b.layoutAward.visibility = View.GONE
+                b.layoutShare.visibility = View.GONE
+                b.blanckView.visibility = View.VISIBLE
+                b.layoutThumb.visibility = View.VISIBLE
+                b.layoutComment.visibility = View.VISIBLE
+                b.blanckView1.visibility = View.GONE
+            }
 
-        layoutBinding.layTime.viewCommon.visibility = View.GONE
-        layoutBinding.layCalories.viewCommon.visibility = View.GONE
-        layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
-        layoutBinding.laySteps.viewCommon.visibility = View.GONE
+            b.txtUsername.text = card.username.orEmpty()
+            b.txtMyride.text = card.className.orEmpty()
+            b.imgMyride.setImageResource(RLTools.rl_geticon(classType))
+            b.txtUserdatetime.text = RLTools.rl_convertTimestampToDateTime(card.timestamp.toLong())
 
-        layoutBinding.txtOrganizer.visibility=View.GONE
-        layoutBinding.txtOrganizerName.visibility=View.GONE
-        layoutBinding.imgOrganizerUser.visibility=View.GONE
-        layoutBinding.relayChart.visibility=View.GONE
-        layoutBinding.imgMain.visibility=View.VISIBLE
-        layoutBinding.imageChart.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(context!!.resources.getColor(R.color.AppBlackColor))
-        // Set comment count
-        if (cardData.total_comments > 0) {
-            layoutBinding.txtComment.setText(cardData.total_comments.toString())
-        }
-        else {
-            layoutBinding.txtComment.setText("")
-        }
-        // Set kudos count and icon
-        if (cardData.total_kudos > 0) {
-            layoutBinding.txtThum.setText(cardData.total_kudos.toString())
-            layoutBinding.imgThum.setImageResource(R.drawable.fd_thumbs_gray)
-        }
-        else {
-            layoutBinding.txtThum.setText("")
-            layoutBinding.imgThum.setImageResource(R.drawable.ic_thumbs_g)
-        }
-        // Set award count and icon
-        val totalAward = cardData.medals_gold + cardData.medals_silver + cardData.medals_bronze
-        if (totalAward > 0) {
-            layoutBinding.txtAward.setText(totalAward.toString())
-            layoutBinding.imgAward.setImageResource(R.drawable.ic_award)
-        } else {
-            layoutBinding.txtAward.setText("0")
-            layoutBinding.imgAward.setImageResource(R.drawable.ic_award_g)
-        }
-        // Set visibility based on current user
-        if (currentUser.equals(cardData.userid)){
-            layoutBinding.imgThreedot.visibility=View.VISIBLE
-            layoutBinding.layoutAward.visibility=View.VISIBLE
-            layoutBinding.imgThum.visibility=View.VISIBLE
-            layoutBinding.layoutShare.visibility=View.VISIBLE
-            layoutBinding.layoutThumb.visibility=View.VISIBLE
-            layoutBinding.layoutComment.visibility=View.VISIBLE
-            layoutBinding.blanckView.visibility=View.GONE
-            layoutBinding.blanckView1.visibility=View.GONE
-        }
-        else{
-            layoutBinding.imgThreedot.visibility=View.GONE
-            layoutBinding.layoutAward.visibility=View.GONE
-            layoutBinding.layoutShare.visibility=View.GONE
-            layoutBinding.blanckView.visibility=View.VISIBLE
-            layoutBinding.layoutThumb.visibility=View.VISIBLE
-            layoutBinding.layoutComment.visibility=View.VISIBLE
-            layoutBinding.blanckView1.visibility=View.GONE
-        }
-         // Set text content
-        layoutBinding.txtUsername.setText(cardData.username.toString())
-        layoutBinding.txtMyride.setText(cardData.className.toString())
+            Glide.with(activity)
+                .load(card.avatar)
+                .placeholder(R.drawable.sample_user)
+                .error(R.drawable.sample_user)
+                .into(b.imgUser)
 
-        layoutBinding.imgMyride.setImageResource(RLTools.rl_geticon(classType))
-        layoutBinding.txtUserdatetime.setText(RLTools.rl_convertTimestampToDateTime(cardData.timestamp.toLong()))
+            val imageLinkMain = RLTools.rl_feedSetImage(card, currentUserId, selectTag)
+            Glide.with(activity).load(imageLinkMain).into(b.imgMain)
 
-        Glide.with(context).load(cardData.avatar).placeholder(R.drawable.sample_user).error(R.drawable.sample_user).into(layoutBinding.imgUser)
+            b.temptext.text =
+                "pos: $pos , ctype: $classType , third: ${card.from_third_party_source} , bmo: ${card.bmo}, HR: ${card.hrm}"
 
-        val imageLinkMain=RLTools.rl_feedSetImage(cardData,currentUser,selectTag)
-        Glide.with(context).load(imageLinkMain).into(layoutBinding.imgMain)
-
-        layoutBinding.temptext.setText("pos:- ${position.toString()} , ctype:- $classType , third:- ${cardData.from_third_party_source.toString()} , bmo:- ${cardData.bmo.toString()}, HR:- ${cardData.hrm.toString()}")
-        // Set click listeners (same as original)
-        layoutBinding.cardChalengis.setOnClickListener{
-            if (cardData.from_third_party_source == 0){
-                when (cardData.bmo){
-                    0->{
-                        //BODY
-                        val bundle = Bundle()
-                        bundle.putSerializable(RLConstants.CardData, cardData)
-                        bundle.putString(RLConstants.FeedSelectTag, selectTag)
-                        bundle.putBoolean("isSessionComplete", false)
-                       (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
+            b.cardChalengis.setOnClickListener {
+                when {
+                    card.from_third_party_source == 0 -> {
+                        val bundle = Bundle().apply {
+                            putSerializable(RLConstants.CardData, card)
+                            putString(RLConstants.FeedSelectTag, selectTag)
+                            putBoolean("isSessionComplete", false)
+                        }
+                        val act = activity as RLMainActivityRL
+                        when (card.bmo) {
+                            0 -> act.rl_loadFrag(
+                                RLFragSessionSummary().newInstance(bundle),
+                                TAG, true, null, true
+                            )
+                            1 -> act.rl_loadFrag(
+                                RLFragMindSessionSummary().newInstance(bundle),
+                                TAG, true, null, true
+                            )
+                            2 -> act.rl_loadFrag(
+                                RLFragSessionSummary().newInstance(bundle),
+                                TAG, true, null, true
+                            )
+                        }
                     }
-                    1->{
-                        //MIND
-                        val bundle = Bundle()
-                        bundle.putSerializable(RLConstants.CardData, cardData)
-                        bundle.putString(RLConstants.FeedSelectTag, selectTag)
-                        bundle.putBoolean("isSessionComplete", false)
-                        (context as RLMainActivityRL).rl_loadFrag(RLFragMindSessionSummary().newInstance(bundle), TAG, true, null, true)
+                    card.from_third_party_source == 101 -> {
+                        // Big Challenge: handled via Join button click; no-op here
                     }
-                    2->{
-                        //OTHER
-                        val bundle = Bundle()
-                        bundle.putSerializable(RLConstants.CardData, cardData)
-                        bundle.putString(RLConstants.FeedSelectTag, selectTag)
-                        bundle.putBoolean("isSessionComplete", false)
-                        (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, true, null, true)
+                    card.from_third_party_source > 10 -> {
+                        val bundle = Bundle().apply {
+                            putSerializable(RLConstants.CardData, card)
+                        }
+                        (activity as RLMainActivityRL).rl_loadFrag(
+                            RLFragTenChallengeSummary().newInstance(bundle),
+                            TAG, true, null, true
+                        )
                     }
-
+                    else -> showSimpleAlert()
                 }
             }
-            else if(cardData.from_third_party_source == 101){
-                //BIG Challenge
-            }
-            else if(cardData.from_third_party_source > 10){
-                //Challenge design
-                val bundle = Bundle()
-                bundle.putSerializable(RLConstants.CardData, cardData)
-                (context as RLMainActivityRL).rl_loadFrag(RLFragTenChallengeSummary().newInstance(bundle), TAG, true, null, true)
-            }
-            else{
-                rl_showAlertDialog()
+
+            b.imgThreedot.setOnClickListener { showEditDeleteDialog(card) }
+
+            b.imgShare.setOnClickListener {
+                val bitmap = RLBranchManager(activity).rl_captureSpecificView(b.cardChalengis)
+                val imgUri = RLBranchManager(activity).rl_bitmapToUri(bitmap)
+                RLTools.rl_logEPrint(TAG, "capture image Uri: $imgUri")
+                if (imgUri != null) RLBranchManager(activity).rl_shareImage(imgUri)
             }
         }
 
-        layoutBinding.imgThreedot.setOnClickListener {
-            rl_showEditDeleteDialog(cardData)
-        }
+        // ---------- Card bodies ----------
+        private fun challengeDesignCard(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding,
+            pos: Int,
+            isImperial: Boolean
+        ) {
+            b.txtOrganizer.visibility = View.VISIBLE
+            b.txtOrganizerName.visibility = View.VISIBLE
+            b.imgOrganizerUser.visibility = View.VISIBLE
+            b.relayChart.visibility = View.VISIBLE
+            b.imgMain.visibility = View.GONE
+            b.imageChart.visibility = View.GONE
 
-        layoutBinding.imgShare.setOnClickListener {
-           // val bitmap = RLBranchManager(context!!).RLCaptureScreen(context!!)
-            val bitmap = RLBranchManager(context!!).rl_captureSpecificView(layoutBinding.cardChalengis)
-           // val pathUri =RLBranchManager(context!!).RLSaveBitmapToInternalStorage(bitmap,"Capture")
-            val imgUri = RLBranchManager(context!!).rl_bitmapToUri(bitmap)
+            b.txtOrganizerName.text = card.instructor.orEmpty()
 
-           RLTools.rl_logEPrint(TAG,"catch image  Uri:- $imgUri")
-            if (imgUri != null) {
-                RLBranchManager(context!!).rl_shareImage(imgUri)
-            }else{
-               RLTools.rl_logEPrint(TAG,"Test Uri:- $imgUri")
+            Glide.with(activity)
+                .load(card.videoKey)
+                .placeholder(R.drawable.sample_user)
+                .error(R.drawable.sample_user)
+                .into(b.imgOrganizerUser)
+
+            val ws: WebSettings = b.webViewChart.settings
+            ws.javaScriptEnabled = true
+            ws.cacheMode = WebSettings.LOAD_NO_CACHE
+            ws.domStorageEnabled = true
+            ws.useWideViewPort = true
+            ws.loadWithOverviewMode = true
+            b.webViewChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
+            b.webViewChart.isHorizontalScrollBarEnabled = false
+            b.webViewChart.isVerticalScrollBarEnabled = false
+            b.webViewChart.webViewClient = WebViewClient()
+
+            val goal = toInt(card.goal)
+            val duration = toInt(card.duration)
+            val metric = RLTools.rl_getMetric(card.from_third_party_source, card)
+            val stepsSoFar = (metric.value ?: 0).coerceAtLeast(0)
+            val targetSteps = goal.coerceAtLeast(0)
+
+            val remainingDays = (((System.currentTimeMillis() / 1000) - card.timestamp.toLong()) / 86400.0).roundToInt()
+                .coerceAtLeast(0)
+            val totalDays = (duration / 86400).toInt()
+            val htmlText = RLAllHTMLChart.rl_getChallengeChartHtml(
+                stepsSoFar,
+                targetSteps,
+                remainingDays,
+                totalDays,
+                RLTools.rl_getMetricsName(RLTools.rl_getClassTypeValue(card.classType))
+            )
+            b.webViewChart.loadDataWithBaseURL(null, htmlText, "text/html", "UTF-8", null)
+
+            b.layTime.imgTime.setImageResource(R.drawable.ic_calender_daily)
+            b.layTime.txtTime.setText(R.string.challenge_period)
+
+            val daysRemain = (totalDays - remainingDays).coerceAtLeast(0)
+            b.layTime.txtTimeNumber.text = "${(totalDays - daysRemain) + daysRemain} of $totalDays Days" // matches original behavior
+
+            when (RLTools.rl_challengesTypeGet(card.classType.orEmpty().lowercase(Locale.ROOT))) {
+                "effort" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
+                    b.layCalories.txtTime.setText(R.string.youachived)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Effort, card)
+                }
+                "steps" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.fd_steps_green)
+                    b.layCalories.txtTime.setText(R.string.youachived)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Steps, card)
+                }
+                "calories" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
+                    b.layCalories.txtTime.setText(R.string.youachived)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
+                }
+                "distance" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.ic_distance)
+                    b.layCalories.txtTime.setText(R.string.distance)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Distance, card)
+                }
+                "climbed" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.ic_climb)
+                    b.layCalories.txtTime.setText(R.string.distance)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Distance, card)
+                }
+                "duration" -> {
+                    b.layCalories.imgTime.setImageResource(R.drawable.fd_active_time_green)
+                    b.layCalories.txtTime.setText(R.string.youachived)
+                    b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Steps, card)
+                }
             }
 
+            if (card.originalClassDate == "shared") {
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
+                b.layAssumedeffort.txtTime.setText(R.string.sharedtargetcaps)
+                b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.Goal, card)
+            } else {
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
+                b.layAssumedeffort.txtTime.setText(R.string.individualtargetcaps)
+                b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.Goal, card)
+            }
+
+            b.laySteps.txtTime.setText(R.string.currenrrank)
+            b.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
+            b.laySteps.txtTimeNumber.text = valueFor(RLValueName.Rank, card)
+
+            b.laySteps.relativeCard.visibility = View.VISIBLE
+            b.layAssumedeffort.relativeCard.visibility = View.VISIBLE
+            b.layBottom.visibility = View.VISIBLE
+
+            b.blanckView1.visibility = View.VISIBLE
+            b.layoutShare.visibility = View.VISIBLE
+            b.layoutThumb.visibility = View.GONE
+            b.layoutComment.visibility = View.GONE
+            b.blanckView.visibility = View.GONE
+            b.layoutAward.visibility = View.GONE
         }
 
-        /*layoutBinding.imgComment.setOnClickListener {
-            var passstring="Comment"
-            if (passstring.isNotEmpty()){
-                val bundle = Bundle()
-                bundle.putSerializable(RLConstants.CardData, cardData)
-                bundle.putString(RLConstants.TYPE, passstring)
-                (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
-            }
-        }
-        layoutBinding.imgThum.setOnClickListener {
-            var passstring="Thumb"
-            if (passstring.isNotEmpty()){
-                val bundle = Bundle()
-                bundle.putSerializable(RLConstants.CardData, cardData)
-                bundle.putString(RLConstants.TYPE, passstring)
-                (context as RLMainActivityRL).RLloadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
-            }
-        }*/
+        private fun thirdPartyAppleHealth(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding,
+            isImperial: Boolean
+        ) {
+            b.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
+            b.layTime.txtTime.setText(R.string.step)
+            b.layTime.txtTimeNumber.text = valueFor(RLValueName.Steps, card)
+            b.layTime.relativeCard.visibility = View.VISIBLE
 
-    }
+            b.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
+            b.layCalories.txtTime.setText(R.string.calorie)
+            b.layCalories.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
 
-    //When ThirdParty >10 Challenges Card once Check
-    private fun rl_thirdPartyTenBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, pos: Int, isImperial: Boolean){
-        layoutBinding.txtOrganizer.visibility=View.VISIBLE
-        layoutBinding.txtOrganizerName.visibility=View.VISIBLE
-        layoutBinding.imgOrganizerUser.visibility=View.VISIBLE
-        layoutBinding.relayChart.visibility=View.VISIBLE
-        layoutBinding.imgMain.visibility=View.GONE
-        layoutBinding.imageChart.visibility=View.GONE
+            b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
+            b.layAssumedeffort.txtTime.setText(
+                if (isImperial) R.string.distancemiles else R.string.distancekm
+            )
+            b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.Distance, card)
 
-        layoutBinding.txtOrganizerName.setText(cardData.instructor.toString())
+            b.laySteps.imgTime.setImageResource(R.drawable.ic_dance)
+            b.laySteps.txtTime.setText(R.string.stadinghour)
+            b.laySteps.txtTimeNumber.text = "--"
 
-        Glide.with(context!!).load(cardData.videoKey)
-            .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-            .into(layoutBinding.imgOrganizerUser)
+            b.laySteps.relativeCard.visibility = View.VISIBLE
+            b.layAssumedeffort.relativeCard.visibility = View.VISIBLE
 
-
-        val webSettings: WebSettings = layoutBinding.webViewChart.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettings.domStorageEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.loadWithOverviewMode = true
-        layoutBinding.webViewChart.scrollBarStyle = WebView.SCROLLBARS_INSIDE_OVERLAY
-        layoutBinding.webViewChart.isHorizontalScrollBarEnabled = false
-        layoutBinding.webViewChart.isVerticalScrollBarEnabled = false
-        layoutBinding.webViewChart.webViewClient = WebViewClient()
-
-        val goal = convertToInt(cardData.goal)
-        val duration = convertToInt(cardData.duration)
-        val metric =  RLTools.rl_getMetric(cardData.from_third_party_source,cardData)
-        val stepsSoFar = if (metric.value ?: 0 > 0) metric.value ?: 0 else 0
-        val targetSteps = if (goal ?: 0 > 0) goal ?: 0 else 0
-
-
-        val remainingDays = Math.round((System.currentTimeMillis() / 1000 - cardData.timestamp.toLong()) / 86400.0).toInt()?: 0
-        val timeGone = if (remainingDays >0) remainingDays else 0
-
-        val totalDays = (duration / 86400).toInt()
-        val totalTime = if (totalDays ?: 0 > 0) totalDays ?: 0 else 0
-
-        val htmlText= RLAllHTMLChart.rl_getChallengeChartHtml(stepsSoFar,targetSteps,timeGone,totalTime,RLTools.rl_getMetricsName(RLTools.rl_getClassTypeValue(cardData.classType)))
-
-        layoutBinding.webViewChart.loadDataWithBaseURL(null,
-            htmlText, "text/html", "UTF-8", null)
-
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_calender_daily)
-        layoutBinding.layTime.txtTime.setText("CHALLENGE PERIOD")
-
-        if (remainingDays.toInt() > 0){
-            val daysRemain=totalDays.toInt()-remainingDays.toInt()
-            if (daysRemain>0){
-                layoutBinding.layTime.txtTimeNumber.setText("${daysRemain.toString()} of ${totalDays.toString()} Days")
-            }else{
-                layoutBinding.layTime.txtTimeNumber.setText("${totalDays.toString()} of ${totalDays.toString()} Days")
-            }
-
-        }else{
-            layoutBinding.layTime.txtTimeNumber.setText("${totalDays.toString()} of ${totalDays.toString()} Days")
-        }
-
-        when(RLTools.rl_challengesTypeGet(classType.toLowerCase())){
-            "effort"->{
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-                layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Effort,cardData))
-
-            }
-            "steps"->{
-
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_steps_green)
-                layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Steps,cardData))
-
-            }
-            "calories"->{
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
-                layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
-            }
-            "distance"->{
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_distance)
-                layoutBinding.layCalories.txtTime.setText(R.string.distance)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Distance,cardData))
-
-            }
-            "climbed"->{
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_climb)
-                layoutBinding.layCalories.txtTime.setText(R.string.distance)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Distance,cardData))
-
-            }
-            "duration"->{
-                layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_active_time_green)
-                layoutBinding.layCalories.txtTime.setText(R.string.youachived)
-                layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Steps,cardData))
-
+            if (card.userid == currentUserId) {
+                b.layoutAward.visibility = View.VISIBLE
+                b.layoutThumb.visibility = View.VISIBLE
+                b.layoutComment.visibility = View.VISIBLE
+                b.imgThreedot.visibility = View.GONE
+            } else {
+                b.layoutAward.visibility = View.GONE
+                b.layoutThumb.visibility = View.GONE
+                b.layoutComment.visibility = View.GONE
+                b.imgThreedot.visibility = View.GONE
+                b.blanckView1.visibility = View.VISIBLE
             }
         }
 
+        private fun thirdPartyGoogleFit(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding,
+            isImperial: Boolean
+        ) {
+            b.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
+            b.layTime.txtTime.setText(R.string.time)
+            b.layTime.txtTimeNumber.text = valueFor(RLValueName.TotalTime, card)
+            b.layTime.relativeCard.visibility = View.VISIBLE
 
-        if (cardData.originalClassDate.equals("shared")){
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.sharedtargetcaps)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Goal,cardData))
+            b.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
+            b.layCalories.txtTime.setText(R.string.revoolaeffort)
+            b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Effort, card)
 
-        }else{
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.individualtargetcaps)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Goal,cardData))
+            val classTypeLc = card.classType.orEmpty().lowercase(Locale.ROOT)
+            if (classTypeLc == "ride" || classTypeLc == "run" || classTypeLc == "walk") {
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
+                b.layAssumedeffort.txtTime.setText(R.string.calorie)
+                b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
 
-        }
+                b.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
+                b.laySteps.txtTime.setText(if (isImperial) R.string.distancemiles else R.string.distancekm)
+                b.laySteps.txtTimeNumber.text = valueFor(RLValueName.Distance, card)
+            } else {
+                val zone = RLTools.rl_verifyFeedZoneName((card.avgRevPercentage.toDouble() ?: 0.0))
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
+                b.layAssumedeffort.txtTime.setText(R.string.effortzone)
+                b.layAssumedeffort.txtTimeNumber.text = zone.efforZoneText
+                b.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(zone.efforZoneTxtClr))
 
-        layoutBinding.laySteps.txtTime.setText(R.string.currenrrank)
-        layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_ranking)
-        layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Rank,cardData))
-
-        layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-
-        layoutBinding.layBottom.visibility=View.VISIBLE
-
-        layoutBinding.blanckView1.visibility=View.VISIBLE
-        layoutBinding.layoutShare.visibility=View.VISIBLE
-        layoutBinding.layoutThumb.visibility=View.GONE
-        layoutBinding.layoutComment.visibility=View.GONE
-        layoutBinding.blanckView.visibility=View.GONE
-        layoutBinding.layoutAward.visibility=View.GONE
-
-    }
-    //when ThirdParty 2 and AppleIos Card done
-    private fun rl_thirdPartyTwoBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
-
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_steps_green)
-        layoutBinding.layTime.txtTime.setText(R.string.step)
-        layoutBinding.layTime.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Steps,cardData))
-        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
-
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.fd_calories_green)
-        layoutBinding.layCalories.txtTime.setText(R.string.calorie)
-        layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
-        layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_distance)
-        if (isImperial) {
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancemiles)
-        }else{
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.distancekm)
-        }
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Distance,cardData))
-
-        layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_dance)
-        layoutBinding.laySteps.txtTime.setText(R.string.stadinghour)
-        layoutBinding.laySteps.txtTimeNumber.setText("--")
-
-
-        layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-
-        if (cardData.userid.equals(currentUser)){
-            layoutBinding.layoutAward.visibility=View.VISIBLE
-            layoutBinding.layoutThumb.visibility=View.VISIBLE
-            layoutBinding.layoutComment.visibility=View.VISIBLE
-            layoutBinding.imgThreedot.visibility=View.GONE
-        }else{
-            layoutBinding.layoutAward.visibility=View.GONE
-            layoutBinding.layoutThumb.visibility=View.GONE
-            layoutBinding.layoutComment.visibility=View.GONE
-            layoutBinding.imgThreedot.visibility=View.GONE
-            layoutBinding.blanckView1.visibility=View.VISIBLE
-        }
-
-    }
-    //when ThirdParty 1 and GoogleFit Card done
-    private fun rl_thirdPartyOneBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
-        layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.TotalTime,cardData))
-        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
-
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.revoolaeffort)
-        layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Effort,cardData))
-
-
-        if (classType.toLowerCase().equals("ride")||classType!!.toLowerCase().equals("run")||classType!!.toLowerCase().equals("walk")){
-
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
-            layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
-            if (isImperial){
-                layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
-            }else{
-                layoutBinding.laySteps.txtTime.setText(R.string.distancekm)
+                b.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
+                b.laySteps.txtTime.setText(R.string.calorie)
+                b.laySteps.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
             }
 
-            layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Distance,cardData))
-
-
-        }else{
-            val ZoneTextData= RLTools.rl_verifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
-
-
-            layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.laySteps.txtTime.setText(R.string.calorie)
-            layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
+            b.laySteps.relativeCard.visibility = View.VISIBLE
+            b.layAssumedeffort.relativeCard.visibility = View.VISIBLE
+            b.imgThreedot.visibility = View.GONE
         }
 
-        layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.imgThreedot.visibility=View.GONE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-    }
-    //when ThirdParty 0 and Bmo 2 YourWay Card done
-    private fun rl_otherClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
-        layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.TotalTime,cardData))
-        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
+        private fun yourWayCard(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding,
+            isImperial: Boolean
+        ) {
+            b.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
+            b.layTime.txtTime.setText(R.string.time)
+            b.layTime.txtTimeNumber.text = valueFor(RLValueName.TotalTime, card)
+            b.layTime.relativeCard.visibility = View.VISIBLE
 
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.effort)
-        layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Effort,cardData))
+            b.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
+            b.layCalories.txtTime.setText(R.string.effort)
+            b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Effort, card)
 
+            val classTypeLc = card.classType.orEmpty().lowercase(Locale.ROOT)
+            if (classTypeLc == "ride" || classTypeLc == "run" || classTypeLc == "walk") {
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
+                b.layAssumedeffort.txtTime.setText(R.string.calorie)
+                b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
 
-        if (classType.toLowerCase().equals("ride")||classType.toLowerCase().equals("run")||classType.toLowerCase().equals("walk")){
+                b.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
+                b.laySteps.txtTime.setText(if (isImperial) R.string.distancemiles else R.string.distancekm)
+                b.laySteps.txtTimeNumber.text = valueFor(RLValueName.Distance, card)
+            } else {
+                val zone = RLTools.rl_verifyFeedZoneName((card.avgRevPercentage.toDouble() ?: 0.0))
+                b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
+                b.layAssumedeffort.txtTime.setText(R.string.effortzone)
+                b.layAssumedeffort.txtTimeNumber.text = zone.efforZoneText
+                b.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(zone.efforZoneTxtClr))
 
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.calorie)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
-
-            layoutBinding.laySteps.imgTime.setImageResource(R.drawable.ic_distance)
-            if (isImperial){
-                layoutBinding.laySteps.txtTime.setText(R.string.distancemiles)
-            }else{
-                layoutBinding.laySteps.txtTime.setText(R.string.distancekm)
+                b.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
+                b.laySteps.txtTime.setText(R.string.calorie)
+                b.laySteps.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
             }
 
-            layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Distance,cardData))
-
-        }else{
-            val ZoneTextData= RLTools.rl_verifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
-            layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
-            layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
-            layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
-
-            layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
-            layoutBinding.laySteps.txtTime.setText(R.string.calorie)
-            layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
-
+            b.laySteps.relativeCard.visibility = View.VISIBLE
+            b.layAssumedeffort.relativeCard.visibility = View.VISIBLE
         }
 
-        layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-    }
-    //when ThirdParty 0 and Bmo 0 Body Card done
-    private fun rl_bodyClassesBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean){
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
-        layoutBinding.layTime.txtTime.setText(R.string.time)
-        layoutBinding.layTime.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.TotalTime,cardData))
-        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
+        private fun bodyCard(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding,
+            isImperial: Boolean
+        ) {
+            b.layTime.imgTime.setImageResource(R.drawable.fd_active_time_green)
+            b.layTime.txtTime.setText(R.string.time)
+            b.layTime.txtTimeNumber.text = valueFor(RLValueName.TotalTime, card)
+            b.layTime.relativeCard.visibility = View.VISIBLE
 
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layCalories.txtTime.setText(R.string.effort)
-        layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.Effort,cardData))
+            b.layCalories.imgTime.setImageResource(R.drawable.ic_heart)
+            b.layCalories.txtTime.setText(R.string.effort)
+            b.layCalories.txtTimeNumber.text = valueFor(RLValueName.Effort, card)
 
-        val ZoneTextData= RLTools.rl_verifyFeedZoneName(cardData.avgRevPercentage.toDouble()?:0.0)
-        layoutBinding.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
-        layoutBinding.layAssumedeffort.txtTime.setText(R.string.effortzone)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setText(ZoneTextData.efforZoneText)
-        layoutBinding.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(ZoneTextData.efforZoneTxtClr))
+            val zone = RLTools.rl_verifyFeedZoneName((card.avgRevPercentage.toDouble() ?: 0.0))
+            b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_heart)
+            b.layAssumedeffort.txtTime.setText(R.string.effortzone)
+            b.layAssumedeffort.txtTimeNumber.text = zone.efforZoneText
+            b.layAssumedeffort.txtTimeNumber.setTextColor(Color.parseColor(zone.efforZoneTxtClr))
 
-        layoutBinding.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
-        layoutBinding.laySteps.txtTime.setText(R.string.calorie)
-        layoutBinding.laySteps.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.ActiveCalories,cardData))
+            b.laySteps.imgTime.setImageResource(R.drawable.fd_calories_green)
+            b.laySteps.txtTime.setText(R.string.calorie)
+            b.laySteps.txtTimeNumber.text = valueFor(RLValueName.ActiveCalories, card)
 
-
-        layoutBinding.laySteps.relativeCard.visibility=View.VISIBLE
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.VISIBLE
-
-
-    }
-    //when ThirdParty 0 and Bmo  1 Mind Card done
-    private fun rl_mindClassBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding, isImperial: Boolean) {
-
-        layoutBinding.layTime.imgTime.setImageResource(R.drawable.ic_mind_read)
-        layoutBinding.layTime.txtTime.setText(R.string.mindfulminutes)
-        layoutBinding.layTime.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.TotalTime,cardData))
-        layoutBinding.layTime.relativeCard.visibility=View.VISIBLE
-
-        layoutBinding.layCalories.imgTime.setImageResource(R.drawable.ic_mind_read)
-        layoutBinding.layCalories.txtTime.setText(R.string.assumedrelaxation)
-        layoutBinding.layCalories.txtTimeNumber.setText(rl_getValueForTitle(RLValueName.AssumedRelaxation,cardData))
-
-
-        layoutBinding.layAssumedeffort.relativeCard.visibility=View.GONE
-        layoutBinding.laySteps.relativeCard.visibility=View.GONE
-
-    }
-
-    //When ThirdParty  101 then Big Challenges Card Show
-    @SuppressLint("NewApi")
-    private fun rl_bigChallengesJoinBodySet(cardData: RLTextOverview, layoutBinding: RlLayoutFeedListBinding){
-        Glide.with(context!!).load(cardData.imageLinkSmall).into(layoutBinding.imgMainBigChallenges)
-        layoutBinding.bigChallengesTitle.setText(cardData.mainTitle)
-        layoutBinding.bigChallengesDescription.text = Html.fromHtml(cardData.className, Html.FROM_HTML_MODE_LEGACY)
-        layoutBinding.ButtonJoinChallenge.setOnClickListener {
-            onItemClicked(cardData)
+            b.laySteps.relativeCard.visibility = View.VISIBLE
+            b.layAssumedeffort.relativeCard.visibility = View.VISIBLE
         }
-    }
 
-    //Alert AND Delete Dialog
-    private fun rl_showAlertDialog() {
-        val sucDialog: Dialog = Dialog(context!!)
-        sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        sucDialog.setContentView(R.layout.rl_alertdialog_custom_layout)
-        sucDialog.setCancelable(false)
-        val iv_ok: TextView = sucDialog.findViewById(R.id.iv_ok)
-        iv_ok.setOnClickListener(View.OnClickListener {
-            sucDialog.dismiss()
-        })
-        sucDialog.show()
-        sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
-    }
-    private fun rl_showEditDeleteDialog(cardData: RLTextOverview) {
-        val  dialog: Dialog = Dialog(context!!)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.rl_dailog_edit_delete_feedcard)
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+        private fun mindCard(
+            card: RLTextOverview,
+            b: RlLayoutFeedListBinding
+        ) {
+            b.layTime.imgTime.setImageResource(R.drawable.ic_mind_read)
+            b.layTime.txtTime.setText(R.string.mindfulminutes)
+            b.layTime.txtTimeNumber.text = valueFor(RLValueName.TotalTime, card)
+            b.layTime.relativeCard.visibility = View.VISIBLE
 
-        val tvEdit : TextView =  dialog.findViewById(R.id.txt_edit)
-        val tvDelete : TextView =  dialog.findViewById(R.id.txt_delete)
-        val btnClose : TextView = dialog.findViewById(R.id.btn_cancle)
+            b.layCalories.imgTime.setImageResource(R.drawable.ic_mind_read)
+            b.layCalories.txtTime.setText(R.string.assumedrelaxation)
+            b.layCalories.txtTimeNumber.text = valueFor(RLValueName.AssumedRelaxation, card)
 
-        tvEdit.setOnClickListener {
-            dialog.dismiss()
+            b.layAssumedeffort.relativeCard.visibility = View.GONE
+            b.laySteps.relativeCard.visibility = View.GONE
         }
-        tvDelete.setOnClickListener {
-            dialog.dismiss()
-        }
-        btnClose.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-        dialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
-    }
 
-    private fun rl_getValueForTitle(title: String, cardData:RLTextOverview): String {
+        // Big challenge (join)
+        @SuppressLint("NewApi")
+        private fun bigChallengeJoinCard(card: RLTextOverview, b: RlLayoutFeedListBinding) {
+            Glide.with(activity).load(card.imageLinkSmall).into(b.imgMainBigChallenges)
+            b.bigChallengesTitle.text = card.mainTitle.orEmpty()
+            b.bigChallengesDescription.text = Html.fromHtml(
+                card.className.orEmpty(),
+                Html.FROM_HTML_MODE_LEGACY
+            )
+            b.ButtonJoinChallenge.setOnClickListener { onItemClicked(card) }
+        }
+
+        // ---------- Dialogs ----------
+        private fun showSimpleAlert() {
+            val dlg = Dialog(activity).apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                setContentView(R.layout.rl_alertdialog_custom_layout)
+                setCancelable(false)
+                window?.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+            }
+            val ok: TextView = dlg.findViewById(R.id.iv_ok)
+            ok.setOnClickListener { dlg.dismiss() }
+            dlg.show()
+        }
+
+        private fun showEditDeleteDialog(cardData: RLTextOverview) {
+            val dialog = Dialog(activity).apply {
+                requestWindowFeature(Window.FEATURE_NO_TITLE)
+                setContentView(R.layout.rl_dailog_edit_delete_feedcard)
+                setCancelable(true)
+                window?.setLayout(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+                window?.setBackgroundDrawableResource(R.color.transparent_dialog)
+            }
+
+            dialog.findViewById<TextView>(R.id.txt_edit)?.setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<TextView>(R.id.txt_delete)?.setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<TextView>(R.id.btn_cancle)?.setOnClickListener { dialog.dismiss() }
+
+            dialog.show()
+        }
+
+        // ---------- Value helpers ----------
+        private fun valueFor(title: String, card: RLTextOverview): String {
             val isImperial = RLTools.rl_getIsImperial(appUnit)
-
             return when (title) {
-                RLValueName.TotalTime -> RLTools.rl_daytimeget(convertToInt(cardData.totalTime))
-                RLValueName.Effort  -> RLTools.rl_formatCommasInt(convertToInt(cardData.totalREV))
-                RLValueName.Boosts  -> if (cardData.total_kudos != 0) cardData.total_kudos.toString() else "0"
-                RLValueName.Comments  -> if (cardData.total_comments != 0) cardData.total_comments.toString() else "0"
-                RLValueName.Awards  -> {
-                    val totalAwards = cardData.medals_bronze + cardData.medals_silver + cardData.medals_gold
-                    if (totalAwards != 0) totalAwards.toString() else "0"
+                RLValueName.TotalTime -> RLTools.rl_daytimeget(toInt(card.totalTime))
+                RLValueName.Effort -> RLTools.rl_formatCommasInt(toInt(card.totalREV))
+                RLValueName.Boosts -> (card.total_kudos.takeIf { it != 0 } ?: 0).toString()
+                RLValueName.Comments -> (card.total_comments.takeIf { it != 0 } ?: 0).toString()
+                RLValueName.Awards -> {
+                    val total = (card.medals_bronze + card.medals_silver + card.medals_gold)
+                    (total.takeIf { it != 0 } ?: 0).toString()
                 }
-                RLValueName.Steps  -> RLTools.rl_formatCommasInt(convertToInt(cardData.steps))
-                RLValueName.Distance  -> if (!isImperial) RLTools.rl_formatCommas(cardData.distance?:0.0) else RLTools.rl_formatCommas(cardData.distance * 0.621371)
-                RLValueName.Climbed  -> {
-                    val demsElevation:Int = convertToInt(cardData.elevation?:-1)
-                    val elevation = if (!isImperial) {
-                        if (demsElevation == -1) "Pending" else RLTools.rl_formatCommasInt(demsElevation)
+                RLValueName.Steps -> RLTools.rl_formatCommasInt(toInt(card.steps))
+                RLValueName.Distance -> {
+                    val km = (card.distance ?: 0.0)
+                    val v = if (!isImperial) km else km * 0.621371
+                    RLTools.rl_formatCommas(v)
+                }
+                RLValueName.Climbed -> {
+                    val raw = toInt(card.elevation ?: -1)
+                    if (raw < 0) {
+                        "Pending"
                     } else {
-                        if (demsElevation == -1) "Pending" else RLTools.rl_formatCommasInt((demsElevation * 3.28084))
+                        val v = if (!isImperial) raw else (raw * 3.28084)
+                        RLTools.rl_formatCommasInt(v.toDouble())
                     }
-                    elevation.toString()
                 }
-                RLValueName.AvgEffort -> convertToInt(cardData.avgRevPercentage).toString()+"%"
-                RLValueName.MaxEffort -> convertToInt(cardData.maxRevPercentage).toString()+"%"
-                RLValueName.ActiveCalories -> convertToInt(cardData.burntCalories).toString()
-                RLValueName.AssumedRelaxation -> RLTools.rl_formatCommasInt(convertToInt(cardData.totalRMS))
-                RLValueName.Rank ->cardData.hrm.toString()+ " of " +cardData.share_map.toString()
-                RLValueName.Goal ->RLTools.rl_formatCommasInt(convertToInt(cardData.goal))
+                RLValueName.AvgEffort -> "${toInt(card.avgRevPercentage)}%"
+                RLValueName.MaxEffort -> "${toInt(card.maxRevPercentage)}%"
+                RLValueName.ActiveCalories -> toInt(card.burntCalories).toString()
+                RLValueName.AssumedRelaxation -> RLTools.rl_formatCommasInt(toInt(card.totalRMS))
+                RLValueName.Rank -> "${card.hrm} of ${card.share_map}"
+                RLValueName.Goal -> RLTools.rl_formatCommasInt(toInt(card.goal))
                 else -> "0"
             }
-
-    }
-
-    private fun convertToInt(value: Any): Int {
-        val result = when (value) {
-            is Double -> value.roundToInt()
-            is Float -> value.roundToInt()
-            is Int -> value
-            is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
-            else -> 0
         }
-        return if (result < 0) 0 else result
-    }
 
+        private fun toInt(value: Any?): Int {
+            val r = when (value) {
+                is Double -> value.roundToInt()
+                is Float -> value.roundToInt()
+                is Int -> value
+                is String -> value.toDoubleOrNull()?.roundToInt() ?: 0
+                else -> 0
+            }
+            return r.coerceAtLeast(0)
+        }
+    }
 }

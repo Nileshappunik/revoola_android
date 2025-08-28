@@ -37,11 +37,6 @@ public class RLPrefManager {
     public static String challenge_selectTarget = "challengeSelectTarget";
     public static String challenge_selectName = "challengeSelectName";
 
-    public static String selectionPeriod = "selectionPeriod";
-    public static String selectionClassType = "selectionClassType";
-    public static String selectionFromDate = "selectionFromDate";
-    public static String selectionToDate = "selectionToDate";
-    public static String selectionFSource = "selectionFSource";
 
 
 

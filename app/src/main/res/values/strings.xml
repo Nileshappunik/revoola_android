@@ -504,6 +504,7 @@
     <string name="trypremiumforfree">TRY PREMIUM FOR FREE</string>
     <string name="viewtransation">View Transaction</string>
     <string name="changeyourpassword">Change Your Password</string>
+    <string name="challenge_period">\"CHALLENGE PERIOD\"</string>
 
 
 </resources>

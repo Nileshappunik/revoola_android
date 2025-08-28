@@ -50,7 +50,10 @@ class RLFragYourGroup : RLBaseFragment() {
        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
         RLPrefManager.rl_setSomeStringValue(activity,RLPrefManager.current_fragment,"RLFragYourGroup" )
         fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
-        rl_onBackPresAct(fragBinding.toolbar.ivBack)
+        fragBinding.toolbar.ivBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
+            rl_bottomHideShowSet(true)
+        }
         currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -62,6 +65,7 @@ class RLFragYourGroup : RLBaseFragment() {
     }
 
     private fun rl_uisetup() {
+
         rl_groupApiCall()
         fragBinding.txtMyGroup.setOnClickListener {
             fragBinding.txtMyGroup.setBackgroundResource(R.drawable.full_round_green)

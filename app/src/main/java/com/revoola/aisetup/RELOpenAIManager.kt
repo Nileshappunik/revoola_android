@@ -39,7 +39,7 @@ object RELOpenAIManager {
     private val forecastLock = Mutex()
     private val notificationLock = Mutex()
     private val titleLock = Mutex()
-    
+
     fun isConfigured(): Boolean = BuildConfig.GROQ_KEY.isNotEmpty()
 
     // -------- Public API (suspend) --------

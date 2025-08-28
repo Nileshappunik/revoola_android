@@ -22,20 +22,21 @@ import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.revoola.commonobject.RLTools
+import com.revoola.utils.RLPrefManager
 
 class RLFragChalengesType : RLBaseFragment() {
     val TAG: String = RLFragChalengesType::class.java.simpleName
-    lateinit var fragBinding: RlFragChalengesTypeBinding
+   // lateinit var fragBinding: RlFragChalengesTypeBinding
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragChalengesTypeBinding.inflate(layoutInflater)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
-        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragChalengesType" )
+       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_chalenges_type, container) as RlFragChalengesTypeBinding
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragChalengesType" )
         return fragBinding.root
     }
 
@@ -54,6 +55,10 @@ class RLFragChalengesType : RLBaseFragment() {
 
     private fun RLChallengesList(height: Int) {
         rl_onBackPresAct(fragBinding.inlayTop.ivBack)
+        fragBinding.inlayTop.ivBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
+            rl_bottomHideShowSet(true)
+        }
         rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.challengessmall))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.typeofchallenge))
