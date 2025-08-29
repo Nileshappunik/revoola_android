@@ -17,6 +17,7 @@ import com.revoola.fragment.feed.RLFragFeedCardLikeCommentView
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.fragment.feed.RLFragFeedCardAwardView
 
 
 class RLFeedSessionSummryListAdapter(
@@ -43,7 +44,6 @@ class RLFeedSessionSummryListAdapter(
     }
 
     inner class MyViewHolder(val layoutBinding: RlCommonSessionSummaryCardBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-       // private val layoutBinding: RlCommonSessionSummaryCardBinding = layoutBinding
         fun bindData(position: Int, itemVIew: View) {
             val (typeOfMetric, metricData) = dataList[position]
 
@@ -61,17 +61,20 @@ class RLFeedSessionSummryListAdapter(
                 layoutBinding.imgright.visibility=View.GONE
             }
             layoutBinding.imgright.setOnClickListener {
-                var passstring=""
+                val bundle = Bundle()
+               val rlMain=  (context as RLMainActivityRL)
                 if (typeOfMetric.title.equals("COMMENTS")){
-                    passstring="Comment"
-                } else if (typeOfMetric.title.equals("BOOSTS")){
-                    passstring="Thumb"
-                }
-                if (passstring.isNotEmpty()){
-                    val bundle = Bundle()
+                    bundle.putString(RLConstants.TYPE, "Comment")
                     bundle.putSerializable(RLConstants.CardData, cardData)
-                    bundle.putString(RLConstants.TYPE, passstring)
-                    (context as RLMainActivityRL).rl_loadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+                    rlMain.rl_loadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+                }else if (typeOfMetric.title.equals("BOOSTS")){
+                    bundle.putString(RLConstants.TYPE, "Thumb")
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    rlMain.rl_loadFrag(RLFragFeedCardLikeCommentView().newInstance(bundle), TAG, true, null, false)
+                }else if (typeOfMetric.title.equals("AWARDS")){
+                    //Here Award View
+                    bundle.putSerializable(RLConstants.CardData, cardData)
+                    rlMain.rl_loadFrag(RLFragFeedCardAwardView().newInstance(bundle), TAG, true, null, false)
                 }
             }
             if (position % 2 == 0) {

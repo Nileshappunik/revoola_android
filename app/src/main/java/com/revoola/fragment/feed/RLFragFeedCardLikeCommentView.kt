@@ -26,7 +26,6 @@ import kotlin.math.roundToInt
 
 class RLFragFeedCardLikeCommentView : RLBaseFragment(){
     val TAG: String = RLFragFeedCardLikeCommentView::class.java.simpleName
-   // lateinit var fragBinding: RlFragFeedCardLikeCommentViewBinding
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     var currentUser:String=""
@@ -44,8 +43,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_feed_card_like_comment_view, container) as RlFragFeedCardLikeCommentViewBinding
-        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeedCardLikeCommentView" )
+         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeedCardLikeCommentView" )
         currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -111,9 +109,13 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         layoutBinding.layAssumedeffort.viewCommon.visibility = View.GONE
         layoutBinding.laySteps.viewCommon.visibility = View.GONE
         layoutBinding.layBottom.visibility = View.GONE
-
+        layoutBinding.relayChart.visibility = View.GONE
         layoutBinding.txtUsername.setText(cardData.username.toString())
         layoutBinding.txtMyride.setText(cardData.className.toString())
+
+        layoutBinding.imgOrganizerUser.visibility = View.GONE
+        layoutBinding.txtOrganizerName.visibility = View.GONE
+        layoutBinding.txtOrganizer.visibility = View.GONE
 
         layoutBinding.imgMyride.setImageResource(RLTools.rl_geticon(classType))
         layoutBinding.txtUserdatetime.setText(RLTools.rl_convertTimestampToDateTime(cardData.timestamp.toLong()))

@@ -110,7 +110,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
                 rl_closeScreen(isSessionComplete)
             }
         })
-        fragBinding.ivTitle.setText(cardData.className.toString())
+        fragBinding.ivTitle.setText(cardData.className ?: "")
         fragBinding.ivDescription.setText(RLTools.rl_convertTimestampToDAte(cardData.timestamp.toLong()))
 
     }
@@ -166,7 +166,12 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
     }
 
     //Summery Ui SetUp
-    private fun rl_summaryUiSet() {
+    private fun rl_summaryUiSetOld() {
+        // Add null safety checks at the beginning
+        if (cardData == null) {
+            RLTools.rl_logEPrint(TAG, "cardData is null")
+            return
+        }
         fragBinding.relaySummary.visibility=View.VISIBLE
         fragBinding.relayAnalysis.visibility=View.GONE
         fragBinding.relayEffort.visibility=View.GONE
@@ -205,17 +210,17 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
                      imageList=imageListOriginal.toMutableList()
                  }else{
                      imageList = cardData.user_images.extractImageUrls().toMutableList()
-                     imageList.add(RLTools.rl_getLinkImage(cardData.classType?.toLowerCase().toString()))
+                     imageList.add(RLTools.rl_getLinkImage(cardData.classType?:"".toLowerCase().toString()))
                  }
              }
             2->{ //Your Way Image Set
-                if (cardData.map_image.isEmpty() && cardData.user_images.isNotEmpty()){
+                if (cardData.map_image.isNullOrEmpty() && cardData.user_images.isNotEmpty()){
                     imageList = cardData.user_images.extractImageUrls().toMutableList()
-                    imageList.add(RLTools.rl_getLinkImage(cardData.classType?.toLowerCase().toString()))
+                    imageList.add(RLTools.rl_getLinkImage(cardData.classType?:"".toLowerCase().toString()))
                 }else if (cardData.map_image.isNotEmpty() && cardData.user_images.isNotEmpty()){
                     imageList = cardData.user_images.extractImageUrls().toMutableList()
                     imageList.add(cardData.map_image)
-                    imageList.add(RLTools.rl_getLinkImage(cardData.classType?.toLowerCase().toString()))
+                    imageList.add(RLTools.rl_getLinkImage(cardData.classType?:"".toLowerCase().toString()))
                 }else{
                     imageList=imageListOriginal.toMutableList()
                 }
@@ -226,7 +231,7 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
             imageList.add("CHART")
         }
 
-       // RLTools.rl_heightsetViewPager(fragBinding.viewPagerImage)
+
         val viewPagerAdapter = RLImagePagerAdapter(activity,imageList,zoneDataList,ZoneTextData,effort,effortScore,maxEffort,this)
         fragBinding.viewPagerImage.adapter = viewPagerAdapter
 
@@ -243,6 +248,129 @@ class RLFragSessionSummary : RLBaseFragment() , OnImageClickListener {
             else -> rl_summaryNameToUi(RLYourWayName.Yoga)
         }
     }
+
+    private fun rl_summaryUiSet() {
+        // 0) Basic guards
+        val localCard = cardData
+        if (localCard == null) {
+            RLTools.rl_logEPrint(TAG, "cardData is null")
+            return
+        }
+        if (!isAdded) return
+
+        fragBinding.relaySummary.visibility = View.VISIBLE
+        fragBinding.relayAnalysis.visibility = View.GONE
+        fragBinding.relayEffort.visibility = View.GONE
+
+        // 1) Safe image sources
+        val imageLink = RLTools.rl_feedSetImage(localCard, currentUser, selectTag).orEmpty()
+        Glide.with(requireContext()).load(imageLink).into(fragBinding.testImage)
+
+
+        val classTypeLower = classType?.lowercase() ?: ""
+        val imageListOriginal = listOf(imageLink)
+
+        RLBaseProgress.rl_hideProgressDialog()
+        fragBinding.testImage.visibility = View.GONE
+        fragBinding.viewPagerImage.visibility = View.VISIBLE
+        fragBinding.constantPager.visibility = View.VISIBLE
+        fragBinding.intoTabLayout.visibility = View.VISIBLE
+        fragBinding.intoTabLayout.setupWithViewPager(fragBinding.viewPagerImage)
+
+        // 2) Zone data (already safe with Elvis to 0)
+        val zoneDataList = listOf(
+            RLZoneChartData("Zone1", fireBaseCardData?.zone1?.seconds ?: 0, "rgb(241, 119, 160)"),
+            RLZoneChartData("Zone2", fireBaseCardData?.zone2?.seconds ?: 0, "rgb(255, 207, 47)"),
+            RLZoneChartData("Zone3", fireBaseCardData?.zone3?.seconds ?: 0, "rgb(44, 174, 44)"),
+            RLZoneChartData("Zone4", fireBaseCardData?.zone4?.seconds ?: 0, "rgb(0, 153, 218)"),
+            RLZoneChartData("Zone5", fireBaseCardData?.zone5?.seconds ?: 0, "rgb(254, 105, 02)"),
+            RLZoneChartData("Zone6", fireBaseCardData?.zone6?.seconds ?: 0, "rgb(153, 0, 204)"),
+            RLZoneChartData("Zone7", fireBaseCardData?.zone7?.seconds ?: 0, "rgb(237, 69, 65)")
+        )
+
+        val avgRevPct = localCard.avgRevPercentage?.toString()?.toDoubleOrNull() ?: 0.0
+        val zoneTextData = RLTools.rl_verifyFeedZoneName(avgRevPct)
+        val effort = rl_getValueForTitle(RLValueName.AvgEffort)
+        val effortScore: String = rl_getValueForTitle(RLValueName.Effort)
+        val maxEffort = rl_getValueForTitle(RLValueName.MaxEffort)
+
+        // 3) Build image list with null-safe checks
+        val userImages = localCard.user_images?.extractImageUrls().orEmpty()
+        val mapImage = localCard.map_image // platform type? treat as nullable
+        val rlImage = RLTools.rl_getImage(classTypeLower)
+        var imageList: MutableList<String> = mutableListOf()
+
+        when (localCard.bmo) {
+            0 -> { // Body
+                imageList = if (userImages.isEmpty()) {
+                    imageListOriginal.toMutableList()
+                } else {
+                    (userImages + rlImage).toMutableList()
+                }
+            }
+
+            2 -> { // Your Way
+                imageList = when {
+                    // map_image empty/null + user images present
+                    mapImage.isNullOrEmpty() && userImages.isNotEmpty() -> {
+                        (userImages + rlImage).toMutableList()
+                    }
+                    // map_image present + user images present
+                    !mapImage.isNullOrEmpty() && userImages.isNotEmpty() -> {
+                        (userImages + mapImage).toMutableList()
+                    }
+                    else -> imageListOriginal.toMutableList()
+                }
+            }
+
+            else -> {
+                imageList = imageListOriginal.toMutableList()
+            }
+        }
+
+
+        // --- Insert CHART in right position ---
+        if (localCard.hrm == 1) {
+            if (!mapImage.isNullOrEmpty()) {
+                // Map exists → insert CHART at index 1 (second position)
+                imageList.add(1, "CHART")
+                // RLTools image should be last
+                if (!imageList.contains(rlImage)) {
+                    imageList.add(rlImage)
+                }
+            } else {
+                // No map → CHART goes first
+                imageList.add(0, "CHART")
+            }
+        }
+
+        val viewPagerAdapter = RLImagePagerAdapter(
+            activity,
+            imageList,
+            zoneDataList,
+            zoneTextData,
+            effort,
+            effortScore,
+            maxEffort,
+            this
+        )
+        fragBinding.viewPagerImage.adapter = viewPagerAdapter
+
+        // 4) Safe class type mapping
+        when (classTypeLower) {
+            "run" -> rl_summaryNameToUi(RLYourWayName.Run)
+            "walk" -> rl_summaryNameToUi(RLYourWayName.Walk)
+            "workout" -> rl_summaryNameToUi(RLYourWayName.Workout)
+            "ride" -> rl_summaryNameToUi(RLYourWayName.Ride)
+            "pilates" -> rl_summaryNameToUi(RLYourWayName.Pilates)
+            "warm" -> rl_summaryNameToUi(RLYourWayName.Warm)
+            "dance" -> rl_summaryNameToUi(RLYourWayName.Dance)
+            "hiit" -> rl_summaryNameToUi(RLYourWayName.Hiit)
+            "yoga" -> rl_summaryNameToUi(RLYourWayName.Yoga)
+            else -> rl_summaryNameToUi(RLYourWayName.Yoga)
+        }
+    }
+
     private fun rl_summaryNameToUi(wayname: RLYourWayName) {
         val isHrConnected = cardData.hrm != 0 // hrm=0 HeartRate Not Connect && hrm!=0 HeartRate Connected
         val isClass = cardData.bmo == 0 //bmo= 0 Your Way && bmo!=0 Class

@@ -380,7 +380,8 @@ class RLFeedListAdapter(
                 b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
                 b.layAssumedeffort.txtTime.setText(R.string.sharedtargetcaps)
                 b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.Goal, card)
-            } else {
+            }
+            else {
                 b.layAssumedeffort.imgTime.setImageResource(R.drawable.ic_goal)
                 b.layAssumedeffort.txtTime.setText(R.string.individualtargetcaps)
                 b.layAssumedeffort.txtTimeNumber.text = valueFor(RLValueName.Goal, card)
