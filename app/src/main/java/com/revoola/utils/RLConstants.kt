@@ -67,6 +67,9 @@ package com.revoola.utils
         const val BASE_URL: String = "https://video.revoola.com/" // _stuff/"
         const val URL_V3: String = "_stuff/getResponse_v3.php"
         const val URL_V2: String = "_stuff/getResponse_v2.php"
+
+        const val  CommentUrl: String =  BASE_URL+"_stuff/comments/cud.php"
+
         const val insertJSONApi = "_stuff/insertJSON.php"
         const val mpfIfCWxBL_insert = "my_overview_thumb/mpfIfCWxBL_insert.php"
         const val insertGroup = "_stuff/_groups/mpfIfCWxBL_insert.php"

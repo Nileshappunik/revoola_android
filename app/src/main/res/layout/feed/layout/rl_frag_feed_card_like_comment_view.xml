@@ -102,6 +102,7 @@
                 android:text="@string/send"
                 android:textAllCaps="true"
                 android:textAlignment="center"
+                android:imeOptions="actionDone"
                 android:gravity="center"
                 android:fontFamily="@font/omnes_semibold_regular"
                 android:textSize="16sp"

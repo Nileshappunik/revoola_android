@@ -4,6 +4,9 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentGetApiPayload
+import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentsApiResponse
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -327,16 +330,16 @@ class RLMainRepository(private val apiService: RLNetworkService) {
         })
 
     }
-    fun rl_getCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
-        apiService.rl_getCommentsData(q,overviewid,limit,index).enqueue(object : Callback<RLFeedModel> {
-            override fun onResponse(call: Call<RLFeedModel>, response: Response<RLFeedModel>) {
+    fun rl_getCommentsData(request: List<RLCommentGetApiPayload>, callback: (Result<RLCommentsApiResponse>) -> Unit) {
+        apiService.rl_getCommentsData(request).enqueue(object : Callback<RLCommentsApiResponse> {
+            override fun onResponse(call: Call<RLCommentsApiResponse>, response: Response<RLCommentsApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
                 } else {
                     callback(Result.failure(Throwable(response.message().toString())))
                 }
             }
-            override fun onFailure(call: Call<RLFeedModel>, t: Throwable) {
+            override fun onFailure(call: Call<RLCommentsApiResponse>, t: Throwable) {
                 callback(Result.failure(t))
             }
         })
@@ -426,6 +429,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     fun rl_insertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         apiService.rl_insertChallenges(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun rl_insertCommentData(request: List<RLCommentInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertCommentData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

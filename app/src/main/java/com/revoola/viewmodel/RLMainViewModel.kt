@@ -5,6 +5,9 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentGetApiPayload
+import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentsApiResponse
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -106,8 +109,8 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.rl_getNotificationData(q,user,limit,index, callback)
     }
 
-    fun rl_getCommentsData(q:String, overviewid:String, limit:Int, index:Int, callback: (Result<RLFeedModel>) -> Unit) {
-        mainRepository.rl_getCommentsData(q,overviewid,limit,index, callback)
+    fun rl_getCommentsData(request: List<RLCommentGetApiPayload>,callback: (Result<RLCommentsApiResponse>) -> Unit) {
+        mainRepository.rl_getCommentsData(request, callback)
     }
 
 
@@ -131,6 +134,11 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
 
     fun rl_insertChallenges(request: List<RLChallengesApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertChallenges(request, callback)
+    }
+
+
+    fun rl_insertCommentData(request: List<RLCommentInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertCommentData(request, callback)
     }
 
 }

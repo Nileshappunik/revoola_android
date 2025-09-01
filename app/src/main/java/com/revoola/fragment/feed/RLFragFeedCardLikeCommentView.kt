@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.api.RLApiClientRet
@@ -18,6 +19,11 @@ import com.revoola.fragment.feed.adapter.RLFeedCommentListAdapter
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.model.CommentGetParent
+import com.revoola.model.InsertParent
+import com.revoola.model.RLCommentGetApiPayload
+import com.revoola.model.RLCommentInsertApiPayload
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -44,7 +50,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
          RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFeedCardLikeCommentView" )
-        currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
+        currentUser= RLAuthManager().rl_getCurrentUser()?.uid?:""
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -67,13 +73,7 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
 
         val cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
         rl_dataSet(cardData)
-
-        val dataList = listOf<String>()
-        val linearLayoutManager = LinearLayoutManager(activity)
-        fragBinding.rvCommentList.layoutManager = linearLayoutManager
-        val adapter = RLFeedCommentListAdapter(dataList,activity)
-        fragBinding.rvCommentList.adapter = adapter
-
+        commentGetApiCall(cardData.ID)
     }
     private fun rl_commentThumbUiSet(cardData: RLTextOverview, inlayMain: RlLayoutFeedListBinding) {
         rl_commonDataSet(cardData, inlayMain)
@@ -347,15 +347,49 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
 
     }
 
-    private fun rl_apiCall(overviewid:String) {
-        viewModel.rl_getCommentsData("commentsNew",overviewid,10,0) { result ->
+    private fun commentGetApiCall(overviewId: Int) {
+        val payload = listOf(
+            RLCommentGetApiPayload(
+                get_comments = CommentGetParent(
+                    overviewid = overviewId,
+                    limit = 10,
+                    index = 0)))
+        RLTools.rl_logDPrint(TAG,"commentGetApiCall:- ${Gson().toJson(payload)}")
+        viewModel.rl_getCommentsData(payload) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success") && response.text.comments.size>0){
+                        RLTools.rl_logDPrint(TAG,"Get Comment Response:- ${response.text.comments}")
+                        val linearLayoutManager = LinearLayoutManager(activity)
+                        fragBinding.rvCommentList.layoutManager = linearLayoutManager
+                        val adapter = RLFeedCommentListAdapter(response.text.comments,activity)
+                        fragBinding.rvCommentList.adapter = adapter
+                    }else {
+                        RLTools.rl_logDPrint(TAG,"Get Comment Fail:- ${response.text}")
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    private fun commentInsertApiCall(overviewId: Int, comment:String) {
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val payload = listOf(RLCommentInsertApiPayload(insertparent = listOf(
+                    InsertParent(
+                        userid = currentUser,
+                        overviewid = overviewId,
+                        timestamp = currentTimestamp,
+                        comment = comment))))
+        RLTools.rl_logDPrint(TAG,"commentInsertPayload= $payload")
+        viewModel.rl_insertCommentData(payload) { result ->
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
-                        if (response.text.size>0){
-                            rl_dataSet(response.text[0])
-                        }
+                        commentGetApiCall(overviewId)
                     }else {
                         RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
@@ -374,16 +408,27 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
         if (clickType.equals("Comment")){
             fragBinding.relativeComment.visibility=View.VISIBLE
             fragBinding.relativeThumb.visibility=View.GONE
-           // RLTools.rl_heightsetimageview(fragBinding.inlayMain.imgMain)
             rl_commentThumbUiSet(cardData,fragBinding.inlayMain)
         }else if (clickType.equals("Thumb")){
             fragBinding.relativeComment.visibility=View.GONE
             fragBinding.relativeThumb.visibility=View.VISIBLE
-           // RLTools.rl_heightsetimageview(fragBinding.inlayMainThumb.imgMain)
             rl_commentThumbUiSet(cardData,fragBinding.inlayMainThumb)
         }
         fragBinding.btnSend.setOnClickListener {
-            //Do Something
+            val comment = fragBinding.edComment.text.toString()
+            // ✅ Call your API
+            commentInsertApiCall(cardData.ID, comment)
+
+            // ✅ Clear text
+            fragBinding.edComment.text?.clear()
+
+            // ✅ Clear focus
+            fragBinding.edComment.clearFocus()
+
+            // ✅ Hide keyboard
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                    as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(fragBinding.edComment.windowToken, 0)
         }
     }
 

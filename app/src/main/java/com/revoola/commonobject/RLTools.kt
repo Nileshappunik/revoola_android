@@ -1183,6 +1183,14 @@ object RLTools {
 
         return time
     }
+    fun rl_formatTimestamp(timestamp: Long): String {
+        // timestamp is in seconds, so convert to milliseconds
+        val date = Date(timestamp * 1000)
+
+        // Format: 01 AUG 2024 (dd MMM yyyy in uppercase)
+        val sdf = SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
+        return sdf.format(date).uppercase(Locale.ENGLISH)
+    }
 
     fun rl_convertTimestampToDAte(timestamp: Long): String {
         try {

@@ -5,6 +5,9 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentGetApiPayload
+import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentsApiResponse
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -99,12 +102,8 @@ interface RLNetworkService {
         @Query("limit") limit: Int,
         @Query("index") index: Int): Call<RLNotificationModel>
 
-    @GET(RLConstants.URL_V2)
-    fun rl_getCommentsData(
-        @Query("q") q: String,
-        @Query("overviewid") overviewid: String,
-        @Query("limit") limit: Int,
-        @Query("index") index: Int): Call<RLFeedModel>
+    @POST(RLConstants.URL_V3)
+    fun rl_getCommentsData(@Body request: List<RLCommentGetApiPayload>): Call<RLCommentsApiResponse>
 
     //Insert Api
     @POST(RLConstants.insertJSONApi)
@@ -128,4 +127,9 @@ interface RLNetworkService {
     //Friends Insert
     @POST(RLConstants.insertJSONApi)
     fun rl_insertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
+
+    //Comment Insert
+    @POST(RLConstants.CommentUrl)
+    fun rl_insertCommentData(@Body request: List<RLCommentInsertApiPayload>): Call<RLInsertCommonApiResponse>
+
 }
