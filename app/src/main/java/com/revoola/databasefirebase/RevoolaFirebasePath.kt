@@ -95,6 +95,7 @@ object RevoolaFirebasePath {
         return "/$basePath/revoolaUserSettings/$userId/schedule"
     }
 
-
-
+    fun awardPathRead(awardKey: String):String{
+        return "/$basePath/codeSection/awardSystem/$awardKey"
+    }
 }

@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
-import com.revoola.api.RLApiClientRet
+import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragFeedCardAwardViewBinding
+import com.revoola.fragment.feed.adapter.RLFeedAwardListAdapter
+import com.revoola.fragment.feed.adapter.RLFeedCommentListAdapter
 import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
-import com.revoola.viewmodel.RLMainRepository
-import com.revoola.viewmodel.RLMainViewModel
-import com.revoola.viewmodel.RLMainViewModelFactory
 
 
 class RLFragFeedCardAwardView : RLBaseFragment(){
@@ -45,9 +45,19 @@ class RLFragFeedCardAwardView : RLBaseFragment(){
         fragBinding.ivBack.setOnClickListener {
             rl_closeFragment()
         }
-        fragBinding.ivAwardDescription.setText("Congratulations Bronze Award For Achieving 20 Effort in Any Your Way Activity.")
-        fragBinding.ivAwardSubDescription.setText("Congratulations You Have Achieved an Effort Score of 20")
-        val  currentUser= RLAuthManager().rl_getCurrentUser()?.uid?:""
         val cardData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
+        RLDatabaseManagerRead().rl_getAwardList(cardData.awards) { awardsList, error ->
+            if (error != null) {
+                RLTools.rl_logEPrint(TAG,"❌ get Award Error: ${error.message}")
+            } else {
+                RLTools.rl_logDPrint(TAG,"✅ get Award Success: ${awardsList?.size}")
+                if (awardsList!=null && awardsList.size>0){
+                    val linearLayoutManager = LinearLayoutManager(activity)
+                    fragBinding.rvCommentListThumb.layoutManager = linearLayoutManager
+                    val adapter = RLFeedAwardListAdapter(awardsList, activity)
+                    fragBinding.rvCommentListThumb.adapter = adapter
+                }
+            }
+        }
     }
 }

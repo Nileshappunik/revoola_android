@@ -7,6 +7,7 @@ import com.revoola.utils.RLConstants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.revoola.firebaseModel.AwardModel
 import com.revoola.firebaseModel.RLChallengeRiderBody
 
 class RLDatabaseManagerRead {
@@ -167,6 +168,42 @@ class RLDatabaseManagerRead {
             }
         })
 
+    }
+
+
+    fun rl_getAwardList(awardsString: String, callback: (List<AwardModel>?, Exception?) -> Unit) {
+        // 🚨 Check null/empty input first
+        if (awardsString.isNullOrBlank()) {
+            callback(emptyList(), null)
+            return
+        }
+
+        val database = FirebaseDatabase.getInstance().reference
+        // Split the comma-separated awards string
+        val keys = awardsString.split(",").map { it.trim() }
+        val awardsList = mutableListOf<AwardModel>()
+        var processedCount = 0
+        for (key in keys) {
+            val path = RevoolaFirebasePath.awardPathRead(key) // 👈 your helper that returns correct path
+            database.child(path).get()
+                .addOnSuccessListener { snapshot ->
+                    processedCount++
+                    if (snapshot.exists()) {
+                        val award = snapshot.getValue(AwardModel::class.java)
+                        award?.let { awardsList.add(it) }
+                    }
+                    if (processedCount == keys.size) {
+                        // ✅ All keys processed
+                        callback(awardsList, null)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    processedCount++
+                    if (processedCount == keys.size) {
+                        callback(awardsList, e) // return partial list + error
+                    }
+                }
+        }
     }
 
 }

@@ -364,6 +364,9 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
                         fragBinding.rvCommentList.layoutManager = linearLayoutManager
                         val adapter = RLFeedCommentListAdapter(response.text.comments,activity)
                         fragBinding.rvCommentList.adapter = adapter
+
+                        fragBinding.rvCommentListThumb.layoutManager = LinearLayoutManager(activity)
+                        fragBinding.rvCommentListThumb.adapter = adapter
                     }else {
                         RLTools.rl_logDPrint(TAG,"Get Comment Fail:- ${response.text}")
                     }
