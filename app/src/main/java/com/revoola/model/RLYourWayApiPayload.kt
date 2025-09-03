@@ -75,3 +75,16 @@ data class RLInsertCommonApiResponse(
     @SerializedName("type") val type: String,
     @SerializedName("text") val text: String
 )
+
+
+/*------------------------Delete feedCard Data-------------------------------*/
+
+data class RLDeleteFeedItemApiPayload(
+    @SerializedName("updateThumbnailsClassleaderboard") val classLeaderboard: RLDeleteFeedItemBoard )
+
+data class RLDeleteFeedItemBoard(
+    @SerializedName("userid") val userId: String,
+    @SerializedName("timestamp_local") val timestampLocal: String,
+    @SerializedName("className") val className: String,
+    @SerializedName("isDeleted") val isDeleted: Int
+)

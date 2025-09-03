@@ -20,10 +20,17 @@ import com.revoola.model.RLTextOverview
 import com.revoola.utils.RLConstants
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.model.CommentDeleteParent
 import com.revoola.model.CommentGetParent
+import com.revoola.model.CommentItem
+import com.revoola.model.CommentReplyDeleteParent
 import com.revoola.model.InsertParent
+import com.revoola.model.InsertReplyParent
+import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
 import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentReplyDeleteApiPayload
+import com.revoola.model.RLCommentReplyInsertApiPayload
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -362,7 +369,9 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
                         RLTools.rl_logDPrint(TAG,"Get Comment Response:- ${response.text.comments}")
                         val linearLayoutManager = LinearLayoutManager(activity)
                         fragBinding.rvCommentList.layoutManager = linearLayoutManager
-                        val adapter = RLFeedCommentListAdapter(response.text.comments,activity)
+                        val adapter = RLFeedCommentListAdapter(response.text.comments as MutableList<CommentItem>,activity){
+                            commentDeleteApiCall(overviewId,it.id)
+                        }
                         fragBinding.rvCommentList.adapter = adapter
 
                         fragBinding.rvCommentListThumb.layoutManager = LinearLayoutManager(activity)
@@ -379,33 +388,6 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
             }
         }
     }
-    private fun commentInsertApiCall(overviewId: Int, comment:String) {
-        val currentTimestamp = System.currentTimeMillis() / 1000
-        val payload = listOf(RLCommentInsertApiPayload(insertparent = listOf(
-                    InsertParent(
-                        userid = currentUser,
-                        overviewid = overviewId,
-                        timestamp = currentTimestamp,
-                        comment = comment))))
-        RLTools.rl_logDPrint(TAG,"commentInsertPayload= $payload")
-        viewModel.rl_insertCommentData(payload) { result ->
-            result.onSuccess { response ->
-                try {
-                    if (response.type.equals("success")){
-                        commentGetApiCall(overviewId)
-                    }else {
-                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
-                    }
-                }catch (e:Exception){
-                    e.printStackTrace()
-                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
-                }
-            }.onFailure { error ->
-                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
-            }
-        }
-    }
-
     private fun rl_dataSet(cardData:RLTextOverview){
         val  clickType = requireArguments().getString(RLConstants.TYPE)
         if (clickType.equals("Comment")){
@@ -432,6 +414,108 @@ class RLFragFeedCardLikeCommentView : RLBaseFragment(){
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
                     as android.view.inputmethod.InputMethodManager
             imm.hideSoftInputFromWindow(fragBinding.edComment.windowToken, 0)
+        }
+    }
+
+    private fun commentInsertApiCall(overviewId: Int, comment:String) {
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val payload = listOf(RLCommentInsertApiPayload(insertparent = listOf(
+            InsertParent(
+                userid = currentUser,
+                overviewid = overviewId,
+                timestamp = currentTimestamp,
+                comment = comment))))
+        RLTools.rl_logDPrint(TAG,"commentInsertPayload= $payload")
+        viewModel.rl_insertCommentData(payload) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        commentGetApiCall(overviewId)
+                    }else {
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
+            }
+        }
+    }
+    private fun commentDeleteApiCall(overviewId: Int,commentid:Int) {
+        val payload = listOf(
+            RLCommentDeleteApiPayload(
+                deleteparent = listOf(CommentDeleteParent(
+                    commentid = commentid,
+                    overviewid = overviewId))))
+        RLTools.rl_logDPrint(TAG,"commentDeleteApiCall:- ${Gson().toJson(payload)}")
+        viewModel.rl_deleteCommentItem(payload) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.rl_logDPrint(TAG,"Delete Comment Response:- ${response.text}")
+                        commentGetApiCall(overviewId)
+                    }else {
+                        RLTools.rl_logDPrint(TAG,"Delete Comment Fail:- ${response.text}")
+                    }
+                }catch (e:Exception){
+                    RLTools.rl_logDPrint(TAG,"Delete Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.rl_logDPrint(TAG,"Delete Error= "+error.message)
+            }
+        }
+    }
+    private fun commentReplyDeleteApiCall(overviewId: Int,commentid:Int) {
+        val payload = listOf(
+            RLCommentReplyDeleteApiPayload(
+                deletereply = listOf(CommentReplyDeleteParent(
+                    commentid = commentid,
+                    overviewid = overviewId))))
+
+        RLTools.rl_logDPrint(TAG,"commentReplyDeleteApiCall:- ${Gson().toJson(payload)}")
+        viewModel.rl_deleteReplyCommentItem(payload) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        RLTools.rl_logDPrint(TAG,"Delete ReplyComment Response:- ${response.text}")
+                    }else {
+                        RLTools.rl_logDPrint(TAG,"Delete ReplyComment Fail:- ${response.text}")
+                    }
+                }catch (e:Exception){
+                    RLTools.rl_logDPrint(TAG,"Delete ReplyComment Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.rl_logDPrint(TAG,"Delete ReplyComment Error= "+error.message)
+            }
+        }
+    }
+    private fun commentReplyInsertApiCall(overviewId: Int, comment:String,commentid:Int) {
+        val currentTimestamp = System.currentTimeMillis() / 1000
+        val payload = listOf(RLCommentReplyInsertApiPayload(insertreply = listOf(
+            InsertReplyParent(
+                userid = currentUser,
+                commentid = commentid,
+                overviewid = overviewId,
+                timestamp = currentTimestamp,
+                comment = comment))))
+        RLTools.rl_logDPrint(TAG,"commentInsertPayload= $payload")
+        viewModel.rl_insertReplyCommentData(payload) { result ->
+            result.onSuccess { response ->
+                try {
+                    if (response.type.equals("success")){
+                        commentGetApiCall(overviewId)
+                    }else {
+                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
+                }
+            }.onFailure { error ->
+                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
+            }
         }
     }
 

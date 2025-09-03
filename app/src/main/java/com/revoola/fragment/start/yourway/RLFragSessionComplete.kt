@@ -91,6 +91,8 @@ class RLFragSessionComplete : RLBaseFragment(){
     private var mapBitmapImage: Bitmap? = null
     private var mapImageUri: Uri? = null
     private lateinit var cardData: RLSessionDataTransferModelNew
+    private lateinit var cardEditData: RLTextOverview
+    private  var isEditFeedItem: Boolean =false
     private val httpClient by lazy { OkHttpClient() }
 
 
@@ -108,7 +110,12 @@ class RLFragSessionComplete : RLBaseFragment(){
         super.onCreate(savedInstanceState)
         // Retrieve the Parcelable object from the Bundle
         arguments?.let {
-            cardData = it.getParcelable("cardData")!! // Use !! only if you're sure it's not null
+            isEditFeedItem = it.getBoolean("isEditFeedItem") // Use !! only if you're sure it's not null
+            if (isEditFeedItem){
+                cardEditData = requireArguments().getSerializable(RLConstants.CardData) as RLTextOverview
+            }else{
+                cardData = it.getParcelable("cardData")!! // Use !! only if you're sure it's not null
+            }
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -127,9 +134,140 @@ class RLFragSessionComplete : RLBaseFragment(){
                 // Do nothing or show a message
             }
         })
-        RLuisetup()
+        if (isEditFeedItem) editUiSetUp() else  RLuisetup()
+
         return fragBinding.root
     }
+    //This Method use for Feed Item Edit
+    private fun editUiSetUp() {
+       RLfetchServerUrl()
+       fragBinding.edtSessionName.setText(cardEditData.className)
+        shareMap = cardEditData.share_map
+        if (safeIntNumber(shareMap) == 1 ){
+            fragBinding.switchCompat.isChecked = true
+        }else{
+            fragBinding.switchCompat.isChecked = false
+        }
+       fragBinding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
+           if (isChecked){
+               shareMap = 1
+           }else{
+               shareMap = 0
+           }
+       }
+
+      var  privacyVisibility = safeIntNumber(cardEditData.visibilityflagforthatsession)
+       when(privacyVisibility){
+           0->{//EveryOne
+               fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+               fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
+               fragBinding.tvShareTitle.setText(R.string.everyone)
+               fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+           }
+           1->{//Private
+               fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+               fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
+               fragBinding.tvShareTitle.setText(R.string.privatetx)
+               fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+           }
+           2->{//Friends
+               fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+               fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+               fragBinding.tvShareTitle.setText(R.string.friendstx)
+               fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+           }
+       }
+
+       fragBinding.layPrivacy.setOnClickListener {
+           val titleTxt:String=fragBinding.tvShareTitle.text.toString().toUpperCase()
+           when(titleTxt){
+               "FRIENDS"->{
+                   privacyVisibility=0
+                   fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyPrivateBGColor))
+                   fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyprivate)
+                   fragBinding.tvShareTitle.setText(R.string.privatetx)
+                   fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyPrivateColor))
+                   RLShareMapHide(false)
+               }
+               "EVERYONE"->{
+                   privacyVisibility=2
+                   fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyFriendsBGColor))
+                   fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyfriends)
+                   fragBinding.tvShareTitle.setText(R.string.friendstx)
+                   fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyFriendsColor))
+                   RLShareMapHide(true)
+               }
+               "PRIVATE"->{
+                   privacyVisibility=1
+                   fragBinding.layPrivacy.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.AppPrivacyEveryOneBGColor))
+                   fragBinding.imgShareImage.setImageResource(R.drawable.ic_privacyeveryone)
+                   fragBinding.tvShareTitle.setText(R.string.everyone)
+                   fragBinding.tvShareTitle.setTextColor(resources.getColor(R.color.AppPrivacyEveryOneColor))
+                   RLShareMapHide(true)
+               }
+           }
+       }
+       fragBinding.txtAddPhoto.setOnClickListener {
+           RLchooseFromGallery()
+       }
+       fragBinding.imgCancle.setOnClickListener {
+           rl_bottomHideShowSet(true)
+           rl_closeFragment()
+       }
+       fragBinding.inlayButton.commonButton.setText(R.string.save)
+       fragBinding.inlayButton.commonButton.setOnClickListener {
+           if(isAdded){
+               RLBaseProgress.rl_showProgressDialog(requireActivity())
+           }
+           updateFeedItemEditApiCall(privacyVisibility)
+       }
+   }
+    //Edit Api Call
+    private fun feedItemEditPayloadNew(privacyVisibility: Int): Map<String, RequestBody> {
+        val requestBodyMap = mutableMapOf<String, RequestBody>()
+        // Add text fields as form data
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][userid]"] = createRequestBody(cardEditData.userid)
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][overviewid]"] = createRequestBody(cardEditData.ID.toString())
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][className]"] = createRequestBody(fragBinding.edtSessionName.text.toString())
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][visibilityflagforthatsession]"] = createRequestBody(privacyVisibility.toString())
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][share_map]"] = createRequestBody(safeIntNumber(shareMap).toString())
+        requestBodyMap["data[updateMyOverviewThumbnailsImages][notes]"] = createRequestBody(fragBinding.edtAddNotes.text.toString())
+
+        return requestBodyMap
+    }
+    //Edit Api Call
+    private fun updateFeedItemEditApiCall(privacyVisibility: Int) {
+        if (apiClientRetrofit.rl_isConnected()) {
+            val dataMap  = feedItemEditPayloadNew(privacyVisibility)
+            val images=getUserImages()
+            RLTools.rl_logDPrint(TAG,"updateFeedItemEditApiCall Request: $dataMap")
+            //Update Api Call
+            viewModel.rl_updateFeedItemCardData(dataMap,images) { result ->
+                result.onSuccess { response ->
+                    try {
+                        if (response.type.equals("success")) {
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logDPrint(TAG, "updateFeedItemEditApiCall Success: ${response.text}")
+                            rl_bottomHideShowSet(true)
+                            rl_closeFragment()
+                        } else {
+                            RLBaseProgress.rl_hideProgressDialog()
+                            RLTools.rl_logEPrint(TAG, "updateFeedItemEditApiCall Fail: ${response.text}")
+                        }
+                    } catch (e: Exception) {
+                        RLBaseProgress.rl_hideProgressDialog()
+                        RLTools.rl_logEPrint(TAG, "updateFeedItemEditApiCall Catch: ${e.message}" )
+
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logEPrint(TAG, "updateFeedItemEditApiCall Error: ${error.localizedMessage}" )
+                }
+            }
+        }
+
+    }
+
     private fun RLuisetup() {
         RLfetchServerUrl()
         fragBinding.edtSessionName.setText("${cardData.yourWayType} Session")
@@ -217,6 +355,7 @@ class RLFragSessionComplete : RLBaseFragment(){
         }
 
     }
+
     //Firebase To Fetch Server Data
     private fun RLfetchServerUrl() {
         // Firebase to fetch user data
@@ -1275,7 +1414,6 @@ class RLFragSessionComplete : RLBaseFragment(){
             return null
         }
     }
-
     private fun RLAllProcessDone(cardData: RLSessionDataTransferModelNew,currentTimestamp:String){
 
         // Convert to a single comma-separated string
@@ -1320,7 +1458,7 @@ class RLFragSessionComplete : RLBaseFragment(){
             medals_silver =0,
             medals_bronze =0,
             awards ="0",
-            visibilityFlagForThatSession =visibilityflagforthatsession,
+            visibilityflagforthatsession =visibilityflagforthatsession,
             bmo =2,
             instructor ="",
             duration ="",
@@ -1365,7 +1503,6 @@ class RLFragSessionComplete : RLBaseFragment(){
         bundle.putBoolean("isSessionComplete", true)
         (context as RLMainActivityRL).rl_loadFrag(RLFragSessionSummary().newInstance(bundle), TAG, false, null, true)
     }
-
     //Below All Code ImagePicker
     private fun RLHandleSelectedImageList(imgUriList:MutableList<Uri>){
         if (imgUriList.size > 0) {

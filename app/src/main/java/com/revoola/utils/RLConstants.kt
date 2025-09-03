@@ -68,10 +68,12 @@ package com.revoola.utils
         const val URL_V3: String = "_stuff/getResponse_v3.php"
         const val URL_V2: String = "_stuff/getResponse_v2.php"
 
+
         const val  CommentUrl: String =  BASE_URL+"_stuff/comments/cud.php"
 
         const val insertJSONApi = "_stuff/insertJSON.php"
         const val mpfIfCWxBL_insert = "my_overview_thumb/mpfIfCWxBL_insert.php"
+        const val mpfIfCWxBL_update = "my_overview_thumb/mpfIfCWxBL_update.php"
         const val insertGroup = "_stuff/_groups/mpfIfCWxBL_insert.php"
         //MAP KEY AND API
         const val mapKey = "AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"

@@ -5,9 +5,13 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
 import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentReplyDeleteApiPayload
+import com.revoola.model.RLCommentReplyInsertApiPayload
 import com.revoola.model.RLCommentsApiResponse
+import com.revoola.model.RLDeleteFeedItemApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -113,10 +117,21 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.rl_getCommentsData(request, callback)
     }
 
+    fun rl_deleteCommentItem(request: List<RLCommentDeleteApiPayload>,callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_deleteCommentItem(request, callback)
+    }
+
+    fun rl_deleteReplyCommentItem(request: List<RLCommentReplyDeleteApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_deleteReplyCommentItem(request, callback)
+    }
 
     //Insert Api
     fun rl_insertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertYourWayData(request, callback)
+    }
+
+    fun rl_deleteFeedCardItem(request: List<RLDeleteFeedItemApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_deleteFeedCardItem(request, callback)
     }
     fun rl_insertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertFriendsData(request, callback)
@@ -127,6 +142,11 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
 
     fun rl_insertYourWayOverviewData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertYourWayOverviewData(request,images, callback)
+    }
+
+
+    fun rl_updateFeedItemCardData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_updateFeedItemCardData(request,images, callback)
     }
     fun rl_insertGroupData(request:  Map<String, @JvmSuppressWildcards RequestBody>, images:List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertGroupData(request,images, callback)
@@ -139,6 +159,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
 
     fun rl_insertCommentData(request: List<RLCommentInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertCommentData(request, callback)
+    }
+
+    fun rl_insertReplyCommentData(request: List<RLCommentReplyInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_insertReplyCommentData(request, callback)
     }
 
 }

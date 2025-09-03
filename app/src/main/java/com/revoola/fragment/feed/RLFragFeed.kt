@@ -227,12 +227,15 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
             currentUser,
             selectTag,
             appUnit
-        ) { clickedItem ->
-            joinChallenge(clickedItem)
+        ) { clickedItem,isDeleteItem ->
+            if (isDeleteItem) {
+                deleteFeedCardItem(clickedItem)
+            } else {
+                joinChallenge(clickedItem)
+            }
         }
         binding.rvItemFeed.adapter = feedAdapter
     }
-
 
     // --- Tab Handling ---
 
@@ -342,8 +345,12 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
                 currentUser,
                 currentTab.label,
                 appUnit
-            ) { clickedItem ->
-                joinChallenge(clickedItem)
+            ) { clickedItem,isDeleteItem ->
+                if (isDeleteItem) {
+                    deleteFeedCardItem(clickedItem)
+                } else {
+                    joinChallenge(clickedItem)
+                }
             }
             binding.rvItemFeed.adapter = feedAdapter
         }
@@ -595,6 +602,31 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
                 }
             }.onFailure { error ->
                 RLTools.rl_logEPrint(TAG, "JoinBigChallenges Error: ${error.message}")
+            }
+        }
+    }
+
+    private fun deleteFeedCardItem(card: RLTextOverview) {
+        val req = listOf(
+            RLDeleteFeedItemApiPayload(
+                classLeaderboard = RLDeleteFeedItemBoard(
+                    userId = card.userid,
+                    timestampLocal = card.timestamp_local,
+                    className = card.className,
+                    isDeleted = 1
+                )
+            )
+        )
+        RLTools.rl_logDPrint(TAG, "deleteFeedCardItemRequest: $req")
+        viewModel.rl_deleteFeedCardItem(req) { result ->
+            result.onSuccess { response ->
+                try {
+                    RLTools.rl_logDPrint(TAG, "deleteFeedCardItem Success: $response")
+                } catch (e: Exception) {
+                    RLTools.rl_logEPrint(TAG, "deleteFeedCardItem Catch: ${e.message}")
+                }
+            }.onFailure { error ->
+                RLTools.rl_logEPrint(TAG, "deleteFeedCardItem Error: ${error.message}")
             }
         }
     }

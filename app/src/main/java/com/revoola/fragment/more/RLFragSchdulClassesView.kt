@@ -30,13 +30,15 @@ class RLFragSchdulClassesView : RLBaseFragment() {
     private val fragBinding by lazy {
         RlFragSchduleClassesViewBinding.inflate(layoutInflater)
     }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragSchdulClassesView()
         fragment.arguments = bundle
         return fragment
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSchdulClassesView" )
@@ -136,8 +138,8 @@ class RLFragSchdulClassesView : RLBaseFragment() {
         return try {
             val challengeTimeMillis = dateOfChallenge.toLong() * 1000 // Convert seconds to milliseconds
             val currentTime = System.currentTimeMillis()
-            RLTools.rl_logEPrint(TAG, "currentTime: $currentTime")
-            RLTools.rl_logEPrint(TAG, "challengeTime: $challengeTimeMillis")
+            RLTools.rl_logEPrint(TAG,"currentTime: $currentTime")
+            RLTools.rl_logEPrint(TAG,"challengeTime: $challengeTimeMillis")
 
             val tenMinutesMillis = 10 * 60 * 1000 // 10 minutes in milliseconds
             val timeDifference = challengeTimeMillis - currentTime // Time remaining until challenge

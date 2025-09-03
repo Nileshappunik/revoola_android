@@ -319,6 +319,7 @@ class RLFragSensorProgress : RLBaseFragment(){
 
             //bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)
+            bundle.putBoolean("isEditFeedItem",false)
             try {
                 timerManager.rl_stop()
                 viewModel.stopNotifications()

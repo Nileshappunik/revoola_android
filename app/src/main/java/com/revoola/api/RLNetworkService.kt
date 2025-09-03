@@ -5,9 +5,13 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
 import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentReplyDeleteApiPayload
+import com.revoola.model.RLCommentReplyInsertApiPayload
 import com.revoola.model.RLCommentsApiResponse
+import com.revoola.model.RLDeleteFeedItemApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -105,9 +109,18 @@ interface RLNetworkService {
     @POST(RLConstants.URL_V3)
     fun rl_getCommentsData(@Body request: List<RLCommentGetApiPayload>): Call<RLCommentsApiResponse>
 
+     @POST(RLConstants.CommentUrl)
+     fun rl_deleteCommentItem(@Body request: List<RLCommentDeleteApiPayload>): Call<RLInsertCommonApiResponse>
+
+     @POST(RLConstants.CommentUrl)
+     fun rl_deleteReplyCommentItem(@Body request: List<RLCommentReplyDeleteApiPayload>): Call<RLInsertCommonApiResponse>
+
     //Insert Api
     @POST(RLConstants.insertJSONApi)
     fun rl_insertYourWayData(@Body request: List<RLYourWayApiPayload>): Call<RLInsertCommonApiResponse>
+
+    @POST(RLConstants.insertJSONApi)
+    fun rl_deleteFeedCardItem(@Body request: List<RLDeleteFeedItemApiPayload>): Call<RLInsertCommonApiResponse>
 
     @Multipart
     @POST(RLConstants.mpfIfCWxBL_insert)
@@ -117,7 +130,12 @@ interface RLNetworkService {
     @POST(RLConstants.mpfIfCWxBL_insert)
     fun rl_insertYourWayOverviewData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
-     @Multipart
+    @Multipart
+    @POST(RLConstants.mpfIfCWxBL_update)
+    fun rl_updateFeedItemCardData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
+
+
+    @Multipart
     @POST(RLConstants.insertGroup)
     fun rl_insertGroupData(@PartMap data: Map<String, @JvmSuppressWildcards RequestBody>, @Part images: List<MultipartBody.Part>): Call<RLInsertCommonApiResponse>
 
@@ -130,6 +148,9 @@ interface RLNetworkService {
 
     //Comment Insert
     @POST(RLConstants.CommentUrl)
-    fun rl_insertCommentData(@Body request: List<RLCommentInsertApiPayload>): Call<RLInsertCommonApiResponse>
+    fun rl_insertCommentData(@Body request: List<RLCommentInsertApiPayload>): Call<RLInsertCommonApiResponse>//Comment Insert
+
+    @POST(RLConstants.CommentUrl)
+    fun rl_insertReplyCommentData(@Body request: List<RLCommentReplyInsertApiPayload>): Call<RLInsertCommonApiResponse>
 
 }

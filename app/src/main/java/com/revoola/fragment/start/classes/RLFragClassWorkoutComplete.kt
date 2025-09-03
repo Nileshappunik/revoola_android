@@ -1030,7 +1030,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
             medals_silver =0,
             medals_bronze =0,
             awards ="0",
-            visibilityFlagForThatSession =visibilityflagforthatsession,
+            visibilityflagforthatsession =visibilityflagforthatsession,
             bmo =bmo,
             instructor =videoCardData.instructor,
             duration =videoCardData.duration,

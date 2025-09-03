@@ -29,6 +29,7 @@ import com.revoola.enumclass.RLValueName
 import com.revoola.fragment.feed.RLFragMindSessionSummary
 import com.revoola.fragment.feed.RLFragSessionSummary
 import com.revoola.fragment.feed.RLFragTenChallengeSummary
+import com.revoola.fragment.start.yourway.RLFragSessionComplete
 import com.revoola.model.RLTextOverview
 import com.revoola.services.RLAllHTMLChart
 import com.revoola.utils.RLConstants
@@ -40,7 +41,7 @@ class RLFeedListAdapter(
     private val currentUserId: String,
     private val selectTag: String,
     private val appUnit: String,
-    private val onItemClicked: (RLTextOverview) -> Unit
+    private val onItemClicked: (RLTextOverview,Boolean) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -129,7 +130,7 @@ class RLFeedListAdapter(
                 val card = dataList[position]
                 RLTools.rl_logLarge(TAG, "cardData: ${Gson().toJson(card)}")
 
-                commonHeader(card, binding, position + 1)
+                commonHeader(card, binding, position)
 
                 val isImperial = RLTools.rl_getIsImperial(appUnit)
                 when (card.from_third_party_source) {
@@ -234,7 +235,7 @@ class RLFeedListAdapter(
             Glide.with(activity).load(imageLinkMain).into(b.imgMain)
 
             b.temptext.text =
-                "pos: $pos , ctype: $classType , third: ${card.from_third_party_source} , bmo: ${card.bmo}, HR: ${card.hrm}"
+                "pos: ${pos + 1} , ctype: $classType , third: ${card.from_third_party_source} , bmo: ${card.bmo}, HR: ${card.hrm}"
 
             b.cardChalengis.setOnClickListener {
                 when {
@@ -276,7 +277,7 @@ class RLFeedListAdapter(
                 }
             }
 
-            b.imgThreedot.setOnClickListener { showEditDeleteDialog(card) }
+            b.imgThreedot.setOnClickListener { showEditDeleteDialog(card,pos) }
 
             b.imgShare.setOnClickListener {
                 val bitmap = RLBranchManager(activity).rl_captureSpecificView(b.cardChalengis)
@@ -577,7 +578,7 @@ class RLFeedListAdapter(
                 card.className.orEmpty(),
                 Html.FROM_HTML_MODE_LEGACY
             )
-            b.ButtonJoinChallenge.setOnClickListener { onItemClicked(card) }
+            b.ButtonJoinChallenge.setOnClickListener { onItemClicked(card,false) }
         }
 
         // ---------- Dialogs ----------
@@ -593,7 +594,7 @@ class RLFeedListAdapter(
             dlg.show()
         }
 
-        private fun showEditDeleteDialog(cardData: RLTextOverview) {
+        private fun showEditDeleteDialog(cardData: RLTextOverview,pos: Int) {
             val dialog = Dialog(activity).apply {
                 requestWindowFeature(Window.FEATURE_NO_TITLE)
                 setContentView(R.layout.rl_dailog_edit_delete_feedcard)
@@ -605,8 +606,22 @@ class RLFeedListAdapter(
                 window?.setBackgroundDrawableResource(R.color.transparent_dialog)
             }
 
-            dialog.findViewById<TextView>(R.id.txt_edit)?.setOnClickListener { dialog.dismiss() }
-            dialog.findViewById<TextView>(R.id.txt_delete)?.setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<TextView>(R.id.txt_edit)?.setOnClickListener { dialog.dismiss()
+               val bundle = Bundle()
+                bundle.putSerializable(RLConstants.CardData, cardData)
+                bundle.putBoolean("isEditFeedItem",true)
+                (activity as RLMainActivityRL).rl_loadFrag(RLFragSessionComplete().newInstance(bundle), TAG, true, null, false)
+
+            }
+            dialog.findViewById<TextView>(R.id.txt_delete)?.setOnClickListener { dialog.dismiss()
+                onItemClicked(cardData,true)
+                // remove from list
+                dataList.removeAt(pos)
+
+                // notify adapter
+                notifyItemRemoved(pos)
+                notifyItemRangeChanged(pos, dataList.size - pos)
+            }
             dialog.findViewById<TextView>(R.id.btn_cancle)?.setOnClickListener { dialog.dismiss() }
 
             dialog.show()

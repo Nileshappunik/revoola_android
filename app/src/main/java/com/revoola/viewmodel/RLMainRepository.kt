@@ -4,9 +4,13 @@ import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
 import com.revoola.model.RLChallengesApiPayload
+import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
 import com.revoola.model.RLCommentInsertApiPayload
+import com.revoola.model.RLCommentReplyDeleteApiPayload
+import com.revoola.model.RLCommentReplyInsertApiPayload
 import com.revoola.model.RLCommentsApiResponse
+import com.revoola.model.RLDeleteFeedItemApiPayload
 import com.revoola.model.RLFeedChallengesMapModel
 import com.revoola.model.RLFeedChallengesModel
 import com.revoola.model.RLFeedModel
@@ -346,9 +350,57 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun rl_deleteCommentItem(request: List<RLCommentDeleteApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_deleteCommentItem(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun rl_deleteReplyCommentItem(request: List<RLCommentReplyDeleteApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_deleteReplyCommentItem(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     //Innsert Api
     fun rl_insertYourWayData(request: List<RLYourWayApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         apiService.rl_insertYourWayData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun rl_deleteFeedCardItem(request: List<RLDeleteFeedItemApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_deleteFeedCardItem(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))
@@ -410,6 +462,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     }
 
+    fun rl_updateFeedItemCardData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_updateFeedItemCardData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
     fun rl_insertGroupData(request:Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         apiService.rl_insertGroupData(request,images).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
@@ -445,6 +513,22 @@ class RLMainRepository(private val apiService: RLNetworkService) {
 
     fun rl_insertCommentData(request: List<RLCommentInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         apiService.rl_insertCommentData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
+            override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
+                if (response.isSuccessful) {
+                    callback(Result.success(response.body()!!))
+                } else {
+                    callback(Result.failure(Throwable(response.message().toString())))
+                }
+            }
+            override fun onFailure(call: Call<RLInsertCommonApiResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+
+    }
+
+    fun rl_insertReplyCommentData(request: List<RLCommentReplyInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        apiService.rl_insertReplyCommentData(request).enqueue(object : Callback<RLInsertCommonApiResponse> {
             override fun onResponse(call: Call<RLInsertCommonApiResponse>, response: Response<RLInsertCommonApiResponse>) {
                 if (response.isSuccessful) {
                     callback(Result.success(response.body()!!))

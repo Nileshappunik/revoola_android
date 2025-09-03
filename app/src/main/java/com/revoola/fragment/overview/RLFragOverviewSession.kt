@@ -124,7 +124,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         swipePosition=position
         fragBinding.txtTotalsession.setText(titleValueList[position])
         fragBinding.inlayTop.ivTitle.setText(titleValueList[position])
-        fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
         rl_moveToCenter(position)
         if (cardDate!=null){
             rl_handleApiResponse(cardDate!!,titleValueList[position],true)
@@ -190,8 +189,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
             if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
                 fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
+                fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
             }else{
                 fragBinding.txtCurrentMonth.setText(selectionPeriod)
+                fragBinding.inlayTop.ivDescription.setText(selectionPeriod)
             }
 
             fromThirdParty =  if (selectionSource.equals("All Available")) "y" else "n"
@@ -256,8 +257,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
         if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
             fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromSelectDate) +" - " +filterManager.formatToMonthYear(toSelectDate))
+            fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromSelectDate) +" - " +filterManager.formatToMonthYear(toSelectDate))
         }else{
             fragBinding.txtCurrentMonth.setText(selectionFPeriod)
+            fragBinding.inlayTop.ivDescription.setText(selectionFPeriod)
         }
 
         val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
@@ -654,7 +657,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             adapterTitle.rl_setList(titleValueList[position])
             fragBinding.txtTotalsession.setText(titleValueList[position])
             fragBinding.inlayTop.ivTitle.setText(titleValueList[position])
-            fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
             rl_moveToCenter(position)
             if (cardDate!=null){
                 rl_handleApiResponse(cardDate!!,titleValueList[position],true)
@@ -674,7 +676,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             adapterTitle.rl_setList(titleValueList[position])
             fragBinding.txtTotalsession.setText(titleValueList[position])
             fragBinding.inlayTop.ivTitle.setText(titleValueList[position])
-            fragBinding.inlayTop.ivDescription.setText("THIS MONTH")
             rl_moveToCenter(position)
             if (cardDate!=null){
                 rl_handleApiResponse(cardDate!!,titleValueList[position],true)

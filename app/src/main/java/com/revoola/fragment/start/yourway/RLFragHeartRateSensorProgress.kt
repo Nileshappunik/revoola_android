@@ -389,6 +389,7 @@ class RLFragHeartRateSensorProgress : RLBaseFragment(),DataClient.OnDataChangedL
 
             //bundle.putSerializable("cardData",cardData)
             bundle.putParcelable("cardData",cardData)
+            bundle.putBoolean("isEditFeedItem",false)
             (context as RLMainActivityRL).rl_loadFrag(RLFragSessionComplete().newInstance(bundle), TAG, false, null, false)
 
         }
