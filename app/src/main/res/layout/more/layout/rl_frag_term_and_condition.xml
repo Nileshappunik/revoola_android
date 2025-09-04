@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/AppLightGrayColor"
+        android:background="@color/AppWhiteColor"
         android:orientation="vertical">
 
         <ImageView
@@ -15,15 +15,14 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            android:src="@drawable/ic_back_g"/>
+            app:tint="@color/AppMainColor"
+            android:src="@drawable/ic_times_close"/>
 
-
-        <WebView
-            android:id="@+id/webView"
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/pdfView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/ivBack"/>
-
 
     </RelativeLayout>
 </layout>

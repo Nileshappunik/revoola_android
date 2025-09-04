@@ -262,7 +262,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_clientId2" />
 
-
     </application>
 
     <queries>

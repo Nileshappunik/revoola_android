@@ -153,4 +153,10 @@ interface RLNetworkService {
     @POST(RLConstants.CommentUrl)
     fun rl_insertReplyCommentData(@Body request: List<RLCommentReplyInsertApiPayload>): Call<RLInsertCommonApiResponse>
 
+
+    //Revenue Cat
+    @POST("insightly/updateUser") suspend fun updateUserInInsightly(@Body body: Map<String, String>)
+    @POST("moengage/update") suspend fun updateMoEngage(@Body body: Map<String, Any>)
+    @POST("user/add") suspend fun addUser(@Body body: List<Map<String, Any>>)
+
 }

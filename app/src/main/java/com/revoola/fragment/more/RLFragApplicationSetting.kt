@@ -22,7 +22,6 @@ import com.revoola.watch.RLWearDataSync
 
 class RLFragApplicationSetting : RLBaseFragment()  {
     val TAG: String = RLFragApplicationSetting::class.java.simpleName
-   // lateinit var fragBinding: RlFragApplicationSettingBinding
     private var userBasicDataCard: RLRevoolaUsersSettingsModel? =null
 
     private val fragBinding by lazy {
@@ -33,8 +32,7 @@ class RLFragApplicationSetting : RLBaseFragment()  {
          rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_application_setting, container) as RlFragApplicationSettingBinding
-        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
+         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragSetting" )
         rl_uiSetUp()
         return fragBinding.root
     }
@@ -86,16 +84,18 @@ class RLFragApplicationSetting : RLBaseFragment()  {
         fragBinding.layTermandcondition.txtUsername.visibility=View.GONE
         fragBinding.layTermandcondition.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layTermandcondition.relayUser.setOnClickListener {
-            //openwebview
-            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition(), TAG, true,null, false)
+            val bundle = Bundle()
+            bundle.putBoolean("isTermAndCondition",true)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition().newInstance(bundle), TAG, true,null, false)
         }
 
         fragBinding.layPrivacyPolicy.txtusertitle.setText(R.string.privacypolicy)
         fragBinding.layPrivacyPolicy.txtUsername.visibility=View.GONE
         fragBinding.layPrivacyPolicy.imgEdit.setImageResource(R.drawable.ic_chevron_right)
         fragBinding.layPrivacyPolicy.relayUser.setOnClickListener {
-            //openwebview
-            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition(), TAG, true, null, false)
+            val bundle = Bundle()
+            bundle.putBoolean("isTermAndCondition",false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition().newInstance(bundle), TAG, true, null, false)
         }
 
     }

@@ -98,7 +98,7 @@ package com.revoola.utils
 
 
         const val currentUser: String="w2p8SQCvE3emjEEDo66f02eF6fG2"
-        const val Revenuecat_Api_Key: String="goog_ezrENTHxAHwKwnqeIoNRBjxrgTE"
+
 
         //All Image Link
         const val Friends_Fab_SVG: String="https://video.revoola.com/v3/icons/misc/friends_fab.svg"

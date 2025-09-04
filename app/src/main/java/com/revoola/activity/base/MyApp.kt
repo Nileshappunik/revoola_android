@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.model.MessageType
+import com.revoola.BuildConfig
 import com.moengage.core.DataCenter
 import com.moengage.core.MoECoreHelper
 import com.moengage.core.MoEngage
@@ -31,6 +32,7 @@ import com.revoola.moengage.push.RLGeofenceHitListener
 import com.revoola.commonobject.RLTools
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RlFirebaseWorker
 import com.revoola.utils.RLConstants
 
@@ -56,17 +58,26 @@ class MyApp : Application() {
         // Initialize Branch SDK
         Branch.getAutoInstance(this)
 
-        // Initialize RevenueCat using Purchases.Builder
-        val configurationRevenueCat = PurchasesConfiguration.Builder(this, RLConstants.Revenuecat_Api_Key).build()
-        // Initialize RevenueCat with your API key
-        Purchases.configure(configurationRevenueCat) // Replace with your RevenueCat API key
-
         FirebaseInAppMessaging.getInstance().addClickListener { inAppMessage, _ ->
             // Handle the message
             if (inAppMessage.messageType == MessageType.MODAL) {
                 RLTools.rl_logEPrint("FirebaseMessage","Firebase Message:- $inAppMessage")
             }
         }
+
+        // Initialize RevenueCat using Purchases.Builder
+        val revenueCatApiKey = BuildConfig.REVENUECAT_ANDROID_API_KEY
+        // Otherwise, you can logIn later.
+        Purchases.configure(
+            PurchasesConfiguration.Builder(this, revenueCatApiKey)
+                .appUserID(RLAuthManager().rl_getCurrentUser()?.uid) // nullable ok
+                .build()
+        )
+       // val configurationRevenueCat = PurchasesConfiguration.Builder(this, BuildConfig.REVENUECAT_ANDROID_API_KEY).build()
+        // Initialize RevenueCat with your API key
+      //  Purchases.configure(configurationRevenueCat) // Replace with your RevenueCat API key
+
+
 
         // Initialize MoEngage SDK
         rl_initializeMoEngage()

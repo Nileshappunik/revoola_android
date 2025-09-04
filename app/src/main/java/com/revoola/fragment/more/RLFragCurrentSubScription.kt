@@ -21,10 +21,15 @@ import com.revenuecat.purchases.logInWith
 import com.revenuecat.purchases.models.StoreProduct
 import com.revenuecat.purchases.models.SubscriptionOption
 import com.revenuecat.purchases.purchaseWith
+import com.revoola.RLBaseProgress
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlFragCurrentSubscriptionBinding
 import com.revoola.fragment.more.adapter.PaywallItem
 import com.revoola.fragment.more.adapter.RLPaywallAdapter
+import com.revoola.revenuecatrevoola.RelAccountManagerAndroid
+import com.revoola.revenuecatrevoola.RelRevenueCatManager
+import com.revoola.revenuecatrevoola.RelSubscriptionConfig
 
 class RLFragCurrentSubScription : RLBaseFragment() {
     private val TAG: String = RLFragCurrentSubScription::class.java.simpleName
@@ -44,6 +49,15 @@ class RLFragCurrentSubScription : RLBaseFragment() {
 
     private fun rl_uisetup() {
         rl_onBackPresAct(fragBinding.ivBack)
+
+        // Fetch user settings (appUnit)
+        rl_firebaseToFetchUserData { userData ->
+            if (userData != null) {
+                fragBinding.inlayPremiumUser.txtRevoolaDate.setText("since ${RLTools.rl_formatTimestamp(userData.joiningDate)}")
+            } else {
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
+            }
+        }
 
         fragBinding.relay1.txtRevoolaDes.visibility=View.VISIBLE
         fragBinding.relay1.txtRevoolaUser.visibility=View.GONE
@@ -71,7 +85,42 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         fragBinding.relay4.txtRevoolaDes.setText(R.string.personalisecalender)
         fragBinding.relay5.txtRevoolaDes.setText(R.string.challengesfriends)
 
-        rl_revenueCatSetUp()
+        fragBinding.txtPrivacyPolicy.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putBoolean("isTermAndCondition",false)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition().newInstance(bundle), TAG, true, null, false)
+        }
+        fragBinding.txtTermsOfUse.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putBoolean("isTermAndCondition",true)
+            (context as RLMainActivityRL).rl_loadFrag(RLFragTermAndCondition().newInstance(bundle), TAG, true,null, false)
+        }
+
+        fragBinding.txtContinuewithfree.setOnClickListener {
+            rl_closeFragment()
+        }
+        fragBinding.txtHavepromocode.setOnClickListener {
+            // Android: open redeem page
+            RelRevenueCatManager.openPromoCodeRedeem(requireContext())
+        }
+
+
+        fragBinding.btnSubscribe.setOnClickListener {
+            if(isAdded) RLBaseProgress.rl_showProgressDialog(requireActivity())
+            RelRevenueCatManager.subscribe(
+                activity = requireActivity(),
+                onSuccess = {
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logDPrint(TAG,"Subscribed successfully!")
+                },
+                onError = { err ->
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logEPrint(TAG,"Purchase failed: ${err.message}")
+                }
+            )
+        }
+
+     //   rl_revenueCatSetUp()
     }
 
     private fun rl_revenueCatSetUp() {
@@ -255,6 +304,6 @@ data class PricingPhase(
         billingCycleCount == 1 -> "1 month"
         else -> "$billingCycleCount months"
     }
-
     val isIntroductory: Boolean get() = recurrenceMode == "FINITE_RECURRING"
 }
+
