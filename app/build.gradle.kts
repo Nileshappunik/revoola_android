@@ -94,7 +94,7 @@ dependencies {
     implementation(moengage.inboxCore)
 
     // -------- RevenueCat --------
-    implementation("com.revenuecat.purchases:purchases:9.5.0")
+    implementation("com.revenuecat.purchases:purchases:9.1.0")
 
     // -------- AndroidX / Google --------
     implementation("androidx.core:core:1.9.0")

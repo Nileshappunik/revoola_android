@@ -53,9 +53,9 @@
                     android:id="@+id/lay_try_premium_for_free"
                     layout="@layout/rl_common_layout_setting"/>
 
-                <include
-                    android:id="@+id/lay_viewTransaction"
-                    layout="@layout/rl_common_layout_setting"/>
+<!--                <include-->
+<!--                    android:id="@+id/lay_viewTransaction"-->
+<!--                    layout="@layout/rl_common_layout_setting"/>-->
 
                 <View
                     android:layout_width="match_parent"

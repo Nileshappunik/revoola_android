@@ -541,10 +541,12 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         RLTools.rl_logDPrint(TAG,"selectionPeriod:- $selectionPeriod")
         val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
         val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
-        val dateFrom = result["comparisonFromTimestamp"] as Long + timezone
-        val dateTo = result["fromTimestamp"] as Long + timezone
+        val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) result["fromTimestamp"] as Long + timezone else result["comparisonFromTimestamp"] as Long + timezone
+        val dateTo = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) result["toTimestamp"] as Long + timezone else result["fromTimestamp"] as Long + timezone
         val timeRef = result["timeRef"] as String
         val queryType = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) "overviewGraphChartHTMCT" else "overviewGraphChartHTMAll"
+
+
         val classTypeString=selectionType.joinToString(",") { it.lowercase() }
 
         val _timezone = if (timezone > 0) "%2B${timezone}" else "%2D${kotlin.math.abs(timezone)}"

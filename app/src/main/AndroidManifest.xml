@@ -229,7 +229,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter android:autoVerify="true"
+                tools:ignore="AppLinkSplitToWebAndCustom">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -261,6 +262,20 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_clientId2" />
+
+        <!-- revenue Cat -->
+<!--        <provider-->
+<!--            android:name="androidx.startup.InitializationProvider"-->
+<!--            android:authorities="com.revoola.androidx-startup"-->
+<!--            android:exported="false"-->
+<!--            tools:node="merge">-->
+<!--            &lt;!&ndash; Remove this meta-data tag &ndash;&gt;-->
+<!--            <meta-data-->
+<!--                android:name="androidx.work.WorkManagerInitializer"-->
+<!--                android:value="androidx.startup"-->
+<!--                tools:node="remove" />-->
+<!--        </provider>-->
+
 
     </application>
 

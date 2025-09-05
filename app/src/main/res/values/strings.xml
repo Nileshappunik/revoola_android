@@ -236,7 +236,7 @@
     <string name="dollarsign">£6.99</string>
     <string name="tryfreeonemonth">per month cancel at any time, Try free one month</string>
     <string name="havepromocode">HAVE PROMOCODE?</string>
-    <string name="permonthcost">£6.99 PM(Start Free Month)</string>
+    <string name="permonthcost"> PM(Start Free Month)</string>
     <string name="or">or</string>
     <string name="continuewithfree">Continue with Free</string>
     <string name="bytappingsubscribeyourpayment">By tapping subscribe/upgrade your payment will be charged to your iTunes account, and your account will be charged each month at the price of £6.99 until you cancel it in settings in the iTunes Store at least 24 hours prior to the end of the current period.</string>

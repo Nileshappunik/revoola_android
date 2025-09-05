@@ -51,13 +51,6 @@
                     android:layout_marginBottom="25dp"
                     android:orientation="vertical">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/paywall_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:background="#000000"/>
-
                     <include
                         android:id="@+id/inlayPremiumUser"
                         layout="@layout/rl_common_account_layout" />
@@ -126,7 +119,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="1dp"
                             android:fontFamily="@font/omnes_semibold_regular"
-                            android:text="@string/dollarsign"
                             android:textColor="@color/AppMainColor"
                             android:textSize="20sp" />
 
@@ -205,7 +197,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="25dp"
                         android:fontFamily="@font/aptos_regular"
-                        android:text="@string/bytappingsubscribeyourpayment"
                         android:textAlignment="center"
                         android:textAllCaps="true"
                         android:textColor="@color/AppBlackColor"

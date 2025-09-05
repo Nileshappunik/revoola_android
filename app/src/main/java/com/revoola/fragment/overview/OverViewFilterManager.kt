@@ -34,7 +34,7 @@ class OverViewFilterManager(
     private var selectionPeriod: String = RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month")
     //private var selectionPeriod: String =
     private var selectionSource: String = RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available")
-    private var selectionType: MutableList<String> = RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf())
+    private var selectionType: MutableList<String> = RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf("All"))
 
     // Use RLPrefManager to retrieve selected positions from SharedPreferences
     private var selectedPositionsSource: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsSource")

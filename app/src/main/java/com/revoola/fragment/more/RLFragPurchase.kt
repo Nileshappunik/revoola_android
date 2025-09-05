@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.*
+import com.revoola.revenuecatrevoola.RelRevenueCatManager
 import com.revoola.utils.RLPrefManager
 
 class RLFragPurchase : RLBaseFragment() {
@@ -56,12 +58,12 @@ class RLFragPurchase : RLBaseFragment() {
         fragBinding.layRestoreYourPurchase.relayUser.setOnClickListener {
             rl_showDialogAlert(getString(R.string.youhavesuccessfullyrestored))
         }
-        fragBinding.layViewTransaction.txtusertitle.setText(R.string.viewtransation)
-        fragBinding.layViewTransaction.txtUsername.visibility=View.GONE
-        fragBinding.layViewTransaction.imgEdit.setImageResource(R.drawable.ic_chevron_right)
-        fragBinding.layViewTransaction.relayUser.setOnClickListener {
-        //click ViewTransaction
-        }
+//        fragBinding.layViewTransaction.txtusertitle.setText(R.string.viewtransation)
+//        fragBinding.layViewTransaction.txtUsername.visibility=View.GONE
+//        fragBinding.layViewTransaction.imgEdit.setImageResource(R.drawable.ic_chevron_right)
+//        fragBinding.layViewTransaction.relayUser.setOnClickListener {
+//        //click ViewTransaction
+//        }
     }
 
     private fun rl_showDialogAlert(message: String) {
@@ -78,6 +80,9 @@ class RLFragPurchase : RLBaseFragment() {
         tvSubTitle.setText(message)
         tvOk.setOnClickListener(View.OnClickListener {
             sucDialog.dismiss()
+            RelRevenueCatManager.restore{
+               RLTools.rl_logDPrint(TAG,"Successfully restore :- $it")
+            }
         })
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.color.transparent_dialog)
