@@ -31,6 +31,11 @@ class OverViewFilterManager(
 
     private var toDate: String = RLPrefManager.rl_getSomeStringValue(context, "toDate", "")
     private var fromDate: String = RLPrefManager.rl_getSomeStringValue(context, "fromDate", "")
+
+    private var toDateLocal: String = ""
+    private var fromDateLocal: String = ""
+
+
     private var selectionPeriod: String = RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month")
     //private var selectionPeriod: String =
     private var selectionSource: String = RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available")
@@ -58,8 +63,18 @@ class OverViewFilterManager(
         dialog.setCancelable(true)
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
+        if (selectionPeriod.equals("Custom Date Range")){
+            if (fromDate.isNotEmpty() && toDate.isNotEmpty()) {
+                binding.txtThisMonth.text = "$fromDate - $toDate"
+            }else {
+                binding.txtThisMonth.text = "$fromDateLocal - $toDateLocal"
+            }
+        }else{
+            binding.txtThisMonth.text = selectionPeriod
+        }
+
         // Set the default values for the filter text views
-        binding.txtThisMonth.text = if (selectionPeriod.equals("Custom Date Range")) "$fromDate - $toDate"  else selectionPeriod
+       // binding.txtThisMonth.text = if (selectionPeriod.equals("Custom Date Range")) "$fromDate - $toDate"  else selectionPeriod
         binding.txtAll.text = selectionSource
 
         // Setup period list adapter
@@ -93,6 +108,8 @@ class OverViewFilterManager(
         binding.btnShowResults.setOnClickListener {
             val selectedToDate = binding.recyclePeriod.toDateButton.text.toString()
             val selectedFromDate = binding.recyclePeriod.fromDateButton.text.toString()
+            fromDateLocal = selectedFromDate
+            toDateLocal = selectedToDate
             if (isDefaultSwitchPeriod){
                 // Save the filter selections to SharedPreferences
                 RLPrefManager.rl_setSomeStringValue(context, "toDate", selectedToDate)

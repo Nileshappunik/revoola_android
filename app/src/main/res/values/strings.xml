@@ -235,11 +235,12 @@
 
     <string name="dollarsign">£6.99</string>
     <string name="tryfreeonemonth">per month cancel at any time, Try free one month</string>
+    <string name="per_month_cancel_at_any_time">per month cancel at any time</string>
     <string name="havepromocode">HAVE PROMOCODE?</string>
     <string name="permonthcost"> PM(Start Free Month)</string>
     <string name="or">or</string>
     <string name="continuewithfree">Continue with Free</string>
-    <string name="bytappingsubscribeyourpayment">By tapping subscribe/upgrade your payment will be charged to your iTunes account, and your account will be charged each month at the price of £6.99 until you cancel it in settings in the iTunes Store at least 24 hours prior to the end of the current period.</string>
+    <string name="bytappingsubscribeyourpayment">By tapping subscribe/upgrade your payment will be charged to your PlayStore account, and your account will be charged each month at the price of £6.99 until you cancel it in settings in the PlayStore Store at least 24 hours prior to the end of the current period.</string>
     <string name="getttingstarted">Getting Started</string>
     <string name="faqs">FAQ\'s</string>
     <string name="logs">Logs</string>

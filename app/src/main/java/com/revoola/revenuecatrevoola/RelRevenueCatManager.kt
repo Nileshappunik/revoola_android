@@ -13,14 +13,17 @@ import com.revenuecat.purchases.models.StoreTransaction
 
 object RelRevenueCatManager {
 
-    fun logInIfNeeded(appUserId: String, onDone: (() -> Unit)? = null) {
+    fun logInIfNeeded(appUserId: String, onDone: ((CustomerInfo?, PurchasesError?) -> Unit)? = null) {
         Purchases.sharedInstance.logInWith(
             appUserId,
-            onError = { _ -> onDone?.invoke() },
-            onSuccess = { _: CustomerInfo, _: Boolean -> onDone?.invoke() }
+            onError = { error ->
+                onDone?.invoke(null, error)
+            },
+            onSuccess = { customerInfo: CustomerInfo, _: Boolean ->
+                onDone?.invoke(customerInfo, null)
+            }
         )
     }
-
     fun logOut(onDone: (() -> Unit)? = null) {
         Purchases.sharedInstance.logOutWith(
             onError = { _ -> onDone?.invoke() },
@@ -43,27 +46,12 @@ object RelRevenueCatManager {
         )
     }
 
-    fun checkIsSubscribed(onDone: (Boolean) -> Unit) {
-        Purchases.sharedInstance.getCustomerInfo(
-            CacheFetchPolicy.CACHED_OR_FETCHED,
-            object : ReceiveCustomerInfoCallback {
-                override fun onReceived(info: CustomerInfo) {
-                    val hasActive = info.entitlements.active.isNotEmpty()
-                    onDone(hasActive)
-                }
-
-                override fun onError(error: PurchasesError) {
-                    onDone(false)
-                }
-            }
-        )
-    }
-
     fun subscribe(activity: Activity,packageToPurchase: Package,onSuccess: (StoreTransaction, CustomerInfo) -> Unit,
         onError: (Throwable) -> Unit) {
         // You can show the default RevenueCat dialog using the `Purchases` SDK's purchase flow
         Purchases.sharedInstance.purchasePackage(activity, packageToPurchase, object : PurchaseCallback {
                 override fun onCompleted(storeTransaction: StoreTransaction, customerInfo: CustomerInfo) {
+                    updateGoogleOnFirebase()
                     onSuccess(storeTransaction, customerInfo)
                 }
                 override fun onError(error: PurchasesError, userCancelled: Boolean) {

@@ -33,6 +33,7 @@
                 android:textSize="26sp"
                 android:fontFamily="@font/omnes_semibold_regular" />
         </RelativeLayout>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -44,17 +45,18 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp">
+                <include
+                    android:id="@+id/inlayPremiumUser"
+                    layout="@layout/rl_common_account_layout" />
 
                 <LinearLayout
+                    android:id="@+id/subscribe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/inlayPremiumUser"
+                    android:visibility="gone"
                     android:layout_marginBottom="25dp"
                     android:orientation="vertical">
-
-                    <include
-                        android:id="@+id/inlayPremiumUser"
-                        layout="@layout/rl_common_account_layout" />
-
                     <TextView
                         android:id="@+id/txt_unlock"
                         android:layout_width="match_parent"
@@ -140,11 +142,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:textAllCaps="true"
                         android:background="@drawable/full_round"
-                        android:backgroundTint="@color/AppDarkGrayColor"
+                        android:backgroundTint="@color/AppBlackColor"
                         android:gravity="center"
                         android:text="@string/havepromocode"
                         android:textColor="@color/AppWhiteColor"
@@ -234,16 +236,6 @@
 
                 </LinearLayout>
 
-                <!--<androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:cardCornerRadius="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp">
-                </androidx.cardview.widget.CardView>-->
             </RelativeLayout>
 
         </ScrollView>
