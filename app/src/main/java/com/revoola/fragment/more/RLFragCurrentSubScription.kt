@@ -42,7 +42,6 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         rl_uisetup()
         return fragBinding.root
     }
-
     private fun rl_uisetup() {
         rl_onBackPresAct(fragBinding.ivBack)
         currentUser = RLAuthManager().rl_getCurrentUser()?.uid?:""
@@ -202,6 +201,8 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         when(pageDesign){
             RLSubscribePageDesign.FreeAccount -> {
                 // Setup for Free Account
+                fragBinding.txtFreeonemonth.setText(R.string.freeonemonthtrial)
+                fragBinding.relay5.txtRevoolaDes.setText(R.string.challengesfriends)
                 fragBinding.subscribe.visibility= View.VISIBLE
                 fragBinding.txtFreeonemonth.visibility= View.VISIBLE
                 fragBinding.txtOr.visibility= View.VISIBLE
@@ -219,8 +220,9 @@ class RLFragCurrentSubScription : RLBaseFragment() {
             }
             RLSubscribePageDesign.OnTrial -> {
                 // Setup for On Trial
+                fragBinding.relay5.txtRevoolaDes.setText(R.string.challengesfriends2)
                 fragBinding.subscribe.visibility= View.VISIBLE
-                fragBinding.txtFreeonemonth.visibility= View.GONE
+                fragBinding.txtFreeonemonth.setText("")
                 fragBinding.txtOr.visibility= View.GONE
                 fragBinding.txtContinuewithfree.visibility= View.GONE
                 fragBinding.txtTryfreeonemonth.setText(R.string.per_month_cancel_at_any_time)
@@ -231,6 +233,8 @@ class RLFragCurrentSubScription : RLBaseFragment() {
             }
             else -> {
                 // Default setup
+                fragBinding.relay5.txtRevoolaDes.setText(R.string.challengesfriends)
+                fragBinding.txtFreeonemonth.setText(R.string.freeonemonthtrial)
                 fragBinding.subscribe.visibility= View.VISIBLE
                 fragBinding.txtFreeonemonth.visibility= View.VISIBLE
                 fragBinding.txtOr.visibility= View.VISIBLE
@@ -244,7 +248,3 @@ class RLFragCurrentSubScription : RLBaseFragment() {
         }
     }
 }
-
-
-
-
