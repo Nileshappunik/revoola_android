@@ -12,14 +12,17 @@ import com.revoola.R
 import com.revoola.databinding.RlLayoutYourFriendBinding
 import com.revoola.model.RLuserData
 
-class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: List<RLuserData>, val isFollowHide:Boolean) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val TAG = "RLYourFriendListAdapter"
+class RLYourFriendListAdapter(val context: FragmentActivity?,
+                              val friendList: List<RLuserData>,
+                              val isFollowHide:Boolean,
+                              val onItemClick: (RLuserData) -> Unit
+) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var bundle: Bundle = Bundle()
-    var datalist:List<RLuserData> = friendList
+    var dataList:List<RLuserData> = friendList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutbinding: RlLayoutYourFriendBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_your_friend , parent, false)
-        return MyViewHolder(layoutbinding)
+        val layoutBinding: RlLayoutYourFriendBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.rl_layout_your_friend , parent, false)
+        return MyViewHolder(layoutBinding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MyViewHolder) {
@@ -28,27 +31,40 @@ class RLYourFriendListAdapter(val context: FragmentActivity?, val friendList: Li
 
     }
     override fun getItemCount(): Int {
-       return datalist.size
+       return dataList.size
     }
-
-    inner class MyViewHolder(private  val layoutBinding: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(layoutBinding.root) {
-      //  private val layoutBinding: RlLayoutYourFriendBinding = layoutBinding
+    inner class MyViewHolder(private  val lb: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(lb.root) {
         fun bindData(position: Int, itemVIew: View) {
-            val cardData = datalist[position]
+            val cardData = dataList[position]
             Glide.with(context!!).load(cardData.avatar)
                 .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-                .into(layoutBinding.imgFriend)
-            layoutBinding.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
-
-            if (isFollowHide){
-                layoutBinding.txtFriendUnfollow.visibility=View.GONE
-            }else{
-                layoutBinding.txtFriendUnfollow.visibility=View.VISIBLE
+                .into(lb.imgFriend)
+            lb.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
+            when(cardData.theiridstatus){
+                "2"->{
+                    lb.txtFriendUnfollow.setText("Requested")
+                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.square_border_black_20)
+                    lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppBlackColor))
+                }
+                else->{
+                    lb.txtFriendUnfollow.setText("Unfollow")
+                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                    lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
+                }
             }
+            if (isFollowHide){
+                lb.txtFriendUnfollow.visibility=View.GONE
+            }else{
+                lb.txtFriendUnfollow.visibility=View.VISIBLE
+            }
+            lb.txtFriendUnfollow.setOnClickListener {
+                onItemClick(cardData)
+            }
+
         }
     }
     fun rl_filter(query: String) {
-        datalist = if (query.isEmpty()) {
+        dataList = if (query.isEmpty()) {
             friendList
         } else {
             friendList.filter { it.first_name.contains(query, ignoreCase = true) || it.last_name.contains(query, ignoreCase = true) }

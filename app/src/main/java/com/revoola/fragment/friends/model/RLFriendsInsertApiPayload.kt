@@ -19,5 +19,20 @@ data class RLInsertContactData(
     @SerializedName("contact_status") val contact_status: Int
 )
 
+data class RLFriendsUpdateApiPayload(
+    @SerializedName("users_contacts_mk2_update") val users_contacts_mk2_update: RLUsersContactsMk2Update
+)
+
+data class RLUsersContactsMk2Update(
+    @SerializedName("myid") val myid: String,
+    @SerializedName("contact_data") val contact_data: List<RLUpdateContactData>
+)
+
+data class RLUpdateContactData(
+    @SerializedName("myidstatus") val myidstatus: String?,
+    @SerializedName("contact_userid") val contact_userid: String,
+    @SerializedName("contact_status") val contact_status: Int
+)
+
 
 

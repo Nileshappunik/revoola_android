@@ -4,6 +4,7 @@ package com.revoola.api
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
+import com.revoola.fragment.friends.model.RLFriendsUpdateApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
@@ -145,8 +146,12 @@ interface RLNetworkService {
     //Friends Insert
     @POST(RLConstants.insertJSONApi)
     fun rl_insertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
+     //Friends Update
+    @POST(RLConstants.insertJSONApi)
+    fun rl_updateFriendsData(@Body request: List<Map<String, Any>>): Call<RLInsertCommonApiResponse>
 
-    //Comment Insert
+
+ //Comment Insert
     @POST(RLConstants.CommentUrl)
     fun rl_insertCommentData(@Body request: List<RLCommentInsertApiPayload>): Call<RLInsertCommonApiResponse>//Comment Insert
 

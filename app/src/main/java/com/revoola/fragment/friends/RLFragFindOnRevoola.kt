@@ -13,8 +13,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
@@ -192,24 +194,24 @@ class RLFragFindOnRevoola : RLBaseFragment() {
                 is RLFindOnRevoolaInviteItem.RLFollow -> {
                     // Handle the UserInvite item (EmailFilterUserInvite)
                     val followUserData = selectedItem.user
-                    RLTools.rl_logDPrint(TAG,"Selected Follow: ${followUserData.username}")
+                    RLTools.rl_logDPrint(TAG,"Selected Follow: ${followUserData}")
                     val contact_data= listOf(RLInsertContactData(
                         myidstatus = followUserData.myIdStatus,
                         contact_userid = followUserData.userId,
                         contact_email = followUserData.email,
                         contact_status = 2 ))
-                    //RLInsertFriendsApiCall(contact_data)
+                  //  rl_insertFriendsApiCall(contact_data)
                 }
                 is RLFindOnRevoolaInviteItem.RLInvite -> {
                     // Handle the ContactInvite item (RLContactModel)
                     val inviteContactData = selectedItem.contact
-                    RLTools.rl_logDPrint(TAG,"Selected Invite: ${inviteContactData.name}")
+                    RLTools.rl_logDPrint(TAG,"Selected Invite: ${inviteContactData}")
                     val contact_data= listOf(RLInsertContactData(
                         myidstatus = "",
                         contact_userid = "",
                         contact_email = inviteContactData.phoneNumber,
                         contact_status = 1 ))
-                   // RLInsertFriendsApiCall(contact_data)
+                   // rl_insertFriendsApiCall(contact_data)
                 }
 
             }
@@ -219,6 +221,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         fragBinding.listSyncContacts.layoutManager = LinearLayoutManager(requireContext())
         fragBinding.listSyncContacts.adapter = myAdapter
         RLBaseProgress.rl_hideProgressDialog()
+
         fragBinding.edtFriendSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -230,7 +233,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         })
     }
 
-    private fun rl_insertFriendsApiCall(contact_data: List<RLInsertContactData>) {
+    private fun rl_insertFriendsApiCall(contact_data: List<RLInsertContactData>,) {
         //Contact Status:1- Invited , 2- Requested ,3- Accepted ,4- Blocked
         if (isAdded){
             RLBaseProgress.rl_showProgressDialog(requireActivity())
@@ -240,17 +243,12 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             myid = currentUser,
             contact_data = contact_data)
         ))
-
-        RLTools.rl_logDPrint(TAG,"Insert Friends Request: $request")
+        RLTools.rl_logDPrint(TAG,"Insert Friends Request: ${Gson().toJson(request)}")
         viewModel.rl_insertFriendsData(request) { result ->
             result.onSuccess { response ->
                 RLBaseProgress.rl_hideProgressDialog()
                 try {
-                    if (response.type.equals("success")){
-                        RLTools.rl_logDPrint(TAG,"Insert Friends Success: ${response.type}")
-                    }else {
-                        RLTools.rl_logDPrint(TAG,"Insert Friends Fail: ${response.type}")
-                    }
+                    RLTools.rl_logDPrint(TAG,"Insert Friends Success: ${Gson().toJson(response) }")
                 }catch (e:Exception){
                     e.printStackTrace()
                     RLTools.rl_logDPrint(TAG,"Insert Friends Catch: ${e.message}")

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.fragment.friends.adapter.RLYourFriendListAdapter
@@ -101,7 +102,9 @@ class RLFragYourGroupDetails : RLBaseFragment() {
     private fun rl_responsehandle(userdata: List<RLuserData>) {
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendListAdapter(activity,userdata,true)
+        val adapter = RLYourFriendListAdapter(activity,userdata,true, onItemClick = { userData ->
+            RLTools.rl_logDPrint(TAG,"Unfollow Click:- ${Gson().toJson(userData)}")
+        })
         fragBinding.recycleYourfriend.adapter = adapter
 
 

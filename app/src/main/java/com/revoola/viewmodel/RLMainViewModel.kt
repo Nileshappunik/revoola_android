@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
+import com.revoola.fragment.friends.model.RLFriendsUpdateApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
@@ -135,6 +136,9 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     }
     fun rl_insertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertFriendsData(request, callback)
+    }
+    fun rl_updateFriendsData(request: List<Map<String, Any>>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
+        mainRepository.rl_updateFriendsData(request, callback)
     }
     fun rl_insertClassSessionData(request: Map<String, @JvmSuppressWildcards RequestBody>, images: List<MultipartBody.Part>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertClassSessionData(request,images, callback)
