@@ -79,8 +79,9 @@ package com.revoola.utils
         const val mapKey = "AIzaSyBUc1JOJWSpJJtGIge4xc1LBcTT_m3w1FU"
 
         //MOENGAGE URL
-        const val UPDATE_USER_INSIGHTLY = "https://us-central1-rideathome-9080e.cloudfunctions.net/insightly-updateAccount"
-        const val UPDATE_MOENAGE_USER = "https://us-central1-rideathome-9080e.cloudfunctions.net/moengage-updateAccount"
+        const val baseUrlMoengage = "https://us-central1-rideathome-9080e.cloudfunctions.net/moengage-createAccountAPP"
+        const val baseUrlUpdateMoengage = "https://us-central1-rideathome-9080e.cloudfunctions.net/moengage-updateAccount"
+        const val baseUrlCreateEventMoengage = "https://us-central1-rideathome-9080e.cloudfunctions.net/moengage-createEvent"
 
 
         //Help Url ALl

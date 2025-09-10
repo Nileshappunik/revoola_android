@@ -22,7 +22,9 @@ import com.revoola.R
 import com.revoola.RLBaseProgress
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.*
+import com.revoola.enumclass.FriendsAPIStatusType
 import com.revoola.fragment.friends.adapter.RLContactsAdapter
 import com.revoola.fragment.friends.model.EmailFilterInviteData
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
@@ -32,30 +34,32 @@ import com.revoola.fragment.friends.model.RLInsertContactData
 import com.revoola.fragment.friends.model.RLSyncContactFilterModel
 import com.revoola.fragment.friends.model.RLUsersContactsMk2
 import com.revoola.model.RLContactModel
+import com.revoola.model.RLuserData
+import com.revoola.moengage.RELMoengageManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragFindOnRevoola : RLBaseFragment() {
-    val TAG: String = RLFragFindOnRevoola::class.java.simpleName
-  //  lateinit var fragBinding: RlFragFingOnRevoolaBinding
+    private val TAG: String = RLFragFindOnRevoola::class.java.simpleName
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private val CONTACTS_PERMISSION_CODE = 1
-    private   var currentUser:String = ""
     private var contactsList = mutableListOf<RLContactModel>()
     private val emailList = mutableListOf<String>()
-
+    private var getFullName: String =""
+    private val currentUser by lazy {
+        RLAuthManager().rl_getCurrentUser()?.uid?:""
+    }
     private val fragBinding by lazy {
         RlFragFingOnRevoolaBinding.inflate(layoutInflater)
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_fing_on_revoola, container) as RlFragFingOnRevoolaBinding
-        currentUser= RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_user, "")
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragFindOnRevoola" )
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
@@ -69,7 +73,13 @@ class RLFragFindOnRevoola : RLBaseFragment() {
     private fun rl_uisetup() {
         fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
         fragBinding.toolbar.ivBack.setOnClickListener { rl_closeFragment()}
-       // RLCheckContactPermission()
+        rl_firebaseToFetchUserData { userData ->
+            if (userData != null) {
+                getFullName = userData.firstName + " " + userData.lastName
+            } else {
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
+            }
+        }
         fragBinding.txtSyncContact.setOnClickListener {
             rl_checkContactPermission()
         }
@@ -119,7 +129,7 @@ class RLFragFindOnRevoola : RLBaseFragment() {
 
                 if (!email.isEmpty() && !email.equals("No Email")){
                     emailList.add(email)
-                    contactsList.add(RLContactModel(id,contactName , email))
+                    contactsList.add(RLContactModel(id,contactName , email,"0"))
                 }
             }
         }
@@ -188,35 +198,47 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             fragBinding.ivTotalContactLay.visibility=View.GONE
         }
 
-        val myAdapter = RLContactsAdapter(activity,combinedList) { selectedItem ->
+        val myAdapter = RLContactsAdapter(requireActivity(),combinedList) { selectedItem,friendsAPIStatusType ->
             // Handle the item click here
             when (selectedItem) {
                 is RLFindOnRevoolaInviteItem.RLFollow -> {
                     // Handle the UserInvite item (EmailFilterUserInvite)
                     val followUserData = selectedItem.user
-                    RLTools.rl_logDPrint(TAG,"Selected Follow: ${followUserData}")
-                    val contact_data= listOf(RLInsertContactData(
-                        myidstatus = followUserData.myIdStatus,
-                        contact_userid = followUserData.userId,
-                        contact_email = followUserData.email,
-                        contact_status = 2 ))
-                  //  rl_insertFriendsApiCall(contact_data)
+                    RLTools.rl_logDPrint(TAG,"Selected Follow: ${Gson().toJson(followUserData)}")
+                   val userData= RLuserData(
+                       userid = followUserData.userId,
+                       theirid = followUserData.userId,
+                       myidstatus = friendsAPIStatusType.value,
+                       theiridstatus = followUserData.theirIdStatus?:FriendsAPIStatusType.Invite.value,
+                       first_name = followUserData.firstName,
+                       last_name = followUserData.lastName,
+                       username = followUserData.username,
+                       avatar = followUserData.avatar,
+                       myid = currentUser,
+                       isSelected = false
+                   )
+                    updateStatusForUser(userData, friendsAPIStatusType)
                 }
                 is RLFindOnRevoolaInviteItem.RLInvite -> {
                     // Handle the ContactInvite item (RLContactModel)
                     val inviteContactData = selectedItem.contact
-                    RLTools.rl_logDPrint(TAG,"Selected Invite: ${inviteContactData}")
-                    val contact_data= listOf(RLInsertContactData(
-                        myidstatus = "",
-                        contact_userid = "",
-                        contact_email = inviteContactData.phoneNumber,
-                        contact_status = 1 ))
-                   // rl_insertFriendsApiCall(contact_data)
+                    RLTools.rl_logDPrint(TAG,"Selected Invite: ${Gson().toJson(inviteContactData)}")
+                    val userData= RLuserData(
+                        userid = inviteContactData.id,
+                        theirid = inviteContactData.id,
+                        myidstatus = FriendsAPIStatusType.Invited.value,
+                        theiridstatus = FriendsAPIStatusType.Invite.value,
+                        first_name = inviteContactData.name,
+                        last_name = "",
+                        username = inviteContactData.name,
+                        avatar = "",
+                        myid = currentUser,
+                        isSelected = false
+                    )
+                 updateStatusForUser(userData, friendsAPIStatusType)
                 }
-
             }
         }
-
         // Set up RecyclerView with fetched email contacts
         fragBinding.listSyncContacts.layoutManager = LinearLayoutManager(requireContext())
         fragBinding.listSyncContacts.adapter = myAdapter
@@ -233,18 +255,43 @@ class RLFragFindOnRevoola : RLBaseFragment() {
         })
     }
 
-    private fun rl_insertFriendsApiCall(contact_data: List<RLInsertContactData>,) {
-        //Contact Status:1- Invited , 2- Requested ,3- Accepted ,4- Blocked
-        if (isAdded){
-            RLBaseProgress.rl_showProgressDialog(requireActivity())
+    private fun updateStatusForUser(user: RLuserData, status: FriendsAPIStatusType) {
+        val params = mutableListOf<Map<String, Any>>()
+        val user_userid = when (status) {
+            FriendsAPIStatusType.Accepted, FriendsAPIStatusType.Blocked -> {
+                user.theirid
+            }else -> {
+                user.userid
+            }
         }
-        val request=  listOf(RLFriendsInsertApiPayload(
-        users_contacts_mk2 = RLUsersContactsMk2(
-            myid = currentUser,
-            contact_data = contact_data)
-        ))
-        RLTools.rl_logDPrint(TAG,"Insert Friends Request: ${Gson().toJson(request)}")
-        viewModel.rl_insertFriendsData(request) { result ->
+
+        val myUser = mapOf(
+            "myidstatus" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus,
+            "contact_userid" to user_userid,
+            "contact_status" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value
+        )
+
+        val otherUser = mapOf(
+            "myidstatus" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value,
+            "contact_userid" to RLAuthManager().rl_getCurrentUser()?.uid,
+            "contact_status" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus
+        )
+
+        val mySearchUser = mapOf(
+            "myid" to RLAuthManager().rl_getCurrentUser()?.uid,
+            "contact_data" to listOf(myUser)
+        )
+
+        val otherSearchUser = mapOf(
+            "myid" to user_userid,
+            "contact_data" to listOf(otherUser)
+        )
+
+        params.add(mapOf("users_contacts_mk2" to mySearchUser))
+        params.add(mapOf("users_contacts_mk2" to otherSearchUser))
+
+        RLTools.rl_logDPrint(TAG,"Insert Friends Request: ${Gson().toJson(params)}")
+        viewModel.rl_updateFriendsData(params) { result ->
             result.onSuccess { response ->
                 RLBaseProgress.rl_hideProgressDialog()
                 try {
@@ -256,6 +303,73 @@ class RLFragFindOnRevoola : RLBaseFragment() {
             }.onFailure { error ->
                 RLBaseProgress.rl_hideProgressDialog()
                 RLTools.rl_logDPrint(TAG,"Insert Friends Error: ${error.message}")
+            }
+        }
+        when (status) {
+            FriendsAPIStatusType.Follow, FriendsAPIStatusType.Invite, FriendsAPIStatusType.Blocked -> {
+                deleteDataForFriends(listOf(user_userid))
+            }
+            FriendsAPIStatusType.Invited, FriendsAPIStatusType.Requested -> {
+                RELMoengageManager.sendRequest(user_userid,getFullName)
+            }
+            FriendsAPIStatusType.Accepted -> {
+                saveDataForFriends(listOf(user_userid))
+                RELMoengageManager.acceptRequest(user_userid,requireContext(),getFullName)
+            }
+        }
+    }
+    private fun saveDataForFriends(members: List<String>) {
+        val currentUserId = RLAuthManager().rl_getCurrentUser()?.uid?:""
+
+        for (member in members) {
+            val user = mapOf(
+                "userid" to currentUserId,
+                "is_admin" to 0
+            )
+            val groupId = mapOf(
+                "users" to listOf(user),
+                "is_friends_group" to true,
+                "group_id" to "${member}_friends"
+            )
+            val params = listOf(mapOf("group_users" to groupId))
+
+            RLTools.rl_logDPrint(TAG,"save Data Friends Request: ${Gson().toJson(params)}")
+            viewModel.rl_updateFriendsData(params) { result ->
+                result.onSuccess { response ->
+                    RLBaseProgress.rl_hideProgressDialog()
+                    try {
+                        RLTools.rl_logDPrint(TAG,"save Data  Friends Success: ${Gson().toJson(response) }")
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                        RLTools.rl_logDPrint(TAG,"save Data  Friends Catch: ${e.message}")
+                    }
+                }.onFailure { error ->
+                    RLBaseProgress.rl_hideProgressDialog()
+                    RLTools.rl_logDPrint(TAG,"save Data  Friends Error: ${error.message}")
+                }
+            }
+        }
+    }
+    private fun deleteDataForFriends(members: List<String>) {
+        val currentUserId = RLAuthManager().rl_getCurrentUser()?.uid?:""
+        val groupId = mapOf(
+            "userid" to members,
+            "groupid" to "${currentUserId}_friends"
+        )
+        val params = listOf(mapOf("delete" to groupId))
+        RLTools.rl_logDPrint(TAG,"delete Data Friends Request: ${Gson().toJson(params)}")
+        viewModel.rl_updateFriendsData(params) { result ->
+            result.onSuccess { response ->
+                RLBaseProgress.rl_hideProgressDialog()
+                try {
+                    RLTools.rl_logDPrint(TAG,"delete Data  Friends Success: ${Gson().toJson(response) }")
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    RLTools.rl_logDPrint(TAG,"delete Data  Friends Catch: ${e.message}")
+                }
+            }.onFailure { error ->
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logDPrint(TAG,"delete Data  Friends Error: ${error.message}")
             }
         }
     }

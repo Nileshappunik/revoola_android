@@ -153,6 +153,13 @@ data class RLSetoverview_thumb_you(var timestampfrom: Int,
                                    var index:Int, var goal:String,
                                    var current_user:String, var isall:Int, var d:String)
 
+
+data class RLoverview_thumb_you(var overview_thumb: RLoverview_thumb_data_you)
+data class RLoverview_thumb_data_you(var timestampfrom: Int,
+                                   var timestampto: String, var users:List<String>, var limit: Int,
+                                   var index:Int, var goal:String,
+                                   var current_user:String, var isall:Int, var from_third_party_source: Int,var metriccaardsvisible: Boolean)
+
 data class RLSetgoaled_challenges_request(var goaled_challenges: RLSetgoaled_challenges)
 data class RLSetgoaled_challenges_request_single(var goaled_challenges: RLSetgoaled_challengesSingle)
 

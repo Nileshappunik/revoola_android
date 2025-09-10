@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
-import com.revoola.fragment.friends.model.RLFriendsUpdateApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
@@ -37,6 +36,8 @@ import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.model.RLInsertCommonApiResponse
+import com.revoola.model.RLTextOverview
+import com.revoola.model.RLoverview_thumb_you
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -102,6 +103,10 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
         mainRepository.rl_friendsFollowingYou(request, callback)
     }
 
+    fun rl_friendsClickList(request: List<RLoverview_thumb_you>, callback: (Result<RLFeedModel>) -> Unit) {
+        mainRepository.rl_friendsClickList(request, callback)
+    }
+
     fun rl_yourGroupData(request: List<RLrequestgroup_dataset>, callback: (Result<RLYourGroupModel>) -> Unit) {
         mainRepository.rl_yourGroupData(request, callback)
     }
@@ -137,6 +142,7 @@ class RLMainViewModel(val mainRepository: RLMainRepository): ViewModel() {
     fun rl_insertFriendsData(request: List<RLFriendsInsertApiPayload>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_insertFriendsData(request, callback)
     }
+
     fun rl_updateFriendsData(request: List<Map<String, Any>>, callback: (Result<RLInsertCommonApiResponse>) -> Unit) {
         mainRepository.rl_updateFriendsData(request, callback)
     }

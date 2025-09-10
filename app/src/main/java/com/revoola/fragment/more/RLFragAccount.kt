@@ -35,7 +35,6 @@ import com.revoola.activity.RLMainActivityRL
 
 class RLFragAccount : RLBaseFragment() {
     val TAG: String = RLFragAccount::class.java.simpleName
-   // lateinit var fragBinding: RlFragAccountBinding
 
     private lateinit var callbackManager: CallbackManager
 

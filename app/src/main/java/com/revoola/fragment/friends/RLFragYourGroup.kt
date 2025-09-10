@@ -97,11 +97,6 @@ class RLFragYourGroup : RLBaseFragment() {
 
         fragBinding.rvSelectedFriend.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        fragBinding.txtInviteyourfriend.setOnClickListener {
-            if (isGroup){
-                (context as RLMainActivityRL).rl_loadFrag(RLFragInviteFriends(), TAG, true, null, false)
-            }
-        }
         fragBinding.tvCreateClick.setOnClickListener {
            //Friend CREATE IMPLEMENT
             val bundle=Bundle()

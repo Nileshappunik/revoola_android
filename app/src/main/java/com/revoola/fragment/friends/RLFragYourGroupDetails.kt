@@ -21,6 +21,7 @@ import com.revoola.model.RLSetGroupMemberData
 import com.revoola.model.RLSetGroupMemberRequest
 import com.revoola.model.RLuserData
 import com.revoola.commonobject.RLTools
+import com.revoola.enumclass.RLFriendsFollowType
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
@@ -102,7 +103,8 @@ class RLFragYourGroupDetails : RLBaseFragment() {
     private fun rl_responsehandle(userdata: List<RLuserData>) {
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendListAdapter(activity,userdata,true, onItemClick = { userData ->
+        val adapter = RLYourFriendListAdapter(activity,userdata,
+            RLFriendsFollowType.YourGroup, onItemClick = { userData, FriendsAPIStatusType ->
             RLTools.rl_logDPrint(TAG,"Unfollow Click:- ${Gson().toJson(userData)}")
         })
         fragBinding.recycleYourfriend.adapter = adapter

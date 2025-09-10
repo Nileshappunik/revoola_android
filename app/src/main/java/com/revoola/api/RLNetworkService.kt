@@ -1,10 +1,8 @@
 package com.revoola.api
 
-
 import com.revoola.fragment.friends.model.EmailFilterApiResponse
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
-import com.revoola.fragment.friends.model.RLFriendsUpdateApiPayload
 import com.revoola.model.RLChallengesApiPayload
 import com.revoola.model.RLCommentDeleteApiPayload
 import com.revoola.model.RLCommentGetApiPayload
@@ -37,6 +35,8 @@ import com.revoola.model.RLYourFriendsModel
 import com.revoola.model.RLYourGroupModel
 import com.revoola.model.RLYourWayApiPayload
 import com.revoola.model.RLInsertCommonApiResponse
+import com.revoola.model.RLTextOverview
+import com.revoola.model.RLoverview_thumb_you
 import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.model.RLrequestgroup_dataset
 import com.revoola.model.RLsearch_userrequest
@@ -95,6 +95,9 @@ interface RLNetworkService {
     fun rl_friendsFollowingYou(@Body request: List<RLSetget_followersrequest>): Call<RLYourFriendsModel>
 
     @POST(RLConstants.URL_V3)
+    fun rl_friendsClickList(@Body request: List<RLoverview_thumb_you>): Call<RLFeedModel>
+
+    @POST(RLConstants.URL_V3)
     fun rl_yourGroupData(@Body request: List<RLrequestgroup_dataset>): Call<RLYourGroupModel>
 
     @POST(RLConstants.URL_V3)
@@ -146,9 +149,12 @@ interface RLNetworkService {
     //Friends Insert
     @POST(RLConstants.insertJSONApi)
     fun rl_insertFriendsData(@Body request: List<RLFriendsInsertApiPayload>): Call<RLInsertCommonApiResponse>
-     //Friends Update
+
+
+    //Friends Update
     @POST(RLConstants.insertJSONApi)
-    fun rl_updateFriendsData(@Body request: List<Map<String, Any>>): Call<RLInsertCommonApiResponse>
+    fun rl_updateFriendsData(@Body request: List<@JvmSuppressWildcards Map<String, Any>>): Call<RLInsertCommonApiResponse>
+
 
 
  //Comment Insert

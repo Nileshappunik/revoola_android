@@ -9,13 +9,17 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlLayoutYourFriendBinding
+import com.revoola.enumclass.FriendsAPIStatusType
+import com.revoola.enumclass.RLFriendsFollowType
+import com.revoola.fragment.friends.RLFragFriendsItemClickList
 import com.revoola.model.RLuserData
 
-class RLYourFriendListAdapter(val context: FragmentActivity?,
-                              val friendList: List<RLuserData>,
-                              val isFollowHide:Boolean,
-                              val onItemClick: (RLuserData) -> Unit
+class RLYourFriendListAdapter(private val context: FragmentActivity?,
+                              private val friendList: List<RLuserData>,
+                              private val friendsFollowType: RLFriendsFollowType,
+                              private val onItemClick: (RLuserData,FriendsAPIStatusType) -> Unit
 ) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var bundle: Bundle = Bundle()
     var dataList:List<RLuserData> = friendList
@@ -31,6 +35,7 @@ class RLYourFriendListAdapter(val context: FragmentActivity?,
 
     }
     override fun getItemCount(): Int {
+
        return dataList.size
     }
     inner class MyViewHolder(private  val lb: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(lb.root) {
@@ -40,25 +45,71 @@ class RLYourFriendListAdapter(val context: FragmentActivity?,
                 .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                 .into(lb.imgFriend)
             lb.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
-            when(cardData.theiridstatus){
-                "2"->{
-                    lb.txtFriendUnfollow.setText("Requested")
-                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.square_border_black_20)
-                    lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppBlackColor))
+            if (friendsFollowType == RLFriendsFollowType.FriendRequest){
+                lb.txtFriendBlock.visibility= View.VISIBLE
+                lb.txtFriendUnfollow.setText("Accept")
+                lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
+                lb.txtFriendUnfollow.setOnClickListener {
+                    onItemClick(cardData,FriendsAPIStatusType.Accepted)
+                    dataList = dataList.filterIndexed { index, _ -> index != position }
+                    notifyItemRemoved(position)
                 }
-                else->{
-                    lb.txtFriendUnfollow.setText("Unfollow")
-                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
-                    lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
+                lb.txtFriendBlock.setOnClickListener {
+                    onItemClick(cardData,FriendsAPIStatusType.Blocked)
+                    dataList = dataList.filterIndexed { index, _ -> index != position }
+                    notifyItemRemoved(position)
                 }
-            }
-            if (isFollowHide){
-                lb.txtFriendUnfollow.visibility=View.GONE
             }else{
-                lb.txtFriendUnfollow.visibility=View.VISIBLE
+                lb.txtFriendBlock.visibility= View.GONE
+                when(cardData.theiridstatus){
+                    "2"->{
+                        lb.txtFriendUnfollow.setText("Requested")
+                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.square_border_black_20)
+                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppBlackColor))
+                    }
+                    "3"->{
+                        lb.txtFriendUnfollow.setText("Unfollow")
+                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
+                    }
+                    else->{
+                        lb.txtFriendUnfollow.setText("follow")
+                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
+                    }
+                }
+                lb.txtFriendUnfollow.setOnClickListener {
+                    if (friendsFollowType == RLFriendsFollowType.YouFollow){
+                        onItemClick(cardData,FriendsAPIStatusType.Follow)
+                        dataList = dataList.filterIndexed { index, _ -> index != position }
+                        notifyItemRemoved(position)
+                    }else{
+                        when(cardData.theiridstatus){
+                            "2"->{//Requested
+                                onItemClick(cardData,FriendsAPIStatusType.Follow)
+                                cardData.theiridstatus = "-1"
+                                notifyItemChanged(position)
+                            }
+                            "3"->{//Unfollow
+                                onItemClick(cardData,FriendsAPIStatusType.Follow)
+                                cardData.theiridstatus = "-1"
+                                notifyItemChanged(position)
+                            }
+                            else->{//follow
+                                onItemClick(cardData,FriendsAPIStatusType.Requested)
+                                cardData.theiridstatus = "2"
+                                notifyItemChanged(position)
+                            }
+                        }
+                    }
+                }
             }
-            lb.txtFriendUnfollow.setOnClickListener {
-                onItemClick(cardData)
+
+            itemVIew.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("currentUser",cardData.theirid)
+                (context as RLMainActivityRL).rl_loadFrag(RLFragFriendsItemClickList().newInstance(bundle), "RLFragYourFriends", true,null, false)
             }
 
         }

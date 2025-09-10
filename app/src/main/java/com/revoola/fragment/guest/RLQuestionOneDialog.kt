@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.RadioButton
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.R
 import com.revoola.databinding.RlGuestQuestionOneDialogBinding
-import com.revoola.databinding.RlGuestWelcomeDialogBinding
-import com.revoola.fragment.start.challenges.adapter.RLCalenderListAdapter
+
 
 
 class RLQuestionOneDialog : DialogFragment() {

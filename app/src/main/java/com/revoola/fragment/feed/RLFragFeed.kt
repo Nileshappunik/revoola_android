@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,12 +21,15 @@ import com.revoola.RLBaseFragment
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.databinding.RlFragFeedBinding
 import com.revoola.fragment.feed.adapter.RLFeedGroupNameAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragYourGroup
+import com.revoola.fragment.friends.RLFragYourGroupDetails
 import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.fragment.start.challenges.RLFragChalengesType
 import com.revoola.interfaceall.RLItemClickListener
@@ -96,7 +100,7 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
         lastFragmentOpen = RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_fragment, "")
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment, "RLFragFeed")
 
-        currentUser = RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
+        currentUser = RLAuthManager().rl_getCurrentUser()?.uid?:""
         groupId = "${currentUser}_friends"
 
         // API / VM
@@ -117,7 +121,6 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
                 }
             }
         )
-
         setupUi()
         return binding.root
     }
@@ -148,8 +151,7 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
         }
 
         // Title (tabs)
-        val titleLayoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        val titleLayoutManager =LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         binding.inlayTop.recyclerTitle.layoutManager = titleLayoutManager
 
         currentTab = if (lastFragmentOpen == "RLFragChallengeSummary") {
@@ -209,6 +211,7 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
             isSwitchOn = checked
             applyTab(currentTab) // re-apply current tab with switch value
         }
+
     }
 
     private fun resetListAdapterForFeed() {

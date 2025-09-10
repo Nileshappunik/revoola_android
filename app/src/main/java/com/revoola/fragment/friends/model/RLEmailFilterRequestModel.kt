@@ -52,7 +52,7 @@ data class EmailFilterUserInvite(
     val email: String,
 
     @SerializedName("theiridstatus")
-    val theirIdStatus: String?,
+    var theirIdStatus: String?,
 
     @SerializedName("myidstatus")
     val myIdStatus: String?

@@ -11,13 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.moengage.pushbase.internal.repository.VALUE
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.friends.adapter.RLYourFriendListAdapter
 import com.revoola.api.RLApiClientRet
-import com.revoola.api.RLNetworkService
 import com.revoola.databinding.*
 import com.revoola.model.RLSetget_followers
 import com.revoola.model.RLSetget_followersrequest
@@ -28,22 +28,20 @@ import com.revoola.model.RLsearch_userrequest
 import com.revoola.model.RLuserData
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.enumclass.FriendsAPIStatusType
-import com.revoola.fragment.friends.model.RLFriendsUpdateApiPayload
-import com.revoola.fragment.friends.model.RLUpdateContactData
-import com.revoola.fragment.friends.model.RLUsersContactsMk2Update
+import com.revoola.enumclass.RLFriendsFollowType
+import com.revoola.moengage.RELMoengageManager
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class RLFragYourFriends : RLBaseFragment() {
     private val TAG: String = RLFragYourFriends::class.java.simpleName
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
+    private var getFullName: String =""
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragYourFriends()
@@ -85,7 +83,6 @@ class RLFragYourFriends : RLBaseFragment() {
                 rl_showDialogFullscreen()
             }
         }
-
         fragBinding.txtFriendFollowingyou.setOnClickListener {
             fragBinding.viewlablelright.setBackgroundResource(R.color.AppMainColor)
             fragBinding.viewlableleft.setBackgroundResource(R.color.AppWhiteColor)
@@ -97,34 +94,48 @@ class RLFragYourFriends : RLBaseFragment() {
                 rl_showDialogFullscreen()
             }
         }
-
-        fragBinding.txtInviteyourfriend.setOnClickListener {
-            (context as RLMainActivityRL).rl_loadFrag(RLFragInviteFriends(), TAG, true, RLFragInviteFriends::class.java.simpleName, false)
+        rl_firebaseToFetchUserData { userData ->
+            if (userData != null) {
+                getFullName = userData.firstName + " " + userData.lastName
+            } else {
+                RLTools.rl_logEPrint(TAG, "Error fetching user data")
+            }
         }
+        val followType = arguments?.getString(RevoolaKeys.FriendsFollowType)
+        if (followType != null) {
+            // If you want the enum value back:
+            val followTypeEnum = RLFriendsFollowType.valueOf(followType)
+            if (followTypeEnum == RLFriendsFollowType.FriendRequest) {
+                fragBinding.layLableText.visibility= View.GONE
+                fragBinding.layLableView.visibility= View.GONE
+                fragBinding.txtFriendFollowcount.setText(R.string.revoolafriendrequest)
+                if (apiClientRetrofit.rl_isConnected()) {
+                    rl_getFriendRequestApiCall()
+                } else {
+                    rl_showDialogFullscreen()
+                }
+            }else {
+                fragBinding.layLableText.visibility= View.VISIBLE
+                fragBinding.layLableView.visibility= View.VISIBLE
+                fragBinding.txtFriendFollowcount.setText(R.string.revoolafriends)
+                if (apiClientRetrofit.rl_isConnected()) {
+                    rl_youFollowApiCall()
+                } else {
+                    rl_showDialogFullscreen()
+                }
+            }
 
-
-        if (apiClientRetrofit.rl_isConnected()) {
-            rl_youFollowApiCall()
-            rl_getFriendRequestApiCall()
-        } else {
-            rl_showDialogFullscreen()
         }
-
-//        val reDirecDeepLinkPage=requireArguments().getBoolean("reDirecDeepLinkPage")
-//        if (reDirecDeepLinkPage){
-//            if (apiClientRetrofit.rl_isConnected()) {
-//                rl_getFriendRequestApiCall()
-//            } else {
-//                rl_showDialogFullscreen()
-//            }
-//        }
-//        else{
-//            if (apiClientRetrofit.rl_isConnected()) {
-//                rl_youFollowApiCall()
-//            } else {
-//                rl_showDialogFullscreen()
-//            }
-//        }
+        else {
+            fragBinding.layLableText.visibility= View.VISIBLE
+            fragBinding.layLableView.visibility= View.VISIBLE
+            fragBinding.txtFriendFollowcount.setText(R.string.revoolafriends)
+            if (apiClientRetrofit.rl_isConnected()) {
+                rl_youFollowApiCall()
+            } else {
+                rl_showDialogFullscreen()
+            }
+        }
     }
     private fun rl_youFollowApiCall() {
         val request = listOf(RLSetsearch_userrequest(
@@ -135,7 +146,7 @@ class RLFragYourFriends : RLBaseFragment() {
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                       rl_responsehandle(response.text.user,true)
+                       rl_responsehandle(response.text.user, RLFriendsFollowType.YouFollow)
                     }
                     RLTools.rl_logDPrint(TAG,"Friend Response:- ${Gson().toJson(response)}")
                 }catch (e:Exception){ e.printStackTrace()
@@ -155,7 +166,7 @@ class RLFragYourFriends : RLBaseFragment() {
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        rl_responsehandle(response.text.user,false)
+                        rl_responsehandle(response.text.user, RLFriendsFollowType.FollowingYou)
                     }
                     RLTools.rl_logDPrint(TAG,"get followers Success:- ${Gson().toJson(response)}")
                 }catch (e:Exception){ e.printStackTrace()
@@ -166,12 +177,12 @@ class RLFragYourFriends : RLBaseFragment() {
             }
         }
     }
-    private fun rl_responsehandle(userdata: List<RLuserData>, youFollow:Boolean) {
+    private fun rl_responsehandle(userdata: List<RLuserData>, youFollow: RLFriendsFollowType) {
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourfriend.layoutManager = linearLayoutManager
-        val adapter = RLYourFriendListAdapter(activity,userdata,false, onItemClick = { userData ->
-            RLTools.rl_logDPrint(TAG,"Unfollow Click:- ${Gson().toJson(userData)}")
-            //updateStatusForUser(userData)
+        val adapter = RLYourFriendListAdapter(activity,userdata,youFollow, onItemClick = { userData,FriendsAPIStatusType ->
+            RLTools.rl_logDPrint(TAG,"Unfollow Click:- ${Gson().toJson(userData)}, Status:- ${FriendsAPIStatusType}")
+            updateStatusForUser(userData,FriendsAPIStatusType)
         })
         fragBinding.recycleYourfriend.adapter = adapter
 
@@ -194,7 +205,7 @@ class RLFragYourFriends : RLBaseFragment() {
             result.onSuccess { response ->
                 try {
                     if (response.type.equals("success")){
-                        rl_responsehandle(response.text.user,true)
+                        rl_responsehandle(response.text.user,RLFriendsFollowType.FriendRequest)
                     }
                     RLTools.rl_logDPrint(TAG,"get Friend Request Response:- ${Gson().toJson(response)}")
                 }catch (e:Exception){ e.printStackTrace()
@@ -207,109 +218,69 @@ class RLFragYourFriends : RLBaseFragment() {
         }
     }
 
-//------------------------------------------------------------------------------
     private fun updateStatusForUser(user: RLuserData, status: FriendsAPIStatusType) {
-    val params = mutableListOf<Map<String, Any>>()
-
-    val myUser = mapOf(
-        "myidstatus" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus,
-        "contact_userid" to user.userid,
-        "contact_status" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value
-    )
-
-    val otherUser = mapOf(
-        "myidstatus" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value,
-        "contact_userid" to RLAuthManager().rl_getCurrentUser()?.uid,
-        "contact_status" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus
-    )
-
-    val mySearchUser = mapOf(
-        "myid" to RLAuthManager().rl_getCurrentUser()?.uid,
-        "contact_data" to listOf(myUser)
-    )
-
-    val otherSearchUser = mapOf(
-        "myid" to user.userid,
-        "contact_data" to listOf(otherUser)
-    )
-
-    params.add(mapOf("users_contacts_mk2" to mySearchUser))
-    params.add(mapOf("users_contacts_mk2" to otherSearchUser))
-
-    RLTools.rl_logDPrint(TAG,"Insert Friends Request: ${Gson().toJson(params)}")
-    viewModel.rl_updateFriendsData(params) { result ->
-        result.onSuccess { response ->
-            RLBaseProgress.rl_hideProgressDialog()
-            try {
-                RLTools.rl_logDPrint(TAG,"Insert Friends Success: ${Gson().toJson(response) }")
-            }catch (e:Exception){
-                e.printStackTrace()
-                RLTools.rl_logDPrint(TAG,"Insert Friends Catch: ${e.message}")
-            }
-        }.onFailure { error ->
-            RLBaseProgress.rl_hideProgressDialog()
-            RLTools.rl_logDPrint(TAG,"Insert Friends Error: ${error.message}")
-        }
-    }
-
-    when (status) {
-        FriendsAPIStatusType.Follow, FriendsAPIStatusType.Invite, FriendsAPIStatusType.Blocked -> {
-            deleteDataForFriends(listOf(user.userid))
-        }
-        FriendsAPIStatusType.Invited, FriendsAPIStatusType.Requested -> {
-            RELMoengageManager.sendRequest(user.userid)
-        }
-        FriendsAPIStatusType.Accepted -> {
-            saveDataForFriends(listOf(user.userid))
-            RELMoengageManager.acceptRequest(user.userid)
-        }
-    }
-}
-
-    private fun acceptAndFollowBack(user: RLuserData) {
         val params = mutableListOf<Map<String, Any>>()
+        val user_userid = when (status) {
+            FriendsAPIStatusType.Accepted, FriendsAPIStatusType.Blocked -> {
+                 user.theirid
+            }else -> {
+             user.userid
+            }
+        }
+
         val myUser = mapOf(
-            "myidstatus" to "3",
-            "contact_userid" to user.userid,
-            "contact_status" to "3"
+            "myidstatus" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus,
+            "contact_userid" to user_userid,
+            "contact_status" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value
         )
 
         val otherUser = mapOf(
-            "myidstatus" to "3",
-            "contact_userid" to  RLAuthManager().rl_getCurrentUser()?.uid,
-            "contact_status" to "3"
+            "myidstatus" to if (status == FriendsAPIStatusType.Accepted) user.theiridstatus else status.value,
+            "contact_userid" to RLAuthManager().rl_getCurrentUser()?.uid,
+            "contact_status" to if (status == FriendsAPIStatusType.Accepted) status.value else user.myidstatus
         )
 
         val mySearchUser = mapOf(
-            "myid" to  RLAuthManager().rl_getCurrentUser()?.uid,
+            "myid" to RLAuthManager().rl_getCurrentUser()?.uid,
             "contact_data" to listOf(myUser)
         )
 
         val otherSearchUser = mapOf(
-            "myid" to user.userid,
+            "myid" to user_userid,
             "contact_data" to listOf(otherUser)
         )
 
         params.add(mapOf("users_contacts_mk2" to mySearchUser))
         params.add(mapOf("users_contacts_mk2" to otherSearchUser))
 
+        RLTools.rl_logDPrint(TAG,"Insert Friends Request: ${Gson().toJson(params)}")
         viewModel.rl_updateFriendsData(params) { result ->
             result.onSuccess { response ->
                 RLBaseProgress.rl_hideProgressDialog()
                 try {
-                    RLTools.rl_logDPrint(TAG,"Update Friends Success: ${Gson().toJson(response) }")
+                    RLTools.rl_logDPrint(TAG,"Insert Friends Success: ${Gson().toJson(response) }")
                 }catch (e:Exception){
                     e.printStackTrace()
-                    RLTools.rl_logDPrint(TAG,"Update Friends Catch: ${e.message}")
+                    RLTools.rl_logDPrint(TAG,"Insert Friends Catch: ${e.message}")
                 }
             }.onFailure { error ->
                 RLBaseProgress.rl_hideProgressDialog()
-                RLTools.rl_logDPrint(TAG,"Update Friends Error: ${error.message}")
+                RLTools.rl_logDPrint(TAG,"Insert Friends Error: ${error.message}")
             }
         }
-        RELMoengageManager.shared().acceptRequest(user.uid)
+        when (status) {
+            FriendsAPIStatusType.Follow, FriendsAPIStatusType.Invite, FriendsAPIStatusType.Blocked -> {
+                deleteDataForFriends(listOf(user_userid))
+            }
+            FriendsAPIStatusType.Invited, FriendsAPIStatusType.Requested -> {
+                RELMoengageManager.sendRequest(user_userid,getFullName)
+            }
+            FriendsAPIStatusType.Accepted -> {
+                saveDataForFriends(listOf(user_userid))
+                RELMoengageManager.acceptRequest(user_userid,requireContext(),getFullName)
+            }
+        }
     }
-
     private fun saveDataForFriends(members: List<String>) {
         val currentUserId = RLAuthManager().rl_getCurrentUser()?.uid?:""
 
@@ -365,6 +336,5 @@ class RLFragYourFriends : RLBaseFragment() {
             }
         }
     }
-
 
 }

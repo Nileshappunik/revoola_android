@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.databinding.RlLayoutYourGroupBinding
+import com.revoola.enumclass.FriendsAPIStatusType
 import com.revoola.fragment.friends.model.RLFindOnRevoolaInviteItem
 
-class RLContactsAdapter(val context: FragmentActivity?, val contactsList: List<RLFindOnRevoolaInviteItem>,
-                        private val onSelected: (RLFindOnRevoolaInviteItem) -> Unit) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RLContactsAdapter(val context: FragmentActivity, val contactsList: List<RLFindOnRevoolaInviteItem>,
+                        private val onSelected: (RLFindOnRevoolaInviteItem,FriendsAPIStatusType) -> Unit) :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val TAG = "RLYourGroupListAdapter"
     var bundle: Bundle = Bundle()
     var dataList: List<RLFindOnRevoolaInviteItem> = contactsList
@@ -49,22 +50,73 @@ class RLContactsAdapter(val context: FragmentActivity?, val contactsList: List<R
                     val followUserData = item.user
                     // Binding data for UserInvite (EmailFilterUserInvite)
                     layoutBinding.txtGroupName.text = "${followUserData.firstName} ${followUserData.lastName}"
-                    layoutBinding.txtGroupMember.setText("Follow")
+                    //layoutBinding.txtGroupMember.setText("Follow")
                     Glide.with(context!!).load(followUserData.avatar)
                         .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
                         .into(layoutBinding.imgGroup)
+
+                    when(followUserData.theirIdStatus?:""){
+                        "2"->{
+                            layoutBinding.txtGroupMember.setText("Requested")
+                            layoutBinding.txtGroupMember.setBackgroundResource(R.drawable.square_border_black_20)
+                            layoutBinding.txtGroupMember.setTextColor(context.getColor(R.color.AppBlackColor))
+                        }
+                        else->{
+                            layoutBinding.txtGroupMember.setText("Follow")
+                            layoutBinding.txtGroupMember.setBackgroundResource(R.drawable.round_border_green)
+                            layoutBinding.txtGroupMember.setTextColor(context.getColor(R.color.AppMainColor))
+                        }
+                    }
+                    layoutBinding.txtGroupMember.setOnClickListener {
+                        when(followUserData.theirIdStatus?:""){
+                            "2"->{//Requested
+                                onSelected(item,FriendsAPIStatusType.Invite)
+                                followUserData.theirIdStatus = "0"
+                                notifyItemChanged(position)
+                            }
+                            else->{//follow
+                                onSelected(item,FriendsAPIStatusType.Requested)
+                                followUserData.theirIdStatus = "2"
+                                notifyItemChanged(position)
+                            }
+                        }
+                    }
+                    
                 }
                 is RLFindOnRevoolaInviteItem.RLInvite  -> {
                     val invitContact = item.contact
                     // Binding data for ContactInvite (RLContactModel)
                     layoutBinding.txtGroupName.text = invitContact.name
                     layoutBinding.txtGroupMember.setText("Invite")
+                    when(invitContact.theirIdStatus?:""){
+                        "2"->{
+                            layoutBinding.txtGroupMember.setText("Invited")
+                            layoutBinding.txtGroupMember.setBackgroundResource(R.drawable.square_border_black_20)
+                            layoutBinding.txtGroupMember.setTextColor(context.getColor(R.color.AppBlackColor))
+                        }
+                        else->{
+                            layoutBinding.txtGroupMember.setText("Invite")
+                            layoutBinding.txtGroupMember.setBackgroundResource(R.drawable.round_border_green)
+                            layoutBinding.txtGroupMember.setTextColor(context.getColor(R.color.AppMainColor))
+                        }
+                    }
+                    layoutBinding.txtGroupMember.setOnClickListener {
+                        when(invitContact.theirIdStatus?:""){
+                            "0"->{//Requested
+                                onSelected(item,FriendsAPIStatusType.Invited)
+                                invitContact.theirIdStatus = "2"
+                                notifyItemChanged(position)
+                            }
+                            else->{//follow
+                               //nothing
+                            }
+                        }
+
+                    }
                 }
 
             }
-            layoutBinding.txtGroupMember.setOnClickListener {
-                onSelected(item)
-            }
+
         }
     }
 
@@ -93,9 +145,5 @@ class RLContactsAdapter(val context: FragmentActivity?, val contactsList: List<R
         }
         notifyDataSetChanged() // Notify the adapter to refresh the list
     }
-
-
-
-
 
 }

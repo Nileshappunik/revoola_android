@@ -959,7 +959,7 @@ class RLFragClassWorkoutComplete : RLBaseFragment(){
                 val mediaType = "application/json".toMediaType()
                 val body = Gson().toJson(requestApi).toRequestBody(mediaType)
                 val request = Request.Builder()
-                    .url(RLConstants.UPDATE_MOENAGE_USER)
+                    .url(RLConstants.baseUrlUpdateMoengage)
                     .post(body)
                     .addHeader("Content-Type", "application/json")
                     .build()

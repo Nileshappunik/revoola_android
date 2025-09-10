@@ -50,6 +50,7 @@ object RevoolaKeys {
 
     const val elevation = "elevation"
     const val data = "data"
+
     const val status = "status"
     const val gpxString = "gpxString"
     const val generatedDisntace = "generatedDisntace"
@@ -121,7 +122,8 @@ object RevoolaKeys {
     const val gpx_T_Server = "gpx_T_Server"
     const val gpx_T_Server_N = "gpx_T_Server_N"
 
-
+    const val FriendsFollowType = "FriendsFollowType"
+    const val FriendsItemClick = "FriendsItemClick"
 
             
 }

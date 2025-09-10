@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.databinding.RlLayoutStartMenuBinding
+import com.revoola.enumclass.RLFriendsFollowType
 import com.revoola.enumclass.RLStartAllMenuModel
 import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragYourFriends
@@ -90,7 +92,7 @@ class RLStartListAdapter(
 
                 }else if (cardData.title.toLowerCase().equals("your friends")){
                     val bundle =Bundle ()
-                    bundle.putBoolean("reDirecDeepLinkPage",false)
+                    bundle.putString(RevoolaKeys.FriendsFollowType, RLFriendsFollowType.FollowingYou.name)
                     (context as RLMainActivityRL).rl_loadFrag(RLFragYourFriends().newInstance(bundle), TAG, true,null, false)
 
                 }else if (cardData.title.toLowerCase().equals("your groups")){
@@ -105,7 +107,7 @@ class RLStartListAdapter(
                     }
                     context.startActivity(Intent.createChooser(shareIntent, "Share via"))
                   //  
-                  //  (context as RLMainActivityRL).RLloadFrag(RLFragInviteFriends(), TAG, true, null, true)
+                  //  (context as RLMainActivityRL).RLloadFrag(RLFragFriendsItemClickList(), TAG, true, null, true)
 
                 }
 

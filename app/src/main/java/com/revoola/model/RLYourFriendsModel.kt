@@ -11,7 +11,7 @@ data class RLuser(val user:List<RLuserData>)
 @Parcelize
 data class RLuserData(val first_name:String, val last_name:String, val userid:String, val username:String,
                       val avatar:String, val myid:String, val myidstatus:String, val theirid:String,
-                      val theiridstatus:String, var isSelected: Boolean = false) : Parcelable
+                      var theiridstatus:String, var isSelected: Boolean = false) : Parcelable
 
 
 data class RLSetsearch_userrequest(var search_user: RLSetsearch_user)

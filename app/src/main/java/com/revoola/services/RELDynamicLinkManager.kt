@@ -32,6 +32,8 @@ import com.revoola.model.RLrequest_goaled_challenges
 import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RevoolaKeys
+import com.revoola.enumclass.RLFriendsFollowType
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
@@ -242,7 +244,7 @@ class RELDynamicLinkManager private   constructor() {
             //TODO REVFriendsRequestListVC (FRIEND-POPOPEN-YES-REDIRECFRIENDPAGE) TESTING PENDING
             dynamicLink.deepLinkPage = ""
             val bundle =Bundle ()
-            bundle.putBoolean("reDirecDeepLinkPage",true)
+            bundle.putString(RevoolaKeys.FriendsFollowType, RLFriendsFollowType.FriendRequest.name)
             (context as RLMainActivityRL).rl_loadFrag(RLFragYourFriends(), TAG, true,null, false)
         }
         else if (deepLinkPage.equals("fri-detail")){
