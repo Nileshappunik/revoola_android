@@ -31,6 +31,7 @@ import com.revoola.RLBaseProgress
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlFragCreateGroupBinding
 import com.revoola.fragment.friends.adapter.RLCreateFriendListAdapter
 import com.revoola.fragment.friends.model.RLCreateGroupModel
@@ -53,33 +54,31 @@ import java.util.Locale
 import java.util.UUID
 
 class RLFragCreateGroup : RLBaseFragment() {
-    val TAG: String = RLFragCreateGroup::class.java.simpleName
-   // lateinit var fragBinding: RlFragCreateGroupBinding
+    companion object{
+        private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
+        private val TAG: String = RLFragCreateGroup::class.java.simpleName
+    }
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var currentUser:String=""
     private var selectUserdata: List<RLUserDataParcelable> = mutableListOf()
-    var imgUriList = mutableListOf<File>()
+    private var imgUriList = mutableListOf<File>()
 
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragCreateGroup()
         fragment.arguments = bundle
         return fragment
     }
-    companion object{
-        private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
-    }
-
     private val fragBinding by lazy {
         RlFragCreateGroupBinding.inflate(layoutInflater)
+    }
+    private val currentUser by lazy {
+        RLAuthManager().rl_getCurrentUser()?.uid?:""
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_create_group, container) as RlFragCreateGroupBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragCreateGroup" )
-        currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -87,6 +86,21 @@ class RLFragCreateGroup : RLBaseFragment() {
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         rl_uisetupNew()
         return fragBinding.root
+    }
+    // Handle permission request result
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted, you can proceed with your code
+                val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                rl_changeImageCamera.launch(pickImg)
+            } else {
+                // Permission is denied
+                // You may want to show a message or handle the case where the RLuser denies the permission
+                rl_opentoast("Permission is denied")
+            }
+        }
     }
     private fun rl_uisetupNew() {
         rl_onBackPresAct(fragBinding.toolbar.ivBack)
@@ -118,50 +132,6 @@ class RLFragCreateGroup : RLBaseFragment() {
             rl_opencameragallerydialog()
         }
 
-    }
-    private fun rl_createGroupApiCall() {
-        val dataMap  = createGroupPayload()
-        val images=getUserImages()
-        RLTools.rl_logDPrint(TAG,"Create Group Request: $dataMap")
-        viewModel.rl_insertGroupData(dataMap,images) { result ->
-            result.onSuccess { response ->
-                RLBaseProgress.rl_hideProgressDialog()
-                try {
-                    if (response.type.equals("success")) {
-                        (context as RLMainActivityRL).rl_loadFrag(RLFragFriends(), TAG, false, null, false)
-                        RLTools.rl_logDPrint(TAG, "Create Group Success: ${response.text}")
-                    } else {
-                        RLTools.rl_logEPrint(TAG, "Create Group Fail: ${response.text}")
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    RLTools.rl_logEPrint(TAG, "Create Group Catch: ${e.message}" )
-
-                }
-            }.onFailure { error ->
-                RLBaseProgress.rl_hideProgressDialog()
-                RLTools.rl_logEPrint(TAG, "Create Group Error: ${error.message}" )
-            }
-        }
-    }
-    private fun createGroupPayload(): Map<String, RequestBody> {
-        val groupName=fragBinding.ivGroupName.text.toString()
-        val requestBodyMap = mutableMapOf<String, RequestBody>()
-        // Add text fields as form data
-        requestBodyMap["data[create_group][group_name]"] = createRequestBody(groupName)
-        requestBodyMap["data[create_group][group_id]"] = createRequestBody(currentUser+generateUniqueKey())
-        requestBodyMap["data[create_group][child_user][$currentUser]"] = createRequestBody("1")
-
-        // Add selected friends
-        for (friend in selectUserdata) {
-            if (friend.userid != currentUser) {
-                requestBodyMap["data[create_group][child_user][${friend.userid}]"] = createRequestBody("0")
-            }
-        }
-        return requestBodyMap
-    }
-    private fun createRequestBody(value: String): RequestBody {
-        return value.toRequestBody("text/plain".toMediaTypeOrNull())
     }
     private fun generateUniqueKey(): String {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 32)
@@ -271,21 +241,6 @@ class RLFragCreateGroup : RLBaseFragment() {
     private fun rl_opentoast(messageprint: String) {
         Toast.makeText(requireContext(),messageprint, Toast.LENGTH_SHORT).show()
     }
-    // Handle permission request result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted, you can proceed with your code
-                val pickImg = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                rl_changeImageCamera.launch(pickImg)
-            } else {
-                // Permission is denied
-                // You may want to show a message or handle the case where the RLuser denies the permission
-                rl_opentoast("Permission is denied")
-            }
-        }
-    }
     private fun rl_showAlertDialog(message:String) {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -304,6 +259,50 @@ class RLFragCreateGroup : RLBaseFragment() {
         })
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
+    }
+    private fun createGroupPayload(): Map<String, RequestBody> {
+        val groupName=fragBinding.ivGroupName.text.toString()
+        val requestBodyMap = mutableMapOf<String, RequestBody>()
+        // Add text fields as form data
+        requestBodyMap["data[create_group][group_name]"] = createRequestBody(groupName)
+        requestBodyMap["data[create_group][group_id]"] = createRequestBody(currentUser+generateUniqueKey())
+        requestBodyMap["data[create_group][child_user][$currentUser]"] = createRequestBody("1")
+
+        // Add selected friends
+        for (friend in selectUserdata) {
+            if (friend.userid != currentUser) {
+                requestBodyMap["data[create_group][child_user][${friend.userid}]"] = createRequestBody("0")
+            }
+        }
+        return requestBodyMap
+    }
+    private fun createRequestBody(value: String): RequestBody {
+        return value.toRequestBody("text/plain".toMediaTypeOrNull())
+    }
+    private fun rl_createGroupApiCall() {
+        val dataMap  = createGroupPayload()
+        val images=getUserImages()
+        RLTools.rl_logDPrint(TAG,"Create Group Request: $dataMap")
+        viewModel.rl_insertGroupData(dataMap,images) { result ->
+            result.onSuccess { response ->
+                RLBaseProgress.rl_hideProgressDialog()
+                try {
+                    if (response.type.equals("success")) {
+                        (context as RLMainActivityRL).rl_loadFrag(RLFragFriends(), TAG, false, null, false)
+                        RLTools.rl_logDPrint(TAG, "Create Group Success: ${response.text}")
+                    } else {
+                        RLTools.rl_logEPrint(TAG, "Create Group Fail: ${response.text}")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    RLTools.rl_logEPrint(TAG, "Create Group Catch: ${e.message}" )
+
+                }
+            }.onFailure { error ->
+                RLBaseProgress.rl_hideProgressDialog()
+                RLTools.rl_logEPrint(TAG, "Create Group Error: ${error.message}" )
+            }
+        }
     }
 
 }

@@ -1,15 +1,18 @@
 package com.revoola.fragment.friends.adapter
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
+import com.revoola.commonobject.RLTools
 import com.revoola.databinding.RlLayoutYourFriendBinding
 import com.revoola.enumclass.FriendsAPIStatusType
 import com.revoola.enumclass.RLFriendsFollowType
@@ -35,71 +38,87 @@ class RLYourFriendListAdapter(private val context: FragmentActivity?,
 
     }
     override fun getItemCount(): Int {
-
        return dataList.size
     }
     inner class MyViewHolder(private  val lb: RlLayoutYourFriendBinding) : RecyclerView.ViewHolder(lb.root) {
         fun bindData(position: Int, itemVIew: View) {
             val cardData = dataList[position]
-            Glide.with(context!!).load(cardData.avatar)
-                .placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-                .into(lb.imgFriend)
+
+            if (!cardData.avatar.isNullOrEmpty()) {
+                Glide.with(context!!)
+                    .load(cardData.avatar)
+                    .placeholder(R.drawable.sample_user)
+                    .error(R.drawable.sample_user)
+                    .into(lb.imgFriend)
+            } else {
+                lb.imgFriend.setImageBitmap(RLTools.getInitialsBitmap(context!!,cardData.first_name+" "+cardData.last_name))
+            }
+
             lb.txtFriendName.setText(cardData.first_name+" "+cardData.last_name)
-            if (friendsFollowType == RLFriendsFollowType.FriendRequest){
-                lb.txtFriendBlock.visibility= View.VISIBLE
-                lb.txtFriendUnfollow.setText("Accept")
-                lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
-                lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
-                lb.txtFriendUnfollow.setOnClickListener {
-                    onItemClick(cardData,FriendsAPIStatusType.Accepted)
-                    dataList = dataList.filterIndexed { index, _ -> index != position }
-                    notifyItemRemoved(position)
-                }
-                lb.txtFriendBlock.setOnClickListener {
-                    onItemClick(cardData,FriendsAPIStatusType.Blocked)
-                    dataList = dataList.filterIndexed { index, _ -> index != position }
-                    notifyItemRemoved(position)
-                }
-            }else{
-                lb.txtFriendBlock.visibility= View.GONE
-                when(cardData.theiridstatus){
-                    "2"->{
-                        lb.txtFriendUnfollow.setText("Requested")
-                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.square_border_black_20)
-                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppBlackColor))
-                    }
-                    "3"->{
-                        lb.txtFriendUnfollow.setText("Unfollow")
-                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
-                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
-                    }
-                    else->{
-                        lb.txtFriendUnfollow.setText("follow")
-                        lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
-                        lb.txtFriendUnfollow.setTextColor(context.getColor(R.color.AppMainColor))
-                    }
-                }
-                lb.txtFriendUnfollow.setOnClickListener {
-                    if (friendsFollowType == RLFriendsFollowType.YouFollow){
-                        onItemClick(cardData,FriendsAPIStatusType.Follow)
+            when (friendsFollowType){
+                RLFriendsFollowType.FriendRequest->{
+                    lb.txtFriendBlock.visibility= View.VISIBLE
+                    lb.txtFriendUnfollow.visibility= View.VISIBLE
+                    lb.txtFriendUnfollow.setText("Accept")
+                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                    lb.txtFriendUnfollow.setTextColor(context!!.getColor(R.color.AppMainColor))
+                    lb.txtFriendUnfollow.setOnClickListener {
+                        onItemClick(cardData,FriendsAPIStatusType.Accepted)
                         dataList = dataList.filterIndexed { index, _ -> index != position }
                         notifyItemRemoved(position)
-                    }else{
-                        when(cardData.theiridstatus){
-                            "2"->{//Requested
-                                onItemClick(cardData,FriendsAPIStatusType.Follow)
-                                cardData.theiridstatus = "-1"
-                                notifyItemChanged(position)
-                            }
-                            "3"->{//Unfollow
-                                onItemClick(cardData,FriendsAPIStatusType.Follow)
-                                cardData.theiridstatus = "-1"
-                                notifyItemChanged(position)
-                            }
-                            else->{//follow
-                                onItemClick(cardData,FriendsAPIStatusType.Requested)
-                                cardData.theiridstatus = "2"
-                                notifyItemChanged(position)
+                    }
+                    lb.txtFriendBlock.setOnClickListener {
+                        onItemClick(cardData,FriendsAPIStatusType.Blocked)
+                        dataList = dataList.filterIndexed { index, _ -> index != position }
+                        notifyItemRemoved(position)
+                    }
+                }
+                RLFriendsFollowType.YourGroup->{
+                    lb.txtFriendUnfollow.visibility= View.GONE
+                    lb.txtFriendBlock.visibility= View.GONE
+                }
+                else -> {
+                    lb.txtFriendUnfollow.visibility= View.VISIBLE
+                    lb.txtFriendBlock.visibility= View.GONE
+                    when(cardData.theiridstatus){
+                        "2"->{
+                            lb.txtFriendUnfollow.setText("Requested")
+                            lb.txtFriendUnfollow.setBackgroundResource(R.drawable.square_border_black_20)
+                            lb.txtFriendUnfollow.setTextColor(context!!.getColor(R.color.AppBlackColor))
+                        }
+                        "3"->{
+                            lb.txtFriendUnfollow.setText("Unfollow")
+                            lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                            lb.txtFriendUnfollow.setTextColor(context!!.getColor(R.color.AppMainColor))
+                        }
+                        else->{
+                            lb.txtFriendUnfollow.setText("follow")
+                            lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                            lb.txtFriendUnfollow.setTextColor(context!!.getColor(R.color.AppMainColor))
+                        }
+                    }
+                    lb.txtFriendUnfollow.setOnClickListener {
+                        if (friendsFollowType == RLFriendsFollowType.YouFollow){
+                            onItemClick(cardData,FriendsAPIStatusType.Follow)
+                            dataList = dataList.filterIndexed { index, _ -> index != position }
+                            notifyItemRemoved(position)
+                        }else{
+                            when(cardData.theiridstatus){
+                                "2"->{//Requested
+                                    onItemClick(cardData,FriendsAPIStatusType.Follow)
+                                    cardData.theiridstatus = "-1"
+                                    notifyItemChanged(position)
+                                }
+                                "3"->{//Unfollow
+                                    onItemClick(cardData,FriendsAPIStatusType.Follow)
+                                    cardData.theiridstatus = "-1"
+                                    notifyItemChanged(position)
+                                }
+                                else->{//follow
+                                    onItemClick(cardData,FriendsAPIStatusType.Requested)
+                                    cardData.theiridstatus = "2"
+                                    notifyItemChanged(position)
+                                }
                             }
                         }
                     }
@@ -107,11 +126,13 @@ class RLYourFriendListAdapter(private val context: FragmentActivity?,
             }
 
             itemVIew.setOnClickListener {
+                if (friendsFollowType == RLFriendsFollowType.YourGroup){
+                    return@setOnClickListener
+                }
                 val bundle = Bundle()
                 bundle.putString("currentUser",cardData.theirid)
                 (context as RLMainActivityRL).rl_loadFrag(RLFragFriendsItemClickList().newInstance(bundle), "RLFragYourFriends", true,null, false)
             }
-
         }
     }
     fun rl_filter(query: String) {
@@ -122,6 +143,4 @@ class RLYourFriendListAdapter(private val context: FragmentActivity?,
         }
         notifyDataSetChanged()
     }
-
-
 }

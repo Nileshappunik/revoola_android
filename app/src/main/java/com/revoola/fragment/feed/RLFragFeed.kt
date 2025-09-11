@@ -29,7 +29,6 @@ import com.revoola.fragment.feed.adapter.RLFeedListAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListChallengesAdapter
 import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragYourGroup
-import com.revoola.fragment.friends.RLFragYourGroupDetails
 import com.revoola.fragment.overview.adapter.RLOverviewSessionTitleListAdapter
 import com.revoola.fragment.start.challenges.RLFragChalengesType
 import com.revoola.interfaceall.RLItemClickListener

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
@@ -24,6 +25,7 @@ import com.revoola.model.RLsetgroup_data
 import com.revoola.model.RLuserData
 import com.revoola.model.RLyourGroupDataModel
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.fragment.friends.model.RLCreateGroupModel
 import com.revoola.model.RLUserDataParcelable
 import com.revoola.utils.RLPrefManager
@@ -32,29 +34,25 @@ import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLFragYourGroup : RLBaseFragment() {
-    val TAG: String = RLFragYourGroup::class.java.simpleName
-    //lateinit var fragBinding: RlFragYourGroupBinding
-    lateinit var apiClientRetrofit: RLApiClientRet
+    companion object{
+        private val TAG: String = RLFragYourGroup::class.java.simpleName
+    }
+    private lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    var currentUser:String=""
-    var isGroup:Boolean=true
+    private var isGroup:Boolean=true
     private var selectUserdata: List<RLuserData> = mutableListOf()
     
     private val fragBinding by lazy {
         RlFragYourGroupBinding.inflate(layoutInflater)
     }
+    private val currentUser by lazy {
+        RLAuthManager().rl_getCurrentUser()?.uid?:""
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-       // fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_your_group, container) as RlFragYourGroupBinding
         RLPrefManager.rl_setSomeStringValue(activity,RLPrefManager.current_fragment,"RLFragYourGroup" )
-        fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
-        fragBinding.toolbar.ivBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-            rl_bottomHideShowSet(true)
-        }
-        currentUser= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.current_user, "")
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -65,7 +63,11 @@ class RLFragYourGroup : RLBaseFragment() {
     }
 
     private fun rl_uisetup() {
-
+        fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
+        fragBinding.toolbar.ivBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
+            rl_bottomHideShowSet(true)
+        }
         rl_groupApiCall()
         fragBinding.txtMyGroup.setOnClickListener {
             fragBinding.txtMyGroup.setBackgroundResource(R.drawable.full_round_green)
@@ -98,7 +100,7 @@ class RLFragYourGroup : RLBaseFragment() {
         fragBinding.rvSelectedFriend.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         fragBinding.tvCreateClick.setOnClickListener {
-           //Friend CREATE IMPLEMENT
+           //Friend CREATE IMPLEMENT/
             val bundle=Bundle()
             val cardData=RLCreateGroupModel()
             val selectFriendList: List<RLUserDataParcelable> = selectUserdata.map {
@@ -127,23 +129,21 @@ class RLFragYourGroup : RLBaseFragment() {
             RLSetsearch_userrequest(
                 search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)
             ))
-        RLTools.rl_logDPrint(TAG,"setyouFollowdata= "+request)
+        RLTools.rl_logDPrint(TAG,"request FriendsData: ${Gson().toJson(request)}")
 
         viewModel.rl_friendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
+                    RLTools.rl_logDPrint(TAG,"Success FriendsData: ${Gson().toJson(response)}")
                     if (response.type.equals("success")){
-                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
-                        rl_responsehandlefriendsApi(response.text.user)
-                    }else {
-                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
+                         rl_responsehandlefriendsApi(response.text.user)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch FriendsData: ${e.message} ")
                 }
             }.onFailure { error ->
 
-                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error FriendsData: ${error.message} " )
             }
         }
     }
@@ -180,42 +180,37 @@ class RLFragYourGroup : RLBaseFragment() {
                 group_data = RLsetgroup_data(userid = currentUser,limit = 100, index=0)
             )
         )
-        RLTools.rl_logDPrint(TAG,"setgroupdata= "+request)
-
+        RLTools.rl_logDPrint(TAG,"request groupData: ${Gson().toJson(request)}")
         viewModel.rl_yourGroupData(request) { result ->
             result.onSuccess { response ->
                 try {
+                    RLTools.rl_logDPrint(TAG,"success groupData: ${Gson().toJson(response)}")
                     if (response.type.equals("success")){
-                        RLTools.rl_logDPrint(TAG,"Success= "+response.type)
                         rl_responsehandleGroupsApi(response.text)
-                    }else {
-                        RLTools.rl_logDPrint(TAG,"Fail= "+response.type)
                     }
                 }catch (e:Exception){ e.printStackTrace()
-                    RLTools.rl_logDPrint(TAG,"Catch= "+e.message)
+                    RLTools.rl_logDPrint(TAG,"Catch groupData: ${e.message}")
                 }
             }.onFailure { error ->
 
-                RLTools.rl_logDPrint(TAG,"Error= "+error.message)
+                RLTools.rl_logDPrint(TAG,"Error groupData: ${error.message}")
             }
         }
     }
-    private fun rl_responsehandleGroupsApi(groupdata: List<RLyourGroupDataModel>) {
+    private fun rl_responsehandleGroupsApi(groupData: List<RLyourGroupDataModel>) {
         val linearLayoutManager = LinearLayoutManager(activity)
         fragBinding.recycleYourgroup.layoutManager = linearLayoutManager
-        val adaptergroup = RLYourGroupListAdapter(activity,groupdata)
-        fragBinding.recycleYourgroup.adapter = adaptergroup
+        val adapterGroup = RLYourGroupListAdapter(activity,groupData)
+        fragBinding.recycleYourgroup.adapter = adapterGroup
 
         fragBinding.edtGroupSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adaptergroup.rl_filter(s.toString())
+                adapterGroup.rl_filter(s.toString())
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-
-
 }

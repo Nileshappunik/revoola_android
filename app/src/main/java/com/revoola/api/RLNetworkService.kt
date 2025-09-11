@@ -155,8 +155,6 @@ interface RLNetworkService {
     @POST(RLConstants.insertJSONApi)
     fun rl_updateFriendsData(@Body request: List<@JvmSuppressWildcards Map<String, Any>>): Call<RLInsertCommonApiResponse>
 
-
-
  //Comment Insert
     @POST(RLConstants.CommentUrl)
     fun rl_insertCommentData(@Body request: List<RLCommentInsertApiPayload>): Call<RLInsertCommonApiResponse>//Comment Insert

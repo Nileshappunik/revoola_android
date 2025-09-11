@@ -40,6 +40,11 @@ import com.revoola.model.EffortZoneFeedModel
 import android.Manifest
 import android.app.Dialog
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.util.TypedValue
 import android.view.Window
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -62,6 +67,35 @@ import java.time.temporal.TemporalAdjusters
 
 
 object RLTools {
+
+    fun getInitialsBitmap( context: Context,name: String): Bitmap {
+        val textColor = ContextCompat.getColor(context, R.color.AppMainColor)
+        val bgColor = ContextCompat.getColor(context, R.color.AppTextLightGrayColor)
+        val size = 200
+
+        val initials = name.split(" ")
+            .filter { it.isNotEmpty() }
+            .take(2)
+            .joinToString("") { it[0].uppercase() }
+
+        val paint = Paint().apply {
+            isAntiAlias = true
+            color = textColor
+            textSize = size / 2f
+            textAlign = Paint.Align.CENTER
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD) // 👈 Bold text
+        }
+
+        val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bmp)
+        canvas.drawColor(bgColor)
+
+        val x = size / 2f
+        val y = size / 2f - (paint.descent() + paint.ascent()) / 2
+        canvas.drawText(initials, x, y, paint)
+
+        return bmp
+    }
 
     fun getColorForScheduleStatus(statusText: String): Int {
         return when (statusText.lowercase()) {
