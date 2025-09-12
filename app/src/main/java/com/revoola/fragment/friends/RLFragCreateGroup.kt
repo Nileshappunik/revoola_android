@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
@@ -134,7 +135,7 @@ class RLFragCreateGroup : RLBaseFragment() {
 
     }
     private fun generateUniqueKey(): String {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 32)
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 20).toUpperCase()
     }
     private fun getUserImages(): List<MultipartBody.Part> {
         val imageParts = mutableListOf<MultipartBody.Part>()
@@ -263,9 +264,10 @@ class RLFragCreateGroup : RLBaseFragment() {
     private fun createGroupPayload(): Map<String, RequestBody> {
         val groupName=fragBinding.ivGroupName.text.toString()
         val requestBodyMap = mutableMapOf<String, RequestBody>()
+        val generate_group_id = currentUser+generateUniqueKey()
         // Add text fields as form data
         requestBodyMap["data[create_group][group_name]"] = createRequestBody(groupName)
-        requestBodyMap["data[create_group][group_id]"] = createRequestBody(currentUser+generateUniqueKey())
+        requestBodyMap["data[create_group][group_id]"] = createRequestBody(generate_group_id)
         requestBodyMap["data[create_group][child_user][$currentUser]"] = createRequestBody("1")
 
         // Add selected friends
@@ -282,7 +284,7 @@ class RLFragCreateGroup : RLBaseFragment() {
     private fun rl_createGroupApiCall() {
         val dataMap  = createGroupPayload()
         val images=getUserImages()
-        RLTools.rl_logDPrint(TAG,"Create Group Request: $dataMap")
+        RLTools.rl_logDPrint(TAG,"Create Group Request: ${Gson().toJson(dataMap)}")
         viewModel.rl_insertGroupData(dataMap,images) { result ->
             result.onSuccess { response ->
                 RLBaseProgress.rl_hideProgressDialog()

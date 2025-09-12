@@ -61,7 +61,6 @@ class RLFragYourGroup : RLBaseFragment() {
         rl_uisetup()
         return fragBinding.root
     }
-
     private fun rl_uisetup() {
         fragBinding.toolbar.tvTitle.setText(R.string.yourgroup)
         fragBinding.toolbar.ivBack.setOnClickListener {
@@ -119,11 +118,9 @@ class RLFragYourGroup : RLBaseFragment() {
             }
             cardData.selectFriendList=selectFriendList
             bundle.putParcelable("cardData",cardData)
-            (context as RLMainActivityRL).rl_loadFrag(RLFragCreateGroup().newInstance(bundle), TAG, true,null, false)
-
+            (context as RLMainActivityRL).rl_loadFrag(RLFragCreateGroup().newInstance(bundle), TAG, true,null, true)
         }
     }
-
     private fun rl_friendsApiCall() {
         val request = listOf(
             RLSetsearch_userrequest(
@@ -213,4 +210,5 @@ class RLFragYourGroup : RLBaseFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
+    
 }

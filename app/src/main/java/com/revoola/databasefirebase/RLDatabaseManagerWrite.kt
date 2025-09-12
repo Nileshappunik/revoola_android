@@ -80,6 +80,10 @@ class RLDatabaseManagerWrite {
         database.child(path).setValue(data)
     }
 
+    fun rl_Delete_All_Data(path: String) {
+        database.child(path).removeValue()
+    }
+
     fun rl_write_Data(path: String, data: Any, callback: (Boolean, Exception?) -> Unit) {
         val entryIdSummery = (System.currentTimeMillis() / 1000).toString()
         entryIdSummery.let {

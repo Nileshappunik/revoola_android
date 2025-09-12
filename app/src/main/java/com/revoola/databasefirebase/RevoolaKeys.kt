@@ -2,6 +2,7 @@ package com.revoola.databasefirebase
 
 object RevoolaKeys {
 
+    const val RevoolaGroups = "revoolaGroups"
     const val  avgBurntCalories = "avgBurntCalories"
     const val  avgCadence = "avgCadence"
     const val avgHr = "avgHr"
@@ -124,6 +125,10 @@ object RevoolaKeys {
 
     const val FriendsFollowType = "FriendsFollowType"
     const val FriendsItemClick = "FriendsItemClick"
+
+
+    const val MemberIds = "memberIds"
+
 
             
 }

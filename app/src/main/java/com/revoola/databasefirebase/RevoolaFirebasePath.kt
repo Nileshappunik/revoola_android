@@ -98,4 +98,19 @@ object RevoolaFirebasePath {
     fun awardPathRead(awardKey: String):String{
         return "/$basePath/codeSection/awardSystem/$awardKey"
     }
+
+    fun groupPathWrite(userID: String,groupId: String):String{
+        return "/$basePath/revoolaUserSettings/$userID/myGroups/$groupId"
+    }
+
+    fun groupStatusPathWrite(userID: String,groupId: String):String{
+        return "/$basePath/revoolaUserSettings/$userID/myGroups/$groupId/status"
+    }
+
+    fun groupMemberPathWrite(groupId: String):String{
+        return "/$basePath/revoolaGroups/$groupId/memberIds"
+    }
+    fun groupMemberPathDelete(groupId: String):String{
+        return "/$basePath/revoolaGroups/$groupId"
+    }
 }

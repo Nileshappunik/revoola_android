@@ -77,6 +77,16 @@ class RLYourFriendListAdapter(private val context: FragmentActivity?,
                     lb.txtFriendUnfollow.visibility= View.GONE
                     lb.txtFriendBlock.visibility= View.GONE
                 }
+                RLFriendsFollowType.InviteGroupFriend->{
+                    lb.txtFriendUnfollow.visibility= View.VISIBLE
+                    lb.txtFriendBlock.visibility= View.GONE
+                    lb.txtFriendUnfollow.setText("INVITE")
+                    lb.txtFriendUnfollow.setBackgroundResource(R.drawable.round_border_green)
+                    lb.txtFriendUnfollow.setTextColor(context!!.getColor(R.color.AppMainColor))
+                    lb.txtFriendUnfollow.setOnClickListener {
+                        onItemClick(cardData,FriendsAPIStatusType.Invite)
+                    }
+                }
                 else -> {
                     lb.txtFriendUnfollow.visibility= View.VISIBLE
                     lb.txtFriendBlock.visibility= View.GONE
@@ -126,7 +136,7 @@ class RLYourFriendListAdapter(private val context: FragmentActivity?,
             }
 
             itemVIew.setOnClickListener {
-                if (friendsFollowType == RLFriendsFollowType.YourGroup){
+                if (friendsFollowType == RLFriendsFollowType.YourGroup || friendsFollowType == RLFriendsFollowType.InviteGroupFriend){
                     return@setOnClickListener
                 }
                 val bundle = Bundle()

@@ -117,7 +117,7 @@
                     android:textColor="@color/AppMainColor"/>
 
                 <TextView
-                    android:id="@+id/txtRevoolaAll"
+                    android:id="@+id/txtRemoveAll"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
