@@ -29,6 +29,7 @@ import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.commonobject.RLTools
 import java.util.UUID
 
 class RLFragMindClassesView : RLBaseFragment() {
@@ -55,6 +56,7 @@ class RLFragMindClassesView : RLBaseFragment() {
     }
     private fun RLuisetup() {
         rl_onBackPresAct(fragBinding.ivBack)
+
         val VideoID=  requireArguments().getString("VIDEODATA","")
         val audioVideoType=  requireArguments().getString("AUDIOVIDEOTYPE","")
         fragBinding.layWorklog.visibility=View.GONE

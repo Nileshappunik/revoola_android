@@ -102,7 +102,6 @@ class RLFriendInviteGroupDialog() : DialogFragment() {
                     RLTools.rl_logDPrint(TAG,"Catch FriendsData: ${e.message} ")
                 }
             }.onFailure { error ->
-
                 RLTools.rl_logDPrint(TAG,"Error FriendsData: ${error.message} " )
             }
         }
@@ -178,10 +177,8 @@ class RLFriendInviteGroupDialog() : DialogFragment() {
                 }catch (e:Exception){ e.printStackTrace()
                     RLTools.rl_logDPrint(TAG,"Catch followAll: ${e.message}")
                 }
-                //rl_friendsApiCall()
             }.onFailure { error ->
                 RLTools.rl_logDPrint(TAG,"Error followAll:${error.localizedMessage} ")
-              //  rl_friendsApiCall()
             }
         }
     }
@@ -192,8 +189,7 @@ class RLFriendInviteGroupDialog() : DialogFragment() {
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
-            }
-            .show()
+            }.show()
     }
 
 }

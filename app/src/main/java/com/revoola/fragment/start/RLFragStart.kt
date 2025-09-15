@@ -1,15 +1,11 @@
 package com.revoola.fragment.start
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import android.view.ViewTreeObserver
-import android.view.Window
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.health.connect.client.HealthConnectClient
@@ -19,10 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.databasefirebase.RLDatabaseManagerRead
-import com.revoola.databinding.RlDialogHelpStartBinding
 import com.revoola.databinding.RlFragStartBinding
 import com.revoola.enumclass.RLStartAllMenuModel
-import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.adapter.RLStartListAdapter
 import com.revoola.utils.RLConstants
 import com.google.firebase.database.DataSnapshot
@@ -69,12 +63,11 @@ class RLFragStart : RLBaseFragment() {
     private fun RLUiSetUP(dataList: List<RLStartAllMenuModel>) {
         RLfetchUserDetails()
         fragBinding.inlayTop.ivBack.visibility=View.GONE
-        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.foryourmindandbody))
         fragBinding.inlayTop.smallLogo.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.visibility=View.GONE
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.thebestyoueveryday))
-
+        RLTools.RLhideShowHelpDialog(requireContext(), "start",  binding.inlayTop.ivhelp)
         fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 //Remove the listener to avoid multiple calls
@@ -89,12 +82,8 @@ class RLFragStart : RLBaseFragment() {
                 fragBinding.rvStart.adapter=adapter
             }
         })
-        fragBinding.inlayTop.ivhelp.setOnClickListener {
-            //getHealth()
-            RLshowHelpDialog()
-        }
 
-        rl_helpHideShowSet(true,fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
+
         (context as RLMainActivityRL).rl_checkAllPermission()
 
         lifecycleScope.launch {
@@ -160,30 +149,6 @@ class RLFragStart : RLBaseFragment() {
                RLTools.rl_logEPrint(TAG, "Firebase Error: ${error.message}")
             }
         })
-    }
-    private fun RLshowHelpDialog() {
-        val dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpStartBinding= RlDialogHelpStartBinding.inflate(getLayoutInflater())
-        dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-
-        val linearLayoutMain = LinearLayoutManager(activity)
-        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
-
-        val jsonString= RLPrefManager.rl_getSomeStringValue(activity, RLPrefManager.start_help_content,"")
-        val gson = Gson()
-        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
-        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
-        dialogMainBinding.ivRecyclerview.adapter=adapter
-
-        dialogMainBinding.tvClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     private lateinit var healthConnectManager: HealthConnectManager

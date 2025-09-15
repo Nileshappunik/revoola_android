@@ -21,10 +21,7 @@ import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.RlDialogFriendChallengesBinding
-import com.revoola.databinding.RlDialogHelpStartBinding
 import com.revoola.databinding.RlFragChallengesForBinding
-import com.revoola.fragment.start.RLStartHelpModel
-import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLChallengeForFriendListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLChallengeForGroupListAdapter
 import com.revoola.model.RLSetsearch_user
@@ -37,7 +34,6 @@ import com.revoola.commonobject.RLTools
 import com.revoola.viewmodel.RLMainRepository
 import com.revoola.viewmodel.RLMainViewModel
 import com.revoola.viewmodel.RLMainViewModelFactory
-import com.google.gson.Gson
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 import com.revoola.utils.RLPrefManager
 
@@ -80,15 +76,14 @@ class RLFragChallengesFor : RLBaseFragment() {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.challenge_selectFor)
         fragBinding.inlayTop.ivBack.setOnClickListener {
             rl_closeFragment()
         }
         fragBinding.inlayTop.ivTitle.setText(R.string.challengesfor)
         fragBinding.inlayTop.ivDescription.setText(R.string.challengeforyouorwithothers)
-        fragBinding.inlayTop.ivhelp.setOnClickListener {
-            RLshowHelpDialog()
-        }
+
+        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectFor",  binding.inlayTop.ivhelp)
+
         RLUIBottom()
     }
     private fun RLUIBottom() {
@@ -144,30 +139,6 @@ class RLFragChallengesFor : RLBaseFragment() {
             RLshowGroup(true)
         }
 
-    }
-    private fun RLshowHelpDialog() {
-        val dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
-        dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-
-        val linearLayoutMain = LinearLayoutManager(activity)
-        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
-
-        val jsonString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectFor,"")
-        val gson = Gson()
-        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
-        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
-        dialogMainBinding.ivRecyclerview.adapter=adapter
-
-        dialogMainBinding.tvClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     private fun RLshowGroup(isGroupVGroup:Boolean) {

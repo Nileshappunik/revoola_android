@@ -13,7 +13,6 @@ import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -43,20 +42,13 @@ import com.revoola.aisetup.MonthlyStats
 import com.revoola.commonobject.RLYourWayCalvulation
 import com.revoola.commonobject.RLYourWayCalvulation.convertToInt
 import com.revoola.enumclass.RLValueOvName
-import com.revoola.model.RLGetUserAggregatedData
-import com.revoola.model.RLGetUserAggregatedDataRequest
 import com.revoola.utils.RLPrefManager
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import java.util.TimeZone
 
 class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private val TAG: String = RLFragOverviewSession::class.java.simpleName
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
-    private var currentUser:String=""
     private var appUnit:String="Metric"
 
     private var fromThirdParty = "y"
@@ -83,16 +75,17 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
     private val fragBinding by lazy {
         RlFragOverviewSessionsBinding.inflate(layoutInflater)
     }
+    private val currentUser by lazy {
+        RLAuthManager().rl_getCurrentUser()?.uid?:""
+    }
 
     private lateinit var filterManager: OverViewFilterManager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
          rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //activity?.window!!.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Dark icons
-        //fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_overview_sessions, container) as RlFragOverviewSessionsBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragOverviewSession" )
-        currentUser= RLAuthManager().rl_getCurrentUser()?.uid?:""
         // Api call
         apiClientRetrofit = RLApiClientRet(activity)
         val apiService = apiClientRetrofit.networkService
@@ -100,6 +93,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         viewModel = ViewModelProvider(requireActivity(),RLMainViewModelFactory(userRepository)).get(RLMainViewModel::class.java)
         // Initialize GestureDetector
         gestureDetector = GestureDetector(requireContext(), rl_swipeGestureListener())
+
         //Filter Dialog Use
         toDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "toDate", "")
         fromDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "fromDate", "")
@@ -130,10 +124,10 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
     }
     private  fun  rl_uisetup(){
-        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, RLPrefManager.start_help_content)
         rl_onBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivBack.visibility=View.VISIBLE
         fragBinding.inlayTop.ivDescription.setText("")
+        RLTools.RLhideShowHelpDialog(requireContext(), "OVERVIEW".lowercase(),   fragBinding.inlayTop.ivhelp)
         //do Title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.inlayTop.recyclerTitle.layoutManager = linearLayoutManager
@@ -164,9 +158,6 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         //Firebase To Get Data
         rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
-                val authManager = RLAuthManager()
-                val userId = authManager.rl_getCurrentUser()?.uid?:""
-                currentUser = userId
                 appUnit = userData.appUnit
                 if (userData.appUnit.toString().toLowerCase().equals("imperial")){
                     imperial = "y"
@@ -687,6 +678,5 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         }
 
     }
-
 }
 

@@ -27,7 +27,6 @@ class RLSplashActivityRL : RLBaseActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         activityBinding = rl_inflateBindLayout(this, R.layout.rl_activity_splash) as RlActivitySplashBinding
-        rl_remoteConfig()
         RLBaseProgress.rl_showProgressDialog(this)
         val userId= RLPrefManager.rl_getSomeStringValue(this, RLPrefManager.current_user,"")
         if (userId.isNullOrEmpty()){
@@ -73,35 +72,6 @@ class RLSplashActivityRL : RLBaseActivity() {
                 RLTools.rl_logEPrint(TAG,"Registration failed: ${error?.message}")
             }
         }
-    }
-
-    private fun rl_remoteConfig() {
-
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
-        // Set default values
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(3600) // 1 hour
-            .build()
-        remoteConfig.setConfigSettingsAsync(configSettings)
-        remoteConfig.setDefaultsAsync(R.xml.rlremote_config_defaults)
-        remoteConfig.fetchAndActivate()
-            .addOnCompleteListener(this,OnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val start_top = remoteConfig.getString("start")
-                    val friends_top = remoteConfig.getString("friends_top")
-                    val challenge_selectFor = remoteConfig.getString("challenge_selectFor")
-                    val challenge_selectTarget = remoteConfig.getString("challenge_selectTarget")
-                    val challenge_selectName = remoteConfig.getString("challenge_selectName")
-                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.start_help_content,start_top.toString())
-                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.friends_help_content,friends_top.toString())
-                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectFor,challenge_selectFor.toString())
-                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectTarget,challenge_selectTarget.toString())
-                    RLPrefManager.rl_setSomeStringValue(this, RLPrefManager.challenge_selectName,challenge_selectName.toString())
-                } else {
-                   RLTools.rl_logEPrint(TAG, "Fetch failed")
-                }
-            })
     }
 
     private fun rl_setUsernameToFirebase(userId:String){

@@ -40,6 +40,8 @@ class RLFragMore : RLBaseFragment() {
     }
 
     private fun rl_setupuiList(){
+        RLTools.RLhideShowHelpDialog(requireContext(), "more",   fragBinding.ivhelp)
+
         fragBinding.cardNotification.setOnClickListener {
             (context as RLMainActivityRL).rl_loadFrag(RLFragNotification(), TAG, true, null, false)
         }

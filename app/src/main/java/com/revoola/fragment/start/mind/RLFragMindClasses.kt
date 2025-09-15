@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.model.RLVideoModel
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
+import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
 import com.revoola.services.RLClassFilterService
@@ -61,11 +62,10 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         return fragBinding.root
     }
     private fun RLuisetup() {
-        rl_helpHideShowSet(true, fragBinding.toolbar.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
         rl_onBackPresAct(fragBinding.toolbar.ivBack)
         fragBinding.toolbar.ivTitle.setText(R.string.mindclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectamindfulclass)
-
+        RLTools.RLhideShowHelpDialog(requireContext(), "mind_classes",  fragBinding.toolbar.ivhelp)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             //filter click open dialog
             RLfilterdialogopen()

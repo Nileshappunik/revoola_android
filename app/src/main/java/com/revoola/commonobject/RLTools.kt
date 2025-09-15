@@ -6,17 +6,14 @@ import android.content.*
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.fragment.app.FragmentActivity
-import androidx.viewpager.widget.ViewPager
 import com.revoola.R
 import com.revoola.enumclass.RLYourWayName
 import com.revoola.model.RLTextOverview
@@ -42,14 +39,22 @@ import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.util.TypedValue
+import android.graphics.drawable.ColorDrawable
+import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.revoola.databinding.RlDialogHelpStartBinding
+import com.revoola.fragment.start.RLStartHelpModel
+import com.revoola.fragment.start.RLStartHelpModelData
+import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.model.BooleanDeserializer
 import com.revoola.model.DoubleDeserializer
 import com.revoola.model.FloatDeserializer
@@ -64,9 +69,55 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.time.temporal.TemporalAdjusters
+import kotlin.jvm.java
 
 
 object RLTools {
+
+    fun RLhideShowHelpDialog(context: Context, key: String,ivHelp: ImageView){
+        try {
+            // Get value from Firebase Remote Config
+            val remoteConfig = FirebaseRemoteConfig.getInstance()
+            val value = remoteConfig.getString(key)
+            val startHelpModel = Gson().fromJson(value, RLStartHelpModel::class.java)
+            rl_logDPrint("HelpDialog","Help $key JSON Data: ${Gson().toJson(startHelpModel)}")
+            if (startHelpModel.visible){
+                rl_logEPrint("HelpDialog","if: ${startHelpModel.visible}")
+                ivHelp.visibility=View.VISIBLE
+                ivHelp.setOnClickListener {
+                    RLshowHelpDialog(context, key, startHelpModel.data)
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+        
+    }
+    private fun RLshowHelpDialog(context: Context, key: String, data: List<RLStartHelpModelData>){
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val binding = RlDialogHelpStartBinding.inflate(LayoutInflater.from(context))
+        dialog.setContentView(binding.root)
+        dialog.setCancelable(true)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+
+        // Setup RecyclerView
+        binding.ivRecyclerview.layoutManager = LinearLayoutManager(context)
+
+        // Attach adapter
+        binding.ivRecyclerview.adapter = RLHelpListAdapter(context, data)
+
+        // Close button
+        binding.tvClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 
     fun getInitialsBitmap( context: Context,name: String): Bitmap {
         val textColor = ContextCompat.getColor(context, R.color.AppMainColor)

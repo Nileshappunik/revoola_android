@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
-import com.moengage.pushbase.internal.repository.VALUE
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.RLBaseProgress
-import com.revoola.activity.RLMainActivityRL
 import com.revoola.fragment.friends.adapter.RLYourFriendListAdapter
 import com.revoola.api.RLApiClientRet
 import com.revoola.databinding.*
@@ -62,6 +60,9 @@ class RLFragYourFriends : RLBaseFragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragYourFriends" )
         fragBinding.toolbar.tvTitle.setText(R.string.yourfriends)
+        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_info)
+        RLTools.RLhideShowHelpDialog(requireContext(), "your_friends",  fragBinding.toolbar.ivNotification)
+
         rl_onBackPresAct(fragBinding.toolbar.ivBack)
        // Api call
         apiClientRetrofit = RLApiClientRet(activity)

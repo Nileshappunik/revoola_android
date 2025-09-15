@@ -24,9 +24,7 @@ import com.revoola.model.RLuserData
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RLDatabaseManagerWrite
-import com.revoola.databasefirebase.RLFirebaseManager
 import com.revoola.databasefirebase.RevoolaFirebasePath
-import com.revoola.databasefirebase.RevoolaFirebasePath.basePath
 import com.revoola.enumclass.RLFriendsFollowType
 import com.revoola.utils.RLPrefManager
 import com.revoola.viewmodel.RLMainRepository
@@ -67,6 +65,9 @@ class RLFragYourGroupDetails : RLBaseFragment() {
     private fun rl_uisetup() {
         fragBinding.toolbar.tvTitle.setText(R.string.groupdetails)
         rl_onBackPresAct(fragBinding.toolbar.ivBack)
+
+        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_info)
+        RLTools.RLhideShowHelpDialog(requireContext(), "your_groups",  fragBinding.toolbar.ivNotification)
 
         val groupID=requireArguments().getString("GroupID")
         val groupName=requireArguments().getString("GroupName")

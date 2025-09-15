@@ -1,13 +1,17 @@
 package com.revoola.activity
 
 import android.app.Dialog
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import android.net.ConnectivityManager
+import android.os.IBinder
 import androidx.appcompat.widget.TooltipCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -31,6 +35,7 @@ import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.permission.RLHealthConnectManager
 import com.revoola.permission.RLPermissionManager
+import com.revoola.utils.RLPrefManager
 import com.revoola.watch.RLWatchFirebaseManager
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
@@ -45,6 +50,26 @@ class RLMainActivityRL  : RLBaseActivity() {
     var sucDialog: Dialog? = null
     private lateinit var networkChangeReceiver: RlNetworkChangeReceiver
     val  healthConnectManager = RLHealthConnectManager(this)
+
+    override fun onStart() {
+        super.onStart()
+        // Force a new Branch session by adding the extra
+        intent.putExtra("branch_force_new_session", true)
+        // Branch init
+        Branch.sessionBuilder(this)
+            .withCallback { referringParams: JSONObject?, error: BranchError? ->
+                if (error == null) {
+                    if (referringParams != null) {
+                        rl_handleBranchData(referringParams)
+                    }
+
+                } else {
+                    RLTools.rl_logEPrint(TAG, "Branch Error onStart: ${error.message}")
+                }
+            }.withData(intent.data).init()
+        rl_setupUsermoengage()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +100,9 @@ class RLMainActivityRL  : RLBaseActivity() {
                RLTools.rl_logEPrint("WatchSession", "Error fetching session: ${e.message}")
             }
         }
+
     }
+
 
     fun rl_checkAllPermission(){
         //All Permission
@@ -211,24 +238,7 @@ class RLMainActivityRL  : RLBaseActivity() {
             .init()
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Force a new Branch session by adding the extra
-        intent.putExtra("branch_force_new_session", true)
-        // Branch init
-        Branch.sessionBuilder(this)
-            .withCallback { referringParams: JSONObject?, error: BranchError? ->
-                if (error == null) {
-                    if (referringParams != null) {
-                        rl_handleBranchData(referringParams)
-                    }
 
-                } else {
-                    RLTools.rl_logEPrint(TAG, "Branch Error onStart: ${error.message}")
-                }
-            }.withData(intent.data).init()
-        rl_setupUsermoengage()
-    }
 
     private fun rl_setupUsermoengage() {
         MoEInAppHelper.getInstance().showInApp(applicationContext)

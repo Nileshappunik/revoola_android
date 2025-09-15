@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
@@ -29,10 +28,7 @@ import com.revoola.fragment.friends.adapter.RLContactsAdapter
 import com.revoola.fragment.friends.model.EmailFilterInviteData
 import com.revoola.fragment.friends.model.RLEmailFilterRequestModel
 import com.revoola.fragment.friends.model.RLFindOnRevoolaInviteItem
-import com.revoola.fragment.friends.model.RLFriendsInsertApiPayload
-import com.revoola.fragment.friends.model.RLInsertContactData
 import com.revoola.fragment.friends.model.RLSyncContactFilterModel
-import com.revoola.fragment.friends.model.RLUsersContactsMk2
 import com.revoola.model.RLContactModel
 import com.revoola.model.RLuserData
 import com.revoola.moengage.RELMoengageManager
@@ -73,6 +69,9 @@ class RLFragFindOnRevoola : RLBaseFragment() {
     private fun rl_uisetup() {
         fragBinding.toolbar.tvTitle.setText(R.string.searchfriends)
         fragBinding.toolbar.ivBack.setOnClickListener { rl_closeFragment()}
+        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_info)
+        RLTools.RLhideShowHelpDialog(requireContext(), "find_on_revoola",  fragBinding.toolbar.ivNotification)
+
         rl_firebaseToFetchUserData { userData ->
             if (userData != null) {
                 getFullName = userData.firstName + " " + userData.lastName

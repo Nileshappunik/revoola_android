@@ -30,14 +30,6 @@ public class RLPrefManager {
     public static String current_user = "current_user";
     public static String current_user_email = "current_user_email";
 
-    public static String start_help_content = "startHelpContent";
-    public static String friends_help_content = "friendsHelpContent";
-    public static String challenge_selectFor = "challengeSelectFor";
-
-    public static String challenge_selectTarget = "challengeSelectTarget";
-    public static String challenge_selectName = "challengeSelectName";
-
-
 
 
     public static SharedPreferences rl_getSharedPreferences(Context context) {

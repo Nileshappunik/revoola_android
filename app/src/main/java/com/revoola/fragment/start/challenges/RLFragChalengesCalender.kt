@@ -1,8 +1,6 @@
 package com.revoola.fragment.start.challenges
 
 import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +11,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.revoola.RLBaseFragment
 import com.revoola.R
 import com.revoola.activity.RLMainActivityRL
-import com.revoola.databinding.RlDialogHelpStartBinding
 import com.revoola.databinding.RlFragChalengesCalenderBinding
 import com.revoola.enumclass.RLDateType
-import com.revoola.fragment.start.RLStartHelpModel
-import com.revoola.fragment.start.adapter.RLHelpListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLCalenderListAdapter
 import com.revoola.fragment.start.challenges.adapter.RLMonthlyCalenderListAdapter
 import com.revoola.fragment.start.challenges.model.RLDateInfoModel
-import com.google.gson.Gson
 import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.challenges.model.RLEditChallengeAllData
 import com.revoola.fragment.start.challenges.model.RLMonthInfoModel
@@ -92,11 +85,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         fragBinding.inlayTop.ivBack.setOnClickListener {
             rl_closeFragment()
         }
-       // RLonBackPresAct(fragBinding.inlayTop.ivBack)
-        rl_helpHideShowSet(true, fragBinding.inlayTop.ivhelp, com.revoola.utils.RLPrefManager.start_help_content)
-        fragBinding.inlayTop.ivhelp.setOnClickListener {
-            RLshowHelpDialog()
-        }
+        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectTime",  binding.inlayTop.ivhelp)
 
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
 
@@ -634,31 +623,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
-    //help Dialog Show
-    private fun RLshowHelpDialog() {
-        val dialog: Dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        val dialogMainBinding: RlDialogHelpStartBinding = RlDialogHelpStartBinding.inflate(getLayoutInflater())
-        dialog.setContentView(dialogMainBinding.getRoot())
-        dialog.setCancelable(true)
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
 
-        val linearLayoutMain = LinearLayoutManager(activity)
-        dialogMainBinding.ivRecyclerview.layoutManager = linearLayoutMain
-
-        val jsonString= com.revoola.utils.RLPrefManager.rl_getSomeStringValue(activity, com.revoola.utils.RLPrefManager.challenge_selectTarget,"")
-        val gson = Gson()
-        val StartHelpModel: RLStartHelpModel = gson.fromJson(jsonString, RLStartHelpModel::class.java)
-        val adapter = RLHelpListAdapter(activity,StartHelpModel.data)
-        dialogMainBinding.ivRecyclerview.adapter=adapter
-
-        dialogMainBinding.tvClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
     //button next visibleinvisible
     private fun RLNextButtonSShowHide(toDateget: String){
         if (toDateget.isNotEmpty()){

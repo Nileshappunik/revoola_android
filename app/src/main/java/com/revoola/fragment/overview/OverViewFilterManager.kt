@@ -10,6 +10,7 @@ import android.view.Window
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.revoola.R
+import com.revoola.activity.RLMainActivityRL
 import com.revoola.databinding.RlFilterOverviewBinding
 import com.revoola.fragment.overview.adapter.RLOverviewFilterListAdapter
 import com.revoola.fragment.overview.adapter.RLOverviewFilterListMultipleSelectedAdapter
@@ -24,7 +25,7 @@ class OverViewFilterManager(
     private val context: Context,
     private val onFilterSelected: (String?, String?, String, String, List<String>) -> Unit
 ) {
-   // private val filterListPeriod = listOf("This Month", "Last 3 Months", "Last 6 Months", "This Year","From","To")
+
     private val filterListPeriod = listOf("This Month", "Last 3 Months", "Last 6 Months", "This Year","Custom Date Range")
     private val filterListSource = listOf("All Available", "Revoola Only")
     private val filterListType = listOf("All", "Walk", "Run","Ride","Workout","HIIT",  "Yoga", "Pilates", "Dance", "Other")
@@ -35,16 +36,15 @@ class OverViewFilterManager(
     private var toDateLocal: String = ""
     private var fromDateLocal: String = ""
 
-
+    private var selectedPositionsPeriod: Int = RLPrefManager.rl_getSomeStringValue(context, "selectedPositionsPeriod","0").toInt()
     private var selectionPeriod: String = RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month")
-    //private var selectionPeriod: String =
+
     private var selectionSource: String = RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available")
     private var selectionType: MutableList<String> = RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf("All"))
 
     // Use RLPrefManager to retrieve selected positions from SharedPreferences
     private var selectedPositionsSource: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsSource")
     //private var selectedPositionsPeriod: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsPeriod")
-    private var selectedPositionsPeriod: Int = RLPrefManager.rl_getSomeStringValue(context, "selectedPositionsPeriod","0").toInt()
 
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
     private val currentCalendar: Calendar = Calendar.getInstance()
@@ -123,6 +123,7 @@ class OverViewFilterManager(
                 RLPrefManager.rl_setSomeStringValue(context, "selectionSource", selectionSource)
                 RLPrefManager.rl_setSomeIntListValue(context, "selectedPositionsSource", selectedPositionsSource)
             }
+
             onFilterSelected(selectedFromDate, selectedToDate, selectionPeriod, selectionSource, selectionType)
             dialog.dismiss()
         }

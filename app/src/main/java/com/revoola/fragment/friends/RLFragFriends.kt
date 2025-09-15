@@ -43,9 +43,9 @@ class RLFragFriends : RLBaseFragment() {
     }
     private fun rl_uisetupNew(dataList: List<RLStartAllMenuModel>) {
         fragBinding.inlayTop.ivBack.visibility=View.GONE
-        fragBinding.inlayTop.ivhelp.visibility=View.GONE
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.friends))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.manageyourrevoolacommunity))
+        RLTools.RLhideShowHelpDialog(requireContext(), "friends_top",  fragBinding.inlayTop.ivhelp)
 
         fragBinding.rvFriend.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -57,7 +57,7 @@ class RLFragFriends : RLBaseFragment() {
 
                 val linearLayoutMain = LinearLayoutManager(activity)
                 fragBinding.rvFriend.layoutManager = linearLayoutMain
-                val adapter = RLFriendListAdapter(activity,dataList,height)
+                val adapter = RLFriendListAdapter(requireContext(),dataList,height)
                 fragBinding.rvFriend.adapter=adapter
             }
         })

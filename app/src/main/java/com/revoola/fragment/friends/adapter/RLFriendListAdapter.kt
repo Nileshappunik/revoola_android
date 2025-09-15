@@ -20,9 +20,19 @@ import com.revoola.fragment.friends.RLFragFindOnRevoola
 import com.revoola.fragment.friends.RLFragYourFriends
 import com.revoola.fragment.friends.RLFragYourGroup
 import com.revoola.utils.loadSvg
+import android.content.Context
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import com.revoola.databasefirebase.RLAuthManager
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Branch
+import io.branch.referral.util.LinkProperties
+import io.branch.referral.util.ContentMetadata
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class RLFriendListAdapter(
-    val context: FragmentActivity?,
+    val context: Context,
     val dataList: List<RLStartAllMenuModel>,
     val heightTotal: Int) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -79,17 +89,60 @@ class RLFriendListAdapter(
                     (context as RLMainActivityRL).rl_loadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
-                    val shareIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, "SHARE LINK")
-                        type = "text/plain"
-                    }
-                    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
-                  //(context as RLMainActivityRL).RLloadFrag(RLFragFriendsItemClickList(), TAG, true, null, true)
+                    onClickInvite()
                 }
 
             }
         }
+
+        private fun onClickInvite() {
+            // Check network availability
+            if (!isOnline()) {
+                Toast.makeText(context, "Data is not available due to network issues.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // 1️⃣ Create BranchUniversalObject
+            val buo = BranchUniversalObject()
+                .setCanonicalIdentifier("invite/revoola")
+                .setTitle("Invited to Revoola")
+                .setContentDescription(
+                    "You should try Revoola! It has over 200 professional instruction videos and lets you monitor runs, rides and other activities. " +
+                            "And what's even better: you can create and participate in plenty of challenges as individual or in groups. Click here, it's free to try:"
+                )
+                .setContentMetadata(ContentMetadata())
+
+            // 2️⃣ Create LinkProperties
+            val linkProperties = LinkProperties()
+                .setFeature("share")
+                .addControlParameter("\$deeplink_path", "https://www.revoola.com/?user=${RLAuthManager().rl_getCurrentUser()?.uid}")
+
+            // 3️⃣ Generate short URL
+            buo.generateShortUrl(context, linkProperties) { url, error ->
+                if (error == null && url != null) {
+                    // 4️⃣ Share via Android Share Intent
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, "Invited to Revoola")
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            "You should try Revoola! It has over 200 professional instruction videos and lets you monitor runs, rides and other activities. " +
+                                    "And what's even better: you can create and participate in plenty of challenges as individual or in groups. Click here, it's free to try: $url"
+                        )
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share with friends"))
+                } else {
+                    Toast.makeText(context, "Failed to generate invite link.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        // Example network check function
+        private fun isOnline(): Boolean {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+            val networkInfo = connectivityManager.activeNetworkInfo
+            return networkInfo != null && networkInfo.isConnected
+        }
+
     }
 
 }

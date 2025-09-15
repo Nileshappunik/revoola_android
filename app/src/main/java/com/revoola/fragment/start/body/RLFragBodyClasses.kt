@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken
 import com.revoola.model.RLVideoModel
 import com.revoola.utils.RLConstants
 import com.google.gson.Gson
+import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
 import com.revoola.services.RLClassFilterService
@@ -66,13 +67,14 @@ class RLFragBodyClasses : RLBaseFragment() , RLItemClickListener {
 
     private fun RLuisetup() {
         rl_onBackPresAct(fragBinding.toolbar.ivBack)
-        rl_helpHideShowSet(true, fragBinding.toolbar.ivhelp,RLPrefManager.start_help_content)
         fragBinding.toolbar.ivTitle.setText(R.string.bodyclasses)
         fragBinding.toolbar.ivDescription.setText(R.string.selectabodyclass)
         fragBinding.inlayFilter.ivFilter.setOnClickListener {
             //filter click open dialog
             RLfilterdialogopen()
         }
+
+        RLTools.RLhideShowHelpDialog(requireContext(), "body_classes",  fragBinding.toolbar.ivhelp)
         //do title
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fragBinding.toolbar.recyclerTitle.layoutManager = linearLayoutManager

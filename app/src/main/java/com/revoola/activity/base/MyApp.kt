@@ -9,6 +9,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.model.MessageType
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.revoola.BuildConfig
 import com.moengage.core.DataCenter
 import com.moengage.core.MoECoreHelper
@@ -47,6 +49,15 @@ class MyApp : Application() {
         // Enable Firebase Database persistence
         val database = FirebaseDatabase.getInstance()
         database.setPersistenceEnabled(true)
+
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(3600) // 1 hour
+            .build()
+        remoteConfig.setConfigSettingsAsync(configSettings)
+
+        // Set defaults globally
+        remoteConfig.setDefaultsAsync(R.xml.rlremote_config_defaults)
 
         //BackGround Firebase WatchData
         val request = OneTimeWorkRequestBuilder<RlFirebaseWorker>().build()

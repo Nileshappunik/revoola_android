@@ -49,7 +49,7 @@ class RLFragYourWay : RLBaseFragment() {
         rl_onBackPresAct(fragBinding.inlayTop.ivBack)
         fragBinding.inlayTop.ivTitle.setText(getString(R.string.yourway))
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.youractivityyourway))
-        fragBinding.inlayTop.ivhelp.visibility=View.VISIBLE
+        RLTools.RLhideShowHelpDialog(requireContext(), "yourway",  binding.inlayTop.ivhelp)
 
          val databaseManager= RLDatabaseManagerRead()
          databaseManager.rl_allMenuListRead(RLConstants.YOUR_WAY){ data, error ->

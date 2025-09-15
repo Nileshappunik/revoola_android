@@ -137,30 +137,6 @@ open class RLBaseFragment : Fragment() {
         }
     }
 
-    open fun rl_helpHideShowSet(isShow: Boolean, imageHelp: ImageView, startHelpContent: String) {
-        val helpString= RLPrefManager.rl_getSomeStringValue(activity, startHelpContent,"" )
-
-        if (helpString.isNotEmpty()){
-            try {
-                val gson = Gson()
-                val StartHelpModel: RLStartHelpModel = gson.fromJson(helpString, RLStartHelpModel::class.java)
-                if(StartHelpModel.visible){
-                    imageHelp.visibility=View.VISIBLE
-                }else{
-                    imageHelp.visibility=View.GONE
-                }
-            }catch (e:Exception){
-              e.printStackTrace()
-            }
-        }
-        /*if (isShow){
-            imageHelp.visibility=View.VISIBLE
-        }else{
-            imageHelp.visibility=View.GONE
-        }*/
-    }
-
-
     //Firebase To Fetch UserBasic Data
      fun rl_firebaseToFetchUserData(callback: (RLRevoolaUsersSettingsModel?) -> Unit) {
         val authManager = RLAuthManager()

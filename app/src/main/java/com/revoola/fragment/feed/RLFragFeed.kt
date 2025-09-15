@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +21,6 @@ import com.revoola.activity.RLMainActivityRL
 import com.revoola.api.RLApiClientRet
 import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
-import com.revoola.databasefirebase.RevoolaKeys
 import com.revoola.databinding.RlFragFeedBinding
 import com.revoola.fragment.feed.adapter.RLFeedGroupNameAdapter
 import com.revoola.fragment.feed.adapter.RLFeedListAdapter
@@ -132,14 +130,13 @@ class RLFragFeed : RLBaseFragment(), RLItemClickListener {
     // --- UI Setup ---
 
     private fun setupUi() {
-        rl_helpHideShowSet(true, binding.inlayTop.ivhelp, RLPrefManager.friends_help_content)
-
         binding.inlayNoData.noDataLayout.visibility = View.GONE
         binding.inlayTop.ivBack.visibility = View.GONE
         binding.inlayTop.ivTitle.text = getString(R.string.feedsmall)
         binding.inlayTop.ivDescription.text = ""
         binding.layoutSwitchFeed.visibility = View.GONE
 
+        RLTools.RLhideShowHelpDialog(requireContext(), "feed", binding.inlayTop.ivhelp)
         // Fetch user settings (appUnit)
         rl_firebaseToFetchUserData { userData ->
             if (userData != null) {

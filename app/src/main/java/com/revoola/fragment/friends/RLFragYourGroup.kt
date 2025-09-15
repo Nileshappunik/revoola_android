@@ -48,7 +48,6 @@ class RLFragYourGroup : RLBaseFragment() {
     private val currentUser by lazy {
         RLAuthManager().rl_getCurrentUser()?.uid?:""
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -67,6 +66,9 @@ class RLFragYourGroup : RLBaseFragment() {
             parentFragmentManager.popBackStack()
             rl_bottomHideShowSet(true)
         }
+        fragBinding.toolbar.ivNotification.setImageResource(R.drawable.ic_info)
+        RLTools.RLhideShowHelpDialog(requireContext(), "your_groups",  fragBinding.toolbar.ivNotification)
+
         rl_groupApiCall()
         fragBinding.txtMyGroup.setOnClickListener {
             fragBinding.txtMyGroup.setBackgroundResource(R.drawable.full_round_green)
@@ -99,7 +101,7 @@ class RLFragYourGroup : RLBaseFragment() {
         fragBinding.rvSelectedFriend.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         fragBinding.tvCreateClick.setOnClickListener {
-           //Friend CREATE IMPLEMENT/
+           //Friend CREATE IMPLEMENTATION
             val bundle=Bundle()
             val cardData=RLCreateGroupModel()
             val selectFriendList: List<RLUserDataParcelable> = selectUserdata.map {
@@ -127,7 +129,6 @@ class RLFragYourGroup : RLBaseFragment() {
                 search_user = RLSetsearch_user(get_friends = currentUser,limit = 100, index=0)
             ))
         RLTools.rl_logDPrint(TAG,"request FriendsData: ${Gson().toJson(request)}")
-
         viewModel.rl_friendsYouFollow(request) { result ->
             result.onSuccess { response ->
                 try {
@@ -210,5 +211,5 @@ class RLFragYourGroup : RLBaseFragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-    
+
 }
