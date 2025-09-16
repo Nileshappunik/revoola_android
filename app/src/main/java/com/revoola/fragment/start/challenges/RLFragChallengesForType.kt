@@ -60,7 +60,7 @@ class RLFragChallengesForType : RLBaseFragment() {
         RLTools.RLhideShowHelpDialog(
             requireContext(),
             "challenge_selectTargetType",
-            binding.inlayTop.ivhelp
+            fragBinding.inlayTop.ivhelp
         )
         fragBinding.layIndividualTarget.setOnClickListener {
             cardData.TargetType="IndividualTarget"

@@ -65,7 +65,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED",
        "OVERVIEW","SESSIONS","EFFORT","RELAXATION","CALORIES","STEPS","DISTANCE","CLIMBED")
 
-   private var totalDisplayItem=9
+    private var totalDisplayItem=9
     private var swipePosition:Int=16
     private lateinit var gestureDetector: GestureDetector
     private val timezone = TimeZone.getDefault().rawOffset / 1000
@@ -94,12 +94,20 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         // Initialize GestureDetector
         gestureDetector = GestureDetector(requireContext(), rl_swipeGestureListener())
 
-        //Filter Dialog Use
-        toDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "toDate", "")
-        fromDate = RLPrefManager.rl_getSomeStringValue(requireContext()  , "fromDate", "")
-        selectionPeriod =  RLPrefManager.rl_getSomeStringValue(requireContext()  , "selectionPeriod", "This Month")
-        selectionType = RLPrefManager.rl_getSomeStringListValue(requireContext()  , "selectionType", listOf("All"))
-        selectionSource =  RLPrefManager.rl_getSomeStringValue(requireContext()  , "selectionSource", "All Available")
+       selectionPeriod = RLPrefManager.rl_getSomeStringValue(context, "temp_selectionPeriod",
+            RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month"))
+
+        selectionSource = RLPrefManager.rl_getSomeStringValue(context, "temp_selectionSource",
+            RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available"))
+        selectionType = RLPrefManager.rl_getSomeStringListValue(context, "temp_selectionType",
+            RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf("All")))
+        // Load from temporary keys first (current session), then fall back to permanent keys
+        toDate = RLPrefManager.rl_getSomeStringValue(context, "temp_toDate",
+            RLPrefManager.rl_getSomeStringValue(context, "toDate", ""))
+        fromDate = RLPrefManager.rl_getSomeStringValue(context, "temp_fromDate",
+            RLPrefManager.rl_getSomeStringValue(context, "fromDate", ""))
+
+
         filterManager = OverViewFilterManager(requireContext()) { fromDate, toDate, selectionPeriod, selectionSource, selectionType ->
             // Handle the selected filters here
             updateFilters(fromDate, toDate, selectionPeriod, selectionSource, selectionType)
@@ -114,6 +122,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         })
         return fragBinding.root
     }
+
     override fun onItemClick(position: Int) {
         swipePosition=position
         fragBinding.txtTotalsession.setText(titleValueList[position])
@@ -175,41 +184,42 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             }
         }
 
-        if (apiClientRetrofit.rl_isConnected()) {
-            //Detail Api
-            val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
-            if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
-                fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
-                fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
-            }else{
-                fragBinding.txtCurrentMonth.setText(selectionPeriod)
-                fragBinding.inlayTop.ivDescription.setText(selectionPeriod)
-            }
+        //Detail Api
+        val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
+        if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
+            fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
+            fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
+        }else{
+            fragBinding.txtCurrentMonth.setText(selectionPeriod)
+            fragBinding.inlayTop.ivDescription.setText(selectionPeriod)
+        }
 
-            fromThirdParty =  if (selectionSource.equals("All Available")) "y" else "n"
+        fromThirdParty =  if (selectionSource.equals("All Available")) "y" else "n"
 
-            val classType=selectionType.joinToString(",") { it.lowercase() }
+        val classType=selectionType.joinToString(",") { it.lowercase() }
 
-            val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
+        val result = filterManager.getDateNewRangeForPeriod(selectedPeriod,fromDate,toDate)
 
-            val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
-                result["comparisonFromTimestamp"] as Long + timezone
-            }else {
-                result["fromTimestamp"] as Long + timezone
-            }
+        val dateFrom = if (selectedPeriod.equals( "CUSTOM_DATE_RANGE")) {
+            result["comparisonFromTimestamp"] as Long + timezone
+        }else {
+            result["fromTimestamp"] as Long + timezone
+        }
 
-            val dateTo = result["toTimestamp"] as Long + timezone
+        val dateTo = result["toTimestamp"] as Long + timezone
 
-            val request = listOf(
-                RLOverviewGraphDataRequest(
-                    overview_graph = RLOverview_graphData(
-                        user = currentUser,
-                        classtype = classType,
-                        timestampfrom = dateFrom.toInt(),
-                        timestampto = dateTo.toInt(),
-                        fromthirdparty=fromThirdParty)
-                )
+        val request = listOf(
+            RLOverviewGraphDataRequest(
+                overview_graph = RLOverview_graphData(
+                    user = currentUser,
+                    classtype = classType,
+                    timestampfrom = dateFrom.toInt(),
+                    timestampto = dateTo.toInt(),
+                    fromthirdparty=fromThirdParty)
             )
+        )
+
+        if (apiClientRetrofit.rl_isConnected()) {
             rl_apiCall(titleValueList[swipePosition],request,false)
         } else {
             rl_showDialogFullscreen()

@@ -30,21 +30,27 @@ class OverViewFilterManager(
     private val filterListSource = listOf("All Available", "Revoola Only")
     private val filterListType = listOf("All", "Walk", "Run","Ride","Workout","HIIT",  "Yoga", "Pilates", "Dance", "Other")
 
-    private var toDate: String = RLPrefManager.rl_getSomeStringValue(context, "toDate", "")
-    private var fromDate: String = RLPrefManager.rl_getSomeStringValue(context, "fromDate", "")
 
-    private var toDateLocal: String = ""
-    private var fromDateLocal: String = ""
+    // Load from temporary keys first (current session), then fall back to permanent keys
+    private var toDate: String = RLPrefManager.rl_getSomeStringValue(context, "temp_toDate",
+        RLPrefManager.rl_getSomeStringValue(context, "toDate", ""))
+    private var fromDate: String = RLPrefManager.rl_getSomeStringValue(context, "temp_fromDate",
+        RLPrefManager.rl_getSomeStringValue(context, "fromDate", ""))
 
-    private var selectedPositionsPeriod: Int = RLPrefManager.rl_getSomeStringValue(context, "selectedPositionsPeriod","0").toInt()
-    private var selectionPeriod: String = RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month")
+    private var selectedPositionsPeriod: Int = RLPrefManager.rl_getSomeStringValue(context, "temp_selectedPositionsPeriod",
+        RLPrefManager.rl_getSomeStringValue(context, "selectedPositionsPeriod","0")).toInt()
+    private var selectionPeriod: String = RLPrefManager.rl_getSomeStringValue(context, "temp_selectionPeriod",
+        RLPrefManager.rl_getSomeStringValue(context, "selectionPeriod", "This Month"))
 
-    private var selectionSource: String = RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available")
-    private var selectionType: MutableList<String> = RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf("All"))
+    private var selectionSource: String = RLPrefManager.rl_getSomeStringValue(context, "temp_selectionSource",
+        RLPrefManager.rl_getSomeStringValue(context, "selectionSource", "All Available"))
+    private var selectionType: MutableList<String> = RLPrefManager.rl_getSomeStringListValue(context, "temp_selectionType",
+        RLPrefManager.rl_getSomeStringListValue(context, "selectionType", mutableListOf("All")))
 
-    // Use RLPrefManager to retrieve selected positions from SharedPreferences
-    private var selectedPositionsSource: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsSource")
-    //private var selectedPositionsPeriod: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsPeriod")
+    // Use temporary keys for selected positions
+    private var selectedPositionsSource: List<Int> = RLPrefManager.rl_getSomeIntListValue(context, "temp_selectedPositionsSource").ifEmpty {
+        RLPrefManager.rl_getSomeIntListValue(context, "selectedPositionsSource")
+    }
 
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
     private val currentCalendar: Calendar = Calendar.getInstance()
@@ -67,7 +73,8 @@ class OverViewFilterManager(
             if (fromDate.isNotEmpty() && toDate.isNotEmpty()) {
                 binding.txtThisMonth.text = "$fromDate - $toDate"
             }else {
-                binding.txtThisMonth.text = "$fromDateLocal - $toDateLocal"
+                binding.txtThisMonth.text = selectionPeriod
+                //binding.txtThisMonth.text = "$fromDateLocal - $toDateLocal"
             }
         }else{
             binding.txtThisMonth.text = selectionPeriod
@@ -108,8 +115,20 @@ class OverViewFilterManager(
         binding.btnShowResults.setOnClickListener {
             val selectedToDate = binding.recyclePeriod.toDateButton.text.toString()
             val selectedFromDate = binding.recyclePeriod.fromDateButton.text.toString()
-            fromDateLocal = selectedFromDate
-            toDateLocal = selectedToDate
+
+            fromDate = selectedFromDate
+            toDate = selectedToDate
+
+            // Always save to temporary keys to maintain state across navigation
+            RLPrefManager.rl_setSomeStringValue(context, "temp_toDate", selectedToDate)
+            RLPrefManager.rl_setSomeStringValue(context, "temp_fromDate", selectedFromDate)
+            RLPrefManager.rl_setSomeStringValue(context, "temp_selectionPeriod", selectionPeriod)
+            RLPrefManager.rl_setSomeStringValue(context, "temp_selectedPositionsPeriod", selectedPositionsPeriod.toString())
+            RLPrefManager.rl_setSomeStringListValue(context, "temp_selectionType", selectionType)
+            RLPrefManager.rl_setSomeStringValue(context, "temp_selectionSource", selectionSource)
+            RLPrefManager.rl_setSomeIntListValue(context, "temp_selectedPositionsSource", selectedPositionsSource)
+
+
             if (isDefaultSwitchPeriod){
                 // Save the filter selections to SharedPreferences
                 RLPrefManager.rl_setSomeStringValue(context, "toDate", selectedToDate)

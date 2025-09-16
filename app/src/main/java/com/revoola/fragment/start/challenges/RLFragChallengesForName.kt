@@ -61,7 +61,7 @@ class RLFragChallengesForName : RLBaseFragment() {
         }
         fragBinding.inlayTop.ivTitle.setText(cardData.ChallengeType+" Challenge")
         fragBinding.inlayTop.ivDescription.setText(R.string.giveyourchallengename)
-        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectName",  binding.inlayTop.ivhelp)
+        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectName",  fragBinding.inlayTop.ivhelp)
         RLUIBottom(cardData)
     }
     private fun RLUIBottom(cardData:RLEditChallengeAllData) {

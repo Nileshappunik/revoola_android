@@ -85,7 +85,7 @@ class RLFragChalengesCalender : RLBaseFragment() {
         fragBinding.inlayTop.ivBack.setOnClickListener {
             rl_closeFragment()
         }
-        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectTime",  binding.inlayTop.ivhelp)
+        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectTime",  fragBinding.inlayTop.ivhelp)
 
         val cardData = requireArguments().getSerializable("cardData") as RLEditChallengeAllData
 

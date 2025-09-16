@@ -37,6 +37,7 @@ import com.revenuecat.purchases.PurchasesConfiguration
 import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databasefirebase.RlFirebaseWorker
 import com.revoola.utils.RLConstants
+import com.revoola.utils.RLPrefManager
 
 class MyApp : Application() {
 
@@ -106,6 +107,19 @@ class MyApp : Application() {
             override fun onActivityDestroyed(activity: Activity) {}
         })
 
+        clearSharedprefenceValue()
+
+    }
+
+    private fun clearSharedprefenceValue() {
+        // Clear temp values on fresh launch
+        RLPrefManager.rl_clearIndividual(this, "temp_toDate");
+        RLPrefManager.rl_clearIndividual(this, "temp_fromDate");
+        RLPrefManager.rl_clearIndividual(this, "temp_selectionPeriod");
+        RLPrefManager.rl_clearIndividual(this, "temp_selectedPositionsPeriod");
+        RLPrefManager.rl_clearIndividual(this, "temp_selectionType");
+        RLPrefManager.rl_clearIndividual(this, "temp_selectionSource");
+        RLPrefManager.rl_clearIndividual(this, "temp_selectedPositionsSource");
     }
 
     private fun rl_initializeMoEngage() {

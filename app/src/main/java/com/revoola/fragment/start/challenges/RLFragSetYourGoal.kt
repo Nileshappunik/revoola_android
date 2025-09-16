@@ -61,7 +61,7 @@ class RLFragSetYourGoal : RLBaseFragment() {
         RLTools.RLhideShowHelpDialog(
             requireContext(),
             "challenge_selectTarget",
-            binding.inlayTop.ivhelp
+            fragBinding.inlayTop.ivhelp
         )
         RLUIBottom()
 

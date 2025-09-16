@@ -37,17 +37,18 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 class RLFragStart : RLBaseFragment() {
-    val TAG: String = RLFragStart::class.java.simpleName
-    lateinit var fragBinding: RlFragStartBinding
+    private val TAG: String = RLFragStart::class.java.simpleName
+    private lateinit var healthConnectManager: HealthConnectManager
+    private lateinit var healthConnectClient: HealthConnectClient
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragStartBinding.inflate(layoutInflater)
     }
+
     override fun onCreateView(inflater:LayoutInflater, container:ViewGroup?,savedInstanceState:Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_start, container) as RlFragStartBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragStart" )
         RLStartList()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -67,7 +68,8 @@ class RLFragStart : RLBaseFragment() {
         fragBinding.inlayTop.smallLogo.visibility=View.VISIBLE
         fragBinding.inlayTop.ivTitle.visibility=View.GONE
         fragBinding.inlayTop.ivDescription.setText(getString(R.string.thebestyoueveryday))
-        RLTools.RLhideShowHelpDialog(requireContext(), "start",  binding.inlayTop.ivhelp)
+        RLTools.RLhideShowHelpDialog(requireContext(), "start", fragBinding.inlayTop.ivhelp)
+        
         fragBinding.rvStart.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 //Remove the listener to avoid multiple calls
@@ -127,32 +129,6 @@ class RLFragStart : RLBaseFragment() {
             }
         }
     }
-    private fun RLStartListNew() {
-        val databaseReference = FirebaseDatabase.getInstance().getReference(RLConstants.MAIN)
-        databaseReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    try {
-                        val gson = Gson()
-                        val jsonArray = gson.toJson(snapshot.value)
-                        RLTools.rl_logDPrint(TAG, "Response:- $jsonArray")
-                        val listType = object : TypeToken<List<RLStartAllMenuModel>>() {}.type
-                        val dataList: List<RLStartAllMenuModel> = gson.fromJson(jsonArray, listType)
-                        RLUiSetUP(dataList)
-                    } catch (e: Exception) {
-                       RLTools.rl_logEPrint(TAG, "Catch:- ${e.message}")
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-               RLTools.rl_logEPrint(TAG, "Firebase Error: ${error.message}")
-            }
-        })
-    }
-
-    private lateinit var healthConnectManager: HealthConnectManager
-    private lateinit var healthConnectClient: HealthConnectClient
 
     private val permissionsLauncher = registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { granted ->
         if (granted.containsAll(HealthConnectManager.PERMISSIONS)) {
@@ -180,7 +156,6 @@ class RLFragStart : RLBaseFragment() {
             }
         }
     }
-
     private fun readStepsData() {
         fragBinding.tempText.setText("Start Step")
         lifecycleScope.launch {

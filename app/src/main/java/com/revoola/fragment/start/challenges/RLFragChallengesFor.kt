@@ -82,7 +82,7 @@ class RLFragChallengesFor : RLBaseFragment() {
         fragBinding.inlayTop.ivTitle.setText(R.string.challengesfor)
         fragBinding.inlayTop.ivDescription.setText(R.string.challengeforyouorwithothers)
 
-        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectFor",  binding.inlayTop.ivhelp)
+        RLTools.RLhideShowHelpDialog(requireContext(), "challenge_selectFor",  fragBinding.inlayTop.ivhelp)
 
         RLUIBottom()
     }
