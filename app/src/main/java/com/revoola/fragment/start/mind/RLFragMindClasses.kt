@@ -28,17 +28,18 @@ import com.revoola.commonobject.RLTools
 import com.revoola.fragment.start.adapter.RlMindBodyFilterExpandableListAdapter
 import com.revoola.model.RLMindBodyFilterGroupItemModel
 import com.revoola.services.RLClassFilterService
+import com.revoola.utils.RLPrefManager
 
 class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
-    val TAG: String = RLFragMindClasses::class.java.simpleName
-    lateinit var fragBinding: RlFragMindClassesBinding
+    private val TAG: String = RLFragMindClasses::class.java.simpleName
 
-    var instructorList:MutableList<String> = mutableListOf()
-    var classTypeList:MutableList<String> = mutableListOf()
-    var durationList:MutableList<String> = mutableListOf()
-    var videoList_Filter:MutableList<RLVideoModel> = mutableListOf()
 
-    private val binding by lazy {
+    private var instructorList:MutableList<String> = mutableListOf()
+    private var classTypeList:MutableList<String> = mutableListOf()
+    private var durationList:MutableList<String> = mutableListOf()
+    private var videoList_Filter:MutableList<RLVideoModel> = mutableListOf()
+
+    private val fragBinding by lazy {
         RlFragMindClassesBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
@@ -46,7 +47,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         fragment.arguments = bundle
         return fragment
     }
-    //val valueslistMind = arrayOf("All", "Relax","Sleep","Happiness","Focus","Energise","Mindful Movement")
+
     val valueslistMind = arrayOf("ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
         "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
         "ALL", "RELAX","SLEEP","HAPPINESS","FOCUS","ENERGISE","MINDFUL MOVEMENT",
@@ -56,8 +57,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
          rl_screenSet(false)
         rl_bottomHideShowSet(true)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes, container) as RlFragMindClassesBinding
-        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClasses" )
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClasses" )
         RLuisetup()
         return fragBinding.root
     }
@@ -120,7 +120,7 @@ class RLFragMindClasses : RLBaseFragment() , RLItemClickListener {
         }
     }
 
-    //rl_dailog_class_filter
+    //Filter Dialog Open
    private fun RLfilterdialogopen() {
         val  dialog: Dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

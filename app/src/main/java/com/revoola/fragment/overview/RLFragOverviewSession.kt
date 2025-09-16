@@ -188,10 +188,8 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
         val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
         if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
             fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
-            fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromDate) +" - " +filterManager.formatToMonthYear(toDate))
         }else{
             fragBinding.txtCurrentMonth.setText(selectionPeriod)
-            fragBinding.inlayTop.ivDescription.setText(selectionPeriod)
         }
 
         fromThirdParty =  if (selectionSource.equals("All Available")) "y" else "n"
@@ -258,7 +256,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
         if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
             fragBinding.txtCurrentMonth.setText(filterManager.formatToMonthYear(fromSelectDate) +" - " +filterManager.formatToMonthYear(toSelectDate))
-            fragBinding.inlayTop.ivDescription.setText(filterManager.formatToMonthYear(fromSelectDate) +" - " +filterManager.formatToMonthYear(toSelectDate))
+            fragBinding.inlayTop.ivDescription.setText(fromSelectDate +" - " +toSelectDate)
         }else{
             fragBinding.txtCurrentMonth.setText(selectionFPeriod)
             fragBinding.inlayTop.ivDescription.setText(selectionFPeriod)
@@ -370,6 +368,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 fragBinding.relayOverviewName.visibility=View.VISIBLE
             }
             "SESSIONS" -> {
+                toolbarDateSet()
                 rl_webviewurlload("sessions")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Session,carddate,appUnit))
                 totalDisplayItem=10
@@ -401,6 +400,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
 
             }
             "CALORIES" -> {
+                toolbarDateSet()
                 rl_webviewurlload("calories")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.TotalCalories,carddate,appUnit))
                 totalDisplayItem=6
@@ -422,6 +422,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             "RELAXATION" -> {
+                toolbarDateSet()
                 rl_webviewurlload("relaxation")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Relaxation,carddate,appUnit))
                 totalDisplayItem=4
@@ -439,6 +440,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             "EFFORT" -> {
+                toolbarDateSet()
                 rl_webviewurlload("effort")
                 totalDisplayItem=8
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Effort,carddate,appUnit))
@@ -464,6 +466,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             "STEPS" -> {
+                toolbarDateSet()
                 rl_webviewurlload("steps")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.Steps,carddate,appUnit))
                 totalDisplayItem=4
@@ -481,6 +484,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             "DISTANCE" -> {
+                toolbarDateSet()
                 rl_webviewurlload("distance")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.DistanceNormal,carddate,appUnit))
                 totalDisplayItem=4
@@ -498,6 +502,7 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
                 }
             }
             "CLIMBED" ->{
+                toolbarDateSet()
                 rl_webviewurlload("climbed")
                 fragBinding.txtTotalsessionNumber.setText(RLYourWayCalvulation.rl_getValueForTitle(RLValueOvName.ClimbedNormal,carddate,appUnit))
                 totalDisplayItem = 4
@@ -687,6 +692,15 @@ class RLFragOverviewSession : RLBaseFragment(), RLItemClickListener {
             println("Exception:- ${e.message}")
         }
 
+    }
+
+    private fun toolbarDateSet(){
+        val selectedPeriod = filterManager.getSelectionPeriod(selectionPeriod)
+        if (selectedPeriod.equals("CUSTOM_DATE_RANGE")){
+            fragBinding.inlayTop.ivDescription.setText(fromDate +" - " +toDate)
+        }else{
+            fragBinding.inlayTop.ivDescription.setText(selectionPeriod)
+        }
     }
 }
 

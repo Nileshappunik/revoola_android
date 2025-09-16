@@ -545,7 +545,7 @@ class OverViewFilterManager(
                 val date: Date = inputFormat.parse(dateString) ?: return ""
 
                 // Define the output format (MMM-yyyy)
-                val outputFormat = SimpleDateFormat("MMM-yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("MMM-yy", Locale.getDefault())
 
                 // Format the date to the desired "MMM-yyyy" format
                 outputFormat.format(date)

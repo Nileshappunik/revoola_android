@@ -33,7 +33,6 @@ import com.revoola.viewmodel.RLMainViewModelFactory
 
 class RLClassesScheduleJoinSession : RLBaseFragment() {
     private val TAG: String = RLClassesScheduleJoinSession::class.java.simpleName
-    //lateinit var fragBinding: RlFragClassesScheduleSessionBinding
     lateinit var apiClientRetrofit: RLApiClientRet
     private lateinit var viewModel: RLMainViewModel
     private var currentUser:String=""

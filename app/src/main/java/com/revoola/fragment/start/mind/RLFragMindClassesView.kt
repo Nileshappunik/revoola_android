@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,35 +27,56 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragMindClassesViewBinding
 import com.revoola.fragment.start.classes.RLClassesSchedule
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.utils.RLConstants
 import com.google.gson.Gson
 import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.commonobject.RELShareManager
+import com.revoola.commonobject.RLDynamicLinkCreate
 import com.revoola.commonobject.RLTools
+import com.revoola.databasefirebase.RLAuthManager
+import com.revoola.model.RLRevoolaUsersSettingsModel
+import com.revoola.utils.RLPrefManager
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.util.ContentMetadata
+import io.branch.referral.util.LinkProperties
 import java.util.UUID
 
 class RLFragMindClassesView : RLBaseFragment() {
-    val TAG: String = RLFragMindClassesView::class.java.simpleName
-    lateinit var fragBinding: RlFragMindClassesViewBinding
+    private val TAG: String = RLFragMindClassesView::class.java.simpleName
     private val PERMISSION_REQUEST_CODE = 1001
-    var videoLink=""
-    private val binding by lazy {
+    private var videoLink=""
+    private var userData: RLRevoolaUsersSettingsModel? = null
+    private val fragBinding by lazy {
         RlFragMindClassesViewBinding.inflate(layoutInflater)
     }
+
     fun newInstance(bundle: Bundle?): Fragment {
         val fragment = RLFragMindClassesView()
         fragment.arguments = bundle
         return fragment
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         rl_screenSet(false)
+        rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
-        com.revoola.utils.RLPrefManager.rl_setSomeStringValue(activity, com.revoola.utils.RLPrefManager.current_fragment,"RLFragMindClassesView" )
+        RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragMindClassesView" )
         RLuisetup()
         return fragBinding.root
     }
+    override fun onPause() {
+        super.onPause()
+        rl_bottomHideShowSet(true)
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                RLDownloadVideo(videoLink,"Video")
+            }
+        }
+    }
+
     private fun RLuisetup() {
         rl_onBackPresAct(fragBinding.ivBack)
 
@@ -93,6 +116,9 @@ class RLFragMindClassesView : RLBaseFragment() {
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLMindUiSetup(VideoData)
                 RLClickToSechedule(jsonObject,VideoID,audioVideoType)
+                fragBinding.inlayShare.relativeCommon.setOnClickListener {
+                    onClickShare(VideoData,VideoID)
+                }
                 fragBinding.inlayButton.commonButton.setOnClickListener {
                     val bundle = Bundle()
 
@@ -120,7 +146,6 @@ class RLFragMindClassesView : RLBaseFragment() {
         }
 
     }
-
     private fun RLClickToSechedule(data: String, videoKey: String?, audioVideoType: String?) {
         fragBinding.inlaySchdual.relativeCommon.setOnClickListener {
             val bundle = Bundle()
@@ -140,12 +165,8 @@ class RLFragMindClassesView : RLBaseFragment() {
         fragBinding.txtTotalClass.setText(VideoData.instructorClasses+" CLASSES")
         fragBinding.txtVideoDescription.setText(VideoData.rideDescription)
         fragBinding.txtMinutes.setText(VideoData.duration+" CLASS")
-        Glide.with(requireContext()).load(VideoData.imageLinkInstructor)
-            //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-            .into(fragBinding.imgTraner)
-        Glide.with(requireContext()).load(VideoData.imageLinkSquareV2)
-            //.placeholder(R.drawable.sample_user).error(R.drawable.sample_user)
-            .into(fragBinding.imgMainBanner)
+        Glide.with(requireContext()).load(VideoData.imageLinkInstructor).into(fragBinding.imgTraner)
+        Glide.with(requireContext()).load(VideoData.imageLinkSquareV2).into(fragBinding.imgMainBanner)
     }
     private fun RLCheckPermissions(): Boolean {
         val writePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -153,14 +174,6 @@ class RLFragMindClassesView : RLBaseFragment() {
     }
     private fun RLRequestPermissions() {
         ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
-    }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                RLDownloadVideo(videoLink,"Video")
-            }
-        }
     }
     private fun RLDownloadVideo(url: String,audioVideoType:String) {
         val uniqueFileName = "video_${UUID.randomUUID()}.mp4"
@@ -175,7 +188,6 @@ class RLFragMindClassesView : RLBaseFragment() {
         val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
     }
-
     private fun RLshowSubscribeDialog() {
         val sucDialog: Dialog = Dialog(requireContext())
         sucDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -192,10 +204,25 @@ class RLFragMindClassesView : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
-
-    override fun onPause() {
-        super.onPause()
-        rl_bottomHideShowSet(true)
+    private fun onClickShare(VideoData: RLFulllVideoModel, videoID: String) {
+        // Check network availability
+        if (!RLTools.isOnline(requireContext())) {
+            Toast.makeText(requireContext(), "Data is not available due to network issues.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        RLDynamicLinkCreate.shared().createVideoLink(
+            requireContext(),
+            video=VideoData,
+            isMind = true,
+            videoKey = videoID,
+            userData = userData
+        ) { link ->
+            link?.let {
+                RELShareManager.shareAsText(requireContext(), it)
+            } ?: run {
+                Toast.makeText(requireContext(), "Error generating link", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 }

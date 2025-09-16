@@ -1,6 +1,7 @@
 package com.revoola.fragment.start.challenges
 
 import android.app.Dialog
+import android.icu.util.TimeZone
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,9 +44,11 @@ class RLFragEditChallenges : RLBaseFragment() {
         fragment.arguments = bundle
         return fragment
     }
+
     private val fragBinding by lazy {
         RlFragEditChallengesBinding.inflate(layoutInflater)
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
@@ -129,8 +132,10 @@ class RLFragEditChallenges : RLBaseFragment() {
             if (isAdded){
                 RLBaseProgress.rl_showProgressDialog(requireActivity())
             }
+            val timezone = TimeZone.getDefault().rawOffset / 1000
+            val timestamp = System.currentTimeMillis() / 1000
+            val currentTimestamp  = (timestamp + timezone).toString()
 
-            val currentTimestamp  = (System.currentTimeMillis() / 1000).toString()
             val userData= rl_getUserDetails(requireContext())
             val challengePayload=RLChallengePayload()
 
@@ -179,7 +184,6 @@ class RLFragEditChallenges : RLBaseFragment() {
         }
 
     }
-
 
     private fun RLshowAlertDialog(message:String) {
         val sucDialog: Dialog = Dialog(requireContext())
@@ -295,6 +299,7 @@ class RLFragEditChallenges : RLBaseFragment() {
         }
 
     }
+
 
 
 }

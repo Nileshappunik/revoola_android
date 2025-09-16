@@ -46,11 +46,13 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.revoola.databasefirebase.RLAuthManager
 import com.revoola.databinding.RlDialogHelpStartBinding
 import com.revoola.fragment.start.RLStartHelpModel
 import com.revoola.fragment.start.RLStartHelpModelData
@@ -64,6 +66,9 @@ import com.revoola.model.RLRevoolaUsersSettingsModel
 import com.revoola.model.RLZoneChartData
 import com.revoola.model.StringDeserializer
 import com.revoola.utils.RLConstants
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.util.ContentMetadata
+import io.branch.referral.util.LinkProperties
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -73,6 +78,13 @@ import kotlin.jvm.java
 
 
 object RLTools {
+
+    // Example network check function
+     fun isOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
 
     fun RLhideShowHelpDialog(context: Context, key: String,ivHelp: ImageView){
         try {

@@ -23,6 +23,7 @@ import com.revoola.utils.loadSvg
 import android.content.Context
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
+import com.revoola.commonobject.RLTools
 import com.revoola.databasefirebase.RLAuthManager
 import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.Branch
@@ -89,7 +90,7 @@ class RLFriendListAdapter(
                     (context as RLMainActivityRL).rl_loadFrag(RLFragYourGroup(), TAG, true, null, false)
 
                 }else if (cardData.title.toLowerCase().equals("invite to join")){
-                    onClickInvite()
+                   onClickInvite()
                 }
 
             }
@@ -97,7 +98,7 @@ class RLFriendListAdapter(
 
         private fun onClickInvite() {
             // Check network availability
-            if (!isOnline()) {
+            if (!RLTools.isOnline(context)) {
                 Toast.makeText(context, "Data is not available due to network issues.", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -136,12 +137,7 @@ class RLFriendListAdapter(
                 }
             }
         }
-        // Example network check function
-        private fun isOnline(): Boolean {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
-            val networkInfo = connectivityManager.activeNetworkInfo
-            return networkInfo != null && networkInfo.isConnected
-        }
+
 
     }
 

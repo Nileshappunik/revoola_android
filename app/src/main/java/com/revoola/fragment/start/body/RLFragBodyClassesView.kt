@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,20 +26,23 @@ import com.revoola.databasefirebase.RLDatabaseManagerRead
 import com.revoola.databinding.RlFragMindClassesViewBinding
 import com.revoola.fragment.start.classes.RLClassesSchedule
 import com.revoola.model.RLFulllVideoModel
-import com.revoola.utils.RLConstants
 import com.revoola.utils.RLPrefManager
 import com.google.gson.Gson
 import com.revoola.fragment.start.yourway.RLFragChooseYourSensor
 import com.revoola.ble.RLExtraValueKey
+import com.revoola.commonobject.RELShareManager
+import com.revoola.commonobject.RLDynamicLinkCreate
+import com.revoola.commonobject.RLTools
+import com.revoola.model.RLRevoolaUsersSettingsModel
 import java.util.UUID
 
 class RLFragBodyClassesView : RLBaseFragment() {
-    val TAG: String = RLFragBodyClassesView::class.java.simpleName
-    lateinit var fragBinding: RlFragMindClassesViewBinding
+    private val TAG: String = RLFragBodyClassesView::class.java.simpleName
     private val PERMISSION_REQUEST_CODE = 1001
-    var videoLink=""
+    private var videoLink=""
+    private var userData: RLRevoolaUsersSettingsModel? = null
 
-    private val binding by lazy {
+    private val fragBinding by lazy {
         RlFragMindClassesViewBinding.inflate(layoutInflater)
     }
     fun newInstance(bundle: Bundle?): Fragment {
@@ -50,7 +54,6 @@ class RLFragBodyClassesView : RLBaseFragment() {
         rl_screenSet(false)
         rl_bottomHideShowSet(false)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        fragBinding = rl_inflateBindLayout(activity?.javaClass,inflater, R.layout.rl_frag_mind_classes_view, container) as RlFragMindClassesViewBinding
         RLPrefManager.rl_setSomeStringValue(activity, RLPrefManager.current_fragment,"RLFragBodyClassesView" )
         RLuisetup()
         return fragBinding.root
@@ -83,6 +86,11 @@ class RLFragBodyClassesView : RLBaseFragment() {
         fragBinding.inlayShare.imgIcon.setImageResource(R.drawable.ic_share)
         fragBinding.linearLayout.weightSum = 3f
 
+        // Fetch user settings (appUnit)
+        rl_firebaseToFetchUserData { userCardData ->
+            userData = userCardData
+        }
+
         val databaseManager= RLDatabaseManagerRead()
         databaseManager.rl_revoolaVideosRead(videoID){ data, error ->
             if (data != null) {
@@ -91,6 +99,9 @@ class RLFragBodyClassesView : RLBaseFragment() {
                 val VideoData = gson.fromJson(jsonObject, RLFulllVideoModel::class.java)
                 RLBodyUiSetup(VideoData)
                 RLClickToSechedule(jsonObject,videoID,"")
+                fragBinding.inlayShare.relativeCommon.setOnClickListener {
+                    onClickShare(VideoData,videoID)
+                }
                 if ( VideoData.classType.toLowerCase().equals("ride")){
                     ride=true
                 }else{
@@ -219,4 +230,26 @@ class RLFragBodyClassesView : RLBaseFragment() {
         sucDialog.show()
         sucDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_dialog_background)
     }
+    private fun onClickShare(VideoData: RLFulllVideoModel, videoID: String) {
+
+        // Check network availability
+        if (!RLTools.isOnline(requireContext())) {
+            Toast.makeText(requireContext(), "Data is not available due to network issues.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        RLDynamicLinkCreate.shared().createVideoLink(
+            requireContext(),
+            video=VideoData,
+            isMind = false,
+            videoKey = videoID,
+            userData = userData
+        ) { link ->
+            link?.let {
+                RELShareManager.shareAsText(requireContext(), it)
+            } ?: run {
+                Toast.makeText(requireContext(), "Error generating link", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }
