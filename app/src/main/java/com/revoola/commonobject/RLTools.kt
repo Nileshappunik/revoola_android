@@ -92,7 +92,7 @@ object RLTools {
             val remoteConfig = FirebaseRemoteConfig.getInstance()
             val value = remoteConfig.getString(key)
             val startHelpModel = Gson().fromJson(value, RLStartHelpModel::class.java)
-            //rl_logDPrint("HelpDialog","Help $key JSON Data: ${Gson().toJson(startHelpModel)}")
+            rl_logDPrint("HelpDialog","Help $key JSON Data: ${Gson().toJson(startHelpModel)}")
             if (startHelpModel.visible){
                 ivHelp.visibility=View.VISIBLE
                 ivHelp.setOnClickListener {
